@@ -15,15 +15,11 @@ public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(
-            final MenuGroupRepository menuGroupRepository
-    ) {
+    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 
-    public MenuGroupResponse create(
-            final MenuGroupCreateRequest request
-    ) {
+    public MenuGroupResponse create(final MenuGroupCreateRequest request) {
         final MenuGroup menuGroup = MenuGroupMapper.toMenuGroup(request);
         final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 

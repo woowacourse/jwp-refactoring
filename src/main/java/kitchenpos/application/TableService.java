@@ -76,9 +76,7 @@ public class TableService {
         return OrderTableMapper.toOrderTableResponse(orderTable);
     }
 
-    private OrderTable findOrderTableById(
-            final Long orderTableId
-    ) {
+    private OrderTable findOrderTableById(final Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 주문 테이블 입니다."));
     }

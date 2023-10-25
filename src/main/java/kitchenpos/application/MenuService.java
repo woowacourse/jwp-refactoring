@@ -1,16 +1,14 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.Price.ZERO_PRICE;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuProductCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.mapper.MenuMapper;
 import kitchenpos.repository.MenuGroupRepository;
@@ -41,64 +39,38 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    public MenuResponse create(
-            final MenuCreateRequest request
-    ) {
+    public MenuResponse create(final MenuCreateRequest request) {
+        final Menu menu = saveMenu(request);
+        menuProductRepository.saveAll(menu.getMenuProducts());
+
+        return MenuMapper.toMenuResponse(menu);
+    }
+
+    private Menu saveMenu(final MenuCreateRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu group 입니다."));
+        final Menu menu = MenuMapper.toMenu(request, menuGroup, convertToMenuProducts(request));
 
-        final List<MenuProduct> menuProducts = convertToMenuProducts(request);
-        final Menu menu = MenuMapper.toMenu(request, menuGroup);
-        validateMenuPrice(menu, calculateSumByMenuProducts(menuProducts));
-        final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu, menuProducts);
-        return MenuMapper.toMenuResponse(savedMenu, savedMenuProducts);
+        return menuRepository.save(menu);
     }
 
-    private List<MenuProduct> convertToMenuProducts(
-            final MenuCreateRequest menuRequest
-    ) {
+    private List<MenuProduct> convertToMenuProducts(final MenuCreateRequest menuRequest) {
         return menuRequest.getMenuProducts().stream()
-                .map(request -> {
-                    final Product product = productRepository.findById(request.getProductId())
-                            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 product 입니다."));
-                    return new MenuProduct(null, product, request.getQuantity());
-                })
+                .map(this::convertToMenuProduct)
                 .collect(Collectors.toList());
     }
 
-    private Price calculateSumByMenuProducts(
-            final List<MenuProduct> menuProducts
-    ) {
-        return menuProducts.stream()
-                .map(MenuProduct::getTotalPrice)
-                .reduce(ZERO_PRICE, Price::add);
-    }
+    private MenuProduct convertToMenuProduct(final MenuProductCreateRequest request) {
+        final Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 product 입니다."));
 
-    private void validateMenuPrice(
-            final Menu menu,
-            final Price price
-    ) {
-        if (menu.isGreaterThan(price)) {
-            throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다.");
-        }
-    }
-
-    private List<MenuProduct> saveMenuProducts(
-            final Menu menu,
-            final List<MenuProduct> menuProducts
-    ) {
-        return menuProducts.stream()
-                .map(menuProduct -> menuProductRepository.save(
-                        new MenuProduct(menu, menuProduct.getProduct(), menuProduct.getQuantity())
-                ))
-                .collect(Collectors.toList());
+        return new MenuProduct(null, product, request.getQuantity());
     }
 
     @Transactional(readOnly = true)
     public List<MenuResponse> readAll() {
         final List<Menu> menus = menuRepository.findAll();
+
         return MenuMapper.toMenuResponses(menus);
     }
 }

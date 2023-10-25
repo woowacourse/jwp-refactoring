@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderLineItemResponse;
 import kitchenpos.dto.order.OrderResponse;
@@ -17,13 +16,12 @@ public class OrderMapper {
 
     public static Order toOrder(
             final OrderTable orderTable,
-            final OrderStatus status,
-            final LocalDateTime orderedTime
-    ) {
+            final LocalDateTime orderedTime,
+            List<OrderLineItem> orderLineItems) {
         return new Order(
                 orderTable,
-                status,
-                orderedTime
+                orderedTime,
+                orderLineItems
         );
     }
 
@@ -32,7 +30,7 @@ public class OrderMapper {
 
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTableId(),
+                order.getOrderTableId().orElse(null),
                 order.getOrderStatus(),
                 order.getOrderedTime(),
                 orderLineItemResponse
@@ -43,8 +41,10 @@ public class OrderMapper {
         return orderLineItems.stream()
                 .map(orderLineItem -> new OrderLineItemResponse(
                                 orderLineItem.getSeq(),
-                                orderLineItem.getOrderId(),
-                                orderLineItem.getMenuId(),
+                                orderLineItem.getOrderId()
+                                        .orElseThrow(() -> new IllegalArgumentException("orderId 가 NULL 입니다")),
+                                orderLineItem.getMenuId()
+                                        .orElseThrow(() -> new IllegalArgumentException("menuId 가 NULL 입니다")),
                                 orderLineItem.getQuantity()
                         )
                 )

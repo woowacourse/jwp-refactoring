@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.Price.ZERO_PRICE;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
@@ -41,6 +43,9 @@ public class Menu {
                  final Price price,
                  final MenuGroup menuGroup,
                  final List<MenuProduct> menuProducts) {
+        updateMenuProducts(menuProducts);
+        validateMenuPrice(price, calculateSumByMenuProducts(menuProducts));
+
         this.id = id;
         this.name = name;
         this.price = price;
@@ -50,20 +55,37 @@ public class Menu {
 
     public static Menu of(final String name,
                           final BigDecimal price,
-                          final MenuGroup menuGroup) {
-
-        return new Menu(null, name, new Price(price), menuGroup, new ArrayList<>());
-    }
-
-    public static Menu of(final String name,
-                          final BigDecimal price,
                           final MenuGroup menuGroup,
                           final List<MenuProduct> menuProducts) {
         return new Menu(null, name, new Price(price), menuGroup, menuProducts);
     }
 
-    public boolean isGreaterThan(final Price other) {
-        return price.isGreaterThan(other);
+    public static Menu of(final String name,
+                          final BigDecimal price,
+                          final MenuGroup menuGroup) {
+        return new Menu(null, name, new Price(price), menuGroup, new ArrayList<>());
+    }
+
+    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
+        this.menuProducts = menuProducts;
+        menuProducts.forEach(menuProduct -> menuProduct.updateMenu(this));
+    }
+
+    private Price calculateSumByMenuProducts(
+            final List<MenuProduct> menuProducts
+    ) {
+        return menuProducts.stream()
+                .map(MenuProduct::caculateTotalPrice)
+                .reduce(ZERO_PRICE, Price::add);
+    }
+
+    private void validateMenuPrice(
+            final Price price,
+            final Price calculatedPrice
+    ) {
+        if (price.isGreaterThan(calculatedPrice)) {
+            throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다.");
+        }
     }
 
     public Long getId() {

@@ -1,15 +1,14 @@
 package kitchenpos.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -19,8 +18,10 @@ class MenuTest {
 
     @Test
     void 메뉴_생성() {
+        final MenuProduct menuProduct = new MenuProduct(null, Product.of("치킨", BigDecimal.valueOf(10_000L)), 1L);
+
         assertDoesNotThrow(
-                () -> Menu.of("치킨", BigDecimal.valueOf(10_000L), null)
+                () -> Menu.of("치킨", BigDecimal.valueOf(10_000L), null, List.of(menuProduct))
         );
     }
 
@@ -42,11 +43,13 @@ class MenuTest {
                 .hasMessageContaining("가격은 음수일 수 없습니다. price: ");
     }
 
-    @ParameterizedTest
-    @CsvSource({"100,true", "15000, false"})
-    void 메뉴의_가격이_더_크면_TRUE_반환(final BigDecimal price, final boolean result) {
-        final Menu menu = Menu.of("치킨", BigDecimal.valueOf(10_000L), null);
+    @Test
+    void 메뉴의_가격이_더_크면_예외_발생() {
+        final MenuProduct menuProduct = new MenuProduct(null, Product.of("치킨", BigDecimal.valueOf(9_000L)), 1L);
 
-        assertThat(menu.isGreaterThan(new Price(price))).isEqualTo(result);
+        assertThatThrownBy(
+                () -> Menu.of("치킨", BigDecimal.valueOf(10_000L), null, List.of(menuProduct))
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다.");
     }
 }

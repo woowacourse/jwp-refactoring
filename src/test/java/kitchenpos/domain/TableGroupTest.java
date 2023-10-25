@@ -63,8 +63,6 @@ class TableGroupTest {
         final OrderTable orderTable2 = new OrderTable(null, 0, true);
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2));
 
-        tableGroup.updateTableGroupInOrderTable();
-
         assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup);
     }
 
@@ -73,7 +71,6 @@ class TableGroupTest {
         final OrderTable orderTable = new OrderTable(null, 0, true);
         final OrderTable orderTable2 = new OrderTable(null, 0, true);
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2));
-        tableGroup.updateTableGroupInOrderTable();
 
         tableGroup.ungroup();
 

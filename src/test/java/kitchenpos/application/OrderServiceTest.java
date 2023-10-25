@@ -16,6 +16,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -39,15 +40,19 @@ class OrderServiceTest extends ServiceTest {
 
     private Menu menu;
 
+    private List<OrderLineItem> orderLineItems;
+
     @BeforeEach
     void setUp() {
         OrderTable newOrderTable = new OrderTable(null, 10, false);
         orderTable = orderTableRepository.save(newOrderTable);
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
         Product product = productRepository.save(Product.of("후라이드", BigDecimal.valueOf(15_000L)));
-        Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup,
-                List.of(new MenuProduct(null, product, 1L)));
+        MenuProduct menuProduct = new MenuProduct(null, product, 1L);
+        Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup, List.of(menuProduct));
         menu = menuRepository.save(newMenu);
+        orderLineItems = List.of(new OrderLineItem(null, menu, 1L)
+                , new OrderLineItem(null, menu, 1L));
     }
 
     @Nested
@@ -87,13 +92,15 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_아이템의_메뉴가_존재하지_않으면_예외_발생() {
             // given
-            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(null, 1L);
-            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
+            final Long wrongMenuId = -1L;
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(wrongMenuId, 1L);
+            OrderLineItemRequest orderLineItemRequest2 = new OrderLineItemRequest(wrongMenuId, 1L);
+            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest, orderLineItemRequest2);
 
             // when, then
             assertThatThrownBy(
                     () -> orderService.create(orderRequest)
-            ).isInstanceOf(IllegalArgumentException.class);
+            ).isInstanceOf(NoSuchElementException.class);
         }
 
         @Test
@@ -178,8 +185,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문이_상태가_COMPLETION이면_예외_발생() {
             // given
-            Order order = new Order(orderTable, COMPLETION, LocalDateTime.now());
+            Order order = new Order(orderTable, LocalDateTime.now(), orderLineItems);
             Order savedOrder = orderRepository.save(order);
+            savedOrder.updateOrderStatus(COMPLETION.name());
 
             OrderUpdateStatusRequest request = new OrderUpdateStatusRequest("MEAL");
 

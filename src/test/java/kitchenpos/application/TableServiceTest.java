@@ -4,18 +4,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.table.TableCreateRequest;
 import kitchenpos.dto.table.TableUpdateEmptyRequest;
 import kitchenpos.dto.table.TableUpdateNumberOfGuestsRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,6 +33,18 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    private Menu menu;
+
+    @BeforeEach
+    void setUp() {
+        final Product product = productRepository.save(Product.of("후라이드", BigDecimal.valueOf(15_000L)));
+        final MenuProduct menuProduct = new MenuProduct(null, product, 1L);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
+        final Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup, List.of(menuProduct));
+        menu = menuRepository.save(newMenu);
+    }
+
 
     @Nested
     class 테이블_생성 {
@@ -121,11 +139,12 @@ class TableServiceTest extends ServiceTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"MEAL", "COOKING"})
-        void 상태_변경할_테이블_주문의_상태가_COMPLETION인_경우_예외_발생(final OrderStatus status) {
+        void 상태_변경할_테이블_주문의_상태가_MEAL이나_COOKING인_경우_예외_발생(final String status) {
             // given
             OrderTable orderTable = new OrderTable(null, 0, false);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-            Order order = createOrder(savedOrderTable, status);
+            Order order = createOrder(savedOrderTable);
+            order.updateOrderStatus(status);
             orderRepository.save(order);
 
             TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(true);
@@ -203,8 +222,9 @@ class TableServiceTest extends ServiceTest {
         }
     }
 
-    private Order createOrder(final OrderTable orderTable,
-                              final OrderStatus status) {
-        return new Order(orderTable, status, LocalDateTime.now());
+    private Order createOrder(final OrderTable orderTable) {
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, menu, 1L),
+                new OrderLineItem(null, menu, 1L));
+        return new Order(orderTable, LocalDateTime.now(), orderLineItems);
     }
 }

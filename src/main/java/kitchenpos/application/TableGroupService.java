@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.SingleOrderTableCreateRequest;
 import kitchenpos.dto.table.TableGroupCreateRequest;
 import kitchenpos.dto.table.TableGroupResponse;
 import kitchenpos.mapper.TableGroupMapper;
@@ -38,45 +40,38 @@ public class TableGroupService {
             final TableGroupCreateRequest tableGroupCreateRequest
     ) {
         final TableGroup tableGroup = saveTableGroup(tableGroupCreateRequest);
-        tableGroup.updateTableGroupInOrderTable();
 
         return TableGroupMapper.toTableGroupResponse(tableGroup);
     }
 
-    private TableGroup saveTableGroup(
-            final TableGroupCreateRequest tableGroupCreateRequest
-    ) {
-        final List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
-        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        validateOrderTableSize(orderTables, orderTableIds);
-
+    private TableGroup saveTableGroup(final TableGroupCreateRequest tableGroupCreateRequest) {
+        final List<OrderTable> orderTables = convertToOrderTables(tableGroupCreateRequest.getOrderTables());
         final TableGroup tableGroup = TableGroupMapper.toTableGroup(LocalDateTime.now(), orderTables);
+
         return tableGroupRepository.save(tableGroup);
     }
 
-    private void validateOrderTableSize(
-            final List<OrderTable> orderTables,
-            final List<Long> orderTableIds
-    ) {
-        if (orderTables.size() != orderTableIds.size()) {
-            throw new NoSuchElementException("존재하지 order table 입니다.");
-        }
+    private List<OrderTable> convertToOrderTables(List<SingleOrderTableCreateRequest> requests) {
+        return requests.stream()
+                .map(this::convertToOrderTable)
+                .collect(Collectors.toList());
     }
 
-    public void ungroup(
-            final Long tableGroupId
-    ) {
+    private OrderTable convertToOrderTable(final SingleOrderTableCreateRequest request) {
+        return orderTableRepository.findById(request.getId())
+                .orElseThrow(() -> new NoSuchElementException("존재하지 order table 입니다."));
+    }
+
+    public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 table group 입니다."));
         validateOrderStatus(tableGroup);
         tableGroup.ungroup();
     }
 
-    private void validateOrderStatus(
-            final TableGroup tableGroup
-    ) {
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                tableGroup.getOrderTables(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+    private void validateOrderStatus(final TableGroup tableGroup) {
+        final List<OrderStatus> statuses = Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(tableGroup.getOrderTables(), statuses)) {
             throw new IllegalArgumentException("주문 상태가 MEAL, COOKING 이면 그룹을 해제할 수 없습니다.");
         }
     }

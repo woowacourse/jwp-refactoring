@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
+    private List<OrderTable> orderTables = new ArrayList<>();
 
 
     protected TableGroup() {
@@ -37,6 +38,7 @@ public class TableGroup {
     ) {
         validateNumberOfOrderTable(orderTables);
         validateOrderTableStatus(orderTables);
+        updateTableGroupInOrderTable(orderTables);
 
         this.id = id;
         this.createdDate = createdDate;
@@ -69,7 +71,8 @@ public class TableGroup {
                 });
     }
 
-    public void updateTableGroupInOrderTable() {
+    public void updateTableGroupInOrderTable(final List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
         orderTables.forEach(orderTable -> orderTable.updateTableGroup(this));
     }
 

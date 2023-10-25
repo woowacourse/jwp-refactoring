@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -36,7 +38,7 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
@@ -49,20 +51,21 @@ public class Order {
             final List<OrderLineItem> orderLineItems
     ) {
         validateEmptyByOrderTable(orderTable);
+        validateEmptyByOrderLineItems(orderLineItems);
+        updateOrderLineItems(orderLineItems);
 
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
     }
 
     public Order(
             final OrderTable orderTable,
-            final OrderStatus orderStatus,
-            final LocalDateTime orderedTime
+            final LocalDateTime orderedTime,
+            final List<OrderLineItem> orderLineItems
     ) {
-        this(null, orderTable, orderStatus, orderedTime, new ArrayList<>());
+        this(null, orderTable, OrderStatus.COOKING, orderedTime, orderLineItems);
     }
 
     private void validateEmptyByOrderTable(
@@ -70,6 +73,14 @@ public class Order {
     ) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("order table은 비어있을 수 없습니다.");
+        }
+    }
+
+    private void validateEmptyByOrderLineItems(
+            final List<OrderLineItem> orderLineItems
+    ) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("order line item 은 1개 이상이어야 합니다.");
         }
     }
 
@@ -85,6 +96,7 @@ public class Order {
 
     public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+        orderLineItems.forEach(orderLineItem -> orderLineItem.updateOrder(this));
     }
 
     public Long getId() {
@@ -93,10 +105,6 @@ public class Order {
 
     public OrderTable getOrderTable() {
         return orderTable;
-    }
-
-    public Long getOrderTableId() {
-        return orderTable.getId();
     }
 
     public OrderStatus getOrderStatus() {
@@ -109,5 +117,12 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public Optional<Long> getOrderTableId() {
+        if (orderTable == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(orderTable.getId());
     }
 }

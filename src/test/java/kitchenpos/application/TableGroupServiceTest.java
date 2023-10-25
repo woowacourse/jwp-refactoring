@@ -4,14 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.table.SingleOrderTableCreateRequest;
@@ -35,12 +40,20 @@ class TableGroupServiceTest extends ServiceTest {
 
     private OrderTable savedOrderTable2;
 
+    private Menu menu;
+
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = new OrderTable(null, 10, true);
-        OrderTable orderTable2 = new OrderTable(null, 15, true);
+        final OrderTable orderTable1 = new OrderTable(null, 10, true);
+        final OrderTable orderTable2 = new OrderTable(null, 15, true);
         savedOrderTable1 = orderTableRepository.save(orderTable1);
         savedOrderTable2 = orderTableRepository.save(orderTable2);
+
+        final Product product = productRepository.save(Product.of("후라이드", BigDecimal.valueOf(15_000L)));
+        final MenuProduct menuProduct = new MenuProduct(null, product, 1L);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
+        final Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup, List.of(menuProduct));
+        menu = menuRepository.save(newMenu);
     }
 
     @Nested
@@ -149,14 +162,15 @@ class TableGroupServiceTest extends ServiceTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"MEAL", "COOKING"})
-        void 요청에_대한_주문의_상태가_COOKING이나_MEAL이면_예외_발생(OrderStatus orderStatus) {
+        void 요청에_대한_주문의_상태가_COOKING이나_MEAL이면_예외_발생(final String orderStatus) {
             // given
             TableGroupCreateRequest request = createTableGroup(
                     new SingleOrderTableCreateRequest(savedOrderTable1.getId()),
                     new SingleOrderTableCreateRequest(savedOrderTable2.getId())
             );
             TableGroupResponse response = tableGroupService.create(request);
-            Order order = createOrder(savedOrderTable1, orderStatus);
+            Order order = createOrder(savedOrderTable1);
+            order.updateOrderStatus(orderStatus);
             orderRepository.save(order);
 
             // when, then
@@ -170,8 +184,9 @@ class TableGroupServiceTest extends ServiceTest {
         return new TableGroupCreateRequest(Arrays.asList(tableRequests));
     }
 
-    private Order createOrder(final OrderTable orderTable,
-                              final OrderStatus status) {
-        return new Order(orderTable, status, LocalDateTime.now());
+    private Order createOrder(final OrderTable orderTable) {
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, menu, 1L),
+                new OrderLineItem(null, menu, 1L));
+        return new Order(orderTable, LocalDateTime.now(), orderLineItems);
     }
 }

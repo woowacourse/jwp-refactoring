@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,7 +50,11 @@ public class MenuProduct {
         this(null, menu, product, quantity);
     }
 
-    public Price getTotalPrice() {
+    public void updateMenu(final Menu menu) {
+        this.menu = menu;
+    }
+
+    public Price caculateTotalPrice() {
         return product.multiplyPrice(quantity);
     }
 
@@ -57,12 +62,18 @@ public class MenuProduct {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menu.getId();
+    public Optional<Long> getMenuId() {
+        if (menu == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(menu.getId());
     }
 
-    public Long getProductId() {
-        return product.getId();
+    public Optional<Long> getProductId() {
+        if (product == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(product.getId());
     }
 
     public long getQuantity() {
