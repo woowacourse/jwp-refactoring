@@ -48,6 +48,17 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
+    public Menu findById(final Long id) {
+        return menuRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+    }
+
+    @Transactional(readOnly = true)
+    public int countByIdIn(final List<Long> menuIds) {
+        return menuRepository.countByIdIn(menuIds);
+    }
+
+    @Transactional(readOnly = true)
     public List<Menu> findAll() {
         return menuRepository.findAll();
     }
