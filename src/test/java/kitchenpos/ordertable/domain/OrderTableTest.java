@@ -1,11 +1,9 @@
 package kitchenpos.ordertable.domain;
 
-import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.util.List;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +15,7 @@ class OrderTableTest {
     @DisplayName("그룹을 해제한다.")
     void unGroup() {
         // given
-        TableGroup tableGroup = TableGroup.create(List.of(ORDER_TABLE1()), 1, 1);
+        TableGroup tableGroup = TableGroup.create();
         OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, true);
         orderTable.updateTableGroupId(tableGroup.getId());
 

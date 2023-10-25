@@ -10,7 +10,6 @@ import static kitchenpos.common.fixtures.OrderFixtures.ORDER1_CREATE_REQUEST;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
 import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1;
 import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2;
-import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -138,7 +137,7 @@ class OrderServiceTest extends ServiceTest {
             final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
-            TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
+            TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
 
@@ -182,7 +181,7 @@ class OrderServiceTest extends ServiceTest {
             final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
-            TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
+            TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
 
@@ -214,7 +213,7 @@ class OrderServiceTest extends ServiceTest {
             final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
-            TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
+            TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
 
@@ -244,7 +243,7 @@ class OrderServiceTest extends ServiceTest {
             final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
-            TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
+            TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
             order.changeStatus(OrderStatus.COMPLETION);

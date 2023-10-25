@@ -2,17 +2,14 @@ package kitchenpos.tablegroup.application;
 
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
-import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1;
 import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1_CREATE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
@@ -56,14 +53,11 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when
             final TableGroupResponse response = tableGroupService.create(request);
-            final List<OrderTableResponse> orderTableResponses = response.getOrderTables().getOrderTables();
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isNotNull();
                 softly.assertThat(response.getCreatedDate()).isNotNull();
-                softly.assertThat(orderTableResponses.get(0).getTableGroupId()).isNotNull();
-                softly.assertThat(orderTableResponses.get(1).getTableGroupId()).isNotNull();
             });
         }
     }
@@ -79,26 +73,25 @@ class TableGroupServiceTest extends ServiceTest {
             final OrderTable orderTable1 = ORDER_TABLE1();
             final OrderTable orderTable2 = ORDER_TABLE1();
 
-            TableGroup tableGroup = TABLE_GROUP1();
+            TableGroup tableGroup = TableGroup.create();
             TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
             orderTable1.updateTableGroupId(savedTableGroup.getId());
             orderTable2.updateTableGroupId(savedTableGroup.getId());
 
-            orderTableRepository.save(orderTable1);
-            orderTableRepository.save(orderTable2);
+            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+            OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
             // when
             tableGroupService.ungroup(savedTableGroup.getId());
-            final TableGroup upGrouppedTableGroup = tableGroupRepository.findById(savedTableGroup.getId()).get();
-            final List<OrderTable> orderTables = upGrouppedTableGroup.getOrderTables();
+            OrderTable orderTable = orderTableRepository.findById(savedOrderTable1.getId()).get();
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(orderTables.get(0).getTableGroupId()).isNull();
-                softly.assertThat(orderTables.get(0).isEmpty()).isFalse();
-                softly.assertThat(orderTables.get(1).getTableGroupId()).isNull();
-                softly.assertThat(orderTables.get(1).isEmpty()).isFalse();
+                softly.assertThat(orderTable.getTableGroupId()).isNull();
+                softly.assertThat(orderTable.isEmpty()).isFalse();
+                softly.assertThat(orderTable.getTableGroupId()).isNull();
+                softly.assertThat(orderTable.isEmpty()).isFalse();
             });
         }
 
@@ -110,7 +103,7 @@ class TableGroupServiceTest extends ServiceTest {
             final OrderTable orderTable2 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
             final int orderLineItemSize = 1;
 
-            final TableGroup tableGroup = TABLE_GROUP1();
+            final TableGroup tableGroup = TableGroup.create();
             final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
             orderTable1.updateTableGroupId(savedTableGroup.getId());

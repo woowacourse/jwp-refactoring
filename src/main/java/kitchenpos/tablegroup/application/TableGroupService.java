@@ -1,11 +1,8 @@
 package kitchenpos.tablegroup.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
-import kitchenpos.order.OrderStatus;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.ordertable.application.dto.OrderTableFindRequest;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
@@ -13,20 +10,21 @@ import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.tablegroup.exception.TableGroupException;
+import kitchenpos.tablegroup.domain.TableGroupValidator;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupValidator tableGroupValidator;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository,
+                             final TableGroupRepository tableGroupRepository,
+                             final TableGroupValidator tableGroupValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupValidator = tableGroupValidator;
     }
 
     @Transactional
@@ -37,9 +35,8 @@ public class TableGroupService {
                 .collect(Collectors.toUnmodifiableList());
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(
-                TableGroup.create(savedOrderTables, orderTableRequests.size(), savedOrderTables.size())
-        );
+        tableGroupValidator.validateCreate(savedOrderTables, orderTableRequests.size(), savedOrderTables.size());
+        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
         associateOrderTable(savedOrderTables, savedTableGroup);
 
         return TableGroupResponse.from(savedTableGroup);
@@ -59,11 +56,7 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new TableGroupException.CannotUngroupStateByOrderStatusException();
-        }
+        tableGroupValidator.validateUnGroup(orderTableIds);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.unGroup();
