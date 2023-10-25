@@ -20,7 +20,7 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         return menuRepository.findAll();
     }

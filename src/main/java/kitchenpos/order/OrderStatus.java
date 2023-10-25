@@ -3,6 +3,7 @@ package kitchenpos.order;
 import java.util.Arrays;
 
 public enum OrderStatus {
+
     COOKING, MEAL, COMPLETION;
 
     public static OrderStatus of(String status) {
