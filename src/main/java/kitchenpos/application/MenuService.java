@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -38,14 +39,14 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         final Menu menu = new Menu(
                 request.getName(),
                 Price.from(request.getPrice()),
                 findMenuGroupById(request.getMenuGroupId())
         );
         menu.updateMenuProducts(extractMenuProducts(request.getMenuProducts()));
-        return menuRepository.save(menu);
+        return MenuResponse.from(menuRepository.save(menu));
     }
 
     private MenuGroup findMenuGroupById(final long menuGroupId) {
@@ -65,7 +66,7 @@ public class MenuService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return MenuResponse.from(menuRepository.findAll());
     }
 }

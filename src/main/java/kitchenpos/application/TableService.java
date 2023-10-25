@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -20,20 +21,20 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest request) {
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return OrderTableResponse.from(orderTableRepository.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
         orderTable.updateEmpty(request.isEmpty());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {
@@ -42,10 +43,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId,
-                                           final OrderTableChangeNumberOfGuestsRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final OrderTableChangeNumberOfGuestsRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
         orderTable.updateNumberOfGuests(request.getNumberOfGuests());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 }

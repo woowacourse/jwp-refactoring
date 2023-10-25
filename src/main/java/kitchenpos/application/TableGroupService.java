@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
@@ -17,22 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+    public TableGroupService(final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroup.updateOrderTables(findAllOrderTableByIdIn(extractOrderTableIds(request.getOrderTables())));
-        return tableGroupRepository.save(tableGroup);
+        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
     private List<Long> extractOrderTableIds(List<OrderTableRequest> orderTableRequests) {

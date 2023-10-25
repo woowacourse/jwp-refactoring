@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -40,13 +41,13 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         final Order order = new Order(
                 findOrderTableById(request.getOrderTableId()),
                 LocalDateTime.now()
         );
         order.updateOrderLineItems(extractOrderLineItems(request.getOrderLineItems()));
-        return orderRepository.save(order);
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     private List<OrderLineItem> extractOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
@@ -66,15 +67,15 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        return OrderResponse.from(orderRepository.findAll());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order order = findOrderById(orderId);
         order.updateOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
-        return orderRepository.save(order);
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     private Order findOrderById(final Long orderId) {

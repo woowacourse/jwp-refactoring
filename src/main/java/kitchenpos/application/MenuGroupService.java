@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,12 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroupCreateRequest request) {
+    public MenuGroupResponse create(final MenuGroupCreateRequest request) {
         final MenuGroup menuGroup = new MenuGroup(request.getName());
-        return menuGroupRepository.save(menuGroup);
+        return MenuGroupResponse.from(menuGroupRepository.save(menuGroup));
     }
 
-    public List<MenuGroup> list() {
-        return menuGroupRepository.findAll();
+    public List<MenuGroupResponse> list() {
+        return MenuGroupResponse.from(menuGroupRepository.findAll());
     }
 }
