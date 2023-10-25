@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Embedded;
@@ -72,5 +73,11 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
+    }
+
+    public boolean hasSamePrice(final int price) {
+        final MenuPrice givenMenuPrice = new MenuPrice(BigDecimal.valueOf(price));
+
+        return this.price.equals(givenMenuPrice);
     }
 }

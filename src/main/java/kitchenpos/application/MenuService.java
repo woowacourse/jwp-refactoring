@@ -38,9 +38,16 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final List<MenuProduct> menuProducts = createMenuProduct(request.getMenuProducts());
         final Menu menu = Menu.forSave(request.getName(), menuProducts);
+        validateMenuPrice(request.getPrice(), menu);
         menu.joinMenuGroup(menuGroup);
 
         return MenuResponse.from(menuRepository.save(menu));
+    }
+
+    private void validateMenuGroup(final Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
+        }
     }
 
     private List<MenuProduct> createMenuProduct(final List<MenuProductCreateRequest> requests) {
@@ -50,9 +57,9 @@ public class MenuService {
             .collect(Collectors.toList());
     }
 
-    private void validateMenuGroup(final Long menuGroupId) {
-        if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
+    private void validateMenuPrice(final int price, final Menu menu) {
+        if (!menu.hasSamePrice(price)) {
+            throw new IllegalArgumentException("메뉴 가격이 일치하지 않습니다.");
         }
     }
 

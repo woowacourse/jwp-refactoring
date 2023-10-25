@@ -24,6 +24,10 @@ public class MenuCreateRequest {
         return name;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
     public Long getMenuGroupId() {
         return menuGroupId;
     }
