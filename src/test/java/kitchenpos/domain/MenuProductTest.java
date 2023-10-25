@@ -1,9 +1,10 @@
 package kitchenpos.domain;
 
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,7 +22,7 @@ class MenuProductTest {
     @Test
     @DisplayName("수량이 1개 미만이면 예외가 발생한다")
     void create_fail2() {
-        assertThatThrownBy(() -> new MenuProduct(new Product(), 0))
+        assertThatThrownBy(() -> new MenuProduct(new Product("연어", Price.valueOf(500)), 0))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("상품의 개수는 양수여야 합니다.");
     }
@@ -32,7 +33,7 @@ class MenuProductTest {
         //given
         final int cost = 4000;
         final int quantity = 6;
-        final MenuProduct menuProduct = new MenuProduct(new Product("연어", new Price(BigDecimal.valueOf(cost))), quantity);
+        final MenuProduct menuProduct = new MenuProduct(new Product("연어", Price.valueOf(4000)), quantity);
 
         //when
         final Price price = menuProduct.calculatePrice();

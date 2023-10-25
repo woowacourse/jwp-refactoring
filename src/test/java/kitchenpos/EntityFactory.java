@@ -1,20 +1,20 @@
 package kitchenpos;
 
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.ProductRepository;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
