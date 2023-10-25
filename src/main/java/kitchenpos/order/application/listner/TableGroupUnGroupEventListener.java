@@ -4,7 +4,7 @@ import kitchenpos.order.application.OrderRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.order.domain.exception.OrderExceptionType;
-import kitchenpos.table.application.TableGroupUnGroupValidationEvent;
+import kitchenpos.table_group.application.TableGroupUnGroupValidationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

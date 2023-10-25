@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.table.domain.exception.OrderTableException;
+import kitchenpos.table_group.domain.TableGroup;
 
 @Entity
 public class OrderTable {

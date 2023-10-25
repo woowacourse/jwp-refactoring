@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.table_group.application;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package kitchenpos.table.domain.exception;
+package kitchenpos.table_group.domain.exception;
 
 import kitchenpos.basic.BasicException;
 

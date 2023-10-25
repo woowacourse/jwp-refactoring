@@ -15,7 +15,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.support.ServiceIntegrationTest;
-import kitchenpos.table.application.TableGroupUnGroupValidationEvent;
+import kitchenpos.table_group.application.TableGroupUnGroupValidationEvent;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;

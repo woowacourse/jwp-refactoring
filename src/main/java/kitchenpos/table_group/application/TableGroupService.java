@@ -1,18 +1,18 @@
-package kitchenpos.table.application;
+package kitchenpos.table_group.application;
 
-import static kitchenpos.table.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_PRESENT_ALL;
-import static kitchenpos.table.domain.exception.TableGroupExceptionType.TABLE_GROUP_NOT_FOUND;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_PRESENT_ALL;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.TABLE_GROUP_NOT_FOUND;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.application.dto.OrderTableDto;
-import kitchenpos.table.application.dto.TableGroupDto;
+import kitchenpos.table_group.application.dto.TableGroupDto;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableGroupRepository;
-import kitchenpos.table.domain.exception.TableGroupException;
+import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.table_group.domain.TableGroupRepository;
+import kitchenpos.table_group.domain.exception.TableGroupException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

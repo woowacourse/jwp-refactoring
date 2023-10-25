@@ -3,9 +3,9 @@ package kitchenpos.support.fixture;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.application.dto.MenuDto;
-import kitchenpos.menu.application.dto.MenuGroupDto;
+import kitchenpos.menu_group.application.MenuGroupDto;
 import kitchenpos.menu.application.dto.MenuProductDto;
-import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu_group.domain.MenuGroup;
 import kitchenpos.product.application.dto.ProductDto;
 
 public class MenuFixture {

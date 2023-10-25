@@ -1,17 +1,19 @@
-package kitchenpos.table.domain;
+package kitchenpos.table_group.domain;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyList;
 import static kitchenpos.support.fixture.TableFixture.비어있는_주문_테이블;
-import static kitchenpos.table.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
-import static kitchenpos.table.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.List;
-import kitchenpos.table.domain.exception.TableGroupException;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table_group.domain.exception.TableGroupException;
+import kitchenpos.table_group.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

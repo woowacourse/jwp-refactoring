@@ -1,8 +1,8 @@
-package kitchenpos.table.domain;
+package kitchenpos.table_group.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
-import static kitchenpos.table.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
-import static kitchenpos.table.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import kitchenpos.table.domain.exception.TableGroupException;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table_group.domain.exception.TableGroupException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
