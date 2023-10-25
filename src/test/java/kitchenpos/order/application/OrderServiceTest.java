@@ -12,11 +12,11 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.Menu.ProductIdAndQuantity;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.Orders;
-import kitchenpos.order.dto.OrdersCreateRequest;
-import kitchenpos.order.dto.OrdersCreateRequest.OrderLineItemDto;
-import kitchenpos.order.dto.OrdersResponse;
-import kitchenpos.order.dto.OrdersStatusRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderCreateRequest.OrderLineItemDto;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.dto.OrderStatusRequest;
 import kitchenpos.order.exception.CannotMakeOrderWithEmptyTableException;
 import kitchenpos.order.exception.MenuNotFoundException;
 import kitchenpos.order.exception.OrderNotFoundException;
@@ -63,11 +63,11 @@ class OrderServiceTest {
             em.persist(menu);
             em.flush();
             em.clear();
-            OrdersCreateRequest request = new OrdersCreateRequest(orderTable.getId(),
+            OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                     List.of(new OrderLineItemDto(menu.getId(), 4L)));
 
             // when
-            OrdersResponse response = orderService.create(request);
+            OrderResponse response = orderService.create(request);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
@@ -80,7 +80,7 @@ class OrderServiceTest {
         @Test
         void 요청에_주문_항목_정보가_없으면_예외를_반환한다() {
             // given
-            OrdersCreateRequest request = new OrdersCreateRequest(1L, Collections.emptyList());
+            OrderCreateRequest request = new OrderCreateRequest(1L, Collections.emptyList());
 
             // when, then
             assertThrows(RequestOrderLineItemIsEmptyException.class,
@@ -90,7 +90,7 @@ class OrderServiceTest {
         @Test
         void 요청에_해당하는_주문_테이블이_존재하지_않으면_예외를_반환한다() {
             // given
-            OrdersCreateRequest request = new OrdersCreateRequest(-1L,
+            OrderCreateRequest request = new OrderCreateRequest(-1L,
                     List.of(new OrderLineItemDto(10L, 10L)));
 
             // when, then
@@ -104,7 +104,7 @@ class OrderServiceTest {
             em.persist(orderTable);
             em.flush();
             em.clear();
-            OrdersCreateRequest request = new OrdersCreateRequest(orderTable.getId(),
+            OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                     List.of(new OrderLineItemDto(1L, 4L)));
 
             // when, then
@@ -119,7 +119,7 @@ class OrderServiceTest {
             em.persist(orderTable);
             em.flush();
             em.clear();
-            OrdersCreateRequest request = new OrdersCreateRequest(orderTable.getId(),
+            OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                     List.of(new OrderLineItemDto(-1L, 4L)));
 
             // when, then
@@ -139,20 +139,20 @@ class OrderServiceTest {
         void 주문의_상태를_변경한다() {
             // given
             OrderTable orderTable = new OrderTable(4, false);
-            Orders orders = new Orders(orderTable, OrderStatus.COOKING,
+            Order order = new Order(orderTable, OrderStatus.COOKING,
                     LocalDateTime.now());
             em.persist(orderTable);
-            em.persist(orders);
+            em.persist(order);
             em.flush();
             em.clear();
-            OrdersStatusRequest request = new OrdersStatusRequest(
+            OrderStatusRequest request = new OrderStatusRequest(
                     OrderStatus.COOKING.name());
             // when
-            OrdersResponse response = orderService.changeOrderStatus(orders.getId(), request);
+            OrderResponse response = orderService.changeOrderStatus(order.getId(), request);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
-                assertThat(response.getId()).isEqualTo(orders.getId());
+                assertThat(response.getId()).isEqualTo(order.getId());
                 assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
             });
         }
@@ -160,7 +160,7 @@ class OrderServiceTest {
         @Test
         void 변경하려는_주문_id에_해당하는_주문이_존재하지_않으면_예외를_반환한다() {
             // given
-            OrdersStatusRequest request = new OrdersStatusRequest(OrderStatus.MEAL.name());
+            OrderStatusRequest request = new OrderStatusRequest(OrderStatus.MEAL.name());
             // when, then
             assertThrows(OrderNotFoundException.class,
                     () -> orderService.changeOrderStatus(-1L, request));
@@ -170,18 +170,18 @@ class OrderServiceTest {
         void 변경하려는_주문의_주문_상태가_계산_완료인_경우_예외를_반환한다() {
             // given
             OrderTable orderTable = new OrderTable(4, false);
-            Orders orders = new Orders(orderTable, OrderStatus.COMPLETION,
+            Order order = new Order(orderTable, OrderStatus.COMPLETION,
                     LocalDateTime.now());
             em.persist(orderTable);
-            em.persist(orders);
+            em.persist(order);
             em.flush();
             em.clear();
-            OrdersStatusRequest request = new OrdersStatusRequest(
+            OrderStatusRequest request = new OrderStatusRequest(
                     OrderStatus.MEAL.name());
 
             // when, then
             assertThrows(OrderStatusNotChangeableException.class,
-                    () -> orderService.changeOrderStatus(orders.getId(), request));
+                    () -> orderService.changeOrderStatus(order.getId(), request));
         }
     }
 }

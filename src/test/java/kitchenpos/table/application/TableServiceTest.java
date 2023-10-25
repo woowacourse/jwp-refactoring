@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.Orders;
+import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.OrderTableChangeNumberOfGuestsRequest;
@@ -95,10 +95,10 @@ class TableServiceTest {
         void 변경하려는_테이블의_주문_상태가_변경_불가하면_예외를_반환한다() {
             // given
             OrderTable orderTable = new OrderTable(1, false);
-            Orders orders = new Orders(orderTable, OrderStatus.COOKING,
+            Order order = new Order(orderTable, OrderStatus.COOKING,
                     LocalDateTime.now());
             em.persist(orderTable);
-            em.persist(orders);
+            em.persist(order);
             em.flush();
             em.clear();
             OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);

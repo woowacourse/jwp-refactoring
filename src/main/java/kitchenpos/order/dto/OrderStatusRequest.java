@@ -2,12 +2,12 @@ package kitchenpos.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public class OrdersStatusRequest {
+public class OrderStatusRequest {
 
     private String orderStatus;
 
     @JsonCreator
-    public OrdersStatusRequest(String orderStatus) {
+    public OrderStatusRequest(String orderStatus) {
         this.orderStatus = orderStatus;
     }
 

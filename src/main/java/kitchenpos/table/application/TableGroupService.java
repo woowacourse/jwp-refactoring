@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.domain.Orders;
+import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.TableGroupRequest;
 import kitchenpos.table.dto.TableGroupRequest.OrderTableDto;
@@ -75,10 +75,10 @@ public class TableGroupService {
 
     private void validateEveryOrderInGroupCompleted(TableGroup tableGroup) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
-        List<Orders> orders = orderRepository.findAllByOrderTableIn(orderTables);
+        List<Order> orders = orderRepository.findAllByOrderTableIn(orderTables);
 
         boolean isUncompletedOrderExists = orders.stream()
-                .anyMatch(Orders::isOrderUnCompleted);
+                .anyMatch(Order::isOrderUnCompleted);
         if (isUncompletedOrderExists) {
             throw new UnCompletedOrderExistsException();
         }

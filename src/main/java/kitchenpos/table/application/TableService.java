@@ -4,7 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.domain.Orders;
+import kitchenpos.order.domain.Order;
 import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.table.dto.OrderTableCreateRequest;
@@ -48,7 +48,7 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        List<Orders> orders = orderRepository.findAllByOrderTable(orderTable);
+        List<Order> orders = orderRepository.findAllByOrderTable(orderTable);
 
         validateDoesEveryOrderCompleted(orders);
 
@@ -57,9 +57,9 @@ public class TableService {
         return OrderTableResponse.from(orderTable);
     }
 
-    private void validateDoesEveryOrderCompleted(List<Orders> orders) {
+    private void validateDoesEveryOrderCompleted(List<Order> orders) {
         boolean isStatusNotChangeable = orders.stream()
-                .anyMatch(Orders::isOrderUnCompleted);
+                .anyMatch(Order::isOrderUnCompleted);
         if (isStatusNotChangeable) {
             throw new UnCompletedOrderExistsException();
         }

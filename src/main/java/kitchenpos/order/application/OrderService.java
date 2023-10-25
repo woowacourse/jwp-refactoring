@@ -7,11 +7,11 @@ import java.util.List;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.Orders;
-import kitchenpos.order.dto.OrdersCreateRequest;
-import kitchenpos.order.dto.OrdersCreateRequest.OrderLineItemDto;
-import kitchenpos.order.dto.OrdersResponse;
-import kitchenpos.order.dto.OrdersStatusRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderCreateRequest.OrderLineItemDto;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.dto.OrderStatusRequest;
 import kitchenpos.order.exception.CannotMakeOrderWithEmptyTableException;
 import kitchenpos.order.exception.MenuNotFoundException;
 import kitchenpos.order.exception.OrderNotFoundException;
@@ -43,7 +43,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrdersResponse create(OrdersCreateRequest request) {
+    public OrderResponse create(OrderCreateRequest request) {
         List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItems();
         validateOrderLineItemIsNotEmpty(orderLineItemDtos);
 
@@ -52,17 +52,17 @@ public class OrderService {
 
         validateOrderTableNotEmpty(orderTable);
 
-        Orders orders = orderRepository.save(
-                new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
+        Order order = orderRepository.save(
+                new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
 
         for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
-            orderLineItemRepository.save(new OrderLineItem(orders,
+            orderLineItemRepository.save(new OrderLineItem(order,
                     menuRepository.findById(orderLineItemDto.getMenuId())
                             .orElseThrow(MenuNotFoundException::new),
                     orderLineItemDto.getQuantity()));
         }
 
-        return OrdersResponse.from(orders);
+        return OrderResponse.from(order);
     }
 
     private void validateOrderLineItemIsNotEmpty(List<OrderLineItemDto> orderLineItemDtos) {
@@ -77,20 +77,20 @@ public class OrderService {
         }
     }
 
-    public List<OrdersResponse> list() {
-        List<Orders> orders = orderRepository.findAll();
+    public List<OrderResponse> list() {
+        List<Order> orders = orderRepository.findAll();
         return orders.stream()
-                .map(OrdersResponse::from)
+                .map(OrderResponse::from)
                 .collect(toList());
     }
 
     @Transactional
-    public OrdersResponse changeOrderStatus(Long orderId, OrdersStatusRequest request) {
-        Orders orders = orderRepository.findById(orderId)
+    public OrderResponse changeOrderStatus(Long orderId, OrderStatusRequest request) {
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFoundException::new);
 
-        orders.changeOrderStatus(request.getOrderStatus());
+        order.changeOrderStatus(request.getOrderStatus());
 
-        return OrdersResponse.from(orders);
+        return OrderResponse.from(order);
     }
 }

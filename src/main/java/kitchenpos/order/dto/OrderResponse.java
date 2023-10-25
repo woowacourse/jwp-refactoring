@@ -5,9 +5,9 @@ import static java.util.stream.Collectors.toList;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.Orders;
+import kitchenpos.order.domain.Order;
 
-public class OrdersResponse {
+public class OrderResponse {
 
     private final Long id;
     private final Long orderTableId;
@@ -15,7 +15,7 @@ public class OrdersResponse {
     private final LocalDateTime orderTime;
     private final List<OrderLineItemDto> orderLineItems;
 
-    private OrdersResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderTime,
+    private OrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderTime,
             List<OrderLineItemDto> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -24,10 +24,10 @@ public class OrdersResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrdersResponse from(Orders orders) {
-        return new OrdersResponse(orders.getId(), orders.getOrderTable().getId(),
-                orders.getOrderStatus().name(), orders.getOrderedTime(),
-                orders.getOrderLineItems().stream().map(OrderLineItemDto::from).collect(
+    public static OrderResponse from(Order order) {
+        return new OrderResponse(order.getId(), order.getOrderTable().getId(),
+                order.getOrderStatus().name(), order.getOrderedTime(),
+                order.getOrderLineItems().stream().map(OrderLineItemDto::from).collect(
                         toList()));
     }
 
