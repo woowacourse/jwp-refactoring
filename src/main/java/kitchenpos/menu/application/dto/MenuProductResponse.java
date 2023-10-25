@@ -17,7 +17,7 @@ public class MenuProductResponse {
 
     public static MenuProductResponse from(final MenuProduct menuProduct) {
         final Long seq = menuProduct.getSeq();
-        final Long productId = menuProduct.getProduct().getId();
+        final Long productId = menuProduct.getProductId();
         final long quantity = menuProduct.getQuantity();
         return new MenuProductResponse(seq, productId, quantity);
     }

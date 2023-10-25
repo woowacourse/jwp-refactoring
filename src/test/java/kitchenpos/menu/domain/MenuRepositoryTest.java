@@ -38,8 +38,8 @@ class MenuRepositoryTest {
         final MenuGroup savedMenuGroup = menuGroupRepository.save(MENU_GROUP1());
         final Product savedProduct1 = productRepository.save(PRODUCT1());
         final Product savedProduct2 = productRepository.save(PRODUCT2());
-        final MenuProduct menuProduct1 = new MenuProduct(savedProduct1, MENU_PRODUCT1_QUANTITY);
-        final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
+        final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MENU_PRODUCT1_QUANTITY);
+        final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MENU_PRODUCT2_QUANTITY);
         final Menu savedMenu1 = menuRepository.save(
                 new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
         final Menu savedMenu2 = menuRepository.save(

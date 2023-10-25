@@ -8,12 +8,10 @@ import kitchenpos.menu.application.dto.MenusResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menugroup.exception.MenuGroupException.NotFoundMenuGroupException;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.product.exception.ProductException.NotFoundProductException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
+    private final MenuValidator menuValidator;
 
     public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository) {
+            final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository,
+            final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
     }
 
     @Transactional
@@ -38,14 +35,12 @@ public class MenuService {
                 .orElseThrow(NotFoundMenuGroupException::new);
 
         List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                .map(menuProductRequest -> {
-                    final Product product = productRepository.findById(menuProductRequest.getProductId())
-                            .orElseThrow(NotFoundProductException::new);
-                    return new MenuProduct(product, menuProductRequest.getQuantity());
-                }).collect(Collectors.toUnmodifiableList());
+                .map(menuProductRequest -> new MenuProduct(
+                        menuProductRequest.getProductId(), menuProductRequest.getQuantity())
+                ).collect(Collectors.toUnmodifiableList());
 
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts
-        );
+        menuValidator.validateCreate(request.getPrice(), menuProducts);
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
         final Menu savedMenu = menuRepository.save(menu);
 
         return MenuResponse.from(savedMenu);

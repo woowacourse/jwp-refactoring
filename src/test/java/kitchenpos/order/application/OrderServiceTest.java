@@ -79,8 +79,8 @@ class OrderServiceTest extends ServiceTest {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product savedProduct1 = productRepository.save(PRODUCT1());
             final Product savedProduct2 = productRepository.save(PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1, MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MENU_PRODUCT2_QUANTITY);
             menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
             orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
 
@@ -106,8 +106,8 @@ class OrderServiceTest extends ServiceTest {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product savedProduct1 = productRepository.save(PRODUCT1());
             final Product savedProduct2 = productRepository.save(PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1, MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MENU_PRODUCT2_QUANTITY);
             menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
             orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
 
@@ -130,8 +130,8 @@ class OrderServiceTest extends ServiceTest {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP1_NAME));
             final Product savedProduct1 = productRepository.save(PRODUCT1());
             final Product savedProduct2 = productRepository.save(PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1, MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
                     new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
             final int orderLineItemSize = 1;
@@ -174,8 +174,8 @@ class OrderServiceTest extends ServiceTest {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP1_NAME));
             final Product savedProduct1 = productRepository.save(PRODUCT1());
             final Product savedProduct2 = productRepository.save(PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1, MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
                     new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
             final int orderLineItemSize = 1;
@@ -206,8 +206,8 @@ class OrderServiceTest extends ServiceTest {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP1_NAME));
             final Product savedProduct1 = productRepository.save(PRODUCT1());
             final Product savedProduct2 = productRepository.save(PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1, MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
                     new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
             final int orderLineItemSize = 1;
@@ -236,8 +236,8 @@ class OrderServiceTest extends ServiceTest {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP1_NAME));
             final Product savedProduct1 = productRepository.save(PRODUCT1());
             final Product savedProduct2 = productRepository.save(PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1, MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
                     new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
             final int orderLineItemSize = 1;

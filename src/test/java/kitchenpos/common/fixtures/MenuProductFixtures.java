@@ -1,10 +1,6 @@
 package kitchenpos.common.fixtures;
 
-import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1;
-import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2;
-
 import kitchenpos.menu.application.dto.MenuProductRequest;
-import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductFixtures {
 
@@ -42,16 +38,5 @@ public class MenuProductFixtures {
 
     public static MenuProductRequest MENU_PRODUCT3_REQUEST() {
         return new MenuProductRequest(MENU_PRODUCT3_PRODUCT_ID, MENU_PRODUCT3_QUANTITY);
-    }
-
-    /**
-     * ENTITY
-     */
-    public static MenuProduct MENU_PRODUCT1() {
-        return new MenuProduct(PRODUCT1(), MENU_PRODUCT1_QUANTITY);
-    }
-
-    public static MenuProduct MENU_PRODUCT2() {
-        return new MenuProduct(PRODUCT2(), MENU_PRODUCT2_QUANTITY);
     }
 }
