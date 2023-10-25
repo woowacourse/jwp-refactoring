@@ -11,8 +11,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.NumberOfGuests;
 
@@ -23,9 +21,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(nullable = false)
+    private Long tableGroupId;
 
     @Embedded
     private NumberOfGuests numberOfGuests;
@@ -45,12 +42,12 @@ public class OrderTable {
 
     private OrderTable(
             Long id,
-            TableGroup tableGroup,
+            Long tableGroupId,
             NumberOfGuests numberOfGuests,
             boolean empty
     ) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -74,13 +71,17 @@ public class OrderTable {
         orders.registerOrderTable(this);
     }
 
-    public void registerTableGroup(TableGroup tableGroup) {
-        if (!isEmpty() || isAlreadyContainsTableGroup()) {
-            throw new IllegalArgumentException();
+    public void registerTableGroup(Long tableGroupId) {
+        if (!isEmpty()) {
+            throw new IllegalArgumentException("주문이 가능한 주문 테이블은 테이블 그룹에 포함될 수 없습니다.");
+        }
+
+        if (isAlreadyContainsTableGroup()) {
+            throw new IllegalArgumentException("이미 테이블 그룹에 포함된 주문 테이블은 테이블 그룹에 포함될 수 없습니다.");
         }
 
         this.empty = false;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     public void breakupTableGroup() {
@@ -92,11 +93,11 @@ public class OrderTable {
         }
 
         empty = false;
-        tableGroup = null;
+        tableGroupId = null;
     }
 
     public boolean isAlreadyContainsTableGroup() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
     public void changeEmpty(boolean empty) {
@@ -108,7 +109,7 @@ public class OrderTable {
                 .anyMatch(order -> order.isCooking() || order.isMeal());
 
         if (canNotChangeEmpty) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블의 주문 가능 여부를 변경할 수 없습니다.");
         }
 
         this.empty = empty;
@@ -126,8 +127,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

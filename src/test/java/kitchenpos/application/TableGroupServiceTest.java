@@ -4,7 +4,6 @@ package kitchenpos.application;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_없는_주문_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_있는_주문_테이블_생성;
 import static kitchenpos.fixture.TableGroupFixture.빈_테이블_그룹_생성;
-import static kitchenpos.fixture.TableGroupFixture.오더_테이블이_있는_테이블_그룹_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -119,9 +118,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         OrderTable savedOrderTable2 = orderTableRepository.findById(orderTable2.getId()).get();
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(savedOrderTable1.getTableGroup().getId()).isEqualTo(savedTableGroup.getId()),
+                () -> assertThat(savedOrderTable1.getTableGroupId()).isEqualTo(savedTableGroup.getId()),
                 () -> assertThat(savedOrderTable1.isEmpty()).isFalse(),
-                () -> assertThat(savedOrderTable2.getTableGroup().getId()).isEqualTo(savedTableGroup.getId()),
+                () -> assertThat(savedOrderTable2.getTableGroupId()).isEqualTo(savedTableGroup.getId()),
                 () -> assertThat(savedOrderTable1.isEmpty()).isFalse()
         );
     }
@@ -174,11 +173,6 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         // given
         OrderTable orderTable1 = orderTableRepository.save(단체_지정이_없는_주문_테이블_생성(1, true));
         OrderTable orderTable2 = orderTableRepository.save(단체_지정이_없는_주문_테이블_생성(1, true));
-        List<OrderTable> savedOrderTables = List.of(
-                orderTable1,
-                orderTable2
-        );
-        TableGroup tableGroup = 오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
         TableGroupCreateRequest request = new TableGroupCreateRequest(
                 List.of(orderTable1.getId(), orderTable2.getId())
         );
@@ -191,9 +185,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
         // then
         assertAll(
-                () -> assertThat(savedOrderTable1.getTableGroup()).isNull(),
+                () -> assertThat(savedOrderTable1.getTableGroupId()).isNull(),
                 () -> assertThat(savedOrderTable1.isEmpty()).isFalse(),
-                () -> assertThat(savedOrderTable2.getTableGroup()).isNull(),
+                () -> assertThat(savedOrderTable2.getTableGroupId()).isNull(),
                 () -> assertThat(savedOrderTable2.isEmpty()).isFalse()
         );
     }

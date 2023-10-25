@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.ui.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
@@ -30,9 +30,9 @@ public class TableGroupService {
     public TableGroup create(TableGroupCreateRequest request) {
         List<OrderTable> orderTables = findOrderTablesByRequest(request.getOrderTableIds());
         TableGroup tableGroup = TableGroup.from();
-        tableGroup.addAllOrderTables(orderTables);
-
-        tableGroupRepository.save(tableGroup);
+        Long tableGroupId = tableGroupRepository.save(tableGroup)
+                .getId();
+        orderTables.forEach(orderTable -> orderTable.registerTableGroup(tableGroupId));
 
         return tableGroup;
     }
@@ -62,20 +62,19 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(Long tableGroupId) {
-        TableGroup tableGroup = findTableGroup(tableGroupId);
-        tableGroup.removeAllOrderTables();
-    }
-
-    private TableGroup findTableGroup(Long tableGroupId) {
         validateTableGroupId(tableGroupId);
 
-        return tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+        orderTableRepository.findAllByTableGroupId(tableGroupId)
+                .forEach(OrderTable::breakupTableGroup);
     }
 
     private void validateTableGroupId(Long tableGroupId) {
         if (Objects.isNull(tableGroupId)) {
             throw new IllegalArgumentException("테이블 그룹의 ID 는 존재하지 않을 수 없습니다.");
+        }
+
+        if (!tableGroupRepository.existsById(tableGroupId)) {
+            throw new IllegalArgumentException("테이블 그룹이 존재하지 않으면 안됩니다.");
         }
     }
 

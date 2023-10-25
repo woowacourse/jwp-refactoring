@@ -18,7 +18,7 @@ public class OrderTableFixture {
                 empty
         );
 
-        tableGroup.addAllOrderTables(List.of(orderTable));
+        orderTable.registerTableGroup(tableGroup.getId());
         return orderTable;
     }
 
