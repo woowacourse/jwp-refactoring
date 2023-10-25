@@ -44,12 +44,12 @@ public class Menu {
         this.price = new Price(price);
         this.menuGroup = menuGroup;
 
-        validateMenuProducts(menuProducts);
+        validatePrice(menuProducts);
         menuProducts.initMenu(this);
         this.menuProducts = menuProducts;
     }
 
-    private void validateMenuProducts(final MenuProducts menuProducts) {
+    private void validatePrice(final MenuProducts menuProducts) {
         if (price.compareTo(menuProducts.calculateSum()) > 0) {
             throw new IllegalArgumentException();
         }

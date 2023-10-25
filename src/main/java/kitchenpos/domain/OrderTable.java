@@ -36,16 +36,6 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void joinTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-        this.empty = false;
-    }
-
-    public void unjoinTableGroup() {
-        this.tableGroup = null;
-        this.empty = false;
-    }
-
     public void changeNumberOfGuests(final Integer numberOfGuests) {
         if (empty || numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -65,6 +55,16 @@ public class OrderTable {
         if (!empty || tableGroup != null) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void joinTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
+    public void unjoinTableGroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 
     public Long getId() {

@@ -23,7 +23,7 @@ public class OrderLineItem {
     private Menu menu;
     private long quantity;
 
-    OrderLineItem() {
+    public OrderLineItem() {
     }
 
     private OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
