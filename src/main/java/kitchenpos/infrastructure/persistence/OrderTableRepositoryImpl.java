@@ -32,8 +32,8 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
     }
 
     @Override
-    public List<OrderTable> findAllByIdIn(final List<Long> ids) {
-        return jpaOrderTableRepository.findAllByIdIn();
+    public List<OrderTable> findAllByIdsIn(final List<Long> ids) {
+        return jpaOrderTableRepository.findAllByIdIn(ids);
     }
 
     @Override

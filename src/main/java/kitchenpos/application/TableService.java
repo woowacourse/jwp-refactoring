@@ -38,7 +38,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                                                                .orElseThrow(IllegalArgumentException::new);
         final boolean isNotComplete = orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, OrderStatus.notCompleteStatus()
+                orderTableId, OrderStatus.notCompleteStatuses()
         );
         if (isNotComplete) {
             throw new IllegalArgumentException();

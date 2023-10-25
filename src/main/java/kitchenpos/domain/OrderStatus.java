@@ -7,8 +7,8 @@ import java.util.Optional;
 public enum OrderStatus {
     COOKING, MEAL, COMPLETION;
 
-    public static List<String> notCompleteStatus() {
-        return Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+    public static List<OrderStatus> notCompleteStatuses() {
+        return Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
     }
 
     public static Optional<OrderStatus> find(final String orderStatusName) {

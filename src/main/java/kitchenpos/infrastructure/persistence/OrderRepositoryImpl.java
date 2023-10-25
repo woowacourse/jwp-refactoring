@@ -1,6 +1,7 @@
 package kitchenpos.infrastructure.persistence;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.repository.OrderRepository;
 import org.springframework.stereotype.Repository;
 
@@ -32,12 +33,12 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<OrderStatus> orderStatuses) {
         return jpaOrderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
     }
 
     @Override
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<OrderStatus> orderStatuses) {
         return jpaOrderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
     }
 }

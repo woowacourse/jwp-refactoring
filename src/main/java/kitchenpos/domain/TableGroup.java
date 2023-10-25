@@ -33,7 +33,7 @@ public class TableGroup {
 
     public TableGroup(final List<OrderTable> orderTables) {
         for (final OrderTable savedOrderTable : orderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup().getId())) {
+            if (savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
