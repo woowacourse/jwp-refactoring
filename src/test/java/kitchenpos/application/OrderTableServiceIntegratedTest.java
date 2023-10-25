@@ -64,9 +64,8 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
             // when, then
             assertDoesNotThrow(() -> orderTableService.create(
                     tableGroup.getId(),
-                    3,
-                    List.of(orderTable1.getId(), orderTable2.getId()))
-            );
+                    3
+            ));
         }
 
     }

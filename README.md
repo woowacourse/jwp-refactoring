@@ -113,7 +113,7 @@
     * 메뉴와는 별도의 도메인이기 때문에 지연 로딩을 사용하여 트랜잭션의 깊이(depth)를 늘리지 않는다.
 
 * 변경 전 : OrderTable(1) <-> (N)Order (양방향, 직접 참조)
-* 변경 전 : OrderTable(1) <- (N)Order (단방향, 직접 참조)
+* 변경 후 : OrderTable(1) <- (N)Order (단방향, 직접 참조)
   * Order는 OrderTable을 직접 참조한다.
     * 같은 도메인이므로 Order는 OrderTable을 직접 가지고 있는게 좋다고 판단.
       * 1. 트랜잭션의 깊이가 깊지 않음
@@ -121,3 +121,14 @@
   * Order는 OrderTable을 단방향으로 참조한다.
     * OrderTable이 Order를 참조하면 다중성이 생김
       * 쿼리 또는 비즈니스 로직을 수행할 때 복잡해질 수 밖에 없음
+
+* 변경 전 : Order(1) <-> (N)OrderLineItem (양방향, 직접 참조)
+* 변경 후 : Order(1) <- (N)OrderLineItem (단방향, 직접 참조)
+  * OrderLineItem은 Order를 직접 참조한다.
+  * 같은 도메인이므로 OrderLineItem은 Order를 직접 가지고 있는게 좋다고 판단.
+    * 1. 트랜잭션의 깊이가 깊지 않음
+    * 2. 단방향이기 때문에 Order가 삭제될 때 OrderLineItem가 삭제되는 이벤트를 만들지 않으면 삭제에 대한 걱정 X
+  * OrderLineItem는 Order를 단방향으로 참조한다.
+    * Order가 OrderLineItem을 참조하면 다중성이 생김
+      * 쿼리 또는 비즈니스 로직을 수행할 때 복잡해질 수 밖에 없음
+
