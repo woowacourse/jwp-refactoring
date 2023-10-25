@@ -4,9 +4,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.*;
-import kitchenpos.fixture.MenuFixtures;
 import kitchenpos.fixture.MenuGroupFixtures;
-import kitchenpos.fixture.MenuProductFixtures;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +14,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -188,13 +187,8 @@ class TableServiceTest extends ServiceTest {
     }
 
     private Menu createMenu(String name, int price) {
-        MenuProduct menuProduct = MenuProductFixtures.create(양념치킨_17000원, 1);
+        MenuProduct menuProduct = new MenuProduct(양념치킨_17000원.getId(), 1);
         MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixtures.한마리_메뉴);
-        return MenuFixtures.create(
-                name,
-                price,
-                menuGroup,
-                List.of(menuProduct)
-        );
+        return new Menu(null, name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), List.of(menuProduct));
     }
 }

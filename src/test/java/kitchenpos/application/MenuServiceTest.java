@@ -6,7 +6,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.MenuProductFixtures;
 import kitchenpos.request.MenuCreateRequest;
 import kitchenpos.request.MenuProductDto;
 import org.junit.jupiter.api.Assertions;
@@ -46,8 +45,8 @@ class MenuServiceTest extends ServiceTest {
         Product product2 = productDao.save(양념치킨_17000원);
 
         List<MenuProduct> menuProducts = List.of(
-                MenuProductFixtures.create(product1, 1),
-                MenuProductFixtures.create(product2, 1)
+                new MenuProduct(product1.getId(), 1),
+                new MenuProduct(product2.getId(), 1)
         );
         MenuCreateRequest request = new MenuCreateRequest(
                 "후라이드+양념",
@@ -114,8 +113,8 @@ class MenuServiceTest extends ServiceTest {
         Product nonSavedProduct = 양념치킨_17000원;
 
         List<MenuProduct> menuProducts = List.of(
-                MenuProductFixtures.create(product, 1),
-                MenuProductFixtures.create(nonSavedProduct, 1)
+                new MenuProduct(product.getId(), 1),
+                new MenuProduct(nonSavedProduct.getId(), 1)
         );
         MenuCreateRequest request = new MenuCreateRequest(
                 "후라이드+양념",
@@ -141,8 +140,8 @@ class MenuServiceTest extends ServiceTest {
         Product product2 = productDao.save(양념치킨_17000원);
 
         List<MenuProduct> menuProducts = List.of(
-                MenuProductFixtures.create(product1, 1),
-                MenuProductFixtures.create(product2, 1)
+                new MenuProduct(product1.getId(), 1),
+                new MenuProduct(product2.getId(), 1)
         );
         MenuCreateRequest request = new MenuCreateRequest(
                 "후라이드+양념",
@@ -165,8 +164,8 @@ class MenuServiceTest extends ServiceTest {
         Product product2 = productDao.save(양념치킨_17000원);
 
         List<MenuProduct> menuProducts1 = List.of(
-                MenuProductFixtures.create(product1, 1),
-                MenuProductFixtures.create(product2, 1)
+                new MenuProduct(product1.getId(), 1),
+                new MenuProduct(product2.getId(), 1)
         );
         MenuCreateRequest request1 = new MenuCreateRequest(
                 "후라이드+양념",
@@ -176,8 +175,8 @@ class MenuServiceTest extends ServiceTest {
         );
 
         List<MenuProduct> menuProducts2 = List.of(
-                MenuProductFixtures.create(product1, 1),
-                MenuProductFixtures.create(product1, 1)
+                new MenuProduct(product1.getId(), 1),
+                new MenuProduct(product1.getId(), 1)
         );
         MenuCreateRequest request2 = new MenuCreateRequest(
                 "후라이드+후라이드",

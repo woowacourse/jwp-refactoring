@@ -5,14 +5,13 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.*;
-import kitchenpos.fixture.MenuFixtures;
-import kitchenpos.fixture.MenuProductFixtures;
 import kitchenpos.request.OrderCreateRequest;
 import kitchenpos.request.OrderLineItemDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -142,14 +141,9 @@ class OrderServiceTest extends ServiceTest {
 
     private Menu createMenu(String name, int price) {
         Product product = productDao.save(양념치킨_17000원);
-        MenuProduct menuProduct = MenuProductFixtures.create(product, 1);
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
         MenuGroup menuGroup = menuGroupDao.save(한마리_메뉴);
-        return MenuFixtures.create(
-                name,
-                price,
-                menuGroup,
-                List.of(menuProduct)
-        );
+        return new Menu(null, name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), List.of(menuProduct));
     }
 
     private OrderCreateRequest getOrderCreateRequest(Long orderTableId, List<OrderLineItem> orderLineItems) {

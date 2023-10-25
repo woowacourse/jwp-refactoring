@@ -5,7 +5,6 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.*;
-import kitchenpos.fixture.MenuProductFixtures;
 import kitchenpos.request.MenuCreateRequest;
 import kitchenpos.request.MenuProductDto;
 import kitchenpos.request.OrderTableCreateRequest;
@@ -138,7 +137,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     private MenuCreateRequest getMenuCreateRequest(String name, int price) {
         Product product = productDao.save(양념치킨_17000원);
-        MenuProduct menuProduct = MenuProductFixtures.create(product, 1);
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
         MenuGroup menuGroup = menuGroupDao.save(한마리_메뉴);
         return new MenuCreateRequest(
                 name,
