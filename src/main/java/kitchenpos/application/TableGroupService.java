@@ -43,7 +43,7 @@ public class TableGroupService {
         }
 
         final List<OrderTable> savedOrderTables = orderTableIds.stream()
-                .map(id -> orderTableRepository.findById(id).get())
+                .map(id -> orderTableRepository.findById(id).orElseThrow(IllegalArgumentException::new))
                 .collect(Collectors.toList());
 
         if (orderTableIds.size() != savedOrderTables.size()) {
@@ -52,7 +52,7 @@ public class TableGroupService {
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup().getId())) {
-                throw new IllegalArgumentException(String.valueOf(savedOrderTable.getId()));
+                throw new IllegalArgumentException();
             }
         }
 
