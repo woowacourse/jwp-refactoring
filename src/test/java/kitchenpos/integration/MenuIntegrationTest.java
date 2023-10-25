@@ -42,7 +42,6 @@ class MenuIntegrationTest extends IntegrationTest {
 
     @Test
     void 메뉴_조회시_메뉴프로덕트도_조회된다() {
-
         // given
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
