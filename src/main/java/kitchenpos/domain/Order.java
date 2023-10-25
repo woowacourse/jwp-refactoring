@@ -20,7 +20,7 @@ public class Order {
     private final LocalDateTime orderedTime = LocalDateTime.now();
 
     @Embedded
-    private OrderLineItems orderLineItems;
+    private OrderLineItems orderLineItems = new OrderLineItems();
 
     protected Order() {
     }
@@ -33,7 +33,6 @@ public class Order {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderLineItems = new OrderLineItems();
     }
 
     public Order(final Long id,

@@ -25,7 +25,7 @@ public class Menu {
     private Long menuGroupId;
 
     @Embedded
-    private MenuProducts menuProducts;
+    private MenuProducts menuProducts = new MenuProducts();
 
     protected Menu() {
     }
@@ -39,7 +39,6 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new MenuProducts();
     }
 
     public void validateMenuPrice(final Price productSum) {

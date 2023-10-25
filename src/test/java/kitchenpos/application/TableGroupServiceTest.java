@@ -95,7 +95,7 @@ class TableGroupServiceTest {
         tableGroup.addOrderTable(orderTable2);
 
         given(orderTableRepository.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId())))
-                .willReturn(tableGroup.getOrderTables());
+                .willReturn(tableGroup.getOrderTables().getTables());
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))

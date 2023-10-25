@@ -1,10 +1,18 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 
+@Embeddable
 public class OrderTables {
 
-    private final List<OrderTable> tables;
+    @OneToMany(mappedBy = "tableGroup")
+    private List<OrderTable> tables = new ArrayList<>();
+
+    protected OrderTables() {
+    }
 
     public OrderTables(final List<OrderTable> tables) {
         this.tables = tables;
@@ -18,6 +26,10 @@ public class OrderTables {
 
     public void checkEmptyAndTableGroups() {
         tables.forEach(OrderTable::checkEmptyAndTableGroups);
+    }
+
+    public void addTable(final OrderTable table) {
+        tables.add(table);
     }
 
     public List<OrderTable> getTables() {
