@@ -29,6 +29,7 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+    
     @Autowired
     private TableGroupRepository tableGroupRepository;
 
