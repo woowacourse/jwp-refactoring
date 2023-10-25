@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixture.OrderFixture.주문;
-import static kitchenpos.common.fixture.OrderTableFixture.빈_주문_테이블;
-import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
-import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
-import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.application.TableGroupServiceTest.TableGroupRequestFixture.단체_지정_생성_요청;
+import static kitchenpos.domain.order.OrderFixture.주문;
+import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
+import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_주문_테이블;
+import static kitchenpos.domain.table.OrderTableFixture.주문_테이블;
+import static kitchenpos.domain.table.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -12,12 +13,15 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroupRepository;
+import kitchenpos.dto.table.OrderTableIdRequest;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.TableGroupCreateRequest;
+import kitchenpos.dto.table.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,41 +37,43 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Nested
     class 단체_지정을_생성할_때 {
 
-        private List<OrderTable> orderTables;
+        private List<OrderTableIdRequest> orderTableIds;
         private OrderTable emptyOrderTable;
         private OrderTable filledOrderTable;
         private OrderTable groupedOrderTable;
 
         @BeforeEach
         void setUp() {
-            orderTables = List.of(orderTableDao.save(빈_주문_테이블()), orderTableDao.save(빈_주문_테이블()));
-            emptyOrderTable = orderTableDao.save(빈_주문_테이블());
-            filledOrderTable = orderTableDao.save(주문_테이블());
+            orderTableIds = List.of(
+                    new OrderTableIdRequest(orderTableRepository.save(단체_지정_없는_빈_주문_테이블()).getId()),
+                    new OrderTableIdRequest(orderTableRepository.save(단체_지정_없는_빈_주문_테이블()).getId())
+            );
+            emptyOrderTable = orderTableRepository.save(단체_지정_없는_빈_주문_테이블());
+            filledOrderTable = orderTableRepository.save(단체_지정_없는_주문_테이블());
 
-            OrderTable orderTable = 주문_테이블();
-            Long tableGroupId = tableGroupDao.save(단체_지정(List.of(orderTable))).getId();
-            orderTable.setTableGroupId(tableGroupId);
-            groupedOrderTable = orderTableDao.save(orderTable);
+            OrderTable orderTable = 단체_지정_없는_주문_테이블();
+            tableGroupRepository.save(단체_지정());
+            groupedOrderTable = orderTableRepository.save(orderTable);
         }
 
         @Test
         void 정상적으로_생성한다() {
             // given
-            TableGroup tableGroup = 단체_지정(orderTables);
+            TableGroupCreateRequest tableGroup = 단체_지정_생성_요청(orderTableIds);
 
             // when
-            TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+            TableGroupResponse createdTableGroup = tableGroupService.create(tableGroup);
 
             // then
             assertSoftly(softly -> {
@@ -75,14 +81,17 @@ class TableGroupServiceTest {
                 softly.assertThat(createdTableGroup).usingRecursiveComparison()
                         .ignoringFields("id", "orderTables.id", "orderTables.tableGroupId")
                         .ignoringFieldsOfTypes(LocalDateTime.class)
-                        .isEqualTo(단체_지정(List.of(주문_테이블(), 주문_테이블())));
+                        .isEqualTo(TableGroupResponse.of(
+                                단체_지정(),
+                                List.of(단체_지정_없는_주문_테이블(), 단체_지정_없는_주문_테이블())
+                        ));
             });
         }
 
         @Test
         void 주문_테이블_목록이_비었으면_예외를_던진다() {
             // given
-            TableGroup invalidTableGroup = 단체_지정(List.of());
+            TableGroupCreateRequest invalidTableGroup = 단체_지정_생성_요청(List.of());
 
             // expect
             assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
@@ -92,7 +101,8 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블의_개수가_2_미만이면_예외를_던진다() {
             // given
-            TableGroup invalidTableGroup = 단체_지정(List.of(emptyOrderTable));
+            TableGroupCreateRequest invalidTableGroup = 단체_지정_생성_요청(
+                    List.of(new OrderTableIdRequest(emptyOrderTable.getId())));
 
             // expect
             assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
@@ -102,7 +112,9 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_목록에_중복된_주문_테이블이_있으면_예외를_던진다() {
             // given
-            TableGroup invalidTableGroup = 단체_지정(List.of(emptyOrderTable, emptyOrderTable));
+            TableGroupCreateRequest invalidTableGroup = 단체_지정_생성_요청(
+                    List.of(new OrderTableIdRequest(emptyOrderTable.getId()),
+                            new OrderTableIdRequest(emptyOrderTable.getId())));
 
             // expect
             assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
@@ -112,7 +124,9 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_목록에_비어있지_않은_테이블이_있으면_예외를_던진다() {
             // given
-            TableGroup invalidTableGroup = 단체_지정(List.of(emptyOrderTable, filledOrderTable));
+            TableGroupCreateRequest invalidTableGroup = 단체_지정_생성_요청(
+                    List.of(new OrderTableIdRequest(emptyOrderTable.getId()),
+                            new OrderTableIdRequest(filledOrderTable.getId())));
 
             // expect
             assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
@@ -122,7 +136,9 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_목록에_이미_단체_지정된_주문_테이블이_있으면_예외를_던진다() {
             // given
-            TableGroup invalidTableGroup = 단체_지정(List.of(emptyOrderTable, groupedOrderTable));
+            TableGroupCreateRequest invalidTableGroup = 단체_지정_생성_요청(
+                    List.of(new OrderTableIdRequest(emptyOrderTable.getId()),
+                            new OrderTableIdRequest(groupedOrderTable.getId())));
 
             // expect
             assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
@@ -138,16 +154,17 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setUp() {
-            emptyOrderTable_A = orderTableDao.save(빈_주문_테이블());
-            emptyOrderTable_B = orderTableDao.save(빈_주문_테이블());
+            emptyOrderTable_A = orderTableRepository.save(단체_지정_없는_빈_주문_테이블());
+            emptyOrderTable_B = orderTableRepository.save(단체_지정_없는_빈_주문_테이블());
         }
 
         @Test
         void 정상적으로_해제한다() {
             // given
-            TableGroup tableGroup = tableGroupService.create(단체_지정(List.of(emptyOrderTable_A, emptyOrderTable_B)));
-
-            saveOrder(emptyOrderTable_A.getId(), COMPLETION.name());
+            TableGroupResponse tableGroup = tableGroupService.create(단체_지정_생성_요청(List.of(
+                    new OrderTableIdRequest(emptyOrderTable_A.getId()),
+                    new OrderTableIdRequest(emptyOrderTable_B.getId())
+            )));
 
             // when
             tableGroupService.ungroup(tableGroup.getId());
@@ -155,24 +172,35 @@ class TableGroupServiceTest {
             // then
             assertThat(tableGroup.getOrderTables()).usingRecursiveComparison()
                     .ignoringFields("id", "tableGroupId")
-                    .isEqualTo(List.of(주문_테이블(), 주문_테이블()));
-        }
-
-        private Order saveOrder(Long orderTableId, String orderStatus) {
-            return orderDao.save(주문(orderTableId, orderStatus));
+                    .isEqualTo(List.of(
+                            OrderTableResponse.from(단체_지정_없는_주문_테이블()),
+                            OrderTableResponse.from(단체_지정_없는_주문_테이블())
+                    ));
         }
 
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 주문_테이블_중_조리_혹은_식사_중인_주문_테이블이_있다면_예외를_던진다(String orderStatus) {
             // given
-            TableGroup tableGroup = tableGroupService.create(단체_지정(List.of(emptyOrderTable_A, emptyOrderTable_B)));
+            TableGroupResponse tableGroup = tableGroupService.create(단체_지정_생성_요청(List.of(
+                    new OrderTableIdRequest(emptyOrderTable_A.getId()),
+                    new OrderTableIdRequest(emptyOrderTable_B.getId())
+            )));
 
-            saveOrder(emptyOrderTable_A.getId(), orderStatus);
+            OrderTable orderTable = 주문_테이블(tableGroup.getId());
+            orderTable.add(주문(OrderStatus.valueOf(orderStatus)));
+            orderTableRepository.save(orderTable);
 
             // expect
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    static class TableGroupRequestFixture {
+
+        public static TableGroupCreateRequest 단체_지정_생성_요청(List<OrderTableIdRequest> orderTableIds) {
+            return new TableGroupCreateRequest(orderTableIds);
         }
     }
 }

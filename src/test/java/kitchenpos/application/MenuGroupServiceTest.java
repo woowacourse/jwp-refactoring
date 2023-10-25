@@ -1,13 +1,15 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixture.MenuGroupFixture.메뉴_그룹;
+import static kitchenpos.application.MenuGroupServiceTest.MenuGroupRequestFixture.메뉴_그룹_생성_요청;
+import static kitchenpos.domain.menu.MenuGroupFixture.메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.dto.menu.MenuGroupCreateRequest;
+import kitchenpos.dto.menu.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuGroupServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -24,30 +26,37 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = 메뉴_그룹();
+        MenuGroupCreateRequest request = 메뉴_그룹_생성_요청();
 
         // when
-        MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupResponse createdMenuGroup = menuGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(createdMenuGroup.getId()).isNotNull();
             softly.assertThat(createdMenuGroup).usingRecursiveComparison()
                     .ignoringFields("id")
-                    .isEqualTo(메뉴_그룹());
+                    .isEqualTo(MenuGroupResponse.from(메뉴_그룹()));
         });
     }
 
     @Test
     void 전체_메뉴_그룹을_조회한다() {
         // given
-        Long menuGroupId = menuGroupDao.save(메뉴_그룹()).getId();
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹()).getId();
 
         // when
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         // then
         assertThat(menuGroups).usingRecursiveComparison()
-                .isEqualTo(List.of(메뉴_그룹(menuGroupId)));
+                .isEqualTo(List.of(MenuGroupResponse.from(메뉴_그룹(menuGroupId))));
+    }
+
+    static class MenuGroupRequestFixture {
+
+        public static MenuGroupCreateRequest 메뉴_그룹_생성_요청() {
+            return new MenuGroupCreateRequest("menuGroupName");
+        }
     }
 }
