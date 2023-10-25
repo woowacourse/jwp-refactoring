@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuDto;
+import kitchenpos.menu.MenuDao;
+import kitchenpos.menugroup.MenuGroupDao;
+import kitchenpos.menu.MenuProductDao;
+import kitchenpos.product.ProductDao;
+import kitchenpos.menu.Menu;
+import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.product.Product;
+import kitchenpos.menu.MenuDto;
+import kitchenpos.menu.MenuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
