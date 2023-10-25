@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.ProductRequest;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +18,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("상품 서비스 테스트")
-@ServiceTest
+@IntegrationTest
 class ProductServiceTest {
 
     @Autowired
@@ -31,45 +33,17 @@ class ProductServiceTest {
         @ValueSource(ints = {0, 10000})
         void createProduct(int price) {
             // given
-            final Product product = new Product();
-            product.setName("알리오 올리오");
-            product.setPrice(BigDecimal.valueOf(price));
+            final ProductRequest request = new ProductRequest("알리오 올리오", new Price(BigDecimal.valueOf(price)));
 
             // when
-            final Product savedProduct = productService.create(product);
+            final ProductResponse response = productService.create(request);
 
             // then
             assertSoftly(softly -> {
-                assertThat(savedProduct.getId()).isNotNull();
-                assertThat(savedProduct.getName()).isEqualTo(product.getName());
+                assertThat(response.getId()).isPositive();
+                assertThat(response.getName()).isEqualTo(request.getName());
+                assertThat(response.getPrice()).isEqualTo(request.getPrice().value());
             });
-        }
-
-
-        @DisplayName("가격이 없으면 예외처리 한다")
-        @Test
-        void throwExceptionWhenPriceIsNull() {
-            // given
-            final Product product = new Product();
-            product.setName("알리오 올리오");
-
-            // then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("가격이 0 미만이면 예외처리 한다")
-        @ParameterizedTest
-        @ValueSource(ints = {-10000, -1})
-        void throwExceptionWhenPriceIsLowerThanZero(int price) {
-            // given
-            final Product product = new Product();
-            product.setName("알리오 올리오");
-            product.setPrice(BigDecimal.valueOf(price));
-
-            // then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -77,13 +51,19 @@ class ProductServiceTest {
     @Test
     void findAllProducts() {
         // given
-        productService.create(ProductFixture.create());
-        productService.create(ProductFixture.create());
+        final ProductResponse product1 = productService.create(ProductFixture.create());
+        final ProductResponse product2 = productService.create(ProductFixture.create());
 
         // when
-        final List<Product> list = productService.list();
+        final List<ProductResponse> response = productService.list();
 
         // then
-        assertThat(list).hasSize(2);
+        assertSoftly(softly -> {
+            assertThat(response).hasSize(2);
+            assertThat(response)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .usingRecursiveComparison()
+                    .isEqualTo(List.of(product1, product2));
+        });
     }
 }

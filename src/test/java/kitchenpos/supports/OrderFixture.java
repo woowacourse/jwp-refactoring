@@ -1,34 +1,24 @@
 package kitchenpos.supports;
 
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.OrderStatusRequest;
 
 public class OrderFixture {
 
     private static final long DEFAULT_QUANTITY = 2;
 
-    public static Order of(final Long menuId, final Long orderTableId){
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(DEFAULT_QUANTITY);
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(List.of(orderLineItem));
-
-        return order;
+    public static OrderRequest of(final Long menuId, final Long orderTableId) {
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, DEFAULT_QUANTITY);
+        return new OrderRequest(orderTableId, List.of(orderLineItemRequest));
     }
 
-    public static Order createMeal(){
-        final Order order = new Order();
-        order.setOrderStatus("MEAL");
-        return order;
+    public static OrderStatusRequest createMeal() {
+        return new OrderStatusRequest("MEAL");
     }
 
-    public static Order createCompletion(){
-        final Order order = new Order();
-        order.setOrderStatus("COMPLETION");
-        return order;
+    public static OrderStatusRequest createCompletion() {
+        return new OrderStatusRequest("COMPLETION");
     }
 }

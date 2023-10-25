@@ -4,12 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.OrderStatusRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.application.dto.response.TableResponse;
+import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.OrderFixture;
@@ -21,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("주문 서비스 테스트")
-@ServiceTest
+@IntegrationTest
 class OrderServiceTest {
 
     private static final long INVALID_ID = -1L;
@@ -37,26 +42,31 @@ class OrderServiceTest {
     @Autowired
     private ProductService productService;
 
-    private Menu setUpMenu() {
-        final Product product = productService.create(ProductFixture.create());
-        final MenuGroup menuGroup = menuGroupService.create(MenuGroupFixture.create());
+    private MenuResponse setUpMenu() {
+        final ProductResponse product = productService.create(ProductFixture.create());
+        final MenuGroupResponse menuGroup = menuGroupService.create(MenuGroupFixture.create());
 
-        final Menu menu = MenuFixture.of(menuGroup.getId(), List.of(product));
-        return menuService.create(menu);
+        final MenuRequest request = MenuFixture.of(menuGroup.getId(), List.of(product));
+        return menuService.create(request);
     }
 
     @DisplayName("주문 목록을 조회할 수 있다")
     @Test
     void findAllOrders() {
         // given
-        final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-        orderService.create(OrderFixture.of(setUpMenu().getId(), orderTable.getId()));
+        final TableResponse orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+        final OrderResponse order = orderService.create(OrderFixture.of(setUpMenu().getId(), orderTable.getId()));
 
         // when
-        final List<Order> list = orderService.list();
+        final List<OrderResponse> list = orderService.list();
 
         // then
-        assertThat(list).hasSize(1);
+        assertSoftly(softly -> {
+            assertThat(list).hasSize(1);
+            assertThat(list)
+                    .usingRecursiveComparison()
+                    .isEqualTo(List.of(order));
+        });
     }
 
     @Nested
@@ -67,15 +77,15 @@ class OrderServiceTest {
         @Test
         void success() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final Order order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
+            final TableResponse orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final OrderRequest order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
 
             // when
-            final Order savedOrder = orderService.create(order);
+            final OrderResponse savedOrder = orderService.create(order);
 
             // then
             assertSoftly(softly -> {
-                assertThat(savedOrder.getId()).isNotNull();
+                assertThat(savedOrder.getId()).isPositive();
                 assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
             });
         }
@@ -84,49 +94,52 @@ class OrderServiceTest {
         @Test
         void throwExceptionWhenOrderLineItemEmpty() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final TableResponse orderTable = tableService.create(OrderTableFixture.createNotEmpty());
 
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
+            final OrderRequest request = new OrderRequest(orderTable.getId(), Collections.emptyList());
 
             // then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 품목이 없어 주문할 수 없습니다.");
         }
 
         @DisplayName("존재하지 않는 메뉴를 주문하면 예외처리 한다")
         @Test
         void throwExceptionWhenInvalidMenu() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final Order order = OrderFixture.of(INVALID_ID, orderTable.getId());
+            final TableResponse orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final OrderRequest order = OrderFixture.of(INVALID_ID, orderTable.getId());
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 메뉴가 포함되어 있습니다.");
         }
 
         @DisplayName("존재하지 않는 주문 테이블로 주문하면 예외처리 한다")
         @Test
         void throwExceptionWhenInvalidOrderTable() {
             // given
-            final Order order = OrderFixture.of(setUpMenu().getId(), INVALID_ID);
+            final OrderRequest order = OrderFixture.of(setUpMenu().getId(), INVALID_ID);
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블입니다.");
         }
 
         @DisplayName("주문 테이블이 빈 테이블이면 예외처리 한다")
         @Test
         void throwExceptionWhenEmptyTable() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createEmpty());
-            final Order order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
+            final TableResponse orderTable = tableService.create(OrderTableFixture.createEmpty());
+            final OrderRequest order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블이 비어있어 주문을 할 수 없습니다.");
         }
     }
 
@@ -138,21 +151,21 @@ class OrderServiceTest {
         @Test
         void success() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final Order order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
+            final TableResponse orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final OrderRequest order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
 
             // when, then (조리)
-            final Order savedOrder = orderService.create(order);
+            final OrderResponse savedOrder = orderService.create(order);
             assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
 
             // when, then (식사)
-            final Order meal = OrderFixture.createMeal();
-            final Order savedOrder2 = orderService.changeOrderStatus(savedOrder.getId(), meal);
+            final OrderStatusRequest meal = OrderFixture.createMeal();
+            final OrderResponse savedOrder2 = orderService.changeOrderStatus(savedOrder.getId(), meal);
             assertThat(savedOrder2.getOrderStatus()).isEqualTo("MEAL");
 
             // when, then (계산완료)
-            final Order completion = OrderFixture.createCompletion();
-            final Order savedOrder3 = orderService.changeOrderStatus(savedOrder2.getId(), completion);
+            final OrderStatusRequest completion = OrderFixture.createCompletion();
+            final OrderResponse savedOrder3 = orderService.changeOrderStatus(savedOrder2.getId(), completion);
             assertThat(savedOrder3.getOrderStatus()).isEqualTo("COMPLETION");
         }
 
@@ -160,28 +173,30 @@ class OrderServiceTest {
         @Test
         void throwExceptionWhenInvalidOrder() {
             // given
-            final Order change = OrderFixture.createMeal();
+            final OrderStatusRequest change = OrderFixture.createMeal();
 
             // then
             assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ID, change))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 주문입니다.");
         }
 
         @DisplayName("계산 완료 상태를 변경 하려하면 예외처리 한다")
         @Test
         void throwExceptionWhenChangeCompletionStatus() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final Order order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
-            final Order savedOrder = orderService.create(order);
+            final TableResponse orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final OrderRequest order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
+            final OrderResponse savedOrder = orderService.create(order);
             final Long savedOrderId = savedOrder.getId();
 
-            final Order completion = OrderFixture.createCompletion();
+            final OrderStatusRequest completion = OrderFixture.createCompletion();
             orderService.changeOrderStatus(savedOrderId, completion); // 계산 완료 상태로 변경
 
             // then
             assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, completion))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("계산 완료 상태를 변경할 수 없습니다.");
         }
     }
 }
