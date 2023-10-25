@@ -7,6 +7,8 @@ import java.util.Objects;
 @Embeddable
 public class Price {
 
+    public static final Price ZERO = new Price(BigDecimal.ZERO);
+
     private BigDecimal value;
 
     protected Price() {
@@ -22,6 +24,12 @@ public class Price {
 
     public boolean biggerThan(final Price otherPrice) {
         return value.compareTo(otherPrice.value) > 0;
+    }
+
+    public Price add(final Price otherPrice) {
+        final BigDecimal addValue = value.add(otherPrice.getValue());
+
+        return new Price(addValue);
     }
 
     public Price multiply(final long quantity) {

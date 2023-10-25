@@ -36,16 +36,34 @@ class PriceTest {
     }
 
     @Test
+    @DisplayName("두 가격을 더한다")
+    void add() {
+        // given
+        final Price price1 = new Price(new BigDecimal(1000));
+        final Price price2 = new Price(new BigDecimal(2000));
+
+        final Price expect = new Price(new BigDecimal(3000));
+
+        // when
+        final Price actual = price1.add(price2);
+
+        // then
+        assertThat(actual).isEqualTo(expect);
+    }
+
+    @Test
     @DisplayName("개수가 주어지면 가격과 개수의 곱을 구한다")
     void multiply() {
         // given
         final Price price = new Price(BigDecimal.valueOf(10000));
         final int quantity = 3;
 
+        final Price expect = new Price(BigDecimal.valueOf(30000));
+
         // when
         final Price actual = price.multiply(quantity);
 
         // then
-        assertThat(actual).isEqualTo(new Price(BigDecimal.valueOf(30000)));
+        assertThat(actual).isEqualTo(expect);
     }
 }
