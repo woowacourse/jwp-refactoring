@@ -21,6 +21,10 @@ public class OrderLineItem {
         this.menuId = id;
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
     public Long getOrderId() {
         return orderId;
     }

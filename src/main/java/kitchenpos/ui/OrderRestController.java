@@ -4,11 +4,13 @@ import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.request.OrderCreateRequest;
+import kitchenpos.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class OrderRestController {
@@ -19,24 +21,26 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody OrderCreateRequest request) {
-        final Order created = orderService.create(request);
-        final URI uri = URI.create("/api/orders/" + created.getId());
-        return ResponseEntity.created(uri).body(created);
+    public ResponseEntity<OrderResponse> create(@RequestBody OrderCreateRequest request) {
+        Order created = orderService.create(request);
+        URI uri = URI.create("/api/orders/" + created.getId());
+        return ResponseEntity.created(uri).body(OrderResponse.from(created));
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
-        return ResponseEntity.ok()
-                .body(orderService.list())
-                ;
+    public ResponseEntity<List<OrderResponse>> list() {
+        List<OrderResponse> response = orderService.list().stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable Long orderId,
             @RequestBody OrderStatus orderStatus
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatus));
+        OrderResponse response = OrderResponse.from(orderService.changeOrderStatus(orderId, orderStatus));
+        return ResponseEntity.ok(response);
     }
 }
