@@ -51,8 +51,16 @@ public class Order {
         return id;
     }
 
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
     public String getOrderStatus() {
         return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

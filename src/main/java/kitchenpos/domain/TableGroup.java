@@ -42,6 +42,10 @@ public class TableGroup {
         return id;
     }
 
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
     public List<OrderTable> getOrderTables() {
         return orderTables.getOrderTables();
     }
