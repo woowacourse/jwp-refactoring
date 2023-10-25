@@ -1,12 +1,11 @@
 package kitchenpos.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 import org.springframework.data.relational.core.mapping.Column;
 
-public class Price implements Serializable {
+public class Price {
 
     public static final int MAX_PRICE_SCALE = 2;
     public static final int MAX_PRICE_PRECISION = 19;
@@ -16,15 +15,26 @@ public class Price implements Serializable {
     private final BigDecimal value;
 
     public Price(final BigDecimal value) {
-        if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (value.scale() > MAX_PRICE_SCALE || value.precision() > MAX_PRICE_PRECISION) {
-            throw new IllegalArgumentException();
-        }
-
+        validatePrice(value);
         this.value = value;
+    }
+
+    private static void validatePrice(final BigDecimal value) {
+        if (Objects.isNull(value) || isNegativeValue(value)) {
+            throw new IllegalArgumentException();
+        }
+
+        if (hasInvalidLengthRange(value)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static boolean hasInvalidLengthRange(final BigDecimal value) {
+        return value.scale() > MAX_PRICE_SCALE || value.precision() > MAX_PRICE_PRECISION;
+    }
+
+    private static boolean isNegativeValue(final BigDecimal value) {
+        return value.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public Price multiply(final Price price) {
