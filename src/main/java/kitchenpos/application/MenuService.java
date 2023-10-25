@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.repository.MenuGroupRepository;
@@ -36,7 +36,6 @@ public class MenuService {
         final Menu menu = new Menu(
                 request.getName(),
                 request.getPrice(),
-                /// TODO: 2023/10/25  menuGroupId만 받고 Validator 사용
                 findMenuGroup(request.getMenuGroupId()),
                 createMenuProducts(request.getMenuProducts())
         );

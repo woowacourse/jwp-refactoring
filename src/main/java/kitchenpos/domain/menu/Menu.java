@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.vo.MenuName;
 import kitchenpos.domain.vo.Price;
 

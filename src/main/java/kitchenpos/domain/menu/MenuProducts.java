@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.vo.Price;
 
 @Embeddable

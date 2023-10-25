@@ -11,7 +11,7 @@ import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.fixture.RequestParser;

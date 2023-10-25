@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
