@@ -1,16 +1,16 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.request.TableGroupCreateRequest;
-import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.table.application.request.TableGroupCreateRequest;
+import kitchenpos.table.application.response.TableGroupResponse;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
