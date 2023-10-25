@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
@@ -15,7 +14,7 @@ public class OrderFixture {
 
     public static OrderCreateDto 주문_생성_요청(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         List<OrderLineItemCreateDto> orderLineItemDtos = orderLineItems.stream()
-                .map(it -> new OrderLineItemCreateDto(it.getMenu().getId(), it.getQuantity()))
+                .map(it -> new OrderLineItemCreateDto(it.getMenuSnapShot().getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new OrderCreateDto(orderTableId, orderLineItemDtos);
     }

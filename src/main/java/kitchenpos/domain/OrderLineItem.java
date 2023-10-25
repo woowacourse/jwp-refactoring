@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,28 +20,16 @@ public class OrderLineItem {
     @JoinColumn(name = "ORDER_ID")
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MENU_ID")
-    private Menu menu;
-
-    private String originalMenuName;
-
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "original_menu_price"))
-    private Price originalMenuPrice;
-
-    private Long originalMenuGroupId;
+    private MenuSnapShot menuSnapShot;
 
     private long quantity;
 
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Menu menu, final long quantity) {
-        this.menu = menu;
-        this.originalMenuName = menu.getName();
-        this.originalMenuPrice = menu.getPrice();
-        this.originalMenuGroupId = menu.getMenuGroup().getId();
+    public OrderLineItem(final MenuSnapShot menuSnapShot, final long quantity) {
+        this.menuSnapShot = menuSnapShot;
         this.quantity = quantity;
     }
 
@@ -55,24 +41,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
-    }
-
     public long getQuantity() {
         return quantity;
     }
 
-    public String getOriginalMenuName() {
-        return originalMenuName;
-    }
-
-    public Price getOriginalMenuPrice() {
-        return originalMenuPrice;
-    }
-
-    public Long getOriginalMenuGroupId() {
-        return originalMenuGroupId;
+    public MenuSnapShot getMenuSnapShot() {
+        return menuSnapShot;
     }
 
     public void setOrder(final Order order) {

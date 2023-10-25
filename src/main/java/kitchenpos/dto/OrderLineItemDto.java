@@ -17,7 +17,7 @@ public class OrderLineItemDto {
     }
 
     public static OrderLineItemDto toDto(final OrderLineItem orderLineItem) {
-        return new OrderLineItemDto(orderLineItem.getSeq(), orderLineItem.getOrder().getId(), orderLineItem.getMenu().getId(), orderLineItem.getQuantity());
+        return new OrderLineItemDto(orderLineItem.getSeq(), orderLineItem.getOrder().getId(), orderLineItem.getMenuSnapShot().getMenuId(), orderLineItem.getQuantity());
     }
 
     public Long getSeq() {

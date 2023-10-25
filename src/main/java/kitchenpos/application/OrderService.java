@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuSnapShot;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -47,7 +48,7 @@ public class OrderService {
                 .map(dto -> {
                     Menu menu = menuRepository.findById(dto.getMenuId())
                             .orElseThrow(IllegalArgumentException::new);
-                    return new OrderLineItem(menu, dto.getQuantity());
+                    return new OrderLineItem(MenuSnapShot.make(menu), dto.getQuantity());
                 })
                 .collect(Collectors.toList());
     }
