@@ -15,8 +15,10 @@ import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
+import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.exception.OrderException.CompletionOrderException;
@@ -155,6 +157,8 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회할 수 있다. - n개의 주문 목록")
     void list_success2(int n) {
         when(orderRepository.findAll()).thenReturn(getOrdersByNTimes(n));
+        when(orderTableRepository.getById(any())).thenReturn(new OrderTable(10));
+        when(orderLineItemRepository.findAllByOrder(any())).thenReturn(List.of(OrderLineItem.of(order, 1L, 10)));
 
         orderService.list();
 
@@ -170,8 +174,10 @@ class OrderServiceTest {
         OrderStatus newOrderStatus = OrderStatus.MEAL;
 
         when(orderRepository.getById(1L)).thenReturn(order);
+        when(orderTableRepository.getById(any())).thenReturn(new OrderTable(10));
+        when(orderLineItemRepository.findAllByOrder(order)).thenReturn(List.of(OrderLineItem.of(order, 1L, 10)));
 
-        Order savedOrder = orderService.changeOrderStatus(1L, new OrderStatusChangeRequest(newOrderStatus));
+        OrderResponse savedOrder = orderService.changeOrderStatus(1L, new OrderStatusChangeRequest(newOrderStatus));
 
         assertThat(savedOrder.getOrderStatus()).isEqualTo(newOrderStatus);
     }

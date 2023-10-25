@@ -1,10 +1,12 @@
 package kitchenpos.order.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
+import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -38,7 +40,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest orderRequest) {
+    public OrderResponse create(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.getById(orderRequest.getOrderTableId());
         validateOrder(orderRequest.getOrderLineItemsRequest(), orderTable);
 
@@ -46,7 +48,7 @@ public class OrderService {
 
         List<OrderLineItem> orderLineItems = getOrderLineItems(savedOrder, orderRequest);
         orderLineItemRepository.saveAll(orderLineItems);
-        return savedOrder;
+        return OrderResponse.of(savedOrder, orderTable, orderLineItems);
     }
 
     private List<OrderLineItem> getOrderLineItems(final Order order, final OrderRequest orderRequest) {
@@ -81,16 +83,26 @@ public class OrderService {
         }
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        List<Order> orders = orderRepository.findAll();
+        for (Order order : orders) {
+            List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrder(order);
+            OrderTable orderTable = orderTableRepository.getById(order.getOrderTableId());
+            orderResponses.add(OrderResponse.of(order, orderTable, orderLineItems));
+        }
+        return orderResponses;
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest orderStatusChangeRequest) {
-        final Order savedOrder = orderRepository.getById(orderId);
+    public OrderResponse changeOrderStatus(final Long orderId,
+                                           final OrderStatusChangeRequest orderStatusChangeRequest) {
+        final Order order = orderRepository.getById(orderId);
 
-        savedOrder.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
+        order.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
 
-        return savedOrder;
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrder(order);
+        OrderTable orderTable = orderTableRepository.getById(order.getOrderTableId());
+        return OrderResponse.of(order, orderTable, orderLineItems);
     }
 }

@@ -6,7 +6,7 @@ import kitchenpos.order.application.TableService;
 import kitchenpos.order.application.dto.OrderTableEmptyRequest;
 import kitchenpos.order.application.dto.OrderTableGuestRequest;
 import kitchenpos.order.application.dto.OrderTableRequest;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.application.dto.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +24,8 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTableRequest orderTableRequest) {
-        final OrderTable created = tableService.create(orderTableRequest);
+    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableRequest orderTableRequest) {
+        final OrderTableResponse created = tableService.create(orderTableRequest);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
@@ -33,14 +33,14 @@ public class TableRestController {
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<OrderTableResponse>> list() {
         return ResponseEntity.ok()
                 .body(tableService.list())
                 ;
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTableEmptyRequest orderTableEmptyRequest
     ) {
@@ -50,7 +50,7 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTableGuestRequest orderTableGuestRequest
     ) {

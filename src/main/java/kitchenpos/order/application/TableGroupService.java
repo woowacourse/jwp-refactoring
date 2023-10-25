@@ -3,6 +3,7 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.order.application.dto.OrderTablesRequest;
+import kitchenpos.order.application.dto.TableGroupResponse;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
@@ -38,14 +39,14 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final OrderTablesRequest orderTablesRequest) {
+    public TableGroupResponse create(final OrderTablesRequest orderTablesRequest) {
         List<OrderTable> orderTables = orderTableRepository.findAllById(orderTablesRequest.getOrderTableIds());
         validateTableGroup(orderTables, orderTablesRequest.getOrderTableIds());
         TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
         for (OrderTable orderTable : orderTables) {
             orderTable.group(savedTableGroup);
         }
-        return savedTableGroup;
+        return TableGroupResponse.of(savedTableGroup, orderTables);
     }
 
     private void validateTableGroup(final List<OrderTable> orderTables, final List<Long> orderTableIds) {
