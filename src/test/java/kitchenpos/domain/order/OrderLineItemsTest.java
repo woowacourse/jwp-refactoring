@@ -32,7 +32,7 @@ class OrderLineItemsTest {
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.MEAL;
         final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
-        final Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // when
         final OrderLineItems actual = OrderLineItems.of(order, List.of(orderLineItem));
@@ -54,7 +54,7 @@ class OrderLineItemsTest {
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.MEAL;
         final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
-        final Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // when & then
         assertThatThrownBy(() -> OrderLineItems.of(order, Collections.emptyList()))

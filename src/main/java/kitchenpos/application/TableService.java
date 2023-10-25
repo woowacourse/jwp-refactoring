@@ -1,26 +1,27 @@
 package kitchenpos.application;
 
+import java.util.List;
 import kitchenpos.application.exception.OrderTableNotFoundException;
-import kitchenpos.domain.order.repository.OrderRepository;
-import kitchenpos.domain.ordertable.repository.OrderTableRepository;
-import kitchenpos.domain.order.Order;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.repository.OrderTableRepository;
+import kitchenpos.domain.ordertable.service.ChangeOrderTableStateService;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableNumberOfGuestsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final ChangeOrderTableStateService changeOrderTableStateService;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(
+            final ChangeOrderTableStateService changeOrderTableStateService,
+            final OrderTableRepository orderTableRepository
+    ) {
+        this.changeOrderTableStateService = changeOrderTableStateService;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -39,8 +40,8 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final UpdateOrderTableEmptyRequest request) {
         final OrderTable persistOrderTable = orderTableRepository.findById(orderTableId)
                                                                  .orElseThrow(OrderTableNotFoundException::new);
-        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        persistOrderTable.changeEmptyStatus(orders, request.isEmpty());
+
+        changeOrderTableStateService.changeEmpty(persistOrderTable, request.isEmpty());
 
         return persistOrderTable;
     }

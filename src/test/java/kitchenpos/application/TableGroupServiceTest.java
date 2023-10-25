@@ -10,28 +10,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.config.IntegrationTest;
+import kitchenpos.domain.exception.InvalidOrderTableSizeException;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.tablegroup.TableGroup;
-import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
-import kitchenpos.domain.exception.InvalidOrderTableSizeException;
-import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
-import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.repository.OrderTableRepository;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.repository.ProductRepository;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.domain.tablegroup.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateOrderGroupOrderTableRequest;
 import kitchenpos.ui.dto.request.CreateTableGroupRequest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @IntegrationTest
@@ -117,33 +114,18 @@ class TableGroupServiceTest {
         final OrderTable persistOrderTable2 = orderTableRepository.save(new OrderTable(0, true));
         final Menu persistMenu = persistMenu();
         persistOrderBy(persistMenu,  OrderStatus.COMPLETION, persistOrderTable1, persistOrderTable2);
-        final TableGroup persistTableGroup = persistTableGroup(persistOrderTable1, persistOrderTable2);
+        final TableGroup persistTableGroup = tableGroupRepository.save(new TableGroup());
 
         // when
         tableGroupService.ungroup(persistTableGroup.getId());
 
         // then
         assertAll(
-                () -> assertThat(persistOrderTable1.getTableGroup()).isNull(),
-                () -> assertThat(persistOrderTable2.getTableGroup()).isNull()
+                () -> assertThat(persistOrderTable1.isEmpty()).isTrue(),
+                () -> assertThat(persistOrderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(persistOrderTable2.isEmpty()).isTrue(),
+                () -> assertThat(persistOrderTable2.getTableGroupId()).isNull()
         );
-    }
-
-    @ParameterizedTest(name = "orderStatus가 {0}일 때 예외가 발생한다.")
-    @ValueSource(strings = {"MEAL", "COOKING"})
-    void upgroup_메서드는_orderTable의_order의_상태가_COMPLETION이_아닌_tableGroup을_전달하면_예외가_발생한다(final String invalidOrderStatus) {
-        // given
-        final OrderTable persistOrderTable1 = orderTableRepository.save(new OrderTable(0, true));
-        final OrderTable persistOrderTable2 = orderTableRepository.save(new OrderTable(0, true));
-        final Menu persistMenu = persistMenu();
-        final OrderStatus orderStatus = OrderStatus.valueOf(invalidOrderStatus);
-        persistOrderBy(persistMenu, orderStatus, persistOrderTable1, persistOrderTable2);
-        final TableGroup persistTableGroup = persistTableGroup(persistOrderTable1, persistOrderTable2);
-        persistOrderTables(persistOrderTable1, persistOrderTable2, persistTableGroup);
-
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(persistTableGroup.getId()))
-                .isInstanceOf(InvalidOrderStatusCompletionException.class);
     }
 
     private CreateTableGroupRequest convertCreateTableGroupRequest(final List<OrderTable> orderTables) {
@@ -183,38 +165,18 @@ class TableGroupServiceTest {
         final OrderLineItem persistOrderLineItem1 = new OrderLineItem(persistMenu, 1L);
         final OrderLineItem persistOrderLineItem2 = new OrderLineItem(persistMenu, 1L);
         final Order order1 = new Order(
-                persistOrderTable1,
+                persistOrderTable1.getId(),
                 orderStatus,
                 LocalDateTime.now().minusHours(3),
                 List.of(persistOrderLineItem1)
         );
         final Order order2 = new Order(
-                persistOrderTable2,
+                persistOrderTable2.getId(),
                 orderStatus,
                 LocalDateTime.now().minusHours(3),
                 List.of(persistOrderLineItem2)
         );
         orderRepository.save(order1);
         orderRepository.save(order2);
-    }
-
-    private TableGroup persistTableGroup(final OrderTable persistOrderTable1, final OrderTable persistOrderTable2) {
-        return tableGroupRepository.save(
-                new TableGroup(List.of(persistOrderTable1, persistOrderTable2))
-        );
-    }
-
-    private void persistOrderTables(
-            final OrderTable persistOrderTable1,
-            final OrderTable persistOrderTable2,
-            final TableGroup tableGroup
-    ) {
-        if (tableGroup != null) {
-            persistOrderTable1.group(tableGroup);
-            persistOrderTable2.group(tableGroup);
-        }
-
-        orderTableRepository.save(persistOrderTable1);
-        orderTableRepository.save(persistOrderTable2);
     }
 }

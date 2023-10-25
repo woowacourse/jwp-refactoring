@@ -2,18 +2,17 @@ package kitchenpos.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.exception.InvalidOrderLineItemException;
 import kitchenpos.domain.exception.InvalidOrderStatusException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -38,13 +37,10 @@ class OrderTest {
         final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
 
         // when
-        final Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // then
-        assertAll(
-                () -> assertThat(orderLineItem.getOrder()).isEqualTo(order),
-                () -> assertThat(orderTable.getOrder()).isEqualTo(order)
-        );
+        assertThat(orderLineItem.getOrder()).isEqualTo(order);
     }
 
     @Test
@@ -58,7 +54,7 @@ class OrderTest {
         final OrderStatus orderStatus = OrderStatus.COOKING;
 
         // when & then
-        assertThatThrownBy(() -> new Order(orderTable, orderStatus, LocalDateTime.now(), Collections.emptyList()))
+        assertThatThrownBy(() -> new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList()))
                 .isInstanceOf(InvalidOrderLineItemException.class);
     }
 
@@ -73,7 +69,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.COOKING;
         final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
-        final Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // when
         order.updateOrderStatus(changeOrderStatus);
@@ -93,7 +89,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.COMPLETION;
         final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
-        final Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // when & then
         assertThatThrownBy(() -> order.updateOrderStatus(changeOrderStatus))
@@ -111,7 +107,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusName);
         final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
-        final Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // when
         final boolean actual = order.isCompletion();
@@ -130,7 +126,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.COMPLETION;
         final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
-        final Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // when
         final boolean actual = order.isCompletion();

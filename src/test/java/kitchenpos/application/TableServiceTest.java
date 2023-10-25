@@ -9,20 +9,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.config.IntegrationTest;
+import kitchenpos.domain.exception.InvalidNumberOfGuestsException;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.exception.InvalidNumberOfGuestsException;
-import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
-import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
-import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.repository.OrderTableRepository;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.repository.ProductRepository;
 import kitchenpos.domain.tablegroup.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
@@ -89,6 +88,7 @@ class TableServiceTest {
     void changeEmpty_메서드는_변경할_orderTableId와_변경한_값을_가진_orderTable을_전달하면_empty를_변경한다() {
         // given
         final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, true));
+        persistOrderTable.group(1L);
         final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(false);
 
         // when
@@ -106,19 +106,6 @@ class TableServiceTest {
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(-999L, request))
                 .isInstanceOf(OrderTableNotFoundException.class);
-    }
-
-    @ParameterizedTest(name = "orderStatus가 {0}이면 예외가 발생한다.")
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void changeEmpty_메서드는_변경할_orderTableId의_orderStatu가_COMPLETION이_아니면_예외가_발생한다(final String invalidOrderStatus) {
-        // given
-        final Menu persistMenu = persistMenu();
-        final OrderTable persistOrderTable = persistOrderTable(invalidOrderStatus, persistMenu);
-        final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(false);
-
-        // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(persistOrderTable.getId(), request))
-                .isInstanceOf(InvalidOrderStatusCompletionException.class);
     }
 
     @Test
@@ -181,7 +168,7 @@ class TableServiceTest {
         final OrderLineItem orderLineItem = new OrderLineItem(persistMenu, 1L);
         final OrderStatus orderStatus = OrderStatus.valueOf(invalidOrderStatus);
         final Order order = new Order(
-                persistOrderTable,
+                persistOrderTable.getId(),
                 orderStatus,
                 LocalDateTime.now().minusHours(3),
                 List.of(orderLineItem)

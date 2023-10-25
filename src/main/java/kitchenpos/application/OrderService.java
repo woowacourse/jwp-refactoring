@@ -42,7 +42,7 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                                                           .orElseThrow(OrderTableNotFoundException::new);
         final List<OrderLineItem> orderLineItems = findOrderLineItems(request);
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
 
         return orderRepository.save(order);
     }

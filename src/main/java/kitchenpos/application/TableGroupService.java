@@ -1,13 +1,11 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.application.exception.OrderTableNotFoundException;
+import java.util.stream.Collectors;
 import kitchenpos.application.exception.TableGroupNotFoundException;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
-import kitchenpos.domain.ordertable.repository.OrderTableRepository;
 import kitchenpos.domain.tablegroup.repository.TableGroupRepository;
+import kitchenpos.domain.tablegroup.service.GroupingTableService;
 import kitchenpos.ui.dto.request.CreateOrderGroupOrderTableRequest;
 import kitchenpos.ui.dto.request.CreateTableGroupRequest;
 import org.springframework.stereotype.Service;
@@ -16,31 +14,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderTableRepository orderTableRepository;
+    private final GroupingTableService groupingTableService;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            final OrderTableRepository orderTableRepository,
+            final GroupingTableService groupingTableService,
             final TableGroupRepository tableGroupRepository
     ) {
-        this.orderTableRepository = orderTableRepository;
+        this.groupingTableService = groupingTableService;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public TableGroup create(final CreateTableGroupRequest request) {
-        final List<OrderTable> orderTables = new ArrayList<>();
+        final TableGroup tableGroup = new TableGroup();
+        final TableGroup persistTableGroup = tableGroupRepository.save(tableGroup);
 
-        for (final CreateOrderGroupOrderTableRequest orderTableRequest : request.getOrderTables()) {
-            final OrderTable findOrderTable = orderTableRepository.findById(orderTableRequest.getId())
-                                                                  .orElseThrow(OrderTableNotFoundException::new);
+        groupingTableService.group(convertOrderTableIds(request), persistTableGroup);
 
-            orderTables.add(findOrderTable);
-        }
+        return persistTableGroup;
+    }
 
-        final TableGroup tableGroup = new TableGroup(orderTables);
-
-        return tableGroupRepository.save(tableGroup);
+    private List<Long> convertOrderTableIds(final CreateTableGroupRequest request) {
+        return request.getOrderTables()
+                      .stream()
+                      .map(CreateOrderGroupOrderTableRequest::getId)
+                      .collect(Collectors.toList());
     }
 
     @Transactional
@@ -48,6 +47,6 @@ public class TableGroupService {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                                                           .orElseThrow(TableGroupNotFoundException::new);
 
-        tableGroup.ungroupOrderTables();
+        groupingTableService.ungroup(tableGroup);
     }
 }

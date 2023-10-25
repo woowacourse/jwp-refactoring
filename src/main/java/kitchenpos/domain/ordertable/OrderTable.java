@@ -1,38 +1,27 @@
 package kitchenpos.domain.ordertable;
 
-import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.domain.common.NumberOfGuests;
 import kitchenpos.domain.exception.InvalidEmptyOrderTableException;
-import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
-import kitchenpos.domain.exception.InvalidTableGroupException;
-import kitchenpos.domain.order.Order;
 
 @Entity
 public class OrderTable {
 
-    private static final TableGroup UNGROUP_TABLE_GROUP = null;
+    private static final Long UNGROUP_TABLE_GROUP = null;
     private static final boolean UNGROUP_EMPTY = true;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
-
-    @OneToOne(mappedBy = "orderTable")
-    private Order order;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Embedded
     private NumberOfGuests numberOfGuests;
@@ -47,37 +36,20 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void initOrder(final Order order) {
-        this.order = order;
-    }
-
-    public void group(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void group(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void ungroup() {
-        validateOrderStatus();
-
-        this.tableGroup = UNGROUP_TABLE_GROUP;
+        this.tableGroupId = UNGROUP_TABLE_GROUP;
         this.empty = UNGROUP_EMPTY;
     }
 
-    private void validateOrderStatus() {
-        if (!order.isCompletion()) {
-            throw new InvalidOrderStatusCompletionException();
-        }
+    public boolean isUngrouping() {
+        return tableGroupId == null;
     }
 
-    public void changeEmptyStatus(final List<Order> orders, final boolean empty) {
-        if (this.tableGroup != null) {
-            throw new InvalidTableGroupException();
-        }
-
-        for (final Order order : orders) {
-            if (!order.isCompletion()) {
-                throw new InvalidOrderStatusCompletionException();
-            }
-        }
+    public void changeEmptyStatus(final boolean empty) {
         this.empty = empty;
     }
 
@@ -93,8 +65,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -103,10 +75,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     @Override

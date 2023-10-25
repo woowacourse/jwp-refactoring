@@ -3,6 +3,7 @@ package kitchenpos.domain.order;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,10 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.exception.InvalidOrderStatusException;
 
 @Entity
@@ -24,9 +22,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
@@ -40,21 +37,15 @@ public class Order {
     }
 
     public Order(
-            final OrderTable orderTable,
+            final Long orderTableId,
             final OrderStatus orderStatus,
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = OrderLineItems.of(this, orderLineItems);
-
-        initOrderTable(orderTable);
-    }
-
-    private void initOrderTable(final OrderTable orderTable) {
-        orderTable.initOrder(this);
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
@@ -69,8 +60,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
