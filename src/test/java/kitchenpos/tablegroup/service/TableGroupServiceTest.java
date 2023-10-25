@@ -19,7 +19,7 @@ import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import kitchenpos.tablegroup.dto.response.TableGroupResponse;
-import kitchenpos.tablegroup.exception.OrderTableCountNotEnoughException;
+import kitchenpos.table.exception.OrderTableCountNotEnoughException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.Test;

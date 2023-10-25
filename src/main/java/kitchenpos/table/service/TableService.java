@@ -10,7 +10,7 @@ import kitchenpos.table.dto.request.CreateOrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.tablegroup.exception.OrderTableCountNotEnoughException;
+import kitchenpos.table.exception.OrderTableCountNotEnoughException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
