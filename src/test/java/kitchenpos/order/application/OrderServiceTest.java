@@ -1,5 +1,6 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
+import kitchenpos.MockServiceTest;
 import kitchenpos.order.application.dto.CreateOrderDto;
 import kitchenpos.order.application.dto.CreateOrderLineItemDto;
 import kitchenpos.order.application.dto.OrderDto;

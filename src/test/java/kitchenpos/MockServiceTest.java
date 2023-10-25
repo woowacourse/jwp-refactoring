@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos;
 
 import kitchenpos.BaseTest;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,18 +1,26 @@
-package kitchenpos.repository;
+package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.*;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductName;
 import kitchenpos.product.domain.ProductPrice;
 import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.RepositoryTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
-class MenuRepositoryTest extends RepositoryTest {
+class OrderRepositoryTest extends RepositoryTest {
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -21,10 +29,10 @@ class MenuRepositoryTest extends RepositoryTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupRepository menuGroupRepository;
+    private OrderTableRepository orderTableRepository;
 
     @Test
-    void 메뉴를_가져올_때_메뉴_상품을_같이_조회한다() {
+    void 주문을_조회할_때_주문_아이템과_함께_조회횐다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(new MenuGroupName("one plus one")));
         Product product = productRepository.save(new Product(new ProductName("pizza"), new ProductPrice(BigDecimal.valueOf(14000L))));
@@ -32,19 +40,29 @@ class MenuRepositoryTest extends RepositoryTest {
         MenuProduct menuProduct = new MenuProduct(product, new MenuProductQuantity(2L));
         menu.addMenuProducts(List.of(menuProduct));
         menuRepository.save(menu);
+
+        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
+        orderTableRepository.save(orderTable);
+
+        Order order = new Order(LocalDateTime.now());
+        OrderLineItem orderLineItem = new OrderLineItem(menu, new OrderLineItemQuantity(1L));
+        OrderLineItem orderLineItem_2 = new OrderLineItem(menu, new OrderLineItemQuantity(2L));
+        order.addOrderLineItems(List.of(orderLineItem, orderLineItem_2));
+        orderTable.addOrder(order);
+        orderRepository.save(order);
         em.flush();
         em.clear();
 
         // when
-        List<Menu> menus = menuRepository.findAllWithMenuProducts();
-        for (Menu findMenu : menus) {
-            em.detach(findMenu);
+        List<Order> orders = orderRepository.findAllWithOrderLineItems();
+        for (Order findOrder : orders) {
+            em.detach(findOrder);
         }
 
         // then
-        for (Menu findMenu : menus) {
+        for (Order findOrder : orders) {
             Assertions.assertThatNoException()
-                    .isThrownBy(() -> findMenu.getMenuProducts().get(0).getQuantity());
+                    .isThrownBy(() -> findOrder.getOrderLineItems().get(0).getSeq());
         }
     }
 }

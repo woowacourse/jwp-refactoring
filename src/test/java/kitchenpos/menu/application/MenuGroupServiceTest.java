@@ -1,8 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
+import kitchenpos.MockServiceTest;
 import kitchenpos.menu.application.dto.CreateMenuGroupDto;
 import kitchenpos.menu.application.dto.MenuGroupDto;
-import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupName;

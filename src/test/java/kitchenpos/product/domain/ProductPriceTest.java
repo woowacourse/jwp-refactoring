@@ -1,4 +1,4 @@
-package kitchenpos.domain.product;
+package kitchenpos.product.domain;
 
 import kitchenpos.BaseTest;
 import kitchenpos.product.exception.ProductPriceException;

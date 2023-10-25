@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos;
 
 import kitchenpos.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;

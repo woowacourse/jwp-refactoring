@@ -1,5 +1,6 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
+import kitchenpos.MockServiceTest;
 import kitchenpos.product.application.dto.CreateProductDto;
 import kitchenpos.product.application.dto.ProductDto;
 import kitchenpos.product.application.ProductService;

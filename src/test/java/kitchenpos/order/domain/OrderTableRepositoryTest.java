@@ -1,6 +1,6 @@
-package kitchenpos.repository;
+package kitchenpos.order.domain;
 
-import kitchenpos.order.domain.*;
+import kitchenpos.RepositoryTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
