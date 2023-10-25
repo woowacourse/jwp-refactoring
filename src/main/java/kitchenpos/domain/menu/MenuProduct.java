@@ -16,7 +16,6 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    // TODO id로만 참조하기? 하지만 MenuProduct, Menu를 함께 영속화하려면 ManyToOne이어야 한다.
     @ManyToOne(optional = false)
     @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_menu_product_to_menu"))
     private Menu menu;
