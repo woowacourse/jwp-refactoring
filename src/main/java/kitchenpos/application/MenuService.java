@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.request.MenuProductCreateRequest;
 import org.springframework.stereotype.Service;
@@ -46,20 +48,43 @@ public class MenuService {
                 .map(this::createMenuProduct)
                 .collect(Collectors.toList());
 
+        validateMenuPrice(menu, menuProducts);
         menu.addAllMenuProducts(menuProducts);
 
         return menuRepository.save(menu);
     }
 
+    private void validateMenuPrice(Menu menu, List<MenuProduct> menuProducts) {
+        Price reduce = menuProducts.stream()
+                .map(this::calculateMenuProductPrice)
+                .reduce(Price.ZERO, Price::add);
+
+        menu.validatePrice(reduce);
+    }
+
+    private Price calculateMenuProductPrice(MenuProduct menuProduct) {
+        Product product = findProduct(menuProduct.getProductId());
+        BigDecimal quantity = BigDecimal.valueOf(menuProduct.getQuantity());
+
+        return Price.from(
+                product.getPrice()
+                        .multiply(quantity)
+        );
+    }
+
     private void validateMenuGroupId(Long menuGroupId) {
-        if (Objects.isNull(menuGroupId) || !menuGroupRepository.existsById(menuGroupId)) {
+        if (Objects.isNull(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹의 ID 는 존재하지 않을 수 없습니다.");
+        }
+
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("메뉴 그룹은 존재하지 않을 수 없습니다.");
         }
     }
 
     private MenuProduct createMenuProduct(MenuProductCreateRequest menuProductCreateRequest) {
         return MenuProduct.of(
-                findProduct(menuProductCreateRequest.getProductId()),
+                menuProductCreateRequest.getProductId(),
                 menuProductCreateRequest.getQuantity()
         );
     }
@@ -68,7 +93,7 @@ public class MenuService {
         validateProductId(productId);
 
         return productRepository.findById(productId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하는 상품이어야 합니다."));
     }
 
     private void validateProductId(Long productId) {

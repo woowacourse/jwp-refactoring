@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
 
 @Entity
@@ -22,9 +21,8 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
 
     @Embedded
     private Quantity quantity;
@@ -32,39 +30,37 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    private MenuProduct(Product product, Quantity quantity) {
-        this(null, null, product, quantity);
+    private MenuProduct(Long productId, Quantity quantity) {
+        this(null, null, productId, quantity);
     }
 
     private MenuProduct(
             Long seq,
             Menu menu,
-            Product product,
+            Long productId,
             Quantity quantity
     ) {
         this.seq = seq;
         this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 
     public static MenuProduct of(
-            Product product,
+            Long productId,
             long quantity
     ) {
         return new MenuProduct(
-                product,
+                productId,
                 Quantity.from(quantity)
         );
     }
 
-    public Price totalPrice() {
-        BigDecimal quantity = BigDecimal.valueOf(this.quantity.getValue());
-
-        return Price.from(
-                product.getPrice()
-                        .multiply(quantity)
-        );
+    public static MenuProduct of(
+            Long productId,
+            Quantity quantity
+    ) {
+        return new MenuProduct(productId, quantity);
     }
 
     public void registerMenu(Menu menu) {
@@ -79,8 +75,8 @@ public class MenuProduct {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {

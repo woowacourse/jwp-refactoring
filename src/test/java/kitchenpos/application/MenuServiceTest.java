@@ -170,9 +170,9 @@ class MenuServiceTest extends ServiceIntegrationTest {
     }
 
     private MenuProductCreateRequest toMenuProductCreateRequest(MenuProduct menuProduct) {
-        Long productId = Optional.ofNullable(menuProduct.getProduct())
-                .map(Product::getId)
+        Long productId = Optional.ofNullable(menuProduct.getProductId())
                 .orElse(Long.MAX_VALUE);
+
         return new MenuProductCreateRequest(
                 productId,
                 menuProduct.getQuantity()

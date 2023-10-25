@@ -75,15 +75,9 @@ public class Menu {
 
     public void addAllMenuProducts(List<MenuProduct> menuProducts) {
         menuProducts.forEach(this::addMenuProduct);
-        validateTotalPrice();
     }
 
-    private void validateTotalPrice() {
-        Price totalPrice = menuProducts
-                .stream()
-                .map(MenuProduct::totalPrice)
-                .reduce(Price.ZERO, Price::add);
-
+    public void validatePrice(Price totalPrice) {
         if (price.moreExpensiveThan(totalPrice)) {
             throw new IllegalArgumentException("메뉴의 가격은 포함된 상품들의 합보다 비쌀 수 없습니다.");
         }
