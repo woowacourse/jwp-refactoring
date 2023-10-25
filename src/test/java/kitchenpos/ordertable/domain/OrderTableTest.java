@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.ordertable.domain;
 
+import kitchenpos.ordertable.domain.OrderTable;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

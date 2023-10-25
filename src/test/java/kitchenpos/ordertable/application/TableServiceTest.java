@@ -1,12 +1,13 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.application;
 
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

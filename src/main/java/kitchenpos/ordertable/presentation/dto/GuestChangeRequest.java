@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ordertable.presentation.dto;
 
 import javax.validation.constraints.PositiveOrZero;
 
