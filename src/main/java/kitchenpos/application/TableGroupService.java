@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.dao.OrderCustomDao;
@@ -21,7 +22,8 @@ public class TableGroupService {
     private final OrderTableDao orderTableDao;
     private final TableGroupCustomDao tableGroupDao;
 
-    public TableGroupService(final OrderCustomDao orderDao, final OrderTableDao orderTableDao, final TableGroupCustomDao tableGroupDao) {
+    public TableGroupService(final OrderCustomDao orderDao, final OrderTableDao orderTableDao,
+                             final TableGroupCustomDao tableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
@@ -38,7 +40,16 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
+        if (hasInvalidOrderTable(savedOrderTables)) {
+            throw new IllegalArgumentException();
+        }
+
         return TableGroupResponse.from(tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables)));
+    }
+
+    private static boolean hasInvalidOrderTable(final List<OrderTable> savedOrderTables) {
+        return savedOrderTables.stream()
+                .anyMatch(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()));
     }
 
     @Transactional

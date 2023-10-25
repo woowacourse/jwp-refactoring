@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
@@ -21,12 +20,6 @@ public class TableGroup {
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
-
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
     }
 
     public Long getId() {
