@@ -40,25 +40,10 @@ public class MenuService {
     public Menu create(MenuCreateRequest request) {
         validateMenuGroupExistence(request);
 
-        List<MenuProductRequest> menuProducts = request.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProductRequest : menuProducts) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
-        }
-
-        Menu menu = mapToMenu(request, sum, menuProducts);
-
+        Menu menu = mapToMenu(request, request.getMenuProducts());
         final Menu savedMenu = menuRepository.save(menu);
 
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProductRequest menuProductRequest : menuProducts) {
-            MenuProduct menuProduct = mapToMenuProduct(menuProductRequest, menuId);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-        }
+        List<MenuProduct> savedMenuProducts = saveMenuProducts(request.getMenuProducts(), savedMenu.getId());
         savedMenu.saveMenuProducts(savedMenuProducts);
 
         return savedMenu;
@@ -70,19 +55,37 @@ public class MenuService {
         }
     }
 
-    private MenuProduct mapToMenuProduct(MenuProductRequest menuProductRequest, Long menuId) {
-        return new MenuProduct(
-                menuId,
-                menuProductRequest.getProductId(),
-                menuProductRequest.getQuantity());
-    }
-
-    private Menu mapToMenu(MenuCreateRequest request, BigDecimal sum, List<MenuProductRequest> menuProducts) {
+    private Menu mapToMenu(MenuCreateRequest request, List<MenuProductRequest> menuProducts) {
+        BigDecimal sum = calculateSum(menuProducts);
         final Menu menu = Menu.of(request.getName(), request.getPrice(), request.getMenuGroupId(), sum);
         for (final MenuProductRequest menuProduct : menuProducts) {
             menu.addProduct(menuProduct.getProductId(), menuProduct.getQuantity());
         }
         return menu;
+    }
+
+    private BigDecimal calculateSum(List<MenuProductRequest> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProductRequest menuProductRequest : menuProducts) {
+            final Product product = productRepository.findById(menuProductRequest.getProductId())
+                    .orElseThrow(IllegalArgumentException::new);
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
+        }
+        return sum;
+    }
+
+    private List<MenuProduct> saveMenuProducts(List<MenuProductRequest> menuProducts, Long menuId) {
+        return menuProducts.stream()
+                .map(menuProductRequest -> mapToMenuProduct(menuProductRequest, menuId))
+                .map(menuProductRepository::save)
+                .toList();
+    }
+
+    private MenuProduct mapToMenuProduct(MenuProductRequest menuProductRequest, Long menuId) {
+        return new MenuProduct(
+                menuId,
+                menuProductRequest.getProductId(),
+                menuProductRequest.getQuantity());
     }
 
     public List<Menu> list() {
