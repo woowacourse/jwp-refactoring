@@ -15,7 +15,7 @@ public class TableGroupRequest {
     }
 
     public TableGroup toEntity(final LocalDateTime now, final List<OrderTable> orderTables) {
-        return new TableGroup(now, orderTables);
+        return TableGroup.of(now, orderTables);
     }
 
     public List<OrderTableDto> getOrderTables() {

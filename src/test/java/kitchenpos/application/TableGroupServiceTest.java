@@ -1,11 +1,16 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.NotAllowedUngroupException;
+import kitchenpos.application.exception.NotFoundOrderTableException;
+import kitchenpos.application.exception.NotFoundTableGroupException;
 import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.exception.InvalidOrderTableToTableGroup;
+import kitchenpos.domain.exception.InvalidOrderTablesSize;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -81,16 +86,6 @@ class TableGroupServiceTest extends ServiceTestConfig {
         }
 
         @Test
-        void 단체_지정_등록시_주문_테이블이_비어있다면_예외를_반환한다() {
-            // given
-            final TableGroupRequest tableGroupRequest = TableGroupFixture.단체_지정_요청_dto_생성(List.of());
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 단체_지정_등록시_주문_테이블이_한개라면_예외를_반환한다() {
             // given
             final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.빈_테이블_엔티티_생성());
@@ -98,7 +93,19 @@ class TableGroupServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderTablesSize.class)
+                    .hasMessage("주문 테이블은 3개 이상 있어야 합니다.");
+        }
+
+        @Test
+        void 단체_지정_등록시_주문_테이블이_비어있다면_예외를_반환한다() {
+            // given
+            final TableGroupRequest tableGroupRequest = TableGroupFixture.단체_지정_요청_dto_생성(List.of());
+
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+                    .isInstanceOf(InvalidOrderTablesSize.class)
+                    .hasMessage("주문 테이블은 3개 이상 있어야 합니다.");
         }
 
         @Test
@@ -110,7 +117,8 @@ class TableGroupServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NotFoundOrderTableException.class)
+                    .hasMessage("존재하지 않는 주문 테이블이 있습니다.");
         }
 
         @Test
@@ -123,7 +131,8 @@ class TableGroupServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderTableToTableGroup.class)
+                    .hasMessage("주문 테이블이 테이블 그룹을 만들 수 없는 상태입니다.");
         }
 
         @Test
@@ -132,11 +141,13 @@ class TableGroupServiceTest extends ServiceTestConfig {
             final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
             tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
             orderTableRepository.saveAll(orderTables);
+            orderTables.add(OrderTableFixture.빈_테이블_엔티티_생성());
             final TableGroupRequest tableGroupRequest = TableGroupFixture.단체_지정_요청_dto_생성(orderTables);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NotFoundOrderTableException.class)
+                    .hasMessage("존재하지 않는 주문 테이블이 있습니다.");
         }
     }
 
@@ -147,7 +158,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
         void 그룹을_해제한다() {
             // given
             final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
-            final TableGroup tableGroup = TableGroupFixture.단체_지정_엔티티_생성(orderTables);
+            final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
 
             // when
             tableGroupService.ungroup(tableGroup.getId());
@@ -164,6 +175,17 @@ class TableGroupServiceTest extends ServiceTestConfig {
         }
 
         @Test
+        void 그룹_해제시_존재하지_않는_특정_주문_테이블이라면_예외를_반환한다() {
+            // given
+            final Long unsavedTableGroup = 999L;
+
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.ungroup(unsavedTableGroup))
+                    .isInstanceOf(NotFoundTableGroupException.class)
+                    .hasMessage("해당 단체 지정이 존재하지 않습니다.");
+        }
+
+        @Test
         void 그룹_해제시_특정_주문_테이블_아이디들_중_조리_혹은_식사_상태인_것이_존재한다면_예외를_반환한다() {
             // given
             final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
@@ -171,11 +193,12 @@ class TableGroupServiceTest extends ServiceTestConfig {
             final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
             orderRepository.save(OrderFixture.조리_상태의_주문_엔티티_생성(orderTables.get(0), menu));
-            final TableGroup tableGroup = TableGroupFixture.단체_지정_엔티티_생성(orderTables);
+            final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NotAllowedUngroupException.class)
+                    .hasMessage("단체 지정을 해제할 수 없는 주문이 존재합니다.");
         }
     }
 }

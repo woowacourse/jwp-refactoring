@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.NotAllowedUngroupException;
+import kitchenpos.application.exception.NotFoundOrderTableException;
+import kitchenpos.application.exception.NotFoundTableGroupException;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -11,12 +14,10 @@ import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
 import kitchenpos.ui.dto.tablegroup.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,60 +38,44 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTableDto> orderTableDtos = tableGroupRequest.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> orderTableIds = orderTableDtos.stream()
-                                                       .map(OrderTableDto::getId)
-                                                       .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTableDtos.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            System.out.println(savedOrderTable.getTableGroup());
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        final TableGroup tableGroup = tableGroupRequest.toEntity(LocalDateTime.now(), savedOrderTables);
-
+        final List<OrderTable> orderTables = findAllOrderTable(tableGroupRequest.getOrderTables());
+        final TableGroup tableGroup = tableGroupRequest.toEntity(LocalDateTime.now(), orderTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.updateTableGroup(savedTableGroup);
-            savedOrderTable.updateEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
 
         return TableGroupResponse.from(savedTableGroup);
     }
 
-    @Transactional
-    public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+    private List<OrderTable> findAllOrderTable(final List<OrderTableDto> orderTableDtos) {
+        final List<Long> orderTableIds = orderTableDtos.stream()
+                                                       .map(OrderTableDto::getId)
+                                                       .collect(Collectors.toList());
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                                                    .map(OrderTable::getId)
-                                                    .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+        if (orderTables.size() != orderTableDtos.size()) {
+            throw new NotFoundOrderTableException("존재하지 않는 주문 테이블이 있습니다.");
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroup(null);
-            orderTable.updateEmpty(false);
-            orderTableRepository.save(orderTable);
+        return orderTables;
+    }
+
+    @Transactional
+    public void ungroup(final Long tableGroupId) {
+        final TableGroup tableGroup =
+                tableGroupRepository.findById(tableGroupId)
+                                    .orElseThrow(() -> new NotFoundTableGroupException("해당 단체 지정이 존재하지 않습니다."));
+        final List<Long> orderTableIds = tableGroup.getOrderTables().stream()
+                                                   .map(OrderTable::getId)
+                                                   .collect(Collectors.toList());
+        validateOrdersToUngroup(orderTableIds);
+
+        tableGroup.ungroup();
+    }
+
+    private void validateOrdersToUngroup(final List<Long> orderTableIds) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
+        ) {
+            throw new NotAllowedUngroupException("단체 지정을 해제할 수 없는 주문이 존재합니다.");
         }
     }
 }

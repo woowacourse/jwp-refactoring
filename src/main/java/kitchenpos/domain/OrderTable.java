@@ -35,12 +35,13 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public TableGroup getTableGroup() {

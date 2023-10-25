@@ -1,5 +1,9 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exception.InvalidOrderTableToTableGroup;
+import kitchenpos.domain.exception.InvalidOrderTablesSize;
+import org.springframework.util.CollectionUtils;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,6 +34,38 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public static TableGroup of(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+        final TableGroup tableGroup = new TableGroup(createdDate, orderTables);
+        addOrderTables(orderTables, tableGroup);
+        return tableGroup;
+    }
+
+    private static void validateOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new InvalidOrderTablesSize("주문 테이블은 3개 이상 있어야 합니다.");
+        }
+
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+                throw new InvalidOrderTableToTableGroup("주문 테이블이 테이블 그룹을 만들 수 없는 상태입니다.");
+            }
+        }
+    }
+
+    private static void addOrderTables(final List<OrderTable> orderTables, final TableGroup tableGroup) {
+        for (final OrderTable savedOrderTable : orderTables) {
+            savedOrderTable.updateTableGroup(tableGroup);
+            savedOrderTable.updateEmpty(false);
+        }
+    }
+
+    public void ungroup() {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -40,10 +76,6 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {
