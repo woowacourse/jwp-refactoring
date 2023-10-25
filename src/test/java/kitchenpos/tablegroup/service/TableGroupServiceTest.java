@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.common.event.ValidateAllOrderCompletedEvent;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
@@ -172,5 +173,27 @@ class TableGroupServiceTest extends ServiceTestContext {
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(OrderIsNotCompletedException.class);
+    }
+
+    @Test
+    void 그룹_해체_시_모든_주문이_끝났는지를_검증하는_이벤트를_발행한다() {
+        // given
+        TableGroup tableGroup = TableGroupFixture.from(LocalDateTime.now());
+        tableGroupRepository.save(tableGroup);
+
+        OrderTable orderTable = OrderTableFixture.of(tableGroup.getId(), 0, false);
+        orderTableRepository.save(orderTable);
+
+        Order order = OrderFixture.of(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now());
+        orderRepository.save(order);
+
+        // when
+        tableGroupService.ungroup(tableGroup.getId());
+
+        // then
+        long eventOccurredCount = applicationEvents.stream(ValidateAllOrderCompletedEvent.class)
+                .count();
+
+        assertThat(eventOccurredCount).isEqualTo(1);
     }
 }
