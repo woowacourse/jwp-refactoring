@@ -34,7 +34,6 @@ public class MenuProducts {
         }
     }
 
-
     public Price totalPrice() {
         final List<Price> prices = menuProducts.stream()
                 .map(MenuProduct::totalPrice)

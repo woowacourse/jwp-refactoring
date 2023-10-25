@@ -23,6 +23,7 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    // TODO id만 알고 있어도 됨
     @ManyToOne
     @JoinColumn(name = "table_group_id", foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
     private TableGroup tableGroup;
@@ -50,8 +51,11 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
+    // TODO 양방향 의존
     public void placeOrder(final Order order) {
         validateAbleToOrder();
+        // TODO OrderTable에서 orders를 조회할 일이 있는가? 없으면 제거하자.
+        // TODO 그런데 orders 중 진행중인 주문이 있는지 확인해야 비울 수 있다. -> Validator에서 검증해주자.
         orders.add(order);
     }
 

@@ -16,9 +16,11 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+    // TODO OneToMany 쪽에서만 매핑하도록 수정
     @ManyToOne(optional = false)
     @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"))
     private Order order;
+    // TODO 메뉴가 변경되어도 바뀌지 않도록 OrderMenu를 만들어 참조?
     @ManyToOne(optional = false)
     @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_menu"))
     private Menu menu;
@@ -35,10 +37,6 @@ public class OrderLineItem {
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public void setOrder(Order order) {
