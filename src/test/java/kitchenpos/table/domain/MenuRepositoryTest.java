@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.table.domain;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,7 @@
 package kitchenpos.dto;
 
 import io.micrometer.core.lang.Nullable;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 import java.util.List;
 import java.util.stream.Collectors;

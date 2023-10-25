@@ -1,6 +1,5 @@
-package kitchenpos.repository;
+package kitchenpos.table.domain;
 
-import kitchenpos.domain.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,6 +1,6 @@
-package kitchenpos.application.table;
+package kitchenpos.table.application;
 
-import kitchenpos.application.TableService;
+import kitchenpos.table.application.TableService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;

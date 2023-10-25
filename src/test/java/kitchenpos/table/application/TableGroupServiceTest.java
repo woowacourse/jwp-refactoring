@@ -1,16 +1,16 @@
-package kitchenpos.application.tablegroup;
+package kitchenpos.table.application;
 
-import kitchenpos.application.TableGroupService;
+import kitchenpos.table.application.TableGroupService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.menu.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
