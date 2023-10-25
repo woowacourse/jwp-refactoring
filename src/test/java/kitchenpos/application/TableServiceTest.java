@@ -118,7 +118,7 @@ class TableServiceTest extends ServiceTest {
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
             final var orderLineItem = new OrderLineItem(menu, 5L);
-            orderRepository.save(new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), List.of(orderLineItem)));
+            orderRepository.save(new Order(orderTable, OrderStatus.MEAL, List.of(orderLineItem)));
             final var request = new OrderTableChangeEmptyRequest(true);
 
             // when & then

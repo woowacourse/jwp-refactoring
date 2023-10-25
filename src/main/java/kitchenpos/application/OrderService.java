@@ -46,7 +46,7 @@ public class OrderService {
 
         final OrderTable orderTable = findOrderTable(request.getOrderTableId());
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
         orderRepository.save(order);
 
         return OrderResponse.from(order);

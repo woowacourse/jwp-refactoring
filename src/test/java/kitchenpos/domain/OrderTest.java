@@ -27,7 +27,7 @@ public class OrderTest {
             final var orderTable = new OrderTable(new TableGroup(), 3, true);
 
             // when & then
-            assertThatThrownBy(() -> new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of()))
+            assertThatThrownBy(() -> new Order(orderTable, OrderStatus.COOKING, List.of()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 주문 테이블이 비어있습니다.");
         }
@@ -38,7 +38,7 @@ public class OrderTest {
             final var orderTable = new OrderTable(new TableGroup(), 3, false);
 
             // when & then
-            assertThatThrownBy(() -> new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of()))
+            assertThatThrownBy(() -> new Order(orderTable, OrderStatus.COOKING, List.of()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 주문 항목이 비어있습니다.");
         }
@@ -51,7 +51,7 @@ public class OrderTest {
         void 주문_상태를_변경한다() {
             // given
             final var orderTable = new OrderTable();
-            final var order = new Order(orderTable, OrderStatus.COOKING, null, List.of(new OrderLineItem()));
+            final var order = new Order(orderTable, OrderStatus.COOKING, List.of(new OrderLineItem()));
 
             // when
             order.changeOrderStatus(OrderStatus.MEAL);
@@ -68,7 +68,7 @@ public class OrderTest {
         void 완료된_주문은_상태를_변경할_수_없다() {
             // given
             final var orderTable = new OrderTable();
-            final var order = new Order(orderTable, OrderStatus.COMPLETION, null, List.of(new OrderLineItem()));
+            final var order = new Order(orderTable, OrderStatus.COMPLETION, List.of(new OrderLineItem()));
 
             // when & then
             assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
@@ -84,7 +84,7 @@ public class OrderTest {
         void 주문_항목을_변경할_수_있다() {
             // given
             final var orderTable = new OrderTable();
-            final var order = new Order(orderTable, OrderStatus.COMPLETION, null, List.of(new OrderLineItem()));
+            final var order = new Order(orderTable, OrderStatus.COMPLETION, List.of(new OrderLineItem()));
             final var newOrderLineItem = new OrderLineItem();
 
             // when

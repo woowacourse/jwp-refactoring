@@ -103,7 +103,7 @@ class TableGroupServiceTest extends ServiceTest {
             final var menu = menuRepository.save(
                     new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
             final var orderLineItem = new OrderLineItem(menu, 5L);
-            orderRepository.save(new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), List.of(orderLineItem)));
+            orderRepository.save(new Order(orderTable, OrderStatus.MEAL, List.of(orderLineItem)));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(1L))
