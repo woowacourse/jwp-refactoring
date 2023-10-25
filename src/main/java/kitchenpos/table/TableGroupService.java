@@ -9,13 +9,16 @@ import java.util.List;
 public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final UnGroupValidator unGroupValidator;
 
     public TableGroupService(
             final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final TableGroupRepository tableGroupRepository,
+            UnGroupValidator unGroupValidator
     ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.unGroupValidator = unGroupValidator;
     }
 
     @Transactional
@@ -37,6 +40,8 @@ public class TableGroupService {
     public TableGroup ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블 그룹이 존재하지 않습니다."));
+
+        unGroupValidator.validate(tableGroup);
 
         tableGroup.unGroup();
 

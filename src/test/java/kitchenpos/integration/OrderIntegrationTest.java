@@ -53,8 +53,8 @@ class OrderIntegrationTest extends IntegrationTest {
         );
         OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false, false));
 
-        Order order = new Order(orderLineItems);
-        Order saved = orderService.create(orderTable.getId(), order);
+        Order order = new Order(orderLineItems, orderTable.getId());
+        Order saved = orderService.create(order);
 
         assertAll(
                 () -> assertThat(orderService.list()).hasSize(1),
@@ -69,7 +69,7 @@ class OrderIntegrationTest extends IntegrationTest {
         void 주문_항목이_없으면_저장할_수_없다() {
             List<OrderLineItem> orderLineItems = List.of();
             OrderTable orderTable = new OrderTable(3, false, false);
-            assertThatThrownBy(() -> orderService.create(orderTable.getId(), new Order(orderLineItems)))
+            assertThatThrownBy(() -> orderService.create(new Order(orderLineItems, 1L)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("주문 항목이 비어있으면 생성할 수 없다.");
         }
@@ -86,7 +86,7 @@ class OrderIntegrationTest extends IntegrationTest {
                     new OrderLineItem(menu.getId(), 1)
             );
             OrderTable orderTable = new OrderTable(3, false, false);
-            assertThatThrownBy(() -> orderService.create(orderTable.getId(), new Order(orderLineItems)))
+            assertThatThrownBy(() -> orderService.create(new Order(orderLineItems, 1L)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("한번의 주문에서 중복 메뉴를 주문할 수 없습니다.");
         }
@@ -107,7 +107,7 @@ class OrderIntegrationTest extends IntegrationTest {
             );
             OrderTable orderTable = orderTableRepository.save(new OrderTable(3, true, false));
 
-            assertThatThrownBy(() -> orderService.create(orderTable.getId(), new Order(orderLineItems)))
+            assertThatThrownBy(() -> orderService.create(new Order(orderLineItems, orderTable.getId())))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("테이블이 비어있으면 주문할 수 없습니다.");
         }
@@ -124,8 +124,8 @@ class OrderIntegrationTest extends IntegrationTest {
                     new OrderLineItem(menu.getId(), 1)
             );
 
-            Order order = new Order(orderLineItems);
-            assertThatThrownBy(() -> orderService.create(-1L, order))
+            Order order = new Order(orderLineItems, -1L);
+            assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("주문 테이블이 존재하지 않습니다.");
         }
@@ -142,8 +142,8 @@ class OrderIntegrationTest extends IntegrationTest {
             );
             OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false, false));
 
-            Order order = new Order(orderLineItems);
-            Order saved = orderService.create(orderTable.getId(), order);
+            Order order = new Order(orderLineItems, orderTable.getId());
+            Order saved = orderService.create(order);
 
 
             assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());

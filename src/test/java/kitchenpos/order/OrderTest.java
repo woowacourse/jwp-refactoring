@@ -16,7 +16,7 @@ class OrderTest {
         // given
         List<OrderLineItem> orderLineItems = List.of();
         // when & then
-        assertThatThrownBy(() -> new Order(orderLineItems))
+        assertThatThrownBy(() -> new Order(orderLineItems, 1L))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -26,7 +26,7 @@ class OrderTest {
         List<OrderLineItem> orderLineItems = List.of(
                 new OrderLineItem(1L, 1)
         );
-        Order order = new Order(orderLineItems);
+        Order order = new Order(orderLineItems, 1L);
         order.changeOrderStatus(OrderStatus.COMPLETION);
         // when & then
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COMPLETION))
@@ -40,7 +40,7 @@ class OrderTest {
         List<OrderLineItem> orderLineItems = List.of(
                 new OrderLineItem(1L, 1)
         );
-        Order order = new Order(orderLineItems);
+        Order order = new Order(orderLineItems, 1L);
         order.changeOrderStatus(orderStatus);
         // when & then
         assertThatCode(() -> order.changeOrderStatus(OrderStatus.COMPLETION))

@@ -6,6 +6,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class OrderTables {
@@ -43,14 +44,6 @@ public class OrderTables {
     }
 
     public void unGroup() {
-        if (collection.stream()
-                .anyMatch(OrderTable::hasCookingOrMealOrder)) {
-            throw new IllegalArgumentException("조리중 또는 식사중인 테이블은 그룹을 해제할 수 없습니다.");
-        }
-        if (collection.stream()
-                .anyMatch(OrderTable::hasNoTableGroup)) {
-            throw new IllegalArgumentException("그룹으로 지정되지 않은 테이블은 그룹을 해제할 수 없습니다.");
-        }
         for (OrderTable orderTable : collection) {
             orderTable.unGroup();
         }
@@ -59,5 +52,11 @@ public class OrderTables {
 
     public List<OrderTable> getCollection() {
         return new ArrayList<>(collection);
+    }
+
+    public List<Long> getOrderTableIds() {
+        return collection.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 }

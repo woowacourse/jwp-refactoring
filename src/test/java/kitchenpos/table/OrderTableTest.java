@@ -27,8 +27,7 @@ class OrderTableTest {
     void 주문_상태가_조리중_또는_식사중이면_비울_수_없다(OrderStatus orderStatus) {
         OrderTable orderTable = new OrderTable(3, false, false);
         OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
-        Order order = new Order(List.of(orderLineItem));
-        orderTable.createdOrder(order);
+        Order order = new Order(List.of(orderLineItem), 1L);
         order.changeOrderStatus(orderStatus);
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))

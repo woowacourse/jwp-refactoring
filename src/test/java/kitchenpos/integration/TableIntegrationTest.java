@@ -4,7 +4,6 @@ import kitchenpos.menu.Menu;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.service.OrderCreateService;
 import kitchenpos.support.FixtureFactory;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.TableGroup;
@@ -31,9 +30,6 @@ class TableIntegrationTest extends IntegrationTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderCreateService orderCreateService;
-
-    @Autowired
     private FixtureFactory fixtureFactory;
 
     @Nested
@@ -56,8 +52,7 @@ class TableIntegrationTest extends IntegrationTest {
         void 주문_상태가_완료가_아니면_비울_수_없다(OrderStatus orderStatus) {
             Menu menu = fixtureFactory.메뉴_생성(fixtureFactory.메뉴_그룹_생성().getId(), fixtureFactory.제품_생성());
             OrderTable orderTable = tableService.create(new OrderTable(1, false, false));
-            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)));
-            orderCreateService.create(orderTable.getId(), order);
+            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), 1L);
             order.changeOrderStatus(orderStatus);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
@@ -155,9 +150,7 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable = tableService.create(new OrderTable(1, true, false));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
             TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
-            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)));
-            orderCreateService.create(orderTable.getId(), order);
-            orderCreateService.create(orderTable2.getId(), order);
+            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), 1L);
             order.changeOrderStatus(orderStatus);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

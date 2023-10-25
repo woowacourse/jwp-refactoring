@@ -1,9 +1,5 @@
 package kitchenpos.table;
 
-import kitchenpos.order.Order;
-import kitchenpos.order.Orders;
-
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,9 +16,6 @@ public class OrderTable {
     private Long id;
 
     private int numberOfGuests;
-
-    @Embedded
-    private Orders orders = new Orders();
 
     private boolean empty;
 
@@ -42,16 +35,16 @@ public class OrderTable {
         if (this.grouped) {
             throw new IllegalArgumentException("그룹된 테이블을 비울 수 없습니다.");
         }
-        if (orders.inCookingOrMeal()) {
-            throw new IllegalArgumentException("조리중 또는 식사중인 테이블은 비울 수 없습니다.");
-        }
+//        if (orders.inCookingOrMeal()) {
+//            throw new IllegalArgumentException("조리중 또는 식사중인 테이블은 비울 수 없습니다.");
+//        }
 
         this.empty = empty;
     }
 
-    public boolean hasCookingOrMealOrder() {
-        return orders.inCookingOrMeal();
-    }
+//    public boolean hasCookingOrMealOrder() {
+//        return orders.inCookingOrMeal();
+//    }
 
     public void changeNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests <= 0) {
@@ -87,14 +80,6 @@ public class OrderTable {
 
     public void makeGrouped() {
         this.grouped = true;
-    }
-
-    public void createdOrder(Order order) {
-        if (this.empty) {
-            throw new IllegalArgumentException("테이블이 비어있으면 주문할 수 없습니다.");
-        }
-        order.setOrderTableId(this.id);
-        this.orders.add(order);
     }
 
     public Long getId() {

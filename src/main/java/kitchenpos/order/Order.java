@@ -38,9 +38,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(List<OrderLineItem> orderLineItems) {
+    public Order(List<OrderLineItem> orderLineItems, Long orderTableId) {
         this.id = null;
-        this.orderTableId = null;
+        this.orderTableId = orderTableId;
         this.orderLineItems = new OrderLineItems(orderLineItems);
         this.orderStatus = OrderStatus.COOKING;
     }
@@ -68,7 +68,7 @@ public class Order {
         return orderLineItems.getCollection();
     }
 
-    public void setOrderTableId(Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 }
