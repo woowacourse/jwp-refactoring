@@ -17,13 +17,11 @@ public class MenuFixture {
     public static MenuProduct CHICKEN_MENU_PRODUCT = new MenuProduct(
             1L,
             1L,
-            1L,
             1
     );
 
     public static MenuProduct COKE_MENU_PRODUCT = new MenuProduct(
             2L,
-            1L,
             2L,
             1
     );
