@@ -45,10 +45,9 @@ public class Order {
     }
 
     private Order(
-            OrderStatus orderStatus,
             LocalDateTime orderedTime
     ) {
-        this(null, null, orderStatus, orderedTime);
+        this(null, null, COOKING, orderedTime);
     }
 
     private Order(
@@ -64,10 +63,9 @@ public class Order {
     }
 
     public static Order of(
-            OrderStatus orderStatus,
             List<OrderLineItem> orderLineItems
     ) {
-        Order orders = new Order(orderStatus, LocalDateTime.now());
+        Order orders = new Order(LocalDateTime.now());
         orders.addAllOrderLineItems(orderLineItems);
 
         return orders;

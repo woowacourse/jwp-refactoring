@@ -1,9 +1,11 @@
 package kitchenpos.fixture;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.MEAL;
+
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -13,7 +15,7 @@ public class OrderFixture {
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Order orders = Order.of(OrderStatus.COOKING, orderLineItems);
+        Order orders = Order.of(orderLineItems);
         savedOrderTable.addOrder(orders);
 
         return orders;
@@ -23,7 +25,7 @@ public class OrderFixture {
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Order orders = Order.of(OrderStatus.COOKING, orderLineItems);
+        Order orders = Order.of(orderLineItems);
         savedOrderTable.addOrder(orders);
 
         return orders;
@@ -33,7 +35,8 @@ public class OrderFixture {
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Order orders = Order.of(OrderStatus.MEAL, orderLineItems);
+        Order orders = Order.of(orderLineItems);
+        orders.changeOrderStatus(MEAL);
         savedOrderTable.addOrder(orders);
 
         return orders;
@@ -43,7 +46,8 @@ public class OrderFixture {
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Order orders = Order.of(OrderStatus.COMPLETION, orderLineItems);
+        Order orders = Order.of(orderLineItems);
+        orders.changeOrderStatus(COMPLETION);
         savedOrderTable.addOrder(orders);
 
         return orders;
@@ -52,7 +56,7 @@ public class OrderFixture {
     public static Order 존재하지_않는_주문_테이블을_가진_주문_생성(
             List<OrderLineItem> orderLineItems
     ) {
-        Order orders = Order.of(OrderStatus.COOKING, orderLineItems);
+        Order orders = Order.of(orderLineItems);
         OrderTable orderTable = OrderTable.of(0, false);
         orderTable.addOrder(orders);
 

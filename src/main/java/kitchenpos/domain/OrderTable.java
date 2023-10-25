@@ -57,11 +57,11 @@ public class OrderTable {
 
     public static OrderTable of(
             int numberOfGuests,
-            boolean emtpy
+            boolean empty
     ) {
         return new OrderTable(
                 NumberOfGuests.from(numberOfGuests),
-                emtpy
+                empty
         );
     }
 
