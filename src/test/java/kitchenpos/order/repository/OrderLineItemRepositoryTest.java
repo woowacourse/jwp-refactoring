@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.config.RepositoryTest;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.config.RepositoryTest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.repository.OrderTableRepository;
@@ -72,7 +72,7 @@ class OrderLineItemRepositoryTest {
 
         Menu menuEntity = Menu.builder()
                 .name("닭가슴살 샐러드")
-                .menuGroup(menuGroup)
+                .menuGroupId(menuGroup.getId())
                 .price(1_000_000)
                 .build();
         menu = menuRepository.save(menuEntity);

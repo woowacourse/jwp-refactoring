@@ -10,7 +10,7 @@ public class MenuFixture {
         return Menu.builder()
                 .name(name)
                 .price(price)
-                .menuGroup(MenuGroup.builder().build())
+                .menuGroupId(MenuGroup.builder().build().getId())
                 .build();
     }
 }

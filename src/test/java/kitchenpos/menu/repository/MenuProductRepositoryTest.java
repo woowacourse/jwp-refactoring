@@ -3,13 +3,13 @@ package kitchenpos.menu.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.config.RepositoryTest;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
-import kitchenpos.config.RepositoryTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ class MenuProductRepositoryTest {
         Menu menuEntity = Menu.builder()
                 .name("닭가슴살")
                 .price(1_000)
-                .menuGroup(menuGroup)
+                .menuGroupId(menuGroup.getId())
                 .build();
         menu = menuRepository.save(menuEntity);
 

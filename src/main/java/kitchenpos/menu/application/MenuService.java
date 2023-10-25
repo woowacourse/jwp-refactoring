@@ -2,15 +2,15 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.application.request.MenuCreateRequest;
 import kitchenpos.dto.ProductQuantityDto;
+import kitchenpos.menu.application.request.MenuCreateRequest;
 import kitchenpos.menu.application.response.MenuResponse;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,17 +38,21 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 메뉴 그룹이 없습니다."));
 
-        Menu menu = Menu.builder()
-                .name(menuCreateRequest.getName())
-                .price(menuCreateRequest.getPrice())
-                .menuGroup(menuGroup)
-                .build();
+        Menu menu = createMenu(menuCreateRequest, menuGroup);
 
         List<MenuProduct> menuProducts = getMenuProducts(menuCreateRequest, menu);
         menu.addMenuProducts(menuProducts);
 
         Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.from(savedMenu);
+    }
+
+    private Menu createMenu(MenuCreateRequest menuCreateRequest, MenuGroup menuGroup) {
+        return Menu.builder()
+                .name(menuCreateRequest.getName())
+                .price(menuCreateRequest.getPrice())
+                .menuGroupId(menuGroup.getId())
+                .build();
     }
 
     private List<MenuProduct> getMenuProducts(MenuCreateRequest menuCreateRequest, Menu menu) {

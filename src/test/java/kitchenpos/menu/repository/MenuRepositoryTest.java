@@ -3,9 +3,9 @@ package kitchenpos.menu.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.config.RepositoryTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.config.RepositoryTest;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,7 +77,7 @@ class MenuRepositoryTest {
         return Menu.builder()
                 .name("스투키")
                 .price(10_000)
-                .menuGroup(menuGroup)
+                .menuGroupId(menuGroup.getId())
                 .build();
     }
 }

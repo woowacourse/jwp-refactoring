@@ -8,17 +8,16 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.config.ServiceTest;
 import kitchenpos.dto.OrderLineItemDto;
+import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.order.application.request.OrderCreateRequest;
 import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderResponse;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -44,9 +43,6 @@ class OrderServiceTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
-
     private Menu menu;
 
     private OrderTable orderTable;
@@ -54,7 +50,7 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.builder().name("인형").build());
-        menu = menuRepository.save(Menu.builder().menuGroup(menuGroup).name("벨리곰").price(10_000).build());
+        menu = menuRepository.save(Menu.builder().menuGroupId(menuGroup.getId()).name("벨리곰").price(10_000).build());
         orderTable = orderTableRepository.save(OrderTableFixture.createOrderTable(null, false, 5));
     }
 

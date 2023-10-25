@@ -6,14 +6,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.dto.vo.MenuName;
 import kitchenpos.dto.vo.Price;
 
 @Entity
@@ -25,15 +23,14 @@ public class Menu {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Embedded
+    private MenuName name;
 
     @Embedded
     private Price price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    @Column(name = "menu_group_id")
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts;
@@ -41,10 +38,10 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(String name, Price price, MenuGroup menuGroup) {
-        this.name = name;
+    private Menu(String name, Price price, Long menuGroupId) {
+        this.name = new MenuName(name);
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
     }
 
     public void addMenuProducts(List<MenuProduct> menuProducts) {
@@ -68,15 +65,15 @@ public class Menu {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public BigDecimal getPrice() {
         return price.getValue();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
@@ -91,7 +88,7 @@ public class Menu {
 
         private String name;
         private Price price;
-        private MenuGroup menuGroup;
+        private Long menuGroupId;
         private List<MenuProduct> menuProducts;
 
         public MenuBuilder name(String name) {
@@ -104,13 +101,13 @@ public class Menu {
             return this;
         }
 
-        public MenuBuilder menuGroup(MenuGroup menuGroup) {
-            this.menuGroup = menuGroup;
+        public MenuBuilder menuGroupId(Long menuGroupId) {
+            this.menuGroupId = menuGroupId;
             return this;
         }
 
         public Menu build() {
-            return new Menu(name, price, menuGroup);
+            return new Menu(name, price, menuGroupId);
         }
     }
 }

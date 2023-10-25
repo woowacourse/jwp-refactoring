@@ -30,7 +30,7 @@ public class MenuResponse {
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice().toString(),
-                menu.getMenuGroup().getId(),
+                menu.getMenuGroupId(),
                 menu.getMenuProducts().stream()
                         .map(ProductQuantityDto::from)
                         .collect(Collectors.toList())
