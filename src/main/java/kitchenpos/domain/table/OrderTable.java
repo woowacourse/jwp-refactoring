@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -53,7 +52,7 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
     }
 
-    public void ungroup(){
+    public void ungroup() {
         empty = true;
         tableGroupId = null;
     }

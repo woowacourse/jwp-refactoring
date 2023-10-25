@@ -1,7 +1,7 @@
 package kitchenpos.domain.table;
 
-import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroup;
 import kitchenpos.exception.orderTableException.InvalidOrderTableException;
+import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroup;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
@@ -47,5 +47,4 @@ public class OrderTables {
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
-
 }

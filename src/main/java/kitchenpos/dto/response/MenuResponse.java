@@ -30,7 +30,6 @@ public class MenuResponse {
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses);
     }
 
-
     public Long getId() {
         return id;
     }

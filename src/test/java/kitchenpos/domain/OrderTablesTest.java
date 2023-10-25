@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class OrderTablesTest {
 
     @Test
-    void create(){
+    void create() {
         //given
         final OrderTable orderTable = new OrderTable(null, 3, false);
         final OrderTable orderTable2 = new OrderTable(null, 3, false);
@@ -25,7 +25,7 @@ class OrderTablesTest {
     }
 
     @Test
-    void validateCreate(){
+    void validateCreate() {
         //given
         final OrderTable orderTable = new OrderTable(null, 3, false);
 
@@ -36,7 +36,7 @@ class OrderTablesTest {
     }
 
     @Test
-    void ungroup(){
+    void ungroup() {
         //given
         final OrderTable orderTable = new OrderTable(null, 3, false);
 

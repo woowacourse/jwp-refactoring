@@ -33,5 +33,4 @@ public class MenuGroup {
     public String getName() {
         return name;
     }
-
 }

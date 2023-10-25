@@ -1,6 +1,5 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.exception.menuProductException.InvalidMenuProductsPriceException;
 
 import javax.persistence.CascadeType;

@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Embeddable
 public class Price {
-    BigDecimal price;
+    private BigDecimal price;
 
     protected Price() {
     }

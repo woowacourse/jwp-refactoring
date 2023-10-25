@@ -1,12 +1,12 @@
 package kitchenpos.application.menu;
 
+import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.MenuRequest;
@@ -51,7 +51,7 @@ public class MenuService {
                 .map(productRequest -> {
                     final Product product = productRepository.findById(productRequest.getProductId())
                             .orElseThrow(ProductNotFoundException::new);
-                    return new MenuProduct(product.getId(),product.getName(),new Price(product.getPrice()), productRequest.getQuantity());
+                    return new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), productRequest.getQuantity());
                 }).collect(Collectors.toList()), menuRequest.getPrice());
     }
 

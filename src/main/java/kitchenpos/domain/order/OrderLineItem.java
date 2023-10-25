@@ -14,7 +14,7 @@ public class OrderLineItem {
 
     private Long menuId;
 
-    private long quantity;
+    private Long quantity;
 
     protected OrderLineItem() {
     }
