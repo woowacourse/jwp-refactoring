@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.application.product.ProductService;
-import kitchenpos.dto.request.ProductRequest;
-import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.exception.InvalidPriceException;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.dto.ProductRequest;
+import kitchenpos.product.dto.ProductResponse;
+import kitchenpos.product.exception.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,15 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.application.tableGroup.TableGroupService;
-import kitchenpos.application.table.TableService;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.exception.orderException.IllegalOrderStatusException;
-import kitchenpos.exception.orderTableException.IllegalOrderTableGuestNumberException;
-import kitchenpos.exception.orderTableException.OrderTableNotFoundException;
+import kitchenpos.tableGroup.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.table.dto.OrderTableResponse;
+import kitchenpos.order.exception.IllegalOrderStatusException;
+import kitchenpos.table.exception.IllegalOrderTableGuestNumberException;
+import kitchenpos.table.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

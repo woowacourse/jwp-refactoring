@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItems;
-import kitchenpos.exception.orderLineItemException.InvalidOrderLineItemException;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
+import kitchenpos.order.exception.InvalidOrderLineItemException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

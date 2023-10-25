@@ -1,25 +1,25 @@
 package kitchenpos.application;
 
-import kitchenpos.application.order.OrderService;
-import kitchenpos.application.table.TableService;
-import kitchenpos.application.tableGroup.TableGroupService;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menuGroup.MenuGroup;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.request.OrderTableIdRequest;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.exception.orderException.IllegalOrderStatusException;
-import kitchenpos.exception.orderTableException.InvalidOrderTableException;
-import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroupException;
-import kitchenpos.exception.tableGroupException.TableGroupNotFoundException;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.tableGroup.application.TableGroupService;
+import kitchenpos.product.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menuGroup.domain.MenuGroup;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.table.dto.OrderTableIdRequest;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.tableGroup.dto.TableGroupRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.table.dto.OrderTableResponse;
+import kitchenpos.tableGroup.dto.TableGroupResponse;
+import kitchenpos.order.exception.IllegalOrderStatusException;
+import kitchenpos.table.exception.InvalidOrderTableException;
+import kitchenpos.table.exception.DuplicateOrderTableException;
+import kitchenpos.tableGroup.exception.TableGroupNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -116,7 +116,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
 
         //when&then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(DuplicateCreateTableGroupException.class)
+                .isInstanceOf(DuplicateOrderTableException.class)
                 .hasMessage("이미 지정된 테이블은 단체 지정할 수 없습니다.");
     }
 

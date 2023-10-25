@@ -1,16 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.application.menu.MenuService;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.menuGroup.MenuGroup;
-import kitchenpos.domain.product.Product;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.exception.InvalidPriceException;
-import kitchenpos.exception.menuGroupException.MenuGroupNotFoundException;
-import kitchenpos.exception.menuProductException.InvalidMenuProductsPriceException;
-import kitchenpos.exception.productException.ProductNotFoundException;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.product.domain.Price;
+import kitchenpos.menuGroup.domain.MenuGroup;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.product.exception.InvalidPriceException;
+import kitchenpos.menu.exception.MenuGroupNotFoundException;
+import kitchenpos.menu.exception.InvalidMenuProductsPriceException;
+import kitchenpos.product.exception.ProductNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

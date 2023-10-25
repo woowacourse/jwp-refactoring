@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.tableGroup.TableGroup;
+import kitchenpos.tableGroup.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

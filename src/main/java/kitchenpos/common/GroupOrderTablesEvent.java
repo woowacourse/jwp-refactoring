@@ -1,6 +1,6 @@
 package kitchenpos.common;
 
-import kitchenpos.dto.request.OrderTableIdRequest;
+import kitchenpos.table.dto.OrderTableIdRequest;
 
 import java.util.List;
 
