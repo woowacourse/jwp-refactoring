@@ -3,6 +3,8 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.CustomException;
+import kitchenpos.exception.ExceptionType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,5 +24,10 @@ public class ProductService {
 
     public List<Product> list() {
         return productDao.findAll();
+    }
+
+    public Product findById(Long productId) {
+        return productDao.findById(productId)
+                         .orElseThrow(() -> new CustomException(ExceptionType.PRODUCT_NOT_FOUND, String.valueOf(productId)));
     }
 }

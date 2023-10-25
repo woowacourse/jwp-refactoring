@@ -47,6 +47,6 @@ class ProductTest {
         assertThatThrownBy(() -> new Product.Builder()
             .name(name)
             .price(price)
-            .build()).hasMessageContaining(ExceptionType.PRODUCT_PRICE.getMessage());
+            .build()).hasMessageContaining(ExceptionType.PRICE_RANGE.getMessage());
     }
 }

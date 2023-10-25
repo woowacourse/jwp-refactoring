@@ -1,6 +1,7 @@
 package kitchenpos.fixture;
 
 import java.util.function.Consumer;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupDto;
 
 public enum MenuGroupFixture {
@@ -27,5 +28,9 @@ public enum MenuGroupFixture {
         menuGroupDto.setId(id);
         menuGroupDto.setName(name);
         return menuGroupDto;
+    }
+
+    public MenuGroup toEntity() {
+        return new MenuGroup(id, name);
     }
 }

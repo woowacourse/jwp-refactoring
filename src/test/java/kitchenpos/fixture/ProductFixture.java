@@ -2,6 +2,7 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import java.util.function.Consumer;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductDto;
 
 public enum ProductFixture {
@@ -34,6 +35,10 @@ public enum ProductFixture {
         productDto.setName(name);
         productDto.setPrice(price);
         return productDto;
+    }
+
+    public Product toEntity() {
+        return new Product(id, name, price);
     }
 }
 

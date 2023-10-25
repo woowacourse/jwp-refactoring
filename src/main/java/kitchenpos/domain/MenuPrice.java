@@ -6,15 +6,15 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import kitchenpos.exception.CustomException;
 
-public class ProductPrice {
+public class MenuPrice {
 
     @Column(name = "price")
     private BigDecimal value;
 
-    protected ProductPrice() {
+    protected MenuPrice() {
     }
 
-    public ProductPrice(BigDecimal value) {
+    public MenuPrice(BigDecimal value) {
         validatePrice(value);
         this.value = value;
     }

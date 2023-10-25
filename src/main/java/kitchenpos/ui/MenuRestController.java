@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 public class MenuRestController {
+
     private final MenuService menuService;
 
     public MenuRestController(final MenuService menuService) {
@@ -24,14 +25,14 @@ public class MenuRestController {
         final MenuDto created = menuService.create(menuDto);
         final URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                             .body(created)
+            ;
     }
 
     @GetMapping("/api/menus")
     public ResponseEntity<List<MenuDto>> list() {
         return ResponseEntity.ok()
-                .body(menuService.list())
-                ;
+                             .body(menuService.list())
+            ;
     }
 }
