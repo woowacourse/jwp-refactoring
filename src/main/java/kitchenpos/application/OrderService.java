@@ -36,7 +36,7 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderCreateDto orderCreateDto) {
-        final List<OrderLineItemDto> orderLineItemDtos = orderCreateDto.getOrderLineItemDtos();
+        final List<OrderLineItemDto> orderLineItemDtos = orderCreateDto.getOrderLineItems();
 
         if (orderLineItemDtos.isEmpty()) {
             throw new EmptyOrderLineItemException();
