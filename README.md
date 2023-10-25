@@ -81,3 +81,68 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+
+## 리팩터링
+
+### 상품
+- 상품 가격의 null 또는 음수 여부 검증 책임을 서비스 레이어에서 도메인으로 위임한다.
+- vo를 도입한다.
+- JPA를 적용한다.
+
+### 메뉴 그룹
+- vo를 도입한다.
+- JPA를 적용한다.
+
+### 메뉴 상품
+- JPA를 적용한다.
+
+### 메뉴
+- 서비스의 로직을 도메인으로 이동시킨다.
+  - [x] 메뉴 가격의 null 또는 음수 여부 검증
+  - [x] 주문 가격 제한(수량 x 상품 가격 보다 작거나 같아야 함)
+- [x] JPA를 적용한다
+  
+    
+## 테이블
+- JPA를 적용한다
+  - [x] 엔티티를 등록한다
+  - [x] Repository를 생성한다.
+  - [x] 테스트를 실행한다.
+- DTO를 적용한다.
+  - [x] Getter Setter를 제거한다.
+- 서비스 레이어의 로직을 도메인으로 옮긴다
+- [x] ordertable 등록 시 초기화 작업
+  - changeEmpty()
+    - [x] OrderTable 내 tableGroup null 체크
+    - order 상태(조리, 식사) 체크
+  - changeNumberOfGuest()
+    - [x] 변경 인원 수(>0) 검증
+
+## 테이블 그룹 
+- [x] DTO를 적용한다
+  - [x] Getter Setter를 제거한다.
+- [x] 테스트 코드를 수정한다.
+- 서비스 레이어 로직을 도메인으로 옮긴다.
+  - [x] List<OrderTable> empty 검증
+  - [x] List<OrderTable> 사이즈(>2) 검증
+  - [x] OrderTable Empty 검증
+  - [x] OrderTable 그룹 지정 여부 검증
+
+## 주문
+- [x] JPA를 적용한다.
+  - [x] 엔티티를 등록한다
+  - [x] Repository를 생성하고 적용한다.
+  - [x] 테스트코드를 실행한다
+- [x] DTO를 적용한다
+  - [x] Getter, Setter를 제거한다.
+- [x] 서비스 로직과 테스트 코드를 수정한다.
+- [x] 서비스 로직을 도메인으로 옮긴다
+  - 등록
+    - [x] List<OrderLineItem> Empty 검증
+    - [x] OrderTable empty 검증
+  - 상태 변경
+    - [x] OrderStatus(Completion) 검증
+
+
+

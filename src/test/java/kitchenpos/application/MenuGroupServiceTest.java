@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menugroup.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,8 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴그룹 등록에 성공한다.")
     void succeedInRegisteringMenuGroup() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
         String menuGroupName = "즐겨찾는 메뉴";
-        menuGroup.setName(menuGroupName);
+        MenuGroupRequest menuGroup = new MenuGroupRequest(menuGroupName);
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
@@ -40,11 +40,8 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴그룹 조회에 성공한다.")
     void succeedInSearchingMenuGroupList() {
         // given
-        MenuGroup menuGroupA = new MenuGroup();
-        menuGroupA.setName("즐겨찾는 메뉴");
-
-        MenuGroup menuGroupB = new MenuGroup();
-        menuGroupB.setName("자주 먹는 메뉴");
+        MenuGroupRequest menuGroupA = new MenuGroupRequest("즐겨찾는 메뉴");
+        MenuGroupRequest menuGroupB = new MenuGroupRequest("자주 먹는 메뉴");
 
         // when
         menuGroupService.create(menuGroupA);

@@ -1,19 +1,22 @@
 package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.dto.order.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +28,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -36,67 +39,57 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     private Menu savedMenu;
     private MenuProduct savedMenuProduct;
     private Product savedProduct;
     private MenuGroup savedMenuGroup;
 
+    private OrderTable savedOrderTable;
+
     @BeforeEach
     void setup() {
-        Product product = new Product();
-        product.setName("치킨");
-        product.setPrice(BigDecimal.valueOf(10000L));
-        savedProduct = productDao.save(product);
+        Product product = new Product("치킨", BigDecimal.valueOf(10000L));
+        savedProduct = productRepository.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(2);
-        menuProduct.setProductId(savedProduct.getId());
+        MenuGroup menuGroup = new MenuGroup("즐겨찾는 음식");
+        savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("즐겨찾는 음식");
-        savedMenuGroup = menuGroupDao.save(menuGroup);
+        Menu menu = new Menu("두마리치킨", BigDecimal.valueOf(20000), savedMenuGroup.getId());
+        savedMenu = menuRepository.save(menu);
 
-        Menu menu = new Menu();
-        menu.setName("두마리치킨");
-        menu.setPrice(BigDecimal.valueOf(20000));
-        menu.setMenuProducts(List.of(savedMenuProduct));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        savedMenu = menuDao.save(menu);
+        MenuProduct menuProduct = new MenuProduct(savedMenu, savedProduct, 2l);
+        savedMenuProduct = menuProductRepository.save(menuProduct);
+
+        OrderTable orderTable = new OrderTable(4, false);
+        savedOrderTable = orderTableRepository.save(orderTable);
     }
 
     @Test
     @DisplayName("주문 등록에 성공한다.")
     void succeedInRegisteringOrder() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(2);
-        orderLineItem.setMenuId(savedMenu.getId());
-
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
 
         // when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(orderRequest);
 
         // then
         assertSoftly(softly -> {
@@ -109,100 +102,70 @@ class OrderServiceTest {
     @DisplayName("주문 항목이 없으면 주문 등록 시 예외가 발생한다.")
     void failToRegisterOrderWithNonExistOrderLine() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("빈 주문 항목으로는 주문을 등록할 수 없습니다.");
     }
 
     @Test
     @DisplayName("등록되지 않은 메뉴 항목을 사용하여 주문 등록 시 예외가 발생한다.")
     void failToRegisterOrderWithNonRegisteredOrderLine() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Long unsavedMenuId = 1000L;
+        OrderLineItemRequest wrongOrderLineItemRequest = new OrderLineItemRequest(unsavedMenuId, 2);
 
-        Menu menu = new Menu();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
-
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), List.of(wrongOrderLineItemRequest));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("등록되지 않은 메뉴에는 주문을 등록할 수 없습니다.");
     }
 
     @Test
     @DisplayName("등록된 테이블이 존재하지 않으면 주문 등록 시 예외가 발생한다.")
     void failToRegisterOrderWithNonRegisteredTable() {
         // given
-        OrderTable orderTable = new OrderTable();
+        Long unsavedTableId = 1000L;
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(2);
-        orderLineItem.setMenuId(savedMenu.getId());
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
 
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
+        OrderRequest orderRequest = new OrderRequest(unsavedTableId, List.of(orderLineItemRequest));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("등록되지 않은 테이블에는 주문을 등록할 수 없습니다.");
     }
 
     @Test
     @DisplayName("등록된 테이블이 비어있을 경우 주문 등록 시 예외가 발생한다.")
     void failToRegisterOrderWithNonEmptyTable() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable orderTable = new OrderTable(0, true);
+        OrderTable savedEmptyTable = orderTableRepository.save(orderTable);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(2);
-        orderLineItem.setMenuId(savedMenu.getId());
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
 
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
+        OrderRequest orderRequest = new OrderRequest(savedEmptyTable.getId(), List.of(orderLineItemRequest));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("빈테이블은 주문을 등록할 수 없습니다.");
     }
 
     @Test
     @DisplayName("주문 내역을 조회하는데 성공한다.")
     void succeedInSearchingOrderList() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(2);
-        orderLineItem.setMenuId(savedMenu.getId());
-
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        Order savedOrder = orderService.create(order);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
+        orderService.create(orderRequest);
 
         // when & then
         assertThat(orderService.list()).hasSize(1);
@@ -212,25 +175,15 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경에 성공한다.")
     void succeedInChangingOrderStatus() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(2);
-        orderLineItem.setMenuId(savedMenu.getId());
-
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        Order savedOrder = orderService.create(order);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
+        Order savedOrder = orderService.create(orderRequest);
 
         // when
-        Order newOrder = new Order();
-        newOrder.setOrderStatus(OrderStatus.MEAL.name());
+        ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(OrderStatus.MEAL.name());
 
-        Order chagedOrder = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
+        Order chagedOrder = orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest);
 
         // then
         assertThat(chagedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -240,43 +193,30 @@ class OrderServiceTest {
     @DisplayName("등록된 주문이 존재하지 않은 상태에서 주문 상태 변경 시 예외가 발생한다.")
     void failToChangeOrderStatusWithNonRegisteredOrder() {
         // given
-        Order order = new Order();
+        Long unsavedOrderId = 1000L;
 
         // when
-        Order newOrder = new Order();
-        newOrder.setOrderStatus(OrderStatus.MEAL.name());
+        ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(OrderStatus.MEAL.name());
 
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), newOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(unsavedOrderId, changeOrderStatusRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("등록되지 않은 주문은 주문 상태를 바꿀 수 없습니다.");
     }
 
     @Test
     @DisplayName("주문 상태가 'COMPLETION'인 경우 주문 상태 변경 시 예외가 발생한다.")
     void failToChangeOrderStatusWithCompletionOrderStatus() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(2);
-        orderLineItem.setMenuId(savedMenu.getId());
-
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
-        Order savedOrder = orderDao.save(order);
+        Order order = new Order(savedOrderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        Order savedOrder = orderRepository.save(order);
 
         // when
-        Order newOrder = new Order();
-        newOrder.setOrderStatus(OrderStatus.MEAL.name());
+        ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(OrderStatus.MEAL.name());
 
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), newOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("완료 상태의 주문은 상태 변경이 불가능합니다.");
     }
 }
