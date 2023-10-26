@@ -21,6 +21,7 @@ public class Product {
     }
 
     private Product(Long id, String name, BigDecimal price) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -30,7 +31,7 @@ public class Product {
         this(null, name, price);
     }
 
-    public void validatePrice() {
+    private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
