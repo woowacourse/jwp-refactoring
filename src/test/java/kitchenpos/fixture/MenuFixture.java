@@ -28,14 +28,14 @@ public class MenuFixture {
 
     public static MenuCreateRequest 메뉴요청_생성(final Menu menu) {
         final var menuProductRequests = menu.getMenuProducts().stream()
-                .map(it -> new MenuProductRequest(it.getProduct().getId(), it.getQuantity()))
+                .map(it -> new MenuProductRequest(it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new MenuCreateRequest(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductRequests);
     }
 
     public static MenuCreateRequest 메뉴요청_망고치킨_N원_생성(final int price, final MenuGroup menuGroup, final MenuProduct... menuProducts) {
         final var menuProductRequests = Arrays.stream(menuProducts)
-                .map(it -> new MenuProductRequest(it.getProduct().getId(), it.getQuantity()))
+                .map(it -> new MenuProductRequest(it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new MenuCreateRequest("망고 치킨", BigDecimal.valueOf(price), menuGroup.getId(), menuProductRequests);
     }
