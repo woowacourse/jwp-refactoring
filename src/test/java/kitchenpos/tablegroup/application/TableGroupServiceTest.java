@@ -1,14 +1,18 @@
 package kitchenpos.tablegroup.application;
 
+import static kitchenpos.common.fixtures.MenuFixtures.MENU1_NAME;
+import static kitchenpos.common.fixtures.MenuFixtures.MENU1_PRICE;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
 import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1_CREATE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
@@ -111,7 +115,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-            final Order order = Order.from(savedOrderTable1.getId(), orderLineItemSize, orderLineItemSize);
+            final OrderLineItem orderLineItem = new OrderLineItem(MENU1_NAME, MENU1_PRICE, 1L);
+            final Order order = Order.from(savedOrderTable1.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
             order.changeStatus(OrderStatus.MEAL);
             orderRepository.save(order);
 

@@ -117,10 +117,9 @@ class OrderServiceTest extends ServiceTest {
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
-
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
-            orderLineItem.confirmOrder(order);
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+
             orderRepository.save(order);
 
             // when
@@ -161,10 +160,9 @@ class OrderServiceTest extends ServiceTest {
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
-
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
-            orderLineItem.confirmOrder(order);
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+
             orderRepository.save(order);
 
             // when
@@ -193,10 +191,9 @@ class OrderServiceTest extends ServiceTest {
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
-
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
-            orderLineItem.confirmOrder(order);
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+
             orderRepository.save(order);
 
             // when & then
@@ -223,11 +220,10 @@ class OrderServiceTest extends ServiceTest {
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
-            order.changeStatus(OrderStatus.COMPLETION);
-
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
-            orderLineItem.confirmOrder(order);
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+
+            order.changeStatus(OrderStatus.COMPLETION);
             orderRepository.save(order);
 
             // when & then

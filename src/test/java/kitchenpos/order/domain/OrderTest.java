@@ -1,8 +1,11 @@
 package kitchenpos.order.domain;
 
+import static kitchenpos.common.fixtures.MenuFixtures.MENU1_NAME;
+import static kitchenpos.common.fixtures.MenuFixtures.MENU1_PRICE;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.exception.OrderException;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -17,9 +20,10 @@ class OrderTest {
         // given
         final int orderLineItemSize = 1;
         final int foundMenuSize = 2;
+        final OrderLineItem orderLineItem = new OrderLineItem(MENU1_NAME, MENU1_PRICE, 1L);
 
         // when & then
-        assertThatThrownBy(() -> Order.from(1L, orderLineItemSize, foundMenuSize))
+        assertThatThrownBy(() -> Order.from(1L, orderLineItemSize, foundMenuSize, List.of(orderLineItem)))
                 .isInstanceOf(OrderException.NotFoundOrderLineItemMenuExistException.class)
                 .hasMessage("[ERROR] 주문 항목 목록에 메뉴가 누락된 주문 항목이 존재합니다.");
     }
@@ -29,7 +33,8 @@ class OrderTest {
     void validateAvailableChangeStatus() {
         // given
         final int orderLineItemSize = 1;
-        final Order order = Order.from(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false).getId(), orderLineItemSize, orderLineItemSize);
+        final OrderLineItem orderLineItem = new OrderLineItem(MENU1_NAME, MENU1_PRICE, 1L);
+        final Order order = Order.from(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false).getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
         order.changeStatus(OrderStatus.COMPLETION);
 
         // when & then

@@ -42,22 +42,20 @@ public class OrderService {
         final Long orderTableId = request.getOrderTableId();
         orderValidator.validateCreate(orderTableId);
 
-        final Order order = Order.from(orderTableId, orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds));
+        List<OrderLineItem> orderLineItems = getOrderLineItems(request);
+        final Order order = Order.from(orderTableId, orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds), orderLineItems);
         final Order savedOrder = orderRepository.save(order);
-        associateOrderLineItem(orderLineItemRequests, savedOrder);
 
         return OrderResponse.from(savedOrder);
     }
 
-    private void associateOrderLineItem(final List<OrderLineItemRequest> orderLineItemRequests,
-                                        final Order savedOrder) {
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(NotFoundMenuException::new);
-            final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(),
-                    orderLineItemRequest.getQuantity());
-            orderLineItem.confirmOrder(savedOrder);
-        }
+    private List<OrderLineItem> getOrderLineItems(final OrderCreateRequest request) {
+        return request.getOrderLineItems().stream()
+                .map(orderLineItemRequest -> {
+                    final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                            .orElseThrow(NotFoundMenuException::new);
+                    return new OrderLineItem(menu.getName(), menu.getPrice(), orderLineItemRequest.getQuantity());
+                }).collect(Collectors.toUnmodifiableList());
     }
 
     public OrdersResponse list() {

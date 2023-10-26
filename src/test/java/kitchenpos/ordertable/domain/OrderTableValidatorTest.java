@@ -1,11 +1,15 @@
 package kitchenpos.ordertable.domain;
 
+import static kitchenpos.common.fixtures.MenuFixtures.MENU1_NAME;
+import static kitchenpos.common.fixtures.MenuFixtures.MENU1_PRICE;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import kitchenpos.common.fixtures.OrderTableFixtures;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.OrderTableException.CannotChangeEmptyStateByOrderStatusException;
@@ -46,7 +50,8 @@ class OrderTableValidatorTest {
         final OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         final int orderLineItemSize = 1;
-        final Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
+        final OrderLineItem orderLineItem = new OrderLineItem(MENU1_NAME, MENU1_PRICE, 1L);
+        final Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
         order.changeStatus(OrderStatus.MEAL);
         orderRepository.save(order);
 
