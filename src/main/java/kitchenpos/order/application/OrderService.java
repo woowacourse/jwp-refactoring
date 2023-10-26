@@ -58,6 +58,8 @@ public class OrderService {
         return OrderLineItem.builder()
                 .menuId(orderLineItemDto.getMenuId())
                 .quantity(orderLineItemDto.getQuantity())
+                .menuName(orderLineItemDto.getMenuName())
+                .price(orderLineItemDto.getPrice())
                 .build();
     }
 

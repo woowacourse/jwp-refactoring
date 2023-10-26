@@ -59,7 +59,8 @@ class OrderServiceTest {
 
         @Test
         void 정상적으로_생성한다() {
-            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1, menu.getName(),
+                    menu.getPrice().toString());
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                     List.of(orderLineItemDto));
 
@@ -86,7 +87,8 @@ class OrderServiceTest {
         @Test
         void 주문_메뉴를_찾을_수_없으면_예외가_발생한다() {
             Long wrongMenuId = -1L;
-            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(wrongMenuId, 1);
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(wrongMenuId, 1, menu.getName(),
+                    menu.getPrice().toString());
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                     List.of(orderLineItemDto));
 
@@ -96,7 +98,8 @@ class OrderServiceTest {
 
         @Test
         void 주문_테이블을_찾을_수_없으면_예외가_발생한다() {
-            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1, menu.getName(),
+                    menu.getPrice().toString());
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(-1L, List.of(orderLineItemDto));
 
             assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -107,7 +110,8 @@ class OrderServiceTest {
         @Test
         void 주문_테이블이_EMPTY_상태이면_예외가_발생한다() {
             OrderTable emptyOrderTable = orderTableRepository.save(OrderTableFixture.createOrderTable(null, true, 10));
-            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1, menu.getName(),
+                    menu.getPrice().toString());
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(),
                     List.of(orderLineItemDto));
 
@@ -119,7 +123,8 @@ class OrderServiceTest {
 
     @Test
     void 모든_주문_엔티티를_조회한다() {
-        OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+        OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1, menu.getName(),
+                menu.getPrice().toString());
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 List.of(orderLineItemDto));
         orderService.create(orderCreateRequest);
@@ -134,7 +139,8 @@ class OrderServiceTest {
 
         @Test
         void 정상적으로_변경한다() {
-            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1, menu.getName(),
+                    menu.getPrice().toString());
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                     List.of(orderLineItemDto));
             OrderResponse orderResponse = orderService.create(orderCreateRequest);
@@ -149,13 +155,15 @@ class OrderServiceTest {
 
         @Test
         void 주문_상태가_완료인_주문의_상태를_변경하면_예외가_발생한다() {
-            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1, menu.getName(),
+                    menu.getPrice().toString());
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                     List.of(orderLineItemDto));
             OrderResponse orderResponse = orderService.create(orderCreateRequest);
             orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusUpdateRequest("COMPLETION"));
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusUpdateRequest("COMPLETION")))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(),
+                    new OrderStatusUpdateRequest("COMPLETION")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("완료된 주문의 상태를 변경할 수 없습니다.");
         }
@@ -164,7 +172,8 @@ class OrderServiceTest {
         void 주문을_찾을_수_없으면_예외가_발생한다() {
             Long wrongOrderId = -1L;
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, new OrderStatusUpdateRequest("COMPLETION")))
+            assertThatThrownBy(
+                    () -> orderService.changeOrderStatus(wrongOrderId, new OrderStatusUpdateRequest("COMPLETION")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("일치하는 주문을 찾을 수 없습니다.");
         }
@@ -173,12 +182,14 @@ class OrderServiceTest {
         @NullAndEmptySource
         @ValueSource(strings = {"hello", "gray", "done"})
         void 존재하는_주문_상태가_아니면_예외가_발생한다(String status) {
-            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1, menu.getName(),
+                    menu.getPrice().toString());
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                     List.of(orderLineItemDto));
             OrderResponse orderResponse = orderService.create(orderCreateRequest);
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusUpdateRequest(status)))
+            assertThatThrownBy(
+                    () -> orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusUpdateRequest(status)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("일치하는 주문 상태를 찾을 수 없습니다.");
         }

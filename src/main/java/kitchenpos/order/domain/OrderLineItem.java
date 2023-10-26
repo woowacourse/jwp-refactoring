@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -24,12 +25,20 @@ public class OrderLineItem {
     @Embedded
     private Quantity quantity;
 
+    @Column(name = "menu_name")
+    private String menuName;
+
+    @Column(name = "menu_price")
+    private BigDecimal menuPrice;
+
     protected OrderLineItem() {
     }
 
-    private OrderLineItem(Long menuId, long quantity) {
+    private OrderLineItem(Long menuId, long quantity, String menuName, BigDecimal menuPrice) {
         this.menuId = menuId;
         this.quantity = new Quantity(quantity);
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
     }
 
     public Long getSeq() {
@@ -44,6 +53,14 @@ public class OrderLineItem {
         return quantity;
     }
 
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
+    }
+
     public static OrderLineItemBuilder builder() {
         return new OrderLineItemBuilder();
     }
@@ -52,6 +69,8 @@ public class OrderLineItem {
 
         private Long menuId;
         private long quantity;
+        private String menuName;
+        private BigDecimal price;
 
         public OrderLineItemBuilder menuId(Long menuId) {
             this.menuId = menuId;
@@ -63,8 +82,18 @@ public class OrderLineItem {
             return this;
         }
 
+        public OrderLineItemBuilder menuName(String name) {
+            this.menuName = name;
+            return this;
+        }
+
+        public OrderLineItemBuilder price(String price) {
+            this.price = BigDecimal.valueOf(Long.parseLong(price));
+            return this;
+        }
+
         public OrderLineItem build() {
-            return new OrderLineItem(menuId, quantity);
+            return new OrderLineItem(menuId, quantity, menuName, price);
         }
     }
 }
