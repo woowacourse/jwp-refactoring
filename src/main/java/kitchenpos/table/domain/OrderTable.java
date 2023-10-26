@@ -5,12 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class OrderTable {
 
-    private static final int MIN_NUMBER_OF_GUESTS = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +16,8 @@ public class OrderTable {
 
     private Long tableGroupId;
 
-    @NotNull
-    private Integer numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
 
     @Embedded
     private Empty empty;
@@ -28,16 +26,8 @@ public class OrderTable {
     }
 
     private OrderTable(Integer numberOfGuests, Boolean empty) {
-        validateNumberOfGuests(numberOfGuests);
-
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = NumberOfGuests.from(numberOfGuests);
         this.empty = Empty.from(empty);
-    }
-
-    private void validateNumberOfGuests(Integer numberOfGuests) {
-        if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
-            throw new IllegalArgumentException("테이블에 방문한 손님 수는 0 이상이어야 합니다.");
-        }
     }
 
     public static OrderTable create(Integer numberOfGuests, Boolean empty) {
@@ -45,14 +35,12 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(Integer numberOfGuests) {
-        validateChangeableNumberOfGuests(numberOfGuests);
+        validateChangeableNumberOfGuests();
 
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = NumberOfGuests.from(numberOfGuests);
     }
 
-    private void validateChangeableNumberOfGuests(Integer numberOfGuests) {
-        validateNumberOfGuests(numberOfGuests);
-
+    private void validateChangeableNumberOfGuests() {
         if (Boolean.TRUE.equals(isEmpty())) {
             throw new IllegalArgumentException("주문을 할 수 없는 상태이므로, 방문 손님 수를 변경할 수 없습니다.");
         }
@@ -62,7 +50,7 @@ public class OrderTable {
         validateChangeableEmpty();
         orderTableValidator.validateChangeableEmpty(id);
 
-        this.empty.change(empty);
+        this.empty = Empty.from(empty);
     }
 
     private void validateChangeableEmpty() {
@@ -77,12 +65,12 @@ public class OrderTable {
         }
 
         this.tableGroupId = tableGroupId;
-        this.empty.change(Boolean.FALSE);
+        this.empty = Empty.from(Boolean.FALSE);
     }
 
     public void ungroup() {
         this.tableGroupId = null;
-        this.empty.change(Boolean.FALSE);
+        this.empty = Empty.from(Boolean.FALSE);
     }
 
     public boolean isGrouped() {
@@ -94,7 +82,7 @@ public class OrderTable {
     }
 
     public Integer getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getNumberOfGuests();
     }
 
     public Boolean isEmpty() {

@@ -7,15 +7,15 @@ import javax.validation.constraints.NotNull;
 public class Empty {
 
     @NotNull
-    private Boolean isEmpty;
+    private Boolean empty;
 
     protected Empty() {
     }
 
-    private Empty(Boolean isEmpty) {
-        validate(isEmpty);
+    private Empty(Boolean empty) {
+        validate(empty);
 
-        this.isEmpty = isEmpty;
+        this.empty = empty;
     }
 
     private void validate(Boolean empty) {
@@ -28,12 +28,8 @@ public class Empty {
         return new Empty(empty);
     }
 
-    public void change(Boolean empty) {
-        this.isEmpty = empty;
-    }
-
     public Boolean isEmpty() {
-        return isEmpty;
+        return empty;
     }
 
 }
