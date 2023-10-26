@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import kitchenpos.exception.InvalidNumberException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.dto.CreateMenuProductsEvent;
+import kitchenpos.menu.dto.CreatedMenuProductsEvent;
 import kitchenpos.menu.dto.MenuProductDto;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
@@ -24,7 +24,7 @@ public class CreatedMenuProductEventListener {
     }
 
     @EventListener
-    public void listenCreatedMenuProductEvent(final CreateMenuProductsEvent event) {
+    public void listenCreatedMenuProductEvent(final CreatedMenuProductsEvent event) {
         final List<Long> productIds = event.getMenuProductDtos().stream()
                 .map(MenuProductDto::getProductId)
                 .collect(Collectors.toList());

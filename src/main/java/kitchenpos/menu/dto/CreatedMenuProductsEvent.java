@@ -5,12 +5,12 @@ import java.util.List;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 
-public class CreateMenuProductsEvent {
+public class CreatedMenuProductsEvent {
 
     private final CreateMenuRequest request;
     private List<MenuProduct> menuProducts;
 
-    public CreateMenuProductsEvent(CreateMenuRequest request) {
+    public CreatedMenuProductsEvent(CreateMenuRequest request) {
         this.request = request;
     }
 

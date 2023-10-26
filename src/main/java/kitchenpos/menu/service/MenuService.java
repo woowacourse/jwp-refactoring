@@ -7,7 +7,7 @@ import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.dto.CreateMenuProductsEvent;
+import kitchenpos.menu.dto.CreatedMenuProductsEvent;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
@@ -44,7 +44,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new NoSuchDataException("해당하는 id의 메뉴 그룹이 없습니다."));
 
-        final CreateMenuProductsEvent event = new CreateMenuProductsEvent(request);
+        final CreatedMenuProductsEvent event = new CreatedMenuProductsEvent(request);
 
         publisher.publishEvent(event);
 

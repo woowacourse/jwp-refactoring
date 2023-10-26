@@ -7,7 +7,7 @@ import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.type.OrderStatus;
-import kitchenpos.order.dto.OrderCreateEvent;
+import kitchenpos.order.dto.CreatedOrderEvent;
 import kitchenpos.order.dto.OrderLineItemsDto;
 import kitchenpos.order.dto.OrderTableIdValidateEvent;
 import kitchenpos.order.dto.request.ChangeOrderRequest;
@@ -59,7 +59,7 @@ public class OrderService {
 
         final Long orderId = orderRepository.save(order).getId();
 
-        final OrderCreateEvent event = new OrderCreateEvent(request.getOrderLineItems(), orderId);
+        final CreatedOrderEvent event = new CreatedOrderEvent(request.getOrderLineItems(), orderId);
 
         publisher.publishEvent(event);
 

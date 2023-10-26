@@ -8,7 +8,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderMenuProduct;
-import kitchenpos.order.dto.OrderCreateEvent;
+import kitchenpos.order.dto.CreatedOrderEvent;
 import kitchenpos.order.dto.OrderLineItemsDto;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderMenuProductRepository;
@@ -17,17 +17,17 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderCreateEventListener {
+public class CreatedOrderEventListener {
 
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderMenuRepository orderMenuRepository;
     private final OrderMenuProductRepository orderMenuProductRepository;
     private final MenuRepository menuRepository;
 
-    public OrderCreateEventListener(OrderLineItemRepository orderLineItemRepository,
-                                    OrderMenuRepository orderMenuRepository,
-                                    OrderMenuProductRepository orderMenuProductRepository,
-                                    MenuRepository menuRepository) {
+    public CreatedOrderEventListener(OrderLineItemRepository orderLineItemRepository,
+                                     OrderMenuRepository orderMenuRepository,
+                                     OrderMenuProductRepository orderMenuProductRepository,
+                                     MenuRepository menuRepository) {
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderMenuRepository = orderMenuRepository;
         this.orderMenuProductRepository = orderMenuProductRepository;
@@ -35,7 +35,7 @@ public class OrderCreateEventListener {
     }
 
     @EventListener
-    public void listenOrderCreateEvent(final OrderCreateEvent event) {
+    public void listenCreatedOrderEvent(final CreatedOrderEvent event) {
         final List<Long> menuIds = event.getOrderLineItemsDtos().stream()
                 .map(dto -> dto.getMenuId())
                 .collect(Collectors.toList());
