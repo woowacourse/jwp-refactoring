@@ -35,8 +35,8 @@ public class TableGroupService {
         final TableGroup tableGroup = new TableGroup();
         tableGroupRepository.save(tableGroup);
 
-        List<OrderTable> orderTables = getOrderTables(request);
-        orderTables.forEach(it -> it.group(tableGroup.getId()));
+        final List<OrderTable> orderTables = getOrderTables(request);
+        orderTables.forEach(table -> table.group(tableGroup.getId()));
 
         return TableGroupDto.toDto(tableGroup, orderTables);
     }
@@ -56,7 +56,6 @@ public class TableGroupService {
         if (orderTableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException();
         }
-
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
@@ -65,16 +64,18 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        validateOrderStatus(orderTables);
 
+        orderTables.forEach(OrderTable::unGroup);
+    }
+
+    private void validateOrderStatus(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.MEAL, OrderStatus.COOKING))) {
             throw new IllegalArgumentException();
         }
-
-        orderTables.forEach(OrderTable::unGroup);
     }
 }
