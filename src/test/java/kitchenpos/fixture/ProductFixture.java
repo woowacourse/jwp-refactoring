@@ -20,6 +20,13 @@ public class ProductFixture {
                     .build();
         }
 
+        public static CreateProductRequest 양념_치킨_17000원() {
+            return CreateProductRequest.builder()
+                    .name("양념치킨")
+                    .price("17000")
+                    .build();
+        }
+
         public static CreateProductRequest 후라이드_치킨_N원(String price) {
             return CreateProductRequest.builder()
                     .name("후라이드치킨")

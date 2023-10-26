@@ -28,6 +28,17 @@ public class MenuFixture {
                     .menuProducts(List.of(MenuProductFixture.REQUEST.상품_N_M개_요청(productId, 1)))
                     .build();
         }
+
+        public static CreateMenuRequest 양념치킨_17000원_1마리_등록_요청() {
+            Long productId = ProductFixture.상품_생성(ProductFixture.REQUEST.양념_치킨_17000원());
+            Long menuGroupId = MenuGroupFixture.메뉴_그룹_생성(CreateMenuGroupRequest.builder().name("양념치킨류").build());
+            return CreateMenuRequest.builder()
+                    .name("양념치킨")
+                    .menuGroupId(menuGroupId)
+                    .price(BigDecimal.valueOf(16000L))
+                    .menuProducts(List.of(MenuProductFixture.REQUEST.상품_N_M개_요청(productId, 1)))
+                    .build();
+        }
     }
 
     public static Long 메뉴_생성(CreateMenuRequest request) {

@@ -26,6 +26,14 @@ public class OrderFixture {
                     .orderLineItems(List.of(new CreateOrderLineItem(menuId, 1L)))
                     .build();
         }
+
+        public static CreateOrderRequest 주문_생성_요청(Long menuId) {
+            Long orderTableId = OrderTableFixture.주문_테이블_생성(OrderTableFixture.REQUEST.주문_테이블_생성_요청_3명());
+            return CreateOrderRequest.builder()
+                    .orderTableId(orderTableId)
+                    .orderLineItems(List.of(new CreateOrderLineItem(menuId, 1L)))
+                    .build();
+        }
     }
 
     public static Long 주문_생성(CreateOrderRequest request) {

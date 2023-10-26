@@ -25,10 +25,6 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu updateMenuProducts(Set<MenuProduct> savedMenuProducts) {
-        return new Menu(id, name, price, menuGroupId, savedMenuProducts);
-    }
-
     public static MenuBuilder builder() {
         return new MenuBuilder();
     }

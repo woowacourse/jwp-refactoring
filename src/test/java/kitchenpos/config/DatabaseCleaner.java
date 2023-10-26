@@ -23,6 +23,7 @@ public class DatabaseCleaner {
         return jdbcTemplate.queryForList("show tables").stream()
                 .map(it -> it.get("TABLE_NAME"))
                 .map(Object::toString)
+                .filter(it -> !it.equals("flyway_schema_history"))
                 .collect(Collectors.toList());
     }
 

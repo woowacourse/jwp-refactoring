@@ -28,7 +28,7 @@ public class CreateOrderResponse {
                 .orderStatus(order.getOrderStatus().name())
                 .orderedTime(order.getOrderedTime())
                 .orderLineItems(order.getOrderLineItems().stream()
-                        .map(OrderLineItemResponse::from)
+                        .map(orderLineItem -> OrderLineItemResponse.of(order.getId(), orderLineItem))
                         .collect(Collectors.toList()))
                 .build();
     }

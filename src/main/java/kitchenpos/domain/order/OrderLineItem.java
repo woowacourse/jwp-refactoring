@@ -2,16 +2,22 @@ package kitchenpos.domain.order;
 
 import org.springframework.data.annotation.Id;
 
+import java.math.BigDecimal;
+
 public class OrderLineItem {
     @Id
     private final Long seq;
     private final Long menuId;
     private final long quantity;
+    private final String name;
+    private final BigDecimal price;
 
-    private OrderLineItem(Long seq, Long menuId, long quantity) {
+    private OrderLineItem(Long seq, Long menuId, long quantity, String name, BigDecimal price) {
         this.seq = seq;
         this.menuId = menuId;
         this.quantity = quantity;
+        this.name = name;
+        this.price = price;
     }
 
     public Long getSeq() {
@@ -20,6 +26,14 @@ public class OrderLineItem {
 
     public Long getMenuId() {
         return menuId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public long getQuantity() {
@@ -34,6 +48,8 @@ public class OrderLineItem {
         private Long seq;
         private Long menuId;
         private long quantity;
+        private String name;
+        private BigDecimal price;
 
         private OrderLineItemBuilder() {
         }
@@ -53,8 +69,18 @@ public class OrderLineItem {
             return this;
         }
 
+        public OrderLineItemBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public OrderLineItemBuilder price(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
         public OrderLineItem build() {
-            return new OrderLineItem(seq, menuId, quantity);
+            return new OrderLineItem(seq, menuId, quantity, name, price);
         }
     }
 }

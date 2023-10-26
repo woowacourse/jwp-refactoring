@@ -2,17 +2,23 @@ package kitchenpos.domain.menu;
 
 import org.springframework.data.annotation.Id;
 
+import java.math.BigDecimal;
+
 public class MenuProduct {
 
     @Id
     private final Long seq;
     private final Long productId;
     private final long quantity;
+    private final String name;
+    private final BigDecimal price;
 
-    private MenuProduct(Long seq, Long productId, long quantity) {
+    private MenuProduct(Long seq, Long productId, long quantity, String name, BigDecimal price) {
         this.seq = seq;
         this.productId = productId;
         this.quantity = quantity;
+        this.name = name;
+        this.price = price;
     }
 
     public Long getSeq() {
@@ -27,6 +33,14 @@ public class MenuProduct {
         return quantity;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
     public static MenuProductBuilder builder() {
         return new MenuProductBuilder();
     }
@@ -35,6 +49,8 @@ public class MenuProduct {
         private Long seq;
         private Long productId;
         private long quantity;
+        private String name;
+        private BigDecimal price;
 
         private MenuProductBuilder() {
         }
@@ -54,8 +70,18 @@ public class MenuProduct {
             return this;
         }
 
+        public MenuProductBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public MenuProductBuilder price(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
         public MenuProduct build() {
-            return new MenuProduct(seq, productId, quantity);
+            return new MenuProduct(seq, productId, quantity, name, price);
         }
     }
 }
