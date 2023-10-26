@@ -1,22 +1,22 @@
 package kitchenpos.dto;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItemResponse {
 
     private Long id;
-    private MenuResponse menu;
+    private Long menuId;
     private Long quantity;
 
-    public OrderLineItemResponse(Long id, MenuResponse menu, Long quantity) {
+    public OrderLineItemResponse(Long id, Long menuId, Long quantity) {
         this.id = id;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse toResponse(OrderLineItem orderLineItem){
+    public static OrderLineItemResponse toResponse(OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(orderLineItem.getId(),
-                MenuResponse.toResponse(orderLineItem.getMenu()),
+                orderLineItem.getMenuId(),
                 orderLineItem.getQuantity());
     }
 
@@ -24,8 +24,8 @@ public class OrderLineItemResponse {
         return id;
     }
 
-    public MenuResponse getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public Long getQuantity() {

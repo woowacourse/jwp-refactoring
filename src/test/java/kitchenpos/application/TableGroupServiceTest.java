@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.orderTable.OrderTable;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableId;
@@ -15,6 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -30,8 +31,9 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블_그룹을_생성한다() {
-        TableGroupResponse response = tableGroupService.create(createRequest);
-        assertThat(response.getOrderTables().size()).isEqualTo(2);
+        assertDoesNotThrow(
+                () -> tableGroupService.create(createRequest)
+        );
     }
 
     @Test
@@ -50,7 +52,7 @@ class TableGroupServiceTest extends ServiceTest {
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(List.of(1L, 2L));
         for (OrderTable orderTable : orderTables) {
             assertAll(
-                    () -> assertThat(orderTable.getTableGroup()).isNull(),
+                    () -> assertThat(orderTable.getTableGroupId()).isNull(),
                     () -> assertThat(orderTable.isEmpty()).isFalse()
             );
         }

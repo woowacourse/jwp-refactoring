@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.orderTable.OrderTable;
+import kitchenpos.domain.orderTable.OrderTables;
+import kitchenpos.domain.tableGroup.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -38,10 +38,11 @@ public class TableGroupService {
                 .map(OrderTableId::getId)
                 .collect(Collectors.toList());
         OrderTables orderTables = OrderTables.from(orderTableRepository.findAllByIdIn(orderTableIds),orderTableIds.size());
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         for (final OrderTable orderTable : orderTables.getOrderTables()) {
             orderTable.updateEmpty(false);
+            orderTable.updateTableGroupId(tableGroup.getId());
         }
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables.getOrderTables());
         return TableGroupResponse.toResponse(tableGroupRepository.save(tableGroup));
     }
 

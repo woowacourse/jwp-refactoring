@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.dto.OrderChangeRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemCreateRequest;
@@ -33,7 +33,7 @@ class OrderServiceTest extends ServiceTest {
         OrderResponse saved = orderService.create(orderCreateRequest);
 
         assertAll(
-                () -> assertThat(saved.getOrderTableResponse().getId()).isEqualTo(orderCreateRequest.getOrderTableId()),
+                () -> assertThat(saved.getOrderTableId()).isEqualTo(orderCreateRequest.getOrderTableId()),
                 () -> assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.toString()),
                 () -> assertThat(saved.getOrderLineItems().size()).isEqualTo(1L)
         );

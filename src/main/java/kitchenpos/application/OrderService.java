@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.orderTable.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -35,9 +35,12 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
+        for (OrderLineItemCreateRequest orderLineItem : request.getOrderLineItems()) {
+            validateMenuExists(orderLineItem);
+        }
         OrderLineItems orderLineItems = new OrderLineItems(request.getOrderLineItems().stream()
                 .map(item -> new OrderLineItem(
-                                menuRepository.findById(item.getMenuId()).orElseThrow(IllegalArgumentException::new),
+                                item.getMenuId(),
                                 item.getQuantity()
                         )
                 ).collect(Collectors.toList()));
@@ -45,7 +48,13 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         validateEmpty(orderTable);
-        return OrderResponse.toResponse(orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)));
+        return OrderResponse.toResponse(orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)));
+    }
+
+    private void validateMenuExists(OrderLineItemCreateRequest orderLineItem) {
+        if (!menuRepository.existsById(orderLineItem.getMenuId())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateEmpty(OrderTable orderTable) {
