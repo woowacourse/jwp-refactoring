@@ -3,7 +3,6 @@ package kitchenpos.ordertable.application;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.application.dto.TableGroupCreateRequest;
-import kitchenpos.ordertable.application.dto.TableGroupCreateRequest.OrderTableId;
 import kitchenpos.ordertable.application.dto.TableGroupResponse;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
@@ -34,29 +33,27 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<Long> orderTableIdValues = request.getOrderTables()
-                .stream()
-                .map(OrderTableId::getId)
-                .collect(Collectors.toList());
+        final List<Long> orderTableIdValues = request.getOrderTableIds();
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIdValues);
 
         if (orderTableIdValues.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
+        savedOrderTables.forEach(orderTable -> orderTable.group(savedTableGroup));
 
-        final TableGroup tableGroup = new TableGroup(savedOrderTables);
-
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+        return TableGroupResponse.from(savedTableGroup, savedOrderTables);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(IllegalArgumentException::new);
 
-        final List<Long> orderTableIds = tableGroup.getOrderTables()
-                .stream()
+        final List<OrderTable> groupTables = orderTableRepository.findAllByTableGroup(tableGroup);
+
+        final List<Long> orderTableIds = groupTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
@@ -65,6 +62,8 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        tableGroup.unGroupTables();
+        for (final OrderTable orderTable : groupTables) {
+            orderTable.deleteGroup();
+        }
     }
 }

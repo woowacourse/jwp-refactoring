@@ -1,23 +1,23 @@
 package kitchenpos.application;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.application.dto.TableChangeEmptyStatusRequest;
 import kitchenpos.ordertable.application.dto.TableChangeNumberOfGuestRequest;
 import kitchenpos.ordertable.application.dto.TableCreateRequest;
 import kitchenpos.ordertable.application.dto.TableResponse;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.product.domain.Product;
 import kitchenpos.ordertable.domain.TableGroup;
-import kitchenpos.menu.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.repoisotory.OrderTableRepository;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.ordertable.domain.repoisotory.TableGroupRepository;
-import kitchenpos.ordertable.application.TableService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,8 +150,9 @@ class TableServiceTest {
         void throwExceptionWithGroupedTable() {
             // given
             final OrderTable otherTable = orderTableRepository.save(EMPTY_TABLE());
-            final TableGroup tableGroup = new TableGroup(List.of(emptyTable, otherTable));
-            tableGroupRepository.save(tableGroup);
+            final TableGroup savedGroup = tableGroupRepository.save(new TableGroup());
+            emptyTable.group(savedGroup);
+            otherTable.group(savedGroup);
 
             final TableChangeEmptyStatusRequest request = new TableChangeEmptyStatusRequest(true);
 

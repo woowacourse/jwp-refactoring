@@ -1,23 +1,23 @@
 package kitchenpos.application;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.application.TableGroupService;
 import kitchenpos.ordertable.application.dto.TableGroupCreateRequest;
 import kitchenpos.ordertable.application.dto.TableGroupCreateRequest.OrderTableId;
 import kitchenpos.ordertable.application.dto.TableGroupResponse;
 import kitchenpos.ordertable.application.dto.TableResponse;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.product.domain.Product;
 import kitchenpos.ordertable.domain.TableGroup;
-import kitchenpos.menu.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.repoisotory.OrderTableRepository;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.ordertable.domain.repoisotory.TableGroupRepository;
-import kitchenpos.ordertable.application.TableGroupService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -145,7 +145,9 @@ class TableGroupServiceTest {
         @DisplayName("이미 그룹지정된 태이블로는 생성시 예외가 발생한다.")
         void throwExceptionWithAlreadyGroupedTable() {
             // given
-            tableGroupRepository.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
+            final TableGroup savedGroup = tableGroupRepository.save(new TableGroup());
+            emptyTable1.group(savedGroup);
+            emptyTable2.group(savedGroup);
 
             final OrderTable savedTable = orderTableRepository.save(new OrderTable(0, true));
 
@@ -170,7 +172,9 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setup() {
-            testTableGroup = tableGroupRepository.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
+            testTableGroup = tableGroupRepository.save(new TableGroup());
+            emptyTable1.group(testTableGroup);
+            emptyTable2.group(testTableGroup);
         }
 
         @Test
