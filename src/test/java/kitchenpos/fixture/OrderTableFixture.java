@@ -1,9 +1,7 @@
 package kitchenpos.fixture;
 
-import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {
@@ -18,7 +16,7 @@ public class OrderTableFixture {
                 empty
         );
 
-        tableGroup.addAllOrderTables(List.of(orderTable));
+        orderTable.registerTableGroup(tableGroup.getId());
         return orderTable;
     }
 

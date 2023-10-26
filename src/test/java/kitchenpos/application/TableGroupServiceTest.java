@@ -4,18 +4,17 @@ package kitchenpos.application;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_없는_주문_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_있는_주문_테이블_생성;
 import static kitchenpos.fixture.TableGroupFixture.빈_테이블_그룹_생성;
-import static kitchenpos.fixture.TableGroupFixture.오더_테이블이_있는_테이블_그룹_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Orders;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.request.TableGroupCreateRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -120,9 +119,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         OrderTable savedOrderTable2 = orderTableRepository.findById(orderTable2.getId()).get();
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(savedOrderTable1.getTableGroup().getId()).isEqualTo(savedTableGroup.getId()),
+                () -> assertThat(savedOrderTable1.getTableGroupId()).isEqualTo(savedTableGroup.getId()),
                 () -> assertThat(savedOrderTable1.isEmpty()).isFalse(),
-                () -> assertThat(savedOrderTable2.getTableGroup().getId()).isEqualTo(savedTableGroup.getId()),
+                () -> assertThat(savedOrderTable2.getTableGroupId()).isEqualTo(savedTableGroup.getId()),
                 () -> assertThat(savedOrderTable1.isEmpty()).isFalse()
         );
     }
@@ -163,7 +162,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         orderTable.changeEmpty(false);
         orderTableRepository.save(orderTable);
 
-        Orders savedOrders = 주문을_저장하고_반환받는다(orderTable);
+        Order savedOrders = 주문을_저장하고_반환받는다(orderTable);
         주문의_상태를_변환한다(savedOrders, orderStatus);
 
         orderTable.changeEmpty(true);
@@ -175,11 +174,6 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         // given
         OrderTable orderTable1 = orderTableRepository.save(단체_지정이_없는_주문_테이블_생성(1, true));
         OrderTable orderTable2 = orderTableRepository.save(단체_지정이_없는_주문_테이블_생성(1, true));
-        List<OrderTable> savedOrderTables = List.of(
-                orderTable1,
-                orderTable2
-        );
-        TableGroup tableGroup = 오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
         TableGroupCreateRequest request = new TableGroupCreateRequest(
                 List.of(orderTable1.getId(), orderTable2.getId())
         );
@@ -192,9 +186,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
         // then
         assertAll(
-                () -> assertThat(savedOrderTable1.getTableGroup()).isNull(),
+                () -> assertThat(savedOrderTable1.getTableGroupId()).isNull(),
                 () -> assertThat(savedOrderTable1.isEmpty()).isFalse(),
-                () -> assertThat(savedOrderTable2.getTableGroup()).isNull(),
+                () -> assertThat(savedOrderTable2.getTableGroupId()).isNull(),
                 () -> assertThat(savedOrderTable2.isEmpty()).isFalse()
         );
     }

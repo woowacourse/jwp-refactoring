@@ -1,63 +1,54 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
+
 import java.util.List;
-import kitchenpos.domain.Orders;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.ordertable.domain.OrderTable;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {
 
-    public static Orders 주문_생성(
+    public static Order 주문_생성(
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Orders orders = Orders.of(OrderStatus.COOKING, orderLineItems);
-        savedOrderTable.addOrder(orders);
-
-        return orders;
+        return Order.of(savedOrderTable.getId(), orderLineItems);
     }
 
-    public static Orders 요리중인_주문_생성(
+    public static Order 요리중인_주문_생성(
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Orders orders = Orders.of(OrderStatus.COOKING, orderLineItems);
-        savedOrderTable.addOrder(orders);
-
-        return orders;
+        return Order.of(savedOrderTable.getId(), orderLineItems);
     }
 
-    public static Orders 식사중인_주문_생성(
+    public static Order 식사중인_주문_생성(
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Orders orders = Orders.of(OrderStatus.MEAL, orderLineItems);
-        savedOrderTable.addOrder(orders);
+        Order order = Order.of(savedOrderTable.getId(), orderLineItems);
+        order.changeOrderStatus(MEAL);
 
-        return orders;
+        return order;
     }
 
-    public static Orders 식사완료_한_주문_생성(
+    public static Order 식사완료_한_주문_생성(
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Orders orders = Orders.of(OrderStatus.COMPLETION, orderLineItems);
-        savedOrderTable.addOrder(orders);
+        Order order = Order.of(savedOrderTable.getId(), orderLineItems);
+        order.changeOrderStatus(COMPLETION);
 
-        return orders;
+        return order;
     }
 
-    public static Orders 존재하지_않는_주문_테이블을_가진_주문_생성(
+    public static Order 존재하지_않는_주문_테이블을_가진_주문_생성(
             List<OrderLineItem> orderLineItems
     ) {
-        Orders orders = Orders.of(OrderStatus.COOKING, orderLineItems);
-        OrderTable orderTable = OrderTable.of(0, false);
-        orderTable.addOrder(orders);
-
-        return orders;
+        return Order.of(Long.MAX_VALUE, orderLineItems);
     }
 
 }

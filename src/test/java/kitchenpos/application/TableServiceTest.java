@@ -1,24 +1,23 @@
 package kitchenpos.application;
 
 import static java.lang.Long.MAX_VALUE;
-import static java.lang.Long.numberOfLeadingZeros;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_없는_주문_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_있는_주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Orders;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.fixture.TableGroupFixture;
-import kitchenpos.ui.request.OrderTableCreateRequest;
-import kitchenpos.ui.request.OrderTableUpdateEmptyRequest;
-import kitchenpos.ui.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.application.dto.OrderTableUpdateEmptyRequest;
+import kitchenpos.ordertable.application.dto.OrderTableUpdateNumberOfGuestsRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -104,8 +103,8 @@ class TableServiceTest extends ServiceIntegrationTest {
         OrderTable savedOrderTable = orderTableRepository.save(
                 단체_지정이_없는_주문_테이블_생성(1, false)
         );
-        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
-        주문의_상태를_변환한다(orders, OrderStatus.COOKING);
+        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
+        주문의_상태를_변환한다(order, OrderStatus.COOKING);
         OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
         // expect
@@ -117,8 +116,8 @@ class TableServiceTest extends ServiceIntegrationTest {
     void 주문_테이블에_속해_있는_주문_중_단_하나라도_식사중이면_empty_변경이_안된다() {
         // given
         OrderTable savedOrderTable = orderTableRepository.save(단체_지정이_없는_주문_테이블_생성(1, false));
-        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
-        주문의_상태를_변환한다(orders, OrderStatus.MEAL);
+        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
+        주문의_상태를_변환한다(order, OrderStatus.MEAL);
         OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
         // expect
@@ -134,9 +133,9 @@ class TableServiceTest extends ServiceIntegrationTest {
                 false
         );
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
-        orders.changeOrderStatus(OrderStatus.COMPLETION);
-        orderRepository.save(orders);
+        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
+        order.changeOrderStatus(OrderStatus.COMPLETION);
+        orderRepository.save(order);
         OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
         // when
