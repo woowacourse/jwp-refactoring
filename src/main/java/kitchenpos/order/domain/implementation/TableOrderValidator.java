@@ -1,10 +1,10 @@
-package kitchenpos.order.application.validator_impl;
+package kitchenpos.order.domain.implementation;
 
 import kitchenpos.order.application.OrderRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.order.domain.exception.OrderExceptionType;
-import kitchenpos.table.application.validator.TableChangeEmptyValidator;
+import kitchenpos.table.domain.TableChangeEmptyValidator;
 import org.springframework.stereotype.Component;
 
 @Component

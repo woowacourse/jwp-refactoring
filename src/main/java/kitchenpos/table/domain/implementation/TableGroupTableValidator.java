@@ -1,4 +1,4 @@
-package kitchenpos.table.application.validator_impl;
+package kitchenpos.table.domain.implementation;
 
 import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY;
 import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_PRESENT_ALL;
@@ -7,7 +7,7 @@ import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.OR
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table_group.application.validator.GroupTableValidator;
+import kitchenpos.table_group.domain.GroupTableValidator;
 import kitchenpos.table_group.domain.exception.TableGroupException;
 import org.springframework.stereotype.Component;
 

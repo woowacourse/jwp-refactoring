@@ -1,4 +1,4 @@
-package kitchenpos.table.application.listener;
+package kitchenpos.table.domain.listener;
 
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;

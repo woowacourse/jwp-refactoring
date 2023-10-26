@@ -1,4 +1,4 @@
-package kitchenpos.order.application.listner;
+package kitchenpos.order.domain.listner;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 
@@ -9,7 +9,7 @@ import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.order.domain.exception.OrderExceptionType;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table_group.application.validator.UngroupTableValidator;
+import kitchenpos.table_group.domain.UngroupTableValidator;
 import org.springframework.stereotype.Component;
 
 @Component

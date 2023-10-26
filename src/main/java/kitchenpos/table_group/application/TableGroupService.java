@@ -1,7 +1,6 @@
 package kitchenpos.table_group.application;
 
 import kitchenpos.table_group.application.dto.TableGroupDto;
-import kitchenpos.table_group.application.validator.FrontTableGroupValidator;
 import kitchenpos.table_group.domain.TableGroup;
 import kitchenpos.table_group.domain.TableGroupRepository;
 import org.springframework.context.ApplicationEventPublisher;

@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.table.domain.implementation;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 

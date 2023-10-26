@@ -1,4 +1,4 @@
-package kitchenpos.table.application.validator;
+package kitchenpos.table.domain;
 
 public interface TableChangeEmptyValidator {
 

@@ -1,4 +1,4 @@
-package kitchenpos.order.application;
+package kitchenpos.order.domain;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 
@@ -6,12 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.order.application.dto.OrderDto;
 import kitchenpos.order.application.dto.OrderLineItemDto;
-import kitchenpos.order.application.validator.OrderValidator;
-import kitchenpos.order.domain.MenuSnapshot;
-import kitchenpos.order.domain.MenuSnapshotFactory;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;

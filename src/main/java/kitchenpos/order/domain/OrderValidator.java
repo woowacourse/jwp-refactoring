@@ -1,4 +1,4 @@
-package kitchenpos.order.application.validator;
+package kitchenpos.order.domain;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static kitchenpos.order.domain.exception.OrderExceptionType.ORDER_LINE_ITEM_DTOS_EMPTY;

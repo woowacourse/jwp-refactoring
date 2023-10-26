@@ -3,9 +3,9 @@ package kitchenpos.table.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.application.dto.OrderTableDto;
-import kitchenpos.table.application.validator.TableChangeEmptyValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableChangeEmptyValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

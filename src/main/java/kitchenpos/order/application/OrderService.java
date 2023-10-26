@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import java.util.List;
 import kitchenpos.order.application.dto.OrderDto;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderCreator;
 import kitchenpos.order.domain.OrderStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

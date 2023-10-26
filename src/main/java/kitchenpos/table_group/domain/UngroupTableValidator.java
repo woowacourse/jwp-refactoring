@@ -1,4 +1,4 @@
-package kitchenpos.table_group.application.validator;
+package kitchenpos.table_group.domain;
 
 public interface UngroupTableValidator {
 

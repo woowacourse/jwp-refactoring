@@ -1,6 +1,8 @@
-package kitchenpos.table_group.application.validator;
+package kitchenpos.table_group.application;
 
 import java.util.List;
+import kitchenpos.table_group.domain.GroupTableValidator;
+import kitchenpos.table_group.domain.UngroupTableValidator;
 import org.springframework.stereotype.Component;
 
 @Component
