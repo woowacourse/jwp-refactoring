@@ -13,7 +13,7 @@ public class OrderResponse {
     private final Long orderTableId;
     private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
-    private final List<OrderLineItemResponse> orderLineItemResponses;
+    private final List<OrderLineItemResponse> orderLineItems;
 
     public static OrderResponse from(Order order) {
         List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems().stream()
@@ -33,13 +33,13 @@ public class OrderResponse {
         Long orderTableId,
         OrderStatus orderStatus,
         LocalDateTime orderedTime,
-        List<OrderLineItemResponse> orderLineItemResponses
+        List<OrderLineItemResponse> orderLineItems
     ) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItemResponses = orderLineItemResponses;
+        this.orderLineItems = orderLineItems;
     }
 
     public Long getId() {
@@ -58,7 +58,7 @@ public class OrderResponse {
         return orderedTime;
     }
 
-    public List<OrderLineItemResponse> getOrderLineItemResponses() {
-        return orderLineItemResponses;
+    public List<OrderLineItemResponse> getOrderLineItems() {
+        return orderLineItems;
     }
 }

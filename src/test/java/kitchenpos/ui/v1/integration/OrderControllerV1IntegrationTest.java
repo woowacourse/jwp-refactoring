@@ -171,8 +171,8 @@ public class OrderControllerV1IntegrationTest extends V1IntegrationTest {
 
             // then
             모든_주문_조회()
-                .andExpect(jsonPath("$[0].orderLineItemResponses[0].menuName").value("맥주세트"))
-                .andExpect(jsonPath("$[0].orderLineItemResponses[0].menuPrice").value("1000.0"));
+                .andExpect(jsonPath("$[0].orderLineItems[0].menuName").value("맥주세트"))
+                .andExpect(jsonPath("$[0].orderLineItems[0].menuPrice").value("1000.0"));
         }
     }
 }

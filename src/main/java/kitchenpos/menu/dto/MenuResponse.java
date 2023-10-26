@@ -12,7 +12,7 @@ public class MenuResponse {
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
-    private final List<MenuProductResponse> menuProductResponses;
+    private final List<MenuProductResponse> menuProducts;
 
     public static MenuResponse from(Menu menu) {
         List<MenuProductResponse> menuProductResponses = menu.getMenuProducts().stream()
@@ -23,12 +23,12 @@ public class MenuResponse {
     }
 
     public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId,
-                        List<MenuProductResponse> menuProductResponses) {
+                        List<MenuProductResponse> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductResponses = menuProductResponses;
+        this.menuProducts = menuProducts;
     }
 
     public Long getId() {
@@ -47,7 +47,7 @@ public class MenuResponse {
         return menuGroupId;
     }
 
-    public List<MenuProductResponse> getMenuProductResponses() {
-        return menuProductResponses;
+    public List<MenuProductResponse> getMenuProducts() {
+        return menuProducts;
     }
 }
