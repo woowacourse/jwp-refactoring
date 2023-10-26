@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,10 +29,10 @@ public class Menu {
     )
     private Price price;
     private Long menuGroupId;
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "menu_id",
-            nullable = false, updatable = false
+            nullable = false
     )
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
