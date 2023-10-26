@@ -27,7 +27,8 @@ public class Order {
     @JoinColumn(nullable = false)
     private OrderTable orderTable;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
     private OrderStatus orderStatus;
 
@@ -39,8 +40,6 @@ public class Order {
         this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
-
-        orderLineItems.forEach(it -> it.setOrder(this));
         this.orderLineItems = orderLineItems;
     }
 
