@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderTableValidator {
 
-
     private final OrderTableRepository orderTableRepository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -25,7 +24,6 @@ public class OrderTableValidator {
 
     public void validateChangeableEmpty(Long orderTableId) {
         eventPublisher.publishEvent(new OrderTableChangeEmptyEvent(orderTableId));
-
     }
 
     @EventListener

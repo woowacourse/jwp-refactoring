@@ -45,6 +45,18 @@ public class MenuService {
         return mapToMenuResponse(menu);
     }
 
+    private MenuProducts createMenuProducts(List<MenuProductRequest> menuProductRequests) {
+        List<MenuProduct> menuProducts = menuProductRequests.stream()
+                .map(request -> MenuProduct.create(request.getQuantity(), request.getProductId()))
+                .collect(Collectors.toList());
+
+        return MenuProducts.from(menuProducts);
+    }
+
+    private Menu createMenu(MenuCreationRequest request, Long menuGroupId, MenuProducts menuProducts) {
+        return Menu.create(request.getName(), request.getPrice(), menuGroupId, menuProducts, menuValidator);
+    }
+
     private MenuResponse mapToMenuResponse(Menu menu) {
         MenuGroupResponse menuGroupResponse = mapToMenuGroupResponse(menu);
 
@@ -60,18 +72,6 @@ public class MenuService {
     private MenuGroup findMenGroup(Long menuGroupId) {
         return menuGroupRepository.findById(menuGroupId)
                 .orElseThrow(() -> new NoSuchElementException("ID에 해당하는 메뉴 그룹이 존재하지 않습니다."));
-    }
-
-    private MenuProducts createMenuProducts(List<MenuProductRequest> menuProductRequests) {
-        List<MenuProduct> menuProducts = menuProductRequests.stream()
-                .map(request -> MenuProduct.create(request.getQuantity(), request.getProductId()))
-                .collect(Collectors.toList());
-
-        return MenuProducts.from(menuProducts);
-    }
-
-    private Menu createMenu(MenuCreationRequest request, Long menuGroupId, MenuProducts menuProducts) {
-        return Menu.create(request.getName(), request.getPrice(), menuGroupId, menuProducts, menuValidator);
     }
 
     public List<MenuResponse> list() {
