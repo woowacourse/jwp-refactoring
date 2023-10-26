@@ -30,8 +30,8 @@ public class MenuRestController {
 
     @GetMapping("/api/menus")
     public ResponseEntity<List<MenuResponse>> list() {
-        final List<MenuResponse> = menuService.list();
+        final List<MenuResponse> allMenu= menuService.list();
         return ResponseEntity.ok()
-                .body(all);
+                .body(allMenu);
     }
 }
