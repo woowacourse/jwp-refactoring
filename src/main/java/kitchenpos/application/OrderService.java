@@ -5,8 +5,8 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderStatusRequest;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import org.springframework.stereotype.Service;
@@ -65,10 +65,9 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public OrderResponse changeOrderStatus(final Long orderId, final String orderStatusName) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
         final Order savedOrder = orderRepository.getById(orderId);
-        final OrderStatus orderStatus = OrderStatus.from(orderStatusName);
-        savedOrder.updateOrderStatus(orderStatus);
+        savedOrder.updateOrderStatus(orderStatusRequest.getOrderStatus());
         return OrderResponse.from(savedOrder);
     }
 }

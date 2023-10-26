@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,8 +8,8 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderStatusRequest;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderResponse;
@@ -20,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -37,8 +37,8 @@ class OrderServiceTest {
     void testCreateOrder() {
         // given
         OrderCreateRequest request = new OrderCreateRequest(1L, Arrays.asList(
-                new OrderLineItemRequest(1L, 1),
-                new OrderLineItemRequest(2L, 2)
+                new OrderLineItemRequest(1L, 1L),
+                new OrderLineItemRequest(2L, 2L)
         ));
         OrderTable orderTable = mock(OrderTable.class);
         given(orderTableRepository.getById(anyLong())).willReturn(orderTable);
@@ -72,16 +72,16 @@ class OrderServiceTest {
     void testChangeOrderStatus() {
         // given
         Long orderId = 1L;
-        String orderStatusName = "COOKING";
+        final OrderStatusRequest orderStatusRequest = new OrderStatusRequest(COOKING);
         Order savedOrder = mock(Order.class);
 
         given(orderRepository.getById(anyLong())).willReturn(savedOrder);
 
         // when
-        OrderResponse result = orderService.changeOrderStatus(orderId, orderStatusName);
+        OrderResponse result = orderService.changeOrderStatus(orderId, orderStatusRequest);
 
         // then
         assertNotNull(result);
-        verify(savedOrder).updateOrderStatus(OrderStatus.from(orderStatusName));
+        verify(savedOrder).updateOrderStatus(orderStatusRequest.getOrderStatus());
     }
 }
