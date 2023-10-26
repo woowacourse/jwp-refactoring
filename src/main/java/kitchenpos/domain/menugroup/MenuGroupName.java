@@ -1,20 +1,20 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menugroup;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class MenuName {
+public class MenuGroupName {
     private static final int MAX_LENGTH = 255;
 
     @Column(nullable = false)
     private String name;
 
-    public MenuName() {
+    public MenuGroupName() {
     }
 
-    public MenuName(final String name) {
+    public MenuGroupName(final String name) {
         validation(name);
         this.name = name;
     }

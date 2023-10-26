@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuName;
-import kitchenpos.domain.MenuPrice;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductQuantity;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuPrice;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menuproduct.MenuProduct;
+import kitchenpos.domain.menuproduct.MenuProductQuantity;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.response.MenuProductResponse;

@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableNumberOfGuests;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableNumberOfGuests;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;

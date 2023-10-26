@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.product;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
