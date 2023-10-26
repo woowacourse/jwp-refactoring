@@ -18,7 +18,6 @@ public class MenuGroup {
     }
 
     public MenuGroup(final String name) {
-        this.id = null;
         this.name = name;
     }
 
