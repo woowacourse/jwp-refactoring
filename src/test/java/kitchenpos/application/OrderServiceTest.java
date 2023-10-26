@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -11,12 +10,20 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderUpdateStatusRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,16 +40,19 @@ class OrderServiceTest extends ServiceTest {
 
     private Menu menu;
 
+    private List<OrderLineItem> orderLineItems;
+
     @BeforeEach
     void setUp() {
-        OrderTable newOrderTable = createOrderTable(false, null, 10);
-        orderTable = tableDao.save(newOrderTable);
-
-        Menu newMenu = new Menu();
-        newMenu.setName("치킨");
-        newMenu.setPrice(BigDecimal.valueOf(15_000L));
-        newMenu.setMenuGroupId(1L);
-        menu = menuDao.save(newMenu);
+        OrderTable newOrderTable = new OrderTable(null, 10, false);
+        orderTable = orderTableRepository.save(newOrderTable);
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
+        Product product = productRepository.save(Product.of("후라이드", BigDecimal.valueOf(15_000L)));
+        MenuProduct menuProduct = new MenuProduct(null, product, 1L);
+        Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup, List.of(menuProduct));
+        menu = menuRepository.save(newMenu);
+        orderLineItems = List.of(new OrderLineItem(null, menu, 1L)
+                , new OrderLineItem(null, menu, 1L));
     }
 
     @Nested
@@ -51,21 +61,19 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            OrderLineItem orderLineItem = createOrderLineItem(null, 1, menu.getId());
-            Order order = createOrder(orderTable.getId(), COOKING, orderLineItem);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
 
             // when
-            Order savedOrder = orderService.create(order);
+            OrderResponse orderResponse = orderService.create(orderRequest);
 
             // then
             assertSoftly(
                     softly -> {
-                        softly.assertThat(savedOrder.getId()).isNotNull();
-                        softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(order.getOrderStatus());
-                        softly.assertThat(savedOrder.getOrderLineItems().get(0))
-                                .usingRecursiveComparison()
-                                .ignoringFields("seq")
-                                .isEqualTo(orderLineItem);
+                        softly.assertThat(orderResponse.getId()).isNotNull();
+                        softly.assertThat(orderResponse.getOrderLineItems().get(0).getQuantity()).isPositive();
+                        softly.assertThat(orderResponse.getOrderLineItems().get(0).getQuantity())
+                                .isEqualTo(orderLineItemRequest.getQuantity());
                     }
             );
         }
@@ -73,51 +81,53 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_상품이_1개_미만이면_예외_발생() {
             // given
-            Order order = createOrder(orderTable.getId(), COOKING);
+            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING);
 
             // when, then
             assertThatThrownBy(
-                    () -> orderService.create(order)
+                    () -> orderService.create(orderRequest)
             ).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_아이템의_메뉴가_존재하지_않으면_예외_발생() {
             // given
-            Long invalidMenuId = -1L;
-            OrderLineItem orderLineItem = createOrderLineItem(null, 1, invalidMenuId);
-            Order order = createOrder(orderTable.getId(), COOKING, orderLineItem);
+            final Long wrongMenuId = -1L;
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(wrongMenuId, 1L);
+            OrderLineItemRequest orderLineItemRequest2 = new OrderLineItemRequest(wrongMenuId, 1L);
+            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest, orderLineItemRequest2);
 
             // when, then
             assertThatThrownBy(
-                    () -> orderService.create(order)
-            ).isInstanceOf(IllegalArgumentException.class);
+                    () -> orderService.create(orderRequest)
+            ).isInstanceOf(NoSuchElementException.class);
         }
 
         @Test
         void 주문_테이블이_존재하지_않으면_예외_발생() {
             // given
-            OrderLineItem orderLineItem = createOrderLineItem(null, 1, menu.getId());
             long invalidOrderTableId = -1L;
-            Order order = createOrder(invalidOrderTableId, COOKING, orderLineItem);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+            OrderCreateRequest request = createOrderRequest(invalidOrderTableId, COOKING, orderLineItemRequest);
 
             // when, then
             assertThatThrownBy(
-                    () -> orderService.create(order)
-            ).isInstanceOf(IllegalArgumentException.class);
+                    () -> orderService.create(request)
+            ).isInstanceOf(NoSuchElementException.class);
         }
 
         @Test
         void 주문_테이블이_비어_있으면_예외_발생() {
             // given
-            OrderTable newOrderTable = createOrderTable(true, null, 10);
-            OrderTable orderTable = tableDao.save(newOrderTable);
-            OrderLineItem orderLineItem = createOrderLineItem(null, 1, menu.getId());
-            Order order = createOrder(orderTable.getId(), COOKING, orderLineItem);
+            OrderTable newOrderTable = new OrderTable(null, 10, true);
+            OrderTable orderTable = orderTableRepository.save(newOrderTable);
+
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
 
             // when, then
             assertThatThrownBy(
-                    () -> orderService.create(order)
+                    () -> orderService.create(orderRequest)
             ).isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -128,17 +138,17 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            OrderLineItem orderLineItem = createOrderLineItem(null, 1, menu.getId());
-            Order order = createOrder(orderTable.getId(), COOKING, orderLineItem);
-            Order savedOrder = orderService.create(order);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
+            OrderResponse orderResponse = orderService.create(orderRequest);
 
             // when
-            List<Order> orders = orderService.list();
+            List<OrderResponse> orderResponses = orderService.readAll();
 
             // then
-            assertThat(orders)
-                    .extracting(Order::getId)
-                    .contains(savedOrder.getId());
+            assertThat(orderResponses)
+                    .extracting(OrderResponse::getId)
+                    .contains(orderResponse.getId());
         }
     }
 
@@ -148,76 +158,49 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            OrderLineItem orderLineItem = createOrderLineItem(null, 1, menu.getId());
-            Order order = createOrder(orderTable.getId(), COOKING, orderLineItem);
-            Order savedOrder = orderService.create(order);
-
-            Order newOrder = createOrder(orderTable.getId(), MEAL, orderLineItem);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
+            OrderResponse orderResponse = orderService.create(orderRequest);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest("MEAL");
 
             // when
-            Order updatedOrder = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
+            OrderResponse response = orderService.changeOrderStatus(orderResponse.getId(), request);
 
             // then
-            assertThat(updatedOrder.getOrderStatus()).isEqualTo(newOrder.getOrderStatus());
+            assertThat(response.getOrderStatus().name()).isEqualTo(request.getOrderStatus());
         }
 
         @Test
         void 주문이_존재하지_않으면_예외_발생() {
             // given
             Long invalidOrderId = -1L;
-
-            Order newOrder = createOrder(orderTable.getId(), MEAL);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest("MEAL");
 
             // when, then
             assertThatThrownBy(
-                    () -> orderService.changeOrderStatus(invalidOrderId, newOrder)
-            ).isInstanceOf(IllegalArgumentException.class);
+                    () -> orderService.changeOrderStatus(invalidOrderId, request)
+            ).isInstanceOf(NoSuchElementException.class);
         }
 
         @Test
         void 주문이_상태가_COMPLETION이면_예외_발생() {
             // given
-            OrderLineItem orderLineItem = createOrderLineItem(null, 1, menu.getId());
-            Order order = createOrder(orderTable.getId(), COMPLETION, orderLineItem);
-            Order savedOrder = orderDao.save(order);
+            Order order = new Order(orderTable, LocalDateTime.now(), orderLineItems);
+            Order savedOrder = orderRepository.save(order);
+            savedOrder.updateOrderStatus(COMPLETION.name());
 
-            Order newOrder = createOrder(orderTable.getId(), MEAL, orderLineItem);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest("MEAL");
 
             // when, then
             assertThatThrownBy(
-                    () -> orderService.changeOrderStatus(savedOrder.getId(), newOrder)
+                    () -> orderService.changeOrderStatus(savedOrder.getId(), request)
             ).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
-    private OrderTable createOrderTable(final boolean empty,
-                                        final Long tableGroupId,
-                                        final Integer numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
-    }
-
-    private Order createOrder(final Long orderTableId,
-                              final OrderStatus status,
-                              final OrderLineItem... orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(status.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(Arrays.asList(orderLineItems));
-        return order;
-    }
-
-    private OrderLineItem createOrderLineItem(final Long orderId,
-                                              final Integer quantity,
-                                              final Long menuId) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setQuantity(quantity);
-        orderLineItem.setMenuId(menuId);
-        return orderLineItem;
+    private OrderCreateRequest createOrderRequest(final Long orderTableId,
+                                                  final OrderStatus status,
+                                                  final OrderLineItemRequest... orderLineItemRequests) {
+        return new OrderCreateRequest(orderTableId, status, Arrays.asList(orderLineItemRequests));
     }
 }
