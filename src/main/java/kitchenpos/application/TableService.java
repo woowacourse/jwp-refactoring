@@ -1,74 +1,50 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.request.OrderTableChangeGuestRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    public TableService(OrderTableRepository orderTableRepository) {
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+    public OrderTableResponse create(OrderTableCreateRequest request) {
+        OrderTable orderTable = orderTableRepository.save(
+            new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
 
-        return orderTableDao.save(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
-    }
-
-    @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("이미 단체 지정된 테이블입니다.");
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리중이거나 식사중인 주문이 있습니다.");
-        }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+            .map(OrderTableResponse::from)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableResponse changeEmpty(Long orderTableId, OrderTableChangeEmptyRequest request) {
+        OrderTable orderTable = orderTableRepository.findByIdOrThrow(orderTableId);
+        orderTable.changeEmpty();
+        return OrderTableResponse.from(orderTable);
+    }
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("손님 수는 음수일 수 없습니다.");
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("비어있는 주문 테이블입니다.");
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+    @Transactional
+    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableChangeGuestRequest request) {
+        OrderTable orderTable = orderTableRepository.findByIdOrThrow(orderTableId);
+        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
+        return OrderTableResponse.from(orderTable);
     }
 }
