@@ -12,7 +12,7 @@ class OrderTableTest extends BaseTest {
     @Test
     void 주문_테이블은_테이블_그룹이_존재하면_주문_상태를_바꾸지_못한다() {
         // given
-        OrderTable orderTable = new OrderTable(1L, new GuestNumber(1), true);
+        OrderTable orderTable = new OrderTable(1L, 1, true);
         orderTable.changeTableGroupId(1L);
 
         // when, then
@@ -23,7 +23,7 @@ class OrderTableTest extends BaseTest {
     @Test
     void 주문_테이블에_포함된_주문_중_요리나_식사_상태의_주문이_있으면_주문_상태를_바꾸지_못한다() {
         // given
-        OrderTable orderTable = new OrderTable(null, new GuestNumber(1), false);
+        OrderTable orderTable = new OrderTable(null, 1, false);
 
         // when, then
         Assertions.assertThatThrownBy(() -> orderTable.changeEmpty(false, orderValidator))
@@ -33,7 +33,7 @@ class OrderTableTest extends BaseTest {
     @Test
     void 주문_테이블이_주문을_할_수_없는_상태면_게스트_수를_바꾸지_못한다() {
         // given
-        OrderTable orderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable orderTable = new OrderTable(1, true);
 
         // when, then
         Assertions.assertThatThrownBy(() -> orderTable.changeNumberOfGuests(new GuestNumber(2)))

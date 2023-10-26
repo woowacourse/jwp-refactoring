@@ -3,7 +3,6 @@ package kitchenpos.ordertable.application;
 import kitchenpos.MockServiceTest;
 import kitchenpos.ordertable.application.dto.CreateOrderTableIdDto;
 import kitchenpos.ordertable.application.dto.OrderTableDto;
-import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.domain.OrderValidator;
@@ -41,8 +40,8 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_추가한다() {
         // given
-        OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
-        OrderTable secondOrderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable firstOrderTable = new OrderTable(1, true);
+        OrderTable secondOrderTable = new OrderTable(1, true);
 
         BDDMockito.given(orderTableRepository.findAllByIdIn(BDDMockito.anyCollection()))
                 .willReturn(List.of(firstOrderTable, secondOrderTable));
@@ -82,7 +81,7 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_추가할_때_주문테이블이_2개_미만이면_예외를_던진다() {
         // given
-        OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable firstOrderTable = new OrderTable(1, true);
 
         BDDMockito.given(orderTableRepository.findAllByIdIn(BDDMockito.anyCollection()))
                 .willReturn(List.of(firstOrderTable));
@@ -115,8 +114,8 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_추가할_때_주문테이블이_주문이_가능한_상태이면_예외를_던진다() {
         // given
-        OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), false);
-        OrderTable secondOrderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable firstOrderTable = new OrderTable(1, false);
+        OrderTable secondOrderTable = new OrderTable(1, true);
 
         BDDMockito.given(orderTableRepository.findAllByIdIn(BDDMockito.anyCollection()))
                 .willReturn(List.of(firstOrderTable, secondOrderTable));
@@ -134,9 +133,9 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_추가할_때_주문테이블이_이미_다른_테이블_그룹에_속해있으면_예외를_던진다() {
         // given
-        OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable firstOrderTable = new OrderTable(1, true);
         firstOrderTable.changeTableGroupId(1L);
-        OrderTable secondOrderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable secondOrderTable = new OrderTable(1, true);
 
         BDDMockito.given(orderTableRepository.findAllByIdIn(BDDMockito.anyCollection()))
                 .willReturn(List.of(firstOrderTable, secondOrderTable));
@@ -154,8 +153,8 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_삭제하면_주문테이블이_주문이_가능한_상태로_바뀌고_테이블_그룹_아이디가_null_로_바뀐다() {
         // given
-        OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
-        OrderTable secondOrderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable firstOrderTable = new OrderTable(1, true);
+        OrderTable secondOrderTable = new OrderTable(1, true);
 
         BDDMockito.given(tableGroupRepository.existsById(BDDMockito.anyLong()))
                 .willReturn(true);
@@ -177,7 +176,7 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_삭제할_때_주문테이블_내에_존재하는_주문들_중_COOKING_또는_MEAL_상태가_존재하면_예외를_던진다() {
         // given
-        OrderTable firstOrderTable = new OrderTable(1L, new GuestNumber(1), true);
+        OrderTable firstOrderTable = new OrderTable(1L, 1, true);
         firstOrderTable.changeTableGroupId(1L);
 
         BDDMockito.given(tableGroupRepository.existsById(BDDMockito.anyLong()))

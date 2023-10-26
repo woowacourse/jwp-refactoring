@@ -47,7 +47,7 @@ class OrderRepositoryTest extends RepositoryTest {
         menu.addMenuProducts(List.of(menuProduct));
         menuRepository.save(menu);
 
-        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
+        OrderTable orderTable = new OrderTable(10, false);
         orderTableRepository.save(orderTable);
 
         OrderLineItem orderLineItem = new OrderLineItem(menu, new OrderLineItemQuantity(1L));

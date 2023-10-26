@@ -31,7 +31,7 @@ public class TableService {
     @Transactional
     public OrderTableDto create(CreateOrderTableDto createOrderTableDto) {
         OrderTable orderTable = new OrderTable(
-                new GuestNumber(createOrderTableDto.getNumberOfGuests()),
+                createOrderTableDto.getNumberOfGuests(),
                 createOrderTableDto.getEmpty());
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);

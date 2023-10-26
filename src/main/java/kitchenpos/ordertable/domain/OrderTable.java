@@ -29,14 +29,14 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(GuestNumber numberOfGuests, Boolean empty) {
+    public OrderTable(Integer numberOfGuests, Boolean empty) {
         this(null, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, GuestNumber numberOfGuests, Boolean empty) {
+    public OrderTable(Long id, Integer numberOfGuests, Boolean empty) {
         this.id = id;
         this.tableGroupId = null;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new GuestNumber(numberOfGuests);
         this.empty = empty;
     }
 

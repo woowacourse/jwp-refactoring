@@ -74,7 +74,7 @@ class OrderServiceTest extends MockServiceTest {
     @Test
     void 주문을_추가한다() {
         // given
-        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
+        OrderTable orderTable = new OrderTable(10, false);
 
         Menu chicken = new Menu("chicken", BigDecimal.TEN, null);
         Menu pizza = new Menu("pizza", BigDecimal.ONE, null);
@@ -107,7 +107,7 @@ class OrderServiceTest extends MockServiceTest {
     @Test
     void 주문을_추가할_때_주문_안에_주문아이템_아이디들_값이_비어있으면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
+        OrderTable orderTable = new OrderTable(10, false);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(orderTable));
@@ -124,7 +124,7 @@ class OrderServiceTest extends MockServiceTest {
     @Test
     void 주문을_추가할_때_존재하지_않는_주문_메뉴가_있으면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
+        OrderTable orderTable = new OrderTable(10, false);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(orderTable));
@@ -164,7 +164,7 @@ class OrderServiceTest extends MockServiceTest {
     @Test
     void 주문을_추가할_때_주문테이블이_주문을_할_수_없는_주문테이블이면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(new GuestNumber(10), true);
+        OrderTable orderTable = new OrderTable(10, true);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(orderTable));
