@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import static java.util.Objects.nonNull;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -51,11 +50,14 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void changeEmpty(final boolean empty) {
-        if (empty && nonNull(tableGroupId)) {
-            throw new IllegalArgumentException("그룹이 지정된 테이블은 empty로 설정할 수 없습니다.");
-        }
-        this.empty = empty;
+    public void groupBy(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void changeEmpty(final ChangeEmptyValidator changeEmptyValidator) {
+        changeEmptyValidator.validate(this);
+        this.empty = true;
     }
 
     @Override

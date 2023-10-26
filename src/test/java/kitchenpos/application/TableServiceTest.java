@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.Money;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.table.application.ChangeNumberOfGuestsCommand;
 import kitchenpos.table.application.ChangeTableEmptyCommand;
 import kitchenpos.table.application.CreateTableCommand;
 import kitchenpos.table.application.OrderTableDto;
-import kitchenpos.Money;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
@@ -69,16 +69,14 @@ class TableServiceTest extends ServiceTest {
         }
 
         private OrderTable empty가_아닌_테이블_조회() {
-            OrderTable 테이블 = orderTableRepository.findAll().get(0);
-            테이블.changeEmpty(false);
-            orderTableRepository.save(테이블);
-            return 테이블;
+            OrderTable 테이블 = new OrderTable(2, false);
+            return orderTableRepository.save(테이블);
         }
 
         @Test
         void 인원이_음수면_예외가_발생한다() {
             //given
-            OrderTable 테이블 = orderTableRepository.findAll().get(0);
+            OrderTable 테이블 = orderTableRepository.save(new OrderTable(2, false));
             ChangeNumberOfGuestsCommand 커맨드 = new ChangeNumberOfGuestsCommand(테이블.getId(), -1);
 
             //expect
@@ -103,8 +101,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블이_empty이면_예외가_발생한다() {
             //given
-            OrderTable 테이블 = orderTableRepository.findAll().get(0);
-            테이블.changeEmpty(true);
+            OrderTable 테이블 = new OrderTable(0, true);
             orderTableRepository.save(테이블);
 
             ChangeNumberOfGuestsCommand 커맨드 = new ChangeNumberOfGuestsCommand(테이블.getId(), 9);
@@ -123,7 +120,6 @@ class TableServiceTest extends ServiceTest {
         void 성공() {
             //given
             OrderTable 테이블 = new OrderTable(2, false);
-            테이블.changeEmpty(false);
             OrderTable 생성된_테이블 = orderTableRepository.save(테이블);
             ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
 
@@ -138,7 +134,6 @@ class TableServiceTest extends ServiceTest {
         void 테이블에_COMPLETION_상태가_아닌_주문이_있으면_예외가_발생한다() {
             //given
             OrderTable 테이블 = new OrderTable(2, false);
-            테이블.changeEmpty(false);
             OrderTable 생성된_테이블 = orderTableRepository.save(테이블);
             주문만들기(생성된_테이블);
             ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);

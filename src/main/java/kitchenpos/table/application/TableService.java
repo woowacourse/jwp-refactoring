@@ -1,9 +1,7 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.ChangeEmptyValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -12,11 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final ChangeEmptyValidator changeEmptyValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final ChangeEmptyValidator changeEmptyValidator,
+                        final OrderTableRepository orderTableRepository) {
+        this.changeEmptyValidator = changeEmptyValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -35,12 +34,7 @@ public class TableService {
         Long tableId = request.getTableId();
         final OrderTable orderTable = orderTableRepository.getById(tableId);
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                tableId, Arrays.asList(OrderStatus.NOT_STARTED, OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("주문 상태가 조리 또는 식사인 경우 테이블의 비어있을 수 없습니다.");
-        }
-
-        orderTable.changeEmpty(request.getEmpty());
+        orderTable.changeEmpty(changeEmptyValidator);
         return OrderTableDto.from(orderTable);
     }
 

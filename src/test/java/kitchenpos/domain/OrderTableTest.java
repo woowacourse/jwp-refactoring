@@ -45,23 +45,6 @@ class OrderTableTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-
-    @Nested
-    class empty_설정 {
-
-        @Test
-        void 포함된_그룹이_있는_경우_예외가_발생한다() {
-            //given
-            OrderTable 테이블 = new OrderTable(1, false);
-            테이블.changeTableGroup(1L);
-
-            //expect
-            assertThatThrownBy(() -> 테이블.changeEmpty(true))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-    }
-
     @Test
     void 그룹을_없앨_수_있다() {
         //given

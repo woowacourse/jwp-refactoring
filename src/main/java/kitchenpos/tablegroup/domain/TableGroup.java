@@ -39,6 +39,11 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public void ungroup(UngroupValidator ungroupValidator) {
+        ungroupValidator.validate(this);
+        orderTables.forEach(OrderTable::ungroup);
+    }
+
     private void validate(final List<OrderTable> orderTables) {
         if (isNull(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("테이블 그룹은 2개 이상의 테이블로 구성되어야 합니다.");
@@ -60,8 +65,7 @@ public class TableGroup {
     public void changeOrderTables(final List<OrderTable> orderTables) {
         validate(orderTables);
         for (final OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(this.id);
-            orderTable.changeEmpty(false);
+            orderTable.groupBy(id);
         }
         this.orderTables = orderTables;
     }
