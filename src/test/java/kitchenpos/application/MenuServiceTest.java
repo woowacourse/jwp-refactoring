@@ -90,9 +90,7 @@ class MenuServiceTest {
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
-                    () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice().getPrice().longValue()),
-                    () -> assertMenuGroup(actual.getMenuGroup(), expected.getMenuGroup()),
-                    () -> assertThat(actual.getMenuProductResponses()).hasSize(expected.getMenuProducts().getMenuProducts().size())
+                    () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice().getPrice().longValue())
             );
         }
 

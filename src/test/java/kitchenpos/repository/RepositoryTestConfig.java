@@ -1,11 +1,13 @@
 package kitchenpos.repository;
 
+import kitchenpos.application.fixture.OrderMenuFixture;
 import kitchenpos.application.fixture.TableGroupFixture;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderMenu;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.OrderTable;
@@ -44,6 +46,12 @@ public abstract class RepositoryTestConfig {
         return menu;
     }
 
+    protected OrderMenu createOrderMenu(final Long menuId, final String name, final BigDecimal price) {
+        final OrderMenu orderMenu = OrderMenuFixture.orderMenu(menuId, name, price);
+        em.persist(orderMenu);
+        return orderMenu;
+    }
+
     protected Product createProduct(final String name, final BigDecimal price) {
         final Product product = product(name, price);
         em.persist(product);
@@ -74,8 +82,8 @@ public abstract class RepositoryTestConfig {
         return order;
     }
 
-    protected OrderLineItem createOrderLineItem(final Long orderId, final Menu menu, final long quantity) {
-        final OrderLineItem orderLineItem = orderLineItem(orderId, menu, quantity);
+    protected OrderLineItem createOrderLineItem(final Long orderId, final OrderMenu orderMenu, final long quantity) {
+        final OrderLineItem orderLineItem = orderLineItem(orderId, orderMenu, quantity);
         em.persist(orderLineItem);
         return orderLineItem;
     }

@@ -7,6 +7,7 @@ import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderMenu;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
@@ -38,6 +39,7 @@ import static kitchenpos.application.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.application.fixture.MenuProductFixture.menuProduct;
 import static kitchenpos.application.fixture.OrderFixture.order;
 import static kitchenpos.application.fixture.OrderLineItemFixture.orderLineItem;
+import static kitchenpos.application.fixture.OrderMenuFixture.orderMenu;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,9 +75,9 @@ class OrderServiceTest {
     @Mock
     private OrderTableRepository orderTableRepository;
 
-    private Menu noodle;
+    private OrderMenu noodle;
 
-    private Menu potato;
+    private OrderMenu potato;
 
     private OrderLineItem wooDong;
 
@@ -83,8 +85,8 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        noodle = mock(Menu.class);
-        potato = mock(Menu.class);
+        noodle = mock(OrderMenu.class);
+        potato = mock(OrderMenu.class);
         wooDong = new OrderLineItem(null, noodle, 1);
         frenchFries = new OrderLineItem(null, potato, 1);
     }
@@ -107,7 +109,8 @@ class OrderServiceTest {
             final long savedIOrderId = 1L;
             given(order.getId()).willReturn(savedIOrderId);
 
-            final OrderLineItem orderLineItem = orderLineItem(savedIOrderId, menu, 1L);
+            final OrderMenu orderMenu = orderMenu(1L, "우동세트", BigDecimal.valueOf(5_000));
+            final OrderLineItem orderLineItem = orderLineItem(savedIOrderId, orderMenu, 1L);
             order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
             given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(orderLineItem));
 
@@ -148,8 +151,9 @@ class OrderServiceTest {
             final Order order = order(COMPLETION, now(), List.of(wooDong, frenchFries));
             final Long wooDongId = 1L;
             final Menu menu = menu("우동세트", BigDecimal.valueOf(8_000), menuGroup("일식"), List.of(menuProduct(wooDongId, 3_000L)));
+            final OrderMenu orderMenu = orderMenu(null, "우동세트", BigDecimal.valueOf(8_000));
             final Long savedOrderId = 1L;
-            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(new OrderLineItem(savedOrderId, menu, 1)));
+            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(new OrderLineItem(savedOrderId, orderMenu, 1)));
 
             // when
             final long incorrectMenuSize = order.getOrderLineItems().getOrderLineItems().size() - 1;
@@ -175,7 +179,8 @@ class OrderServiceTest {
             final long orderTableId = 1L;
             final Order order = spy(order(orderTableId, COOKING, now(), new ArrayList<>()));
             final Long savedOrderId = 1L;
-            final OrderLineItem orderLineItem = orderLineItem(savedOrderId, menu, 1L);
+            final OrderMenu orderMenu = orderMenu(1L, "우동세트", BigDecimal.valueOf(5_000));
+            final OrderLineItem orderLineItem = orderLineItem(savedOrderId, orderMenu, 1L);
             order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
             given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(orderLineItem));
 
