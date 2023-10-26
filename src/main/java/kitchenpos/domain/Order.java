@@ -41,7 +41,7 @@ public class Order {
 
     protected Order() {}
 
-    public Order(
+    private Order(
             final OrderTable orderTable,
             final OrderStatus orderStatus,
             final LocalDateTime now,

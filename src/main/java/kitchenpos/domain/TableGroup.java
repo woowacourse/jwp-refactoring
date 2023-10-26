@@ -29,7 +29,7 @@ public class TableGroup {
 
     protected TableGroup() {}
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    private TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }

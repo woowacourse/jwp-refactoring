@@ -42,7 +42,7 @@ public class Menu {
 
     protected Menu() {}
 
-    public Menu(
+    private Menu(
             final String name,
             final Price price,
             final MenuGroup menuGroup,
