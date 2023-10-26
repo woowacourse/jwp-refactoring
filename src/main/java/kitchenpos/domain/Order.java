@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,14 +39,16 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = makeList(orderLineItems);
+        this.orderLineItems = makeOrderItems(orderLineItems);
     }
 
-    private List<OrderLineItem> makeList(List<OrderLineItem> orderLineItems) {
+    private List<OrderLineItem> makeOrderItems(List<OrderLineItem> orderLineItems) {
         if (orderLineItems == null) {
             return new ArrayList<>();
         }
-        return new ArrayList<>(orderLineItems);
+        return orderLineItems.stream()
+            .map(orderLineItem -> orderLineItem.assignOrder(this))
+            .collect(Collectors.toList());
     }
 
     public void addOrderLineItems(List<OrderLineItem> orderLineItems) {

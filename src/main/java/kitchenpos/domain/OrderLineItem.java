@@ -33,6 +33,14 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public OrderLineItem assignOrder(Order order) {
+        if (this.order != null) {
+            throw new IllegalArgumentException("이미 해당 주문 상품은 주문에 포함되었습니다.");
+        }
+        this.order = order;
+        return this;
+    }
+
     public Long getId() {
         return id;
     }

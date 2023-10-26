@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,12 +33,11 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Order order(Order order) {
+    public Order order(List<OrderLineItem> items) {
         if (empty) {
             throw new IllegalArgumentException("해당 테이블은 비어있습니다.");
         }
-        order.tabling(this);
-        return null;
+        return new Order(null, this.id, OrderStatus.COOKING.name(), LocalDateTime.now(), items);
     }
 
     public void ungroup() {

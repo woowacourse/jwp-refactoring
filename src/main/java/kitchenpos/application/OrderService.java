@@ -3,8 +3,6 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -38,9 +36,7 @@ public class OrderService {
 
     public OrderResponse create(final OrderCreateRequest request) {
         final OrderTable orderTable = findOrderTable(request);
-        Order order = makeOrder(request);
-        orderTable.order(order);
-
+        Order order = orderTable.order(makeOrderLine(request));
         return OrderResponse.of(orderRepository.save(order));
     }
 
@@ -49,20 +45,13 @@ public class OrderService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
     }
 
-    private Order makeOrder(OrderCreateRequest request) {
-        Order order = new Order(null, null, OrderStatus.COOKING.name(), LocalDateTime.now(),
-            new ArrayList<>());
-        order.addOrderLineItems(makeOrderLine(order, request));
-        return order;
-    }
-
-    private List<OrderLineItem> makeOrderLine(Order order, OrderCreateRequest request) {
+    private List<OrderLineItem> makeOrderLine(OrderCreateRequest request) {
         List<Menu> menus = findMenus(request);
         if (request.getOrderLines().size() != menus.size()) {
             throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다.");
         }
         return request.getOrderLines().stream()
-            .map(req -> new OrderLineItem(null, findMenuId(req, menus), order, req.getQuantity()))
+            .map(req -> new OrderLineItem(null, findMenuId(req, menus), null, req.getQuantity()))
             .collect(toList());
     }
 
