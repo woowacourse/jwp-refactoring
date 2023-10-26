@@ -5,7 +5,6 @@ import static kitchenpos.support.fixture.MenuFixture.한마리메뉴_DTO;
 import static kitchenpos.support.fixture.MenuFixture.후라이드치킨_DTO;
 import static kitchenpos.support.fixture.OrderFixture.createOrderLineItem;
 import static kitchenpos.support.fixture.ProductFixture.후라이드_DTO;
-import static kitchenpos.support.fixture.TableFixture.비어있는_주문_테이블_DTO;
 import static kitchenpos.support.fixture.TableFixture.비어있지_않는_주문_테이블_DTO;
 
 import java.math.BigDecimal;
@@ -24,7 +23,7 @@ import kitchenpos.product.application.dto.ProductDto;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table_group.application.TableGroupService;
-import kitchenpos.table_group.application.dto.TableGroupDto;
+import kitchenpos.table_group.application.dto.OrderTableDtoInTableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -77,13 +76,12 @@ public abstract class ServiceIntegrationTest {
         return tableService.create(orderTable);
     }
 
-    protected void saveTableGroup(final OrderTableDto savedOrderTableDto) {
-        final OrderTableDto orderTable = tableService.create(비어있는_주문_테이블_DTO());
-        final TableGroupDto tableGroupDto = new TableGroupDto(
-            null,
-            LocalDateTime.now(),
-            List.of(savedOrderTableDto, orderTable)
+    protected static OrderTableDtoInTableGroup map(final OrderTableDto orderTableDto) {
+        return new OrderTableDtoInTableGroup(
+            orderTableDto.getId(),
+            orderTableDto.getTableGroupId(),
+            orderTableDto.getNumberOfGuests(),
+            orderTableDto.getEmpty()
         );
-        tableGroupService.create(tableGroupDto);
     }
 }

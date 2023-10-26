@@ -21,6 +21,8 @@ import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.support.ServiceIntegrationTest;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table.domain.exception.OrderTableException;
+import kitchenpos.table_group.application.dto.OrderTableDtoInTableGroup;
+import kitchenpos.table_group.application.dto.TableGroupDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -174,5 +176,20 @@ class TableServiceTest extends ServiceIntegrationTest {
             ).isInstanceOf(OrderTableException.class)
                 .hasMessage(TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY.getMessage());
         }
+    }
+
+    private void saveTableGroup(final OrderTableDto savedOrderTableDto) {
+        final OrderTableDto orderTable = tableService.create(비어있는_주문_테이블_DTO());
+
+        final List<OrderTableDtoInTableGroup> orderTables = List.of(
+            map(orderTable), map(savedOrderTableDto));
+
+        final TableGroupDto tableGroupDto = new TableGroupDto(
+            null,
+            LocalDateTime.now(),
+            orderTables
+        );
+
+        tableGroupService.create(tableGroupDto);
     }
 }

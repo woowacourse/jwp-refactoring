@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table_group.domain.TableGroup;
 
 public class TableGroupDto {
@@ -13,19 +12,22 @@ public class TableGroupDto {
 
     private final LocalDateTime createdDate;
 
-    private final List<OrderTableDto> orderTables;
+    private final List<OrderTableDtoInTableGroup> orderTables;
 
     public TableGroupDto(
         final Long id,
         final LocalDateTime createdDate,
-        final List<OrderTableDto> orderTables
+        final List<OrderTableDtoInTableGroup> orderTables
     ) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    public static TableGroupDto createResponse(final TableGroup tableGroup) {
+    public static TableGroupDto createResponse(
+        final TableGroup tableGroup,
+        final List<OrderTableDtoInTableGroup> orderTableDtos
+    ) {
         return new TableGroupDto(
             tableGroup.getId(),
             tableGroup.getCreatedDate(),
@@ -41,13 +43,13 @@ public class TableGroupDto {
         return createdDate;
     }
 
-    public List<OrderTableDto> getOrderTables() {
+    public List<OrderTableDtoInTableGroup> getOrderTables() {
         return orderTables;
     }
 
     public List<Long> getOrderTableIds() {
         return orderTables.stream()
-            .map(OrderTableDto::getId)
+            .map(OrderTableDtoInTableGroup::getId)
             .collect(toUnmodifiableList());
     }
 

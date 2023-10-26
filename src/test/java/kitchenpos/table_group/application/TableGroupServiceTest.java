@@ -28,6 +28,7 @@ import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table_group.application.dto.OrderTableDtoInTableGroup;
 import kitchenpos.table_group.application.dto.TableGroupDto;
 import kitchenpos.table_group.domain.exception.TableGroupException;
 import org.junit.jupiter.api.DisplayName;
@@ -54,8 +55,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("테이블 그룹을 정상적으로 생성한다.")
         void success() {
             //given
-            final List<OrderTableDto> orderTableDtos = 비어있는_전쳬_주문_테이블_DTO().stream()
+            final List<OrderTableDtoInTableGroup> orderTableDtos = 비어있는_전쳬_주문_테이블_DTO().stream()
                 .map(tableService::create)
+                .map(TableGroupServiceTest::map)
                 .collect(Collectors.toList());
 
             final TableGroupDto tableGroupDto = new TableGroupDto(
@@ -91,10 +93,10 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("저장되지 않은 tableGroup로 요청하는 경우 Exception을 throw한다.")
         void throwExceptionOrderTablesAreNotFound() {
-            final OrderTableDto unsavedTable1
-                = new OrderTableDto(1L, null, 1, true);
-            final OrderTableDto unsavedTable2
-                = new OrderTableDto(2L, null, 1, true);
+            final OrderTableDtoInTableGroup unsavedTable1
+                = new OrderTableDtoInTableGroup(1L, null, 1, true);
+            final OrderTableDtoInTableGroup unsavedTable2
+                = new OrderTableDtoInTableGroup(2L, null, 1, true);
 
             final TableGroupDto tableGroupDto = new TableGroupDto(null, LocalDateTime.now(),
                 List.of(unsavedTable1, unsavedTable2));
@@ -107,8 +109,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("tableGroup안에 orderTable이 비어있지 않은 경우 Exception을 throw한다.")
         void throwExceptionOrderTablesAreNotEmpty() {
-            final List<OrderTableDto> orderTableDtos = 비어있지_않는_전쳬_주문_테이블_DTO().stream()
+            final List<OrderTableDtoInTableGroup> orderTableDtos = 비어있지_않는_전쳬_주문_테이블_DTO().stream()
                 .map(tableService::create)
+                .map(ServiceIntegrationTest::map)
                 .collect(toUnmodifiableList());
 
             final TableGroupDto tableGroupDto
@@ -147,7 +150,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("해제하려는 TableGroup에 속한 Table의 주문 상태가 완료상태가 아닌경우 예외처리")
         void throwExceptionIfOrderIsNotCompletion() {
             //given
-            final List<OrderTableDto> orderTableDtos = createOrderTableContainNoCompletion();
+            final List<OrderTableDtoInTableGroup> orderTableDtos = createOrderTableContainNoCompletion();
             final TableGroupDto tableGroupDto =
                 new TableGroupDto(null, LocalDateTime.now(), orderTableDtos);
 
@@ -160,13 +163,14 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
                 .hasMessage(ORDER_IS_NOT_COMPLETION.getMessage());
         }
 
-        private List<OrderTableDto> createOrderTableContainNoCompletion() {
+        private List<OrderTableDtoInTableGroup> createOrderTableContainNoCompletion() {
             final OrderTable savedOrderTable = orderTableRepository.save(비어있는_주문_테이블());
             final OrderTable savedOrderTable2 = orderTableRepository.save(비어있는_주문_테이블());
             saveOrderMeal(savedOrderTable);
 
             return Stream.of(savedOrderTable, savedOrderTable2)
                 .map(OrderTableDto::from)
+                .map(ServiceIntegrationTest::map)
                 .collect(Collectors.toList());
         }
 
@@ -184,8 +188,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     private TableGroupDto saveTableGroupSuccessfully(
         final List<OrderTableDto> orderTableDtos
     ) {
-        final List<OrderTableDto> savedOrderTableDtos = orderTableDtos.stream()
+        final List<OrderTableDtoInTableGroup> savedOrderTableDtos = orderTableDtos.stream()
             .map(tableService::create)
+            .map(ServiceIntegrationTest::map)
             .collect(Collectors.toList());
         final TableGroupDto tableGroupDto =
             new TableGroupDto(null, LocalDateTime.now(), savedOrderTableDtos);

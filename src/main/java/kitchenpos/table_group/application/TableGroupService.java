@@ -14,15 +14,18 @@ public class TableGroupService {
     private final ApplicationEventPublisher eventPublisher;
     private final FrontTableGroupValidator frontTableGroupValidator;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderTableDtoReader orderTableDtoReader;
 
     public TableGroupService(
         final ApplicationEventPublisher eventPublisher,
         final FrontTableGroupValidator frontTableGroupValidator,
-        final TableGroupRepository tableGroupRepository
+        final TableGroupRepository tableGroupRepository,
+        final OrderTableDtoReader orderTableDtoReader
     ) {
         this.eventPublisher = eventPublisher;
         this.frontTableGroupValidator = frontTableGroupValidator;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderTableDtoReader = orderTableDtoReader;
     }
 
     @Transactional
@@ -34,10 +37,11 @@ public class TableGroupService {
             = new TableGroupCreateEvent(savedTableGroup.getId(), tableGroupDto.getOrderTableIds());
         eventPublisher.publishEvent(tableGroupCreateEvent);
 
-        return TableGroupDto.createResponse(savedTableGroup);
+        return TableGroupDto.createResponse(
+            savedTableGroup, orderTableDtoReader.readTablesByTableGroupId(savedTableGroup.getId())
+        );
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
         frontTableGroupValidator.validateUngroup(tableGroup.getId());
