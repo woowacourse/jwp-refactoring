@@ -79,7 +79,7 @@ public class OrderService {
         return savedOrderLineItems;
     }
 
-    private static List<Long> convertToIds(final List<OrderLineItemDto> orderLineItemDtos) {
+    private List<Long> convertToIds(final List<OrderLineItemDto> orderLineItemDtos) {
         return orderLineItemDtos.stream()
                                 .map(OrderLineItemDto::getMenuId)
                                 .collect(Collectors.toList());
@@ -109,7 +109,7 @@ public class OrderService {
         return OrderResponse.from(order);
     }
 
-    private static void validateOrderStatus(final Order order) {
+    private void validateOrderStatus(final Order order) {
         if (Objects.equals(OrderStatus.COMPLETION, order.getOrderStatus())) {
             throw new InvalidOrderStatusToChangeException("주문이 상태가 계산 완료라면 상태를 변경할 수 없다.");
         }

@@ -88,7 +88,7 @@ public class TableService {
         return OrderTableResponse.from(savedOrderTable);
     }
 
-    private static void validateOrderTableIsEmpty(final OrderTable savedOrderTable) {
+    private void validateOrderTableIsEmpty(final OrderTable savedOrderTable) {
         if (savedOrderTable.isEmpty()) {
             throw new InvalidChangeOrderTableNumberOfGuests("주문 테이블이 빈 상태라면 사용자 수를 변경할 수 없습니다.");
         }
