@@ -2,7 +2,6 @@ package kitchenpos.order.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderCreateRequest {
 
@@ -15,12 +14,6 @@ public class OrderCreateRequest {
     public OrderCreateRequest(final Long orderTableId, final List<OrderLineItemCreateRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
-    }
-
-    public List<Long> getMenuIds() {
-        return orderLineItems.stream()
-                .map(OrderLineItemCreateRequest::getMenuId)
-                .collect(Collectors.toList());
     }
 
     public Long getOrderTableId() {
