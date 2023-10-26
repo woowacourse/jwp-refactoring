@@ -14,5 +14,5 @@ public interface OrderRepository extends JpaRepository<Order, Long>, CustomOrder
         return findById(id).orElseThrow(() -> new OrderException.NotFoundException(id));
     }
 
-    List<Order> findByOrderTable(final AggregateReference<OrderTable> orderTableId);
+    List<Order> findByOrderTable(final Long orderTableId);
 }

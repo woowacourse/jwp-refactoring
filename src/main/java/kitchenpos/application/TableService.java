@@ -80,7 +80,7 @@ public class TableService {
 
     @TransactionalEventListener
     public void ungroup(final TableUnGroupEvent request) {
-        orderTableRepository.findByTableGroupId(request.getTableGroupId())
+        orderTableRepository.findByTableGroupId(request.getTableGroupId().getId())
                 .forEach(it -> it.unGroup(tableGroupValidator));
     }
 }

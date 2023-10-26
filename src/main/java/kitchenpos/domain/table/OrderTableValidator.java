@@ -18,7 +18,7 @@ public class OrderTableValidator {
 
     public void validateChangeEmpty(final OrderTable orderTable) {
         final AggregateReference<OrderTable> orderTableId = new AggregateReference<>(orderTable.getId());
-        final Orders orders = new Orders(orderRepository.findByOrderTable(orderTableId));
+        final Orders orders = new Orders(orderRepository.findByOrderTable(orderTableId.getId()));
 
         if (orders.isEmpty() || orders.isAllStatusOf(OrderStatus.COMPLETION)) {
             return;

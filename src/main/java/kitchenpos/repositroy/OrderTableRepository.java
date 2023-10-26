@@ -13,7 +13,7 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
         return findById(id).orElseThrow(() -> new TableException.NotFoundException(id));
     }
 
-    List<OrderTable> findByTableGroupId(final AggregateReference<TableGroup> tableGroupId);
+    List<OrderTable> findByTableGroupId(final Long tableGroupId);
 
     Long countByIdIn(final List<Long> id);
 }
