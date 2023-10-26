@@ -20,6 +20,9 @@ public class OrderLineItem {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
+    @Embedded
+    private OrderedMenu orderedMenu;
+
     @Column(nullable = false)
     private long quantity;
 
@@ -32,6 +35,7 @@ public class OrderLineItem {
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
+        this.orderedMenu = OrderedMenu.from(menu);
     }
 
     public Long getSeq() {
@@ -44,6 +48,10 @@ public class OrderLineItem {
 
     public Menu getMenu() {
         return menu;
+    }
+
+    public OrderedMenu getOrderedMenu() {
+        return orderedMenu;
     }
 
     public long getQuantity() {

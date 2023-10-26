@@ -50,7 +50,7 @@ class MenuServiceTest extends ServiceTest {
 
         assertSoftly(softly -> {
             softly.assertThat(menu.getId()).isNotNull();
-            softly.assertThat(menu.getName().getName()).isEqualTo("메뉴");
+            softly.assertThat(menu.getName().getValue()).isEqualTo("메뉴");
         });
     }
 
