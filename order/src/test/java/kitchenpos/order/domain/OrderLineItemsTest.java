@@ -38,12 +38,12 @@ public class OrderLineItemsTest {
         void success() {
             // given
             List<OrderLineItem> validOrderLineItems = List.of(
-                    new OrderLineItem(menu1.getId(), 1L),
-                    new OrderLineItem(menu2.getId(), 1L)
+                    OrderLineItem.of(menu1, 1L),
+                    OrderLineItem.of(menu2, 1L)
             );
 
             // when
-            OrderLineItems orderLineItems = OrderLineItems.of(validOrderLineItems, menus);
+            OrderLineItems orderLineItems = new OrderLineItems(validOrderLineItems);
 
             // then
             assertThat(orderLineItems.getOrderLineItems())
@@ -58,26 +58,9 @@ public class OrderLineItemsTest {
 
             // when
             // then
-            assertThatThrownBy(() -> OrderLineItems.of(empty, menus))
+            assertThatThrownBy(() -> new OrderLineItems(empty))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("하나 이상의 상품을 주문하셔야 합니다.");
-        }
-
-        @Test
-        void testOrderLineItemsCreationWithInvalidOrderLineItems() {
-            // given
-            Long invalidMenuId = 3L;
-
-            List<OrderLineItem> invalidOrderLineItems = List.of(
-                    new OrderLineItem(menu1.getId(), 1L),
-                    new OrderLineItem(invalidMenuId, 1L)
-            );
-
-            // when
-            // then
-            assertThatThrownBy(() -> OrderLineItems.of(invalidOrderLineItems, menus))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("등록되지 않은 상품은 주문할 수 없습니다.");
         }
 
     }
