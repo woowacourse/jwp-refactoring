@@ -1,6 +1,7 @@
 package kitchenpos.tablegroup.application;
 
 import kitchenpos.ordertable.application.dto.CreateOrderTableIdDto;
+import kitchenpos.ordertable.domain.OrderTables;
 import kitchenpos.tablegroup.application.dto.CreateTableGroupDto;
 import kitchenpos.tablegroup.application.dto.TableGroupDto;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -39,12 +40,11 @@ public class TableGroupService {
                 .map(CreateOrderTableIdDto::getId)
                 .collect(Collectors.toList());
         List<OrderTable> orderTables = findOrderTables(orderTableIds);
-
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        tableGroup.addOrderTables(orderTables);
         tableGroupRepository.save(tableGroup);
-
-        return TableGroupDto.from(tableGroup);
+        OrderTables orderTableGrouper = new OrderTables(orderTables);
+        orderTableGrouper.group(tableGroup.getId());
+        return TableGroupDto.of(tableGroup, orderTables);
     }
 
     private List<OrderTable> findOrderTables(List<Long> orderTablesId) {

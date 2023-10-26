@@ -2,15 +2,13 @@ package kitchenpos.ordertable.domain;
 
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.TableGroupException;
-import kitchenpos.tablegroup.domain.TableGroup;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -20,8 +18,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Embedded
     private GuestNumber numberOfGuests;
@@ -37,11 +35,12 @@ public class OrderTable {
 
     public OrderTable(Long id, GuestNumber numberOfGuests, Boolean empty) {
         this.id = id;
+        this.tableGroupId = null;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void changeTableGroup(TableGroup tableGroup) {
+    public void changeTableGroupId(Long tableGroupId) {
         if (isNotEmpty()) {
             throw new TableGroupException("주문 테이블이 주문이 가능한 상태여서 테이블 그룹을 생성할 수 없습니다.");
         }
@@ -49,7 +48,7 @@ public class OrderTable {
             throw new TableGroupException("주문 테이블이 이미 테이블 그룹에 속해 있어 테이블 그룹을 생성할 수 없습니다.");
         }
         empty = Boolean.FALSE;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     public void changeEmpty(Boolean empty, OrderValidator orderValidator) {
@@ -61,7 +60,7 @@ public class OrderTable {
     }
 
     private boolean existsTableGroup() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
     private boolean isNotEmpty() {
@@ -78,15 +77,15 @@ public class OrderTable {
     public void ungroup(OrderValidator orderValidator) {
         orderValidator.validateOrder(id);
         empty = false;
-        tableGroup = null;
+        tableGroupId = null;
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public Integer getNumberOfGuests() {

@@ -9,7 +9,6 @@ import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.domain.OrderValidator;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.OrderTableGuestNumberException;
 import org.assertj.core.api.Assertions;
@@ -19,7 +18,6 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,8 +123,7 @@ class TableServiceTest extends MockServiceTest {
                 new GuestNumber(1),
                 true);
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        ordertable.changeTableGroup(tableGroup);
+        ordertable.changeTableGroupId(1L);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(ordertable));

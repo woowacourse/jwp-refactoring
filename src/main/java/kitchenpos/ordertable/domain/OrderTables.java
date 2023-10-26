@@ -2,26 +2,24 @@ package kitchenpos.ordertable.domain;
 
 import kitchenpos.ordertable.exception.TableGroupException;
 
-import javax.persistence.Embeddable;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Embeddable
 public class OrderTables {
 
     private final static Integer MINIMUM_GROUP_SIZE = 2;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
+    private List<OrderTable> orderTables;
 
-    public OrderTables() {
+    public OrderTables(List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+        this.orderTables = orderTables;
     }
 
-    public void add(List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
-        this.orderTables.addAll(orderTables);
+    public void group(Long tableGroupId) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroupId(tableGroupId);
+        }
     }
 
     private void validateOrderTables(List<OrderTable> orderTables) {

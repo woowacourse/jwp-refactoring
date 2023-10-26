@@ -20,8 +20,8 @@ public class OrderTableDto {
 
     public static OrderTableDto from(OrderTable orderTable) {
         Long tableGroupId = null;
-        if (Objects.nonNull(orderTable.getTableGroup())) {
-            tableGroupId = orderTable.getTableGroup().getId();
+        if (Objects.nonNull(orderTable.getTableGroupId())) {
+            tableGroupId = orderTable.getTableGroupId();
         }
         return new OrderTableDto(
                 orderTable.getId(),

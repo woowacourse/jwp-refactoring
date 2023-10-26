@@ -2,18 +2,17 @@ package kitchenpos.ordertable.application;
 
 import kitchenpos.MockServiceTest;
 import kitchenpos.ordertable.application.dto.CreateOrderTableIdDto;
-import kitchenpos.tablegroup.application.dto.CreateTableGroupDto;
 import kitchenpos.ordertable.application.dto.OrderTableDto;
-import kitchenpos.tablegroup.application.dto.TableGroupDto;
 import kitchenpos.ordertable.domain.GuestNumber;
-import kitchenpos.order.domain.Order;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.OrderValidator;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.TableGroupException;
-import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.CreateTableGroupDto;
+import kitchenpos.tablegroup.application.dto.TableGroupDto;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +34,9 @@ class TableGroupServiceTest extends MockServiceTest {
 
     @Mock
     private TableGroupRepository tableGroupRepository;
+
+    @Mock
+    private OrderValidator orderValidator;
 
     @Test
     void 테이블그룹을_추가한다() {
@@ -134,7 +135,7 @@ class TableGroupServiceTest extends MockServiceTest {
     void 테이블그룹을_추가할_때_주문테이블이_이미_다른_테이블_그룹에_속해있으면_예외를_던진다() {
         // given
         OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
-        firstOrderTable.changeTableGroup(new TableGroup(LocalDateTime.now()));
+        firstOrderTable.changeTableGroupId(1L);
         OrderTable secondOrderTable = new OrderTable(new GuestNumber(1), true);
 
         BDDMockito.given(orderTableRepository.findAllByIdIn(BDDMockito.anyCollection()))
@@ -158,7 +159,7 @@ class TableGroupServiceTest extends MockServiceTest {
 
         BDDMockito.given(tableGroupRepository.existsById(BDDMockito.anyLong()))
                 .willReturn(true);
-        BDDMockito.given(orderTableRepository.findAllByTableGroupIdWithOrders(BDDMockito.anyLong()))
+        BDDMockito.given(orderTableRepository.findAllByTableGroupId(BDDMockito.anyLong()))
                 .willReturn(List.of(firstOrderTable, secondOrderTable));
 
         // when
@@ -167,23 +168,25 @@ class TableGroupServiceTest extends MockServiceTest {
         // then
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(firstOrderTable.getEmpty()).isFalse();
-        softAssertions.assertThat(firstOrderTable.getTableGroup()).isNull();
+        softAssertions.assertThat(firstOrderTable.getTableGroupId()).isNull();
         softAssertions.assertThat(secondOrderTable.getEmpty()).isFalse();
-        softAssertions.assertThat(secondOrderTable.getTableGroup()).isNull();
+        softAssertions.assertThat(secondOrderTable.getTableGroupId()).isNull();
         softAssertions.assertAll();
     }
 
     @Test
     void 테이블그룹을_삭제할_때_주문테이블_내에_존재하는_주문들_중_COOKING_또는_MEAL_상태가_존재하면_예외를_던진다() {
         // given
-        OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), false);
-        Order order = new Order(LocalDateTime.now());
-        firstOrderTable.addOrder(order);
+        OrderTable firstOrderTable = new OrderTable(1L, new GuestNumber(1), true);
+        firstOrderTable.changeTableGroupId(1L);
 
         BDDMockito.given(tableGroupRepository.existsById(BDDMockito.anyLong()))
                 .willReturn(true);
-        BDDMockito.given(orderTableRepository.findAllByTableGroupIdWithOrders(BDDMockito.anyLong()))
+        BDDMockito.given(orderTableRepository.findAllByTableGroupId(BDDMockito.anyLong()))
                 .willReturn(List.of(firstOrderTable));
+        BDDMockito.willThrow(new OrderTableException("주문테이블에 속한 주문이 요리중 또는 식사중이므로 상태를 변경할 수 없습니다."))
+                .given(orderValidator)
+                .validateOrder(BDDMockito.anyLong());
 
         // when, then
         Assertions.assertThatThrownBy(() -> tableGroupService.ungroup(1L))

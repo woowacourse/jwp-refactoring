@@ -2,12 +2,11 @@ package kitchenpos.ordertable.domain;
 
 import kitchenpos.BaseTest;
 import kitchenpos.ordertable.exception.TableGroupException;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class TableGroupTest extends BaseTest {
 
@@ -16,23 +15,26 @@ class TableGroupTest extends BaseTest {
         // given
         OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
         OrderTable secondOrderTable = new OrderTable(new GuestNumber(2), true);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         // when
-        tableGroup.addOrderTables(List.of(firstOrderTable, secondOrderTable));
+        OrderTables orderTables = new OrderTables(List.of(firstOrderTable, secondOrderTable));
+        orderTables.group(1L);
+        List<Long> orderTableIds = orderTables.getOrderTables()
+                .stream()
+                .map(OrderTable::getTableGroupId)
+                .collect(Collectors.toList());
 
         // then
-        Assertions.assertThat(tableGroup.getOrderTables().size()).isEqualTo(2);
+        Assertions.assertThat(orderTableIds).containsExactlyInAnyOrderElementsOf(List.of(1L, 1L));
     }
 
     @Test
     void 테이블_그룹에_주문_테이블을_추가할_때_주문_테이블의_개수가_1개_이하이면_예외를_던진다() {
         // given
         OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         // when, then
-        Assertions.assertThatThrownBy(() -> tableGroup.addOrderTables(List.of(firstOrderTable)))
+        Assertions.assertThatThrownBy(() -> new OrderTables(List.of(firstOrderTable)))
                 .isInstanceOf(TableGroupException.class);
     }
 
@@ -41,10 +43,10 @@ class TableGroupTest extends BaseTest {
         // given
         OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), false);
         OrderTable secondOrderTable = new OrderTable(new GuestNumber(2), true);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        OrderTables orderTables = new OrderTables(List.of(firstOrderTable, secondOrderTable));
 
         // when, then
-        Assertions.assertThatThrownBy(() -> tableGroup.addOrderTables(List.of(firstOrderTable, secondOrderTable)))
+        Assertions.assertThatThrownBy(() -> orderTables.group(2L))
                 .isInstanceOf(TableGroupException.class);
     }
 
@@ -53,13 +55,11 @@ class TableGroupTest extends BaseTest {
         // given
         OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
         OrderTable secondOrderTable = new OrderTable(new GuestNumber(2), true);
-        TableGroup anotherTableGroup = new TableGroup(LocalDateTime.now());
-        anotherTableGroup.addOrderTables(List.of(firstOrderTable, secondOrderTable));
-
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        firstOrderTable.changeTableGroupId(1L);
+        OrderTables orderTables = new OrderTables(List.of(firstOrderTable, secondOrderTable));
 
         // when, then
-        Assertions.assertThatThrownBy(() -> tableGroup.addOrderTables(List.of(firstOrderTable, secondOrderTable)))
+        Assertions.assertThatThrownBy(() -> orderTables.group(2L))
                 .isInstanceOf(TableGroupException.class);
     }
 }

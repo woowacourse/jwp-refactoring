@@ -2,11 +2,8 @@ package kitchenpos.ordertable.domain;
 
 import kitchenpos.BaseTest;
 import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
 
 class OrderTableTest extends BaseTest {
 
@@ -16,8 +13,7 @@ class OrderTableTest extends BaseTest {
     void 주문_테이블은_테이블_그룹이_존재하면_주문_상태를_바꾸지_못한다() {
         // given
         OrderTable orderTable = new OrderTable(1L, new GuestNumber(1), true);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        orderTable.changeTableGroup(tableGroup);
+        orderTable.changeTableGroupId(1L);
 
         // when, then
         Assertions.assertThatThrownBy(() -> orderTable.changeEmpty(false, orderValidator))
