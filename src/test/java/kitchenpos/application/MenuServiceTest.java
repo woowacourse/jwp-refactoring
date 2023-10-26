@@ -19,28 +19,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class MenuServiceTest {
 
+    @Autowired
     private MenuService menuService;
-    private MenuMapper menuMapper;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
-    private MenuGroupRepository menuGroupRepository;
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
     private EntityManager manager;
-
-    @BeforeEach
-    void setUp() {
-        menuService = new MenuService(menuRepository,
-                new MenuMapper(menuRepository, menuGroupRepository, menuProductRepository, productRepository));
-    }
 
     @Test
     void 메뉴_그룹_ID_가_존재하지_않은_경우_예외가_발생한다() {
