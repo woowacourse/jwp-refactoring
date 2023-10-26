@@ -10,14 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final TableEmptyChangeService tableEmptyChangeService;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(
-            TableEmptyChangeService tableEmptyChangeService,
-            OrderTableRepository orderTableRepository
-    ) {
-        this.tableEmptyChangeService = tableEmptyChangeService;
+    public TableService(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -35,8 +30,8 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(Long orderTableId, boolean empty) {
         OrderTable orderTable = orderTableRepository.getById(orderTableId);
-        tableEmptyChangeService.execute(orderTable, empty);
-
+        orderTable.changeEmpty(empty);
+        
         return orderTable;
     }
 

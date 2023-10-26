@@ -8,9 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import kitchenpos.vo.NumberOfGuests;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-public class OrderTable {
+public class OrderTable extends AbstractAggregateRoot<OrderTable> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -37,15 +38,11 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public boolean hasTableGroup() {
-        Optional<Long> result = tableGroupId();
-        return result.isPresent();
-    }
-
     public void changeEmpty(boolean empty) {
         if (tableGroupId != null) {
             throw new IllegalStateException("이미 속한 테이블 그룹이 있으면 주문 가능 상태를 변경할 수 없습니다.");
         }
+        registerEvent(new TableEmptyChangedEvent(this, empty));
         this.empty = empty;
     }
 
