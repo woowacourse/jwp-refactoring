@@ -2,7 +2,7 @@ package kitchenpos.application.tablegroup;
 
 import kitchenpos.application.ServiceTestHelper;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.tablegroup.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

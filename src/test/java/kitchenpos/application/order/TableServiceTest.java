@@ -1,7 +1,7 @@
 package kitchenpos.application.order;
 
 import kitchenpos.application.ServiceTestHelper;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.tablegroup.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
