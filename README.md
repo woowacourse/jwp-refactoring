@@ -88,14 +88,22 @@
 ```mermaid
 classDiagram
     Menu "*" --> "1" MenuGroup
-    Menu ..> MenuProduct: mappedBy
-    MenuProduct "*" --o "1" Menu
+    Menu "1" --> "*" MenuProduct
     MenuProduct "*" --> "1" Product
     Order "*" --> "1" OrderTable
-    Order ..> OrderLineItem: mappedBy
+    Order "1" --> "*" OrderLineItem
     OrderLineItem "*" ..> "1" Menu : id
-    OrderLineItem "*" --o "1" Order
     OrderTable "*" --> "0..1" TableGroup
+```
+
+## 패키지 의존성 다이어그램
+```mermaid
+classDiagram
+    Menu --> MenuGroup
+    Menu --> Product
+    Order --> Menu
+    Order --> OrderTable
+    OrderTable --> TableGroup
 ```
 
 ## 프로젝트 개선 목록
@@ -116,6 +124,11 @@ classDiagram
 - [X] 도메인 요구 사항 정리
 - [X] Controller 테스트 추가
 - [X] Service 테스트 추가
+
+## 3단계 요구 사항
+- [X] 메뉴의 이름과 가격이 변경되어도 주문 항목이 변경되지 않아야 한다.
+- [X] 상품의 이름과 가격이 변경되어도 메뉴 상품은 변경되어야 한다.
+- [X] 클래스, 패키지 간의 양방향 의존 관계를 제거한다.
 
 ## 용어 사전
 

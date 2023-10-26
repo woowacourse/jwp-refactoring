@@ -11,7 +11,7 @@ import static org.mockito.BDDMockito.given;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.legacy.dao.MenuDao;
 import kitchenpos.legacy.dao.OrderDao;
 import kitchenpos.legacy.dao.OrderLineItemDao;

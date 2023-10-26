@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.legacy.dao.OrderDao;
 import kitchenpos.legacy.dao.OrderTableDao;
 import kitchenpos.legacy.dao.TableGroupDao;

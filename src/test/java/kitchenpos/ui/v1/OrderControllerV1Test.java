@@ -11,15 +11,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.OrderService;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderLineCreateRequest;
-import kitchenpos.ui.dto.OrderLineItemResponse;
-import kitchenpos.ui.dto.OrderResponse;
-import kitchenpos.ui.dto.OrderUpdateRequest;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderLineCreateRequest;
+import kitchenpos.order.dto.OrderLineItemResponse;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -52,7 +53,7 @@ class OrderControllerV1Test {
         ));
         LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
         var response = new OrderResponse(4885L, 1L, OrderStatus.COOKING, orderedTime, List.of(
-            new OrderLineItemResponse(1L, 2L, 2)
+            new OrderLineItemResponse(1L, 2L, 2, "소주세트", BigDecimal.valueOf(1000))
         ));
 
         given(orderService.create(any(OrderCreateRequest.class)))
@@ -74,10 +75,10 @@ class OrderControllerV1Test {
         given(orderService.findAll())
             .willReturn(List.of(
                 new OrderResponse(4885L, 1L, OrderStatus.COOKING, orderedTime, List.of(
-                    new OrderLineItemResponse(1L, 2L, 2)
+                    new OrderLineItemResponse(1L, 2L, 2, "소주세트", BigDecimal.valueOf(1000))
                 )),
                 new OrderResponse(4886L, 2L, OrderStatus.COMPLETION, orderedTime, List.of(
-                    new OrderLineItemResponse(2L, 3L, 5)
+                    new OrderLineItemResponse(2L, 3L, 5, "맥주세트", BigDecimal.valueOf(1000))
                 )))
             );
 
@@ -96,7 +97,7 @@ class OrderControllerV1Test {
         var request = new OrderUpdateRequest(OrderStatus.COMPLETION);
         LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
         var response = new OrderResponse(4885L, 1L, OrderStatus.COOKING, orderedTime, List.of(
-            new OrderLineItemResponse(1L, 2L, 2)
+            new OrderLineItemResponse(1L, 2L, 2, "소주세트", BigDecimal.valueOf(1000))
         ));
         given(orderService.changeOrderStatus(anyLong(), any(OrderStatus.class)))
             .willReturn(response);

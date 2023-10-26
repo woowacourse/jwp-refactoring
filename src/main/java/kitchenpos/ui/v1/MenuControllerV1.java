@@ -2,11 +2,14 @@ package kitchenpos.ui.v1;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.MenuService;
-import kitchenpos.ui.dto.MenuCreateRequest;
-import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.dto.MenuCreateRequest;
+import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.menu.dto.MenuUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,5 +37,15 @@ public class MenuControllerV1 {
     public ResponseEntity<List<MenuResponse>> findAll() {
         return ResponseEntity.ok()
             .body(menuService.findAll());
+    }
+
+    @PatchMapping("/{menuId}")
+    public ResponseEntity<MenuResponse> update(
+        @PathVariable Long menuId,
+        @RequestBody MenuUpdateRequest request
+    ) {
+        var response =  menuService.update(menuId, request);
+        return ResponseEntity.ok()
+            .body(response);
     }
 }

@@ -10,9 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.ui.dto.TableGroupCreateRequest;
-import kitchenpos.ui.dto.TableGroupResponse;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

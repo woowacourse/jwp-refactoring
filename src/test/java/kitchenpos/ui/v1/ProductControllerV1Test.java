@@ -1,8 +1,10 @@
 package kitchenpos.ui.v1;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -11,9 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.ProductService;
-import kitchenpos.ui.dto.ProductCreateRequest;
-import kitchenpos.ui.dto.ProductResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.dto.ProductResponse;
+import kitchenpos.product.dto.ProductUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -71,5 +74,23 @@ class ProductControllerV1Test {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.size()").value(2));
+    }
+
+    @Test
+    @DisplayName("/api/v1/products/{id}로 PATCH 요청을 보내면 200 응답과 결과가 반환된다.")
+    void update_with_200() throws Exception {
+        // given
+        var response = new ProductResponse(1L, "소주", BigDecimal.valueOf(2000));
+        var request = new ProductUpdateRequest("소주", 2000L);
+        given(productService.update(anyLong(), any(ProductUpdateRequest.class)))
+            .willReturn(response);
+
+        // when & then
+        mockMvc.perform(patch("/api/v1/products/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("소주"))
+            .andExpect(jsonPath("$.price").value(2000));
     }
 }
