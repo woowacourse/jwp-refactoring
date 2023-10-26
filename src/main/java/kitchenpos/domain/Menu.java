@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exception.InvalidMenuPriceException;
 import kitchenpos.domain.vo.Price;
 
 import javax.persistence.AttributeOverride;
@@ -62,13 +63,13 @@ public class Menu {
     ) {
         final Menu menu = new Menu(name, price, menuGroup, menuProducts);
 
-        validateMenuProduct(menuProducts, price);
+        validateMenuPrice(menuProducts, price);
         addMenuProducts(menuProducts, menu);
 
         return menu;
     }
 
-    private static void validateMenuProduct(final List<MenuProduct> menuProducts, final Price price) {
+    private static void validateMenuPrice(final List<MenuProduct> menuProducts, final Price price) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = menuProduct.getProduct();
@@ -76,7 +77,7 @@ public class Menu {
         }
 
         if (price.compareTo(new Price(sum))) {
-            throw new IllegalArgumentException();
+            throw new InvalidMenuPriceException("메뉴 가격이 상품들의 가격 합보다 클 수 없습니다.");
         }
     }
 

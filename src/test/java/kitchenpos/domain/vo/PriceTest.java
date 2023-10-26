@@ -37,7 +37,7 @@ class PriceTest {
         // when & then
         assertThatThrownBy(() -> new Price(value))
                 .isInstanceOf(InvalidPriceValue.class)
-                .hasMessage("상품의 가격은 음수가될 수 없습니다.");
+                .hasMessage("상품의 가격은 0 혹은 양수여야 합니다.");
     }
 
     @ParameterizedTest
@@ -46,6 +46,6 @@ class PriceTest {
         // when & then
         assertThatThrownBy(() -> new Price(priceValue))
                 .isInstanceOf(InvalidPriceValue.class)
-                .hasMessage("상품의 가격은 음수가될 수 없습니다.");
+                .hasMessage("상품의 가격은 0 혹은 양수여야 합니다.");
     }
 }

@@ -20,7 +20,7 @@ public class Price {
 
     private void validate(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidPriceValue("상품의 가격은 음수가될 수 없습니다.");
+            throw new InvalidPriceValue("상품의 가격은 0 혹은 양수여야 합니다.");
         }
     }
 

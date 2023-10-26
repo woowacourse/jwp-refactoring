@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.InvalidOrderStatusToChangeException;
 import kitchenpos.application.exception.NotFoundOrDuplicateMenuToOrderExcpetion;
 import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Menu;
@@ -224,7 +225,8 @@ class OrderServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changeStatusRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderStatusToChangeException.class)
+                    .hasMessage("주문이 상태가 계산 완료라면 상태를 변경할 수 없다.");
         }
 
         @Test
@@ -234,9 +236,9 @@ class OrderServiceTest extends ServiceTestConfig {
             final ChangeOrderStatusRequest changeStatusRequest = new ChangeOrderStatusRequest(OrderStatus.MEAL.name());
 
             // when & then
-            assertThatThrownBy(() ->
-                    orderService.changeOrderStatus(order.getId(), changeStatusRequest)
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changeStatusRequest))
+                    .isInstanceOf(InvalidOrderStatusToChangeException.class)
+                    .hasMessage("주문이 상태가 계산 완료라면 상태를 변경할 수 없다.");
         }
     }
 }

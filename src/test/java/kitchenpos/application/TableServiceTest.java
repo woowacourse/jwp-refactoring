@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.exception.InvalidChangeOrderTableNumberOfGuests;
+import kitchenpos.application.exception.InvalidOrderToChangeEmptyException;
 import kitchenpos.application.exception.NotFoundOrderTableException;
 import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Menu;
@@ -139,7 +140,8 @@ class TableServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTable.getId(), changeEmptyRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderToChangeEmptyException.class)
+                    .hasMessage("단체 지정이 정해지지 않아 상태 변경이 불가능합니다.");
         }
 
         @Test
@@ -156,12 +158,13 @@ class TableServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTable.getId(), changeEmptyRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderToChangeEmptyException.class)
+                    .hasMessage("단체 지정이 정해지지 않아 상태 변경이 불가능합니다.");
         }
     }
 
     @Nested
-    class 주문_테이블_상태_변경 {
+    class 주문_테이블_방문자_수_변경 {
 
         @Test
         void 주문_테이블의_방문자_수의_값을_변경할_수_있다() {

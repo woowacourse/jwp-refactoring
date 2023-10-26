@@ -58,7 +58,7 @@ class ProductServiceTest extends ServiceTestConfig {
             // when & then
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(InvalidPriceValue.class)
-                    .hasMessage("상품의 가격은 음수가될 수 없습니다.");
+                    .hasMessage("상품의 가격은 0 혹은 양수여야 합니다.");
         }
 
         @Test
@@ -70,7 +70,7 @@ class ProductServiceTest extends ServiceTestConfig {
             // when & then
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(InvalidPriceValue.class)
-                    .hasMessage("상품의 가격은 음수가될 수 없습니다.");
+                    .hasMessage("상품의 가격은 0 혹은 양수여야 합니다.");
         }
     }
 

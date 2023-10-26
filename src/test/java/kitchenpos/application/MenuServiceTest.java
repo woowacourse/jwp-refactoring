@@ -1,9 +1,13 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.NotFoundMenuGroupException;
+import kitchenpos.application.exception.NotFoundProductException;
 import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidMenuPriceException;
+import kitchenpos.domain.exception.InvalidPriceValue;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
@@ -93,7 +97,8 @@ class MenuServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menuRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidPriceValue.class)
+                    .hasMessage("상품의 가격은 0 혹은 양수여야 합니다.");
         }
 
         @Test
@@ -104,7 +109,8 @@ class MenuServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menuRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidPriceValue.class)
+                    .hasMessage("상품의 가격은 0 혹은 양수여야 합니다.");
         }
 
         @Test
@@ -115,7 +121,8 @@ class MenuServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menuRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NotFoundMenuGroupException.class)
+                    .hasMessage("해당 메뉴 그룹이 존재하지 않습니다.");
         }
 
         @Test
@@ -126,7 +133,8 @@ class MenuServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menuRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NotFoundProductException.class)
+                    .hasMessage("존재하지 않는 상품이 있습니다.");
         }
 
         @Test
@@ -137,7 +145,8 @@ class MenuServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menuRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidMenuPriceException.class)
+                    .hasMessage("메뉴 가격이 상품들의 가격 합보다 클 수 없습니다.");
         }
     }
 
