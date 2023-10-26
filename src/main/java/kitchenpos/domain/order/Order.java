@@ -20,6 +20,10 @@ import org.springframework.util.CollectionUtils;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.NOT_STARTED;
 
 @Entity
 @Table(name = "orders")
@@ -46,10 +50,10 @@ public class Order {
     }
 
     public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        this(null, orderTableId, NOT_STARTED, LocalDateTime.now(), orderLineItems);
     }
 
-    private Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
                   final LocalDateTime orderedTime,
                   final List<OrderLineItem> orderLineItems) {
         this.id = id;
@@ -71,11 +75,25 @@ public class Order {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
-        if (this.orderStatus.equals(orderStatus)) {
-            throw new IllegalArgumentException("같은 상태로 변경할 수 없습니다.");
+    public void startCooking() {
+        if (this.orderStatus != NOT_STARTED) {
+            throw new IllegalArgumentException("이미 진행 중인 주문입니다.");
         }
-        this.orderStatus = orderStatus;
+        this.orderStatus = COOKING;
+    }
+
+    public void startMeal() {
+        if (this.orderStatus != COOKING) {
+            throw new IllegalArgumentException("조리 중인 주문이 아닙니다.");
+        }
+        this.orderStatus = MEAL;
+    }
+
+    public void completeOrder() {
+        if (this.orderStatus != MEAL) {
+            throw new IllegalArgumentException("식사 중인 주문이 아닙니다.");
+        }
+        this.orderStatus = COMPLETION;
     }
 
     public LocalDateTime getOrderedTime() {

@@ -167,7 +167,8 @@ class OrderServiceTest extends ServiceTest {
         void 주문_상태가_COMPLETION이면_예외가_발생한다() {
             //given
             Order 생성된_주문 = orderRepository.getById(주문_생성().getId());
-            생성된_주문.changeOrderStatus(OrderStatus.COMPLETION);
+            생성된_주문.startMeal();
+            생성된_주문.completeOrder();
             orderRepository.save(생성된_주문);
 
             ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(생성된_주문.getId(),
