@@ -4,16 +4,15 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.common.Price;
 import kitchenpos.common.exception.InvalidPriceException;
-import kitchenpos.menugroup.domain.MenuGroup;
 
 @Entity
 public class Menu {
@@ -28,9 +27,9 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id", nullable = false)
-    private MenuGroup menuGroup;
+
+    @Column(name = "menu_group_id", nullable = false)
+    private Long menuGroupId;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "menu_id", nullable = false, updatable = false)
@@ -39,16 +38,16 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final List<MenuProduct> menuProducts, final MenuGroup menuGroup) {
-        this(null, name, price, menuProducts, menuGroup);
+    public Menu(final String name, final BigDecimal price, final List<MenuProduct> menuProducts, final Long menuGroupId) {
+        this(null, name, price, menuProducts, menuGroupId);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final List<MenuProduct> menuProducts, final MenuGroup menuGroup) {
+    public Menu(final Long id, final String name, final BigDecimal price, final List<MenuProduct> menuProducts, final Long menuGroupId) {
         this.id = id;
         this.name = new MenuName(name);
         this.menuProducts.addAll(menuProducts);
         this.price = new Price(price);
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         validateValueLessThanProductTotalPrice(price, calculateMenuProductTotalPrice());
     }
 
@@ -76,8 +75,8 @@ public class Menu {
         return price.getValue();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

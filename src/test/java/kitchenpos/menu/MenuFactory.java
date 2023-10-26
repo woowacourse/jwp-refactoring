@@ -19,7 +19,7 @@ public final class MenuFactory {
             final MenuGroup menuGroup,
             final MenuProduct... menuProducts
     ) {
-        return new Menu(name, price, List.of(menuProducts), menuGroup);
+        return new Menu(name, price, List.of(menuProducts), menuGroup.getId());
     }
 
     public static MenuCreateRequest createMenuRequestOf(

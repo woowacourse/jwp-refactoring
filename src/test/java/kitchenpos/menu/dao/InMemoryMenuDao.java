@@ -13,7 +13,7 @@ public class InMemoryMenuDao implements MenuDao {
     @Override
     public Menu save(final Menu entity) {
         final var id = (long) (menus.size() + 1);
-        final var saved = new Menu(id, entity.getName(), entity.getPrice(), entity.getMenuProducts(), entity.getMenuGroup());
+        final var saved = new Menu(id, entity.getName(), entity.getPrice(), entity.getMenuProducts(), entity.getMenuGroupId());
         menus.add(saved);
         return saved;
     }

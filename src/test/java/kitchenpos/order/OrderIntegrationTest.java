@@ -48,7 +48,7 @@ public class OrderIntegrationTest extends IntegrationTest {
             productDao.save(product);
             final var menuProduct = new MenuProduct(product, 1L);
             final var menuGroup = menuGroupDao.save(new MenuGroup("치킨"));
-            final var menu = menuDao.save(new Menu("후라이드", BigDecimal.valueOf(16000), List.of(menuProduct), menuGroup));
+            final var menu = menuDao.save(new Menu("후라이드", BigDecimal.valueOf(16000), List.of(menuProduct), menuGroup.getId()));
             final var orderTable = orderTableDao.save(new OrderTable(1, false));
 
             final var request = new OrderCreateRequest(
@@ -75,7 +75,7 @@ public class OrderIntegrationTest extends IntegrationTest {
             productDao.save(product);
             final var menuProduct = new MenuProduct(product, 1L);
             final var menuGroup = menuGroupDao.save(new MenuGroup("치킨"));
-            final var menu = menuDao.save(new Menu("후라이드", BigDecimal.valueOf(16000), List.of(menuProduct), menuGroup));
+            final var menu = menuDao.save(new Menu("후라이드", BigDecimal.valueOf(16000), List.of(menuProduct), menuGroup.getId()));
 
             final var request = new OrderCreateRequest(
                     Long.MAX_VALUE,
@@ -97,7 +97,7 @@ public class OrderIntegrationTest extends IntegrationTest {
             productDao.save(product);
             final var menuProduct = new MenuProduct(product, 1L);
             final var menuGroup = menuGroupDao.save(new MenuGroup("치킨"));
-            final var menu = menuDao.save(new Menu("후라이드", BigDecimal.valueOf(16000), List.of(menuProduct), menuGroup));
+            final var menu = menuDao.save(new Menu("후라이드", BigDecimal.valueOf(16000), List.of(menuProduct), menuGroup.getId()));
 
             final var request = new OrderCreateRequest(
                     orderTable.getId(),

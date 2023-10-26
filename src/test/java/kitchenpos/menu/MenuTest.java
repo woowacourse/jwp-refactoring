@@ -24,7 +24,7 @@ class MenuTest {
         final var menuProducts = List.of(new MenuProduct(new Product("상품 이름", BigDecimal.valueOf(1000)), 1L));
 
         //when
-        final ThrowingSupplier<Menu> action = () -> new Menu("메뉴이름", price, menuProducts, new MenuGroup("메뉴 그룹 이름"));
+        final ThrowingSupplier<Menu> action = () -> new Menu("메뉴이름", price, menuProducts, new MenuGroup("메뉴 그룹 이름").getId());
 
         //then
         assertDoesNotThrow(action);
@@ -37,7 +37,7 @@ class MenuTest {
         final var menuProducts = List.of(new MenuProduct(new Product("상품 이름", BigDecimal.valueOf(1000)), 1L));
 
         //when
-        final ThrowingCallable action = () -> new Menu("메뉴이름", price, menuProducts, new MenuGroup("메뉴 그룹 이름"));
+        final ThrowingCallable action = () -> new Menu("메뉴이름", price, menuProducts, new MenuGroup("메뉴 그룹 이름").getId());
 
         //then
         assertThatThrownBy(action).isInstanceOf(InvalidPriceException.class)

@@ -40,7 +40,7 @@ public class MenuService {
                                         .map(this::crateMenuProductByRequest)
                                         .collect(Collectors.toList());
 
-        final var menu = new Menu(request.getName(), request.getPrice(), menuProducts, menuGroup);
+        final var menu = new Menu(request.getName(), request.getPrice(), menuProducts, menuGroup.getId());
         return MenuResponse.from(menuDao.save(menu));
     }
 
