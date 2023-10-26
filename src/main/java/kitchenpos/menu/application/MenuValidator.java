@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.vo.Price;
@@ -16,16 +17,25 @@ import org.springframework.stereotype.Component;
 public class MenuValidator {
 
     private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
     public MenuValidator(
-            final ProductRepository productRepository
+            final ProductRepository productRepository,
+            final MenuGroupRepository menuGroupRepository
     ) {
         this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     public void validate(final Menu menu) {
         validateMenuPrice(menu.getPrice(), calculateSumByMenuProducts(menu.getMenuProducts()));
+        validateExistMenuGroupById(menu.getMenuGroupId());
+    }
 
+    private void validateExistMenuGroupById(final Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new NoSuchElementException("존재하지 않는 menu group 입니다.");
+        }
     }
 
     private void validateMenuPrice(

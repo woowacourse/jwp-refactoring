@@ -1,15 +1,12 @@
 package kitchenpos.menu.application;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.mapper.MenuMapper;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuResponse;
-import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,31 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
     private final MenuValidator menuValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            MenuValidator menuValidator) {
+            final MenuValidator menuValidator
+    ) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.menuValidator = menuValidator;
     }
 
     public MenuResponse create(final MenuCreateRequest request) {
-        final Menu menu = saveMenu(request);
+        final Menu menu = MenuMapper.toMenu(request, convertToMenuProducts(request));
+        menuValidator.validate(menu);
+        menuRepository.save(menu);
 
         return MenuMapper.toMenuResponse(menu);
-    }
-
-    private Menu saveMenu(final MenuCreateRequest request) {
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu group 입니다."));
-        final Menu menu = MenuMapper.toMenu(request, menuGroup, convertToMenuProducts(request));
-        menuValidator.validate(menu);
-
-        return menuRepository.save(menu);
     }
 
     private List<MenuProduct> convertToMenuProducts(final MenuCreateRequest menuRequest) {
