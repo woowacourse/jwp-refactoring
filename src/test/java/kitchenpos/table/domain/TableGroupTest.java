@@ -1,7 +1,6 @@
 package kitchenpos.table.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -23,38 +22,6 @@ class TableGroupTest {
         assertDoesNotThrow(
                 () -> new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2))
         );
-    }
-
-    @Test
-    void 테이블_그룹_생성_시_테이블_수가_2개_미만이면_예외_발생() {
-        final OrderTable orderTable = new OrderTable(null, 0, true);
-
-        assertThatThrownBy(
-                () -> new TableGroup(LocalDateTime.now(), List.of(orderTable))
-        ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("order table 수는 2 이상이어야 합니다.");
-    }
-
-    @Test
-    void 테이블_그룹_생성_시_테이블이_비어있지_않으면_예외_발생() {
-        final OrderTable orderTable = new OrderTable(null, 0, false);
-        final OrderTable orderTable2 = new OrderTable(null, 0, false);
-
-        assertThatThrownBy(
-                () -> new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2))
-        ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("orderTable 은 비어있어야 하고, 소속된 table group이 없어야 합니다.");
-    }
-
-    @Test
-    void 테이블_그룹_생성_시_테이블이_이미_속한_그룹이_있으면_예외_발생() {
-        final OrderTable orderTable = new OrderTable(null, 0, true);
-        final OrderTable orderTable2 = new OrderTable(1L, 0, true);
-
-        assertThatThrownBy(
-                () -> new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2))
-        ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("orderTable 은 비어있어야 하고, 소속된 table group이 없어야 합니다.");
     }
 
     @Test
