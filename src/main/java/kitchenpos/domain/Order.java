@@ -70,7 +70,7 @@ public class Order extends BaseDate {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order() {
+    protected Order() {
     }
 
     public Long getId() {

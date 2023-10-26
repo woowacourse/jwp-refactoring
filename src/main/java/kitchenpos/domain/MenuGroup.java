@@ -25,7 +25,7 @@ public class MenuGroup extends BaseDate {
         this(null, name);
     }
 
-    public MenuGroup() {
+    protected MenuGroup() {
     }
 
     public Long getId() {

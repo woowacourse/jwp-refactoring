@@ -38,7 +38,7 @@ public class MenuProduct extends BaseDate {
         this(null, null, product, quantity);
     }
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     public Long getSeq() {

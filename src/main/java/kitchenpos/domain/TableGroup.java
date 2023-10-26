@@ -47,7 +47,7 @@ public class TableGroup {
         }
     }
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public Long getId() {

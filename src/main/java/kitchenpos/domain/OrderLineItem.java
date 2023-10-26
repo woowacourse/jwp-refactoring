@@ -35,7 +35,7 @@ public class OrderLineItem extends BaseDate {
         this(null, null, menuId, quantity);
     }
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
     public void setOrder(final Order order) {

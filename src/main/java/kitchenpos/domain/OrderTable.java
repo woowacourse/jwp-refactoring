@@ -31,7 +31,7 @@ public class OrderTable extends BaseDate {
         this.empty = empty;
     }
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests, final Boolean empty) {

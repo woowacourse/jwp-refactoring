@@ -30,7 +30,7 @@ public class Product extends BaseDate {
         this(null, name, price);
     }
 
-    public Product() {
+    protected Product() {
     }
 
     private void validatePrice(final BigDecimal price) {

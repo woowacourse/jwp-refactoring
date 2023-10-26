@@ -46,7 +46,7 @@ public class Menu extends BaseDate {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu() {
+    protected Menu() {
     }
 
     private void validatePrice(final BigDecimal price) {
