@@ -9,8 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.domain.common.Name;
-import kitchenpos.domain.common.Price;
 import kitchenpos.domain.common.Quantity;
 
 @Entity
@@ -24,12 +22,6 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @Embedded
-    private Price menuPrice;
-
-    @Embedded
-    private Name menuName;
-
     @Column(name = "product_id")
     private Long productId;
 
@@ -39,19 +31,13 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long productId, final Price menuPrice, final Name menuName, final long quantity) {
+    public MenuProduct(final Long productId, final long quantity) {
         this.productId = productId;
-        this.menuPrice = menuPrice;
-        this.menuName = menuName;
         this.quantity = new Quantity(quantity);
     }
 
     public void initMenu(final Menu menu) {
         this.menu = menu;
-    }
-
-    public Price calculateMenuProductPrice() {
-        return this.menuPrice.times(this.quantity.value());
     }
 
     public Long getSeq() {

@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -21,8 +23,14 @@ class OrderLineItemTest {
         // given
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
+        final Menu menu = new Menu(
+                "메뉴",
+                BigDecimal.TEN,
+                menuGroup.getId(),
+                MenuProducts.of(price, price, List.of(menuProduct))
+        );
 
         // when & then
         assertThatCode(() -> new OrderLineItem(menu.getId(), 1L)).doesNotThrowAnyException();

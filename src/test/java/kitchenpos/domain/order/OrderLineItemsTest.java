@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.exception.InvalidOrderLineItemException;
 import kitchenpos.domain.menu.Menu;
@@ -27,8 +29,14 @@ class OrderLineItemsTest {
         // given
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
+        final Menu menu = new Menu(
+                "메뉴",
+                BigDecimal.TEN,
+                menuGroup.getId(),
+                MenuProducts.of(price, price, List.of(menuProduct))
+        );
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.MEAL;
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1L);
@@ -49,8 +57,14 @@ class OrderLineItemsTest {
         // given
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
+        final Menu menu = new Menu(
+                "메뉴",
+                BigDecimal.TEN,
+                menuGroup.getId(),
+                MenuProducts.of(price, price, List.of(menuProduct))
+        );
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.MEAL;
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1L);

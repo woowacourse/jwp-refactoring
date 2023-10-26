@@ -24,8 +24,7 @@ class MenuProductTest {
         final Product product = new Product("상품", BigDecimal.TEN);
 
         // when & then
-        assertThatCode(() -> new MenuProduct(product.getId(), product.price(), product.name(), 1L))
-                .doesNotThrowAnyException();
+        assertThatCode(() -> new MenuProduct(product.getId(), 1L)).doesNotThrowAnyException();
     }
 
     @Test
@@ -35,7 +34,7 @@ class MenuProductTest {
         final long invalidQuantity = -999L;
 
         // when & then
-        assertThatThrownBy(() -> new MenuProduct(product.getId(), product.price(), product.name(), invalidQuantity))
+        assertThatThrownBy(() -> new MenuProduct(product.getId(), invalidQuantity))
                 .isInstanceOf(InvalidQuantityException.class);
     }
 
@@ -43,28 +42,21 @@ class MenuProductTest {
     void initMenu_메서드는_menu를_전달하면_menu_필드를_초기화한다() {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
-        final MenuProduct targetMenuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 2L);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
+        final Menu menu = new Menu(
+                "메뉴",
+                BigDecimal.TEN,
+                menuGroup.getId(),
+                MenuProducts.of(price, price, List.of(menuProduct))
+        );
+        final MenuProduct targetMenuProduct = new MenuProduct(product.getId(), 2L);
 
         // when
         targetMenuProduct.initMenu(menu);
 
         // then
         assertThat(targetMenuProduct.getMenu()).isEqualTo(menu);
-    }
-
-    @Test
-    void calculateMenuProductPrice_메서드는_menuProduct의_가격을_계산해_반환한다() {
-        // given
-        final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
-
-        // when
-        final Price actual = menuProduct.calculateMenuProductPrice();
-
-        // then
-        assertThat(actual).isEqualTo(new Price(new BigDecimal("10")));
     }
 }

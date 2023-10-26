@@ -20,8 +20,6 @@ create table menu_product
     quantity   bigint         not null,
     menu_id    bigint         not null,
     product_id bigint         not null,
-    name       varchar(255)   not null,
-    price      decimal(19, 2) not null,
     primary key (seq)
 );
 

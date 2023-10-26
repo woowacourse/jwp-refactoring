@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.common.Price;
 import kitchenpos.domain.exception.InvalidMenuPriceException;
-import kitchenpos.domain.exception.InvalidMenuProductException;
+import kitchenpos.domain.exception.InvalidProductException;
 
 @Embeddable
 public class MenuProducts {
@@ -22,37 +22,32 @@ public class MenuProducts {
         this.values = values;
     }
 
-    public static MenuProducts of(final Menu menu, final List<MenuProduct> menuProducts) {
+    public static MenuProducts of(
+            final Price totalMenuProductPrice,
+            final Price menuPrice,
+            final List<MenuProduct> menuProducts
+    ) {
         validateMenuProduct(menuProducts);
-        validateMenuProductPrice(menu.price(), menuProducts);
-        initMenuForMenuProduct(menu, menuProducts);
+        validateMenuProductPrice(totalMenuProductPrice, menuPrice);
 
         return new MenuProducts(menuProducts);
     }
 
     private static void validateMenuProduct(final List<MenuProduct> menuProducts) {
         if (menuProducts == null || menuProducts.isEmpty()) {
-            throw new InvalidMenuProductException();
+            throw new InvalidProductException();
         }
     }
 
-    private static void validateMenuProductPrice(final Price menuPrice, final List<MenuProduct> menuProducts) {
-        final Price totalMenuProductPrice = calculateTotalMenuProductPrice(menuProducts);
-
-        if (menuPrice.compareTo(totalMenuProductPrice) > 0) {
+    private static void validateMenuProductPrice(final Price totalMenuProductPrice, final Price menuPrice) {
+        if (menuPrice.isGreaterThan(totalMenuProductPrice)) {
             throw new InvalidMenuPriceException();
         }
     }
 
-    private static Price calculateTotalMenuProductPrice(final List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
-                           .map(MenuProduct::calculateMenuProductPrice)
-                           .reduce(Price.ZERO, Price::plus);
-    }
-
-    private static void initMenuForMenuProduct(final Menu menu, final List<MenuProduct> menuProducts) {
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.initMenu(menu);
+    public void initMenu(final Menu menu) {
+        for (final MenuProduct value : values) {
+            value.initMenu(menu);
         }
     }
 

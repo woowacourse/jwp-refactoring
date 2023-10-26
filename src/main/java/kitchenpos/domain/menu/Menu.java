@@ -34,27 +34,18 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(
-            final String name,
-            final Price price,
-            final Long menuGroupId,
-            final List<MenuProduct> menuProducts
-    ) {
-        this.name = new Name(name);
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = MenuProducts.of(this, menuProducts);
-    }
-
-    public static Menu of(
+    public Menu(
             final String name,
             final BigDecimal price,
-            final List<MenuProduct> menuProducts,
-            final Long menuGroupId
+            final Long menuGroupId,
+            final MenuProducts menuProducts
     ) {
-        final Price menuPrice = new Price(price);
+        this.name = new Name(name);
+        this.price = new Price(price);
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
 
-        return new Menu(name, menuPrice, menuGroupId, menuProducts);
+        menuProducts.initMenu(this);
     }
 
     public Price price() {

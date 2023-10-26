@@ -11,9 +11,11 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.CreateTableGroupDto;
 import kitchenpos.config.IntegrationTest;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.exception.InvalidOrderTableSizeException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
@@ -114,7 +116,7 @@ class TableGroupServiceTest {
         final OrderTable persistOrderTable1 = orderTableRepository.save(new OrderTable(0, true));
         final OrderTable persistOrderTable2 = orderTableRepository.save(new OrderTable(0, true));
         final Menu persistMenu = persistMenu();
-        persistOrderBy(persistMenu,  OrderStatus.COMPLETION, persistOrderTable1, persistOrderTable2);
+        persistOrderBy(persistMenu, OrderStatus.COMPLETION, persistOrderTable1, persistOrderTable2);
         final TableGroup persistTableGroup = tableGroupRepository.save(new TableGroup());
 
         // when
@@ -142,18 +144,16 @@ class TableGroupServiceTest {
     private Menu persistMenu() {
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct persistMenuProduct = new MenuProduct(
-                persistProduct.getId(),
-                persistProduct.price(),
-                persistProduct.name(),
-                1L
-        );
+        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
 
-        return menuRepository.save(Menu.of(
-                "메뉴",
-                BigDecimal.TEN,
-                List.of(persistMenuProduct),
-                persistMenuGroup.getId())
+        return menuRepository.save(
+                new Menu(
+                        "메뉴",
+                        BigDecimal.TEN,
+                        persistMenuGroup.getId(),
+                        MenuProducts.of(price, price, List.of(persistMenuProduct))
+                )
         );
     }
 

@@ -2,14 +2,13 @@ package kitchenpos.domain.menu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.product.Product;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.exception.InvalidMenuPriceException;
-import kitchenpos.domain.exception.InvalidMenuProductException;
+import kitchenpos.domain.exception.InvalidProductException;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -24,18 +23,14 @@ class MenuProductsTest {
     void of_메서드는_유효한_데이터를_전달하면_menuProducts를_초기화한다() {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
-        final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
 
         // when
-        final MenuProducts actual = MenuProducts.of(menu, List.of(menuProduct));
+        final MenuProducts actual = MenuProducts.of(price, price, List.of(menuProduct));
 
         // then
-        assertAll(
-                () -> assertThat(actual.getValues()).hasSize(1),
-                () -> assertThat(actual.getValues().get(0).getMenu()).isEqualTo(menu)
-        );
+        assertThat(actual.getValues()).hasSize(1);
     }
 
     @ParameterizedTest(name = "menuProducts가 {0}이면 예외가 발생한다.")
@@ -43,26 +38,23 @@ class MenuProductsTest {
     void of_메서드는_menuProducts가_비어_있으면_예외가_발생한다(final List<MenuProduct> invalidMenuProducts) {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
-        final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
+        final Price price = new Price(BigDecimal.TEN);
 
         // when & then
-        assertThatThrownBy(() -> MenuProducts.of(menu, invalidMenuProducts))
-                .isInstanceOf(InvalidMenuProductException.class);
+        assertThatThrownBy(() -> MenuProducts.of(price, price, invalidMenuProducts))
+                .isInstanceOf(InvalidProductException.class);
     }
 
     @Test
     void of_메서드는_menuProducts의_가격보다_menu의_가격이_클_경우_예외가_발생한다() {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct validMenuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 5L);
-        final MenuProduct invalidMenuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
-        final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = Menu.of("메뉴", new BigDecimal("30"), List.of(validMenuProduct), menuGroup.getId());
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
+        final Price totalProductPrice = new Price(BigDecimal.ZERO);
+        final Price invalidMenuPrice = new Price(BigDecimal.TEN);
 
         // when & then
-        assertThatThrownBy(() -> MenuProducts.of(menu, List.of(invalidMenuProduct)))
+        assertThatThrownBy(() -> MenuProducts.of(totalProductPrice, invalidMenuPrice, List.of(menuProduct)))
                 .isInstanceOf(InvalidMenuPriceException.class);
     }
 }

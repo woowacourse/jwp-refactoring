@@ -10,7 +10,9 @@ import kitchenpos.application.dto.CreateMenuDto;
 import kitchenpos.application.dto.ReadMenuDto;
 import kitchenpos.application.exception.MenuGroupNotFoundException;
 import kitchenpos.config.IntegrationTest;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
@@ -112,16 +114,7 @@ class MenuServiceTest {
     @Test
     void list_메서드는_등록한_모든_menu를_반환한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct menuProduct = new MenuProduct(
-                persistProduct.getId(),
-                persistProduct.price(),
-                persistProduct.name(),
-                1L
-        );
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), persistMenuGroup.getId());
-        final Menu expected = menuRepository.save(menu);
+        final Menu expected = persistMenu();
 
         // when
         final List<ReadMenuDto> actual = menuService.list();
@@ -131,6 +124,22 @@ class MenuServiceTest {
                 () -> assertThat(actual).hasSize(1),
                 () -> assertThat(actual.get(0).getId()).isEqualTo(expected.getId()),
                 () -> assertThat(actual.get(0).getName()).isEqualTo(expected.getName())
+        );
+    }
+
+    private Menu persistMenu() {
+        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
+        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
+
+        return menuRepository.save(
+                new Menu(
+                        "메뉴",
+                        BigDecimal.TEN,
+                        persistMenuGroup.getId(),
+                        MenuProducts.of(price, price, List.of(persistMenuProduct))
+                )
         );
     }
 }

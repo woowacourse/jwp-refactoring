@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.ChangeEmptyOrderTableDto;
 import kitchenpos.application.dto.ChangeNumberOfGuestsOrderTableDto;
@@ -14,18 +12,11 @@ import kitchenpos.application.dto.ReadOrderTableDto;
 import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.config.IntegrationTest;
 import kitchenpos.domain.exception.InvalidNumberOfGuestsException;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.repository.MenuRepository;
-import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.repository.OrderTableRepository;
-import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.repository.ProductRepository;
 import kitchenpos.domain.tablegroup.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
@@ -148,39 +139,5 @@ class TableServiceTest {
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(-999L, request))
                 .isInstanceOf(OrderTableNotFoundException.class);
-    }
-
-    private Menu persistMenu() {
-        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct persistMenuProduct = new MenuProduct(
-                persistProduct.getId(),
-                persistProduct.price(),
-                persistProduct.name(),
-                1L
-        );
-        final Menu menu = Menu.of(
-                "메뉴",
-                BigDecimal.TEN,
-                List.of(persistMenuProduct),
-                persistMenuGroup.getId()
-        );
-
-        return menuRepository.save(menu);
-    }
-
-    private OrderTable persistOrderTable(final String invalidOrderStatus, final Menu persistMenu) {
-        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        final OrderLineItem orderLineItem = new OrderLineItem(persistMenu.getId(), 1L);
-        final OrderStatus orderStatus = OrderStatus.valueOf(invalidOrderStatus);
-        final Order order = new Order(
-                persistOrderTable.getId(),
-                orderStatus,
-                LocalDateTime.now().minusHours(3),
-                List.of(orderLineItem)
-        );
-        orderRepository.save(order);
-
-        return persistOrderTable;
     }
 }
