@@ -82,10 +82,7 @@ public class TableService {
 
     @EventListener
     public void group(final GroupOrderTablesEvent groupOrderTablesEvent) {
-        final List<Long> orderTableIds = groupOrderTablesEvent.getOrderTableIdRequests().stream()
-                .map(orderTableIdRequest -> orderTableIdRequest.getId())
-                .collect(Collectors.toList());
-
+        final List<Long> orderTableIds = groupOrderTablesEvent.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findByIdIn(orderTableIds);
 
         validateOrderTable(orderTables, orderTableIds);

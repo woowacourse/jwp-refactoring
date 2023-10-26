@@ -6,16 +6,16 @@ import java.util.List;
 
 public class GroupOrderTablesEvent {
 
-    private final List<OrderTableIdRequest> orderTableIdRequests;
+    private final List<Long> orderTableIds;
     private final Long tableGroupId;
 
-    public GroupOrderTablesEvent(final List<OrderTableIdRequest> orderTableIdRequests, final Long tableGroupId) {
-        this.orderTableIdRequests = orderTableIdRequests;
+    public GroupOrderTablesEvent(final List<Long> orderTableIds, final Long tableGroupId) {
+        this.orderTableIds = orderTableIds;
         this.tableGroupId = tableGroupId;
     }
 
-    public List<OrderTableIdRequest> getOrderTableIdRequests() {
-        return orderTableIdRequests;
+    public List<Long> getOrderTableIds() {
+        return orderTableIds;
     }
 
     public Long getTableGroupId() {

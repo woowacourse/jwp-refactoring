@@ -36,7 +36,7 @@ public class TableGroupService {
         tableGroup.validate(orderTableIds);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        eventPublisher.publishEvent(new GroupOrderTablesEvent(tableGroupRequest.getOrderTables(), savedTableGroup.getId()));
+        eventPublisher.publishEvent(new GroupOrderTablesEvent(orderTableIds, savedTableGroup.getId()));
 
         return TableGroupResponse.from(savedTableGroup);
     }
