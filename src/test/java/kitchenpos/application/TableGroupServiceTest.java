@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableNumberOfGuests;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +35,7 @@ class TableGroupServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Nested
     class 단체_지정을_등록한다 {
@@ -40,7 +43,7 @@ class TableGroupServiceTest {
         void 단체_지정이_정상적으로_등록된다() {
             final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
-                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
+                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, new OrderTableNumberOfGuests(0), true));
                 orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
 
@@ -55,7 +58,7 @@ class TableGroupServiceTest {
 
         @Test
         void 단체_지정시_2개_보다_작은_테이블을_입력하면_예외가_발생한다() {
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
+            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, new OrderTableNumberOfGuests(0), true));
 
             final TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(List.of(new OrderTableIdRequest(savedOrderTable.getId())));
 
@@ -67,7 +70,7 @@ class TableGroupServiceTest {
         void 단체_지정되어있는_테이블을_단체_지정하면_예외가_발생한다() {
             final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
-                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
+                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, new OrderTableNumberOfGuests(0), true));
                 orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
             final TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(orderTables);
@@ -84,7 +87,7 @@ class TableGroupServiceTest {
         void 단체_지정을_정상적으로_해제한다() {
             final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
-                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
+                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, new OrderTableNumberOfGuests(0), true));
                 orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
 
@@ -92,8 +95,10 @@ class TableGroupServiceTest {
             final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
 
             tableGroupService.ungroup(tableGroupResponse.getId());
+            final TableGroup tableGroup = tableGroupRepository.findById(tableGroupResponse.getId())
+                    .orElseThrow(IllegalArgumentException::new);
 
-            final List<OrderTable> changedOrderTableIds = orderTableRepository.findAllByTableGroupId(tableGroupResponse.getId());
+            final List<OrderTable> changedOrderTableIds = orderTableRepository.findAllByTableGroup(tableGroup);
 
             assertThat(changedOrderTableIds).isEmpty();
         }
@@ -103,9 +108,9 @@ class TableGroupServiceTest {
         void 테이블이_조리_혹은_식사_상태일때_단체_지정을_해제하면_예외가_발생한다(final String status) {
             final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
-                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
+                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, new OrderTableNumberOfGuests(0), true));
+                orderRepository.save(new Order(savedOrderTable, OrderStatus.valueOf(status), LocalDateTime.now()));
                 orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
-                orderDao.save(new Order(null, savedOrderTable.getId(), status, LocalDateTime.now(), List.of()));
             }
 
             final TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(orderTables);

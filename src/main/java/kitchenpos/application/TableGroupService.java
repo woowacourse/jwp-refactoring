@@ -51,7 +51,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup().getId())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
@@ -68,7 +68,9 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)

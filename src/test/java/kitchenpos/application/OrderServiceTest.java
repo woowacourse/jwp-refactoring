@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuName;
@@ -10,15 +8,22 @@ import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductQuantity;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableNumberOfGuests;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductName;
 import kitchenpos.domain.ProductPrice;
+import kitchenpos.dto.request.OrderChangeStatusRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +34,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +46,11 @@ class OrderServiceTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderLineItemRepository orderLineItemRepository;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
@@ -54,7 +60,7 @@ class OrderServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    private List<OrderLineItemCreateRequest> orderLineItems = new ArrayList<>();
     private OrderTable savedOrderTable;
 
     @BeforeEach
@@ -63,81 +69,79 @@ class OrderServiceTest {
         final Product savedProduct = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE)));
         final Menu savedMenu = menuRepository.save(new Menu(new MenuName("메뉴"), new MenuPrice(BigDecimal.ONE), savedMenuGroup));
         final MenuProduct savedMenuProduct = menuProductRepository.save(new MenuProduct(savedMenu, savedProduct, new MenuProductQuantity(2)));
-        orderLineItems.add(new OrderLineItem(null, null, savedMenu.getId(), 1));
-        savedOrderTable = orderTableDao.save(new OrderTable(null, null, 5, false));
+        orderLineItems.add(new OrderLineItemCreateRequest(savedMenu.getId(), 1));
+        savedOrderTable = orderTableRepository.save(new OrderTable(null, new OrderTableNumberOfGuests(5), false));
     }
 
     @Nested
     class 주문을_등록한다 {
         @Test
         void 주문이_정상적으로_등록된다() {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-            final Order savedOrder = orderService.create(order);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            final OrderResponse response = orderService.create(request);
 
             SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(savedOrder.getId()).isNotNull();
-                softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-                softly.assertThat(savedOrder.getOrderedTime()).isNotNull();
+                softly.assertThat(response.getId()).isNotNull();
+                softly.assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+                softly.assertThat(response.getOrderedTime()).isNotNull();
             });
         }
 
         @Test
         void 존재하지_않는_테이블에_주문이_등록되면_예외가_발생한다() {
-            final Order order = new Order(null, savedOrderTable.getId() + 1, null, null, orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId() + 1, orderLineItems);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 비어있는_상태의_테이블에_주문이_등록되면_예외가_발생한다() {
             savedOrderTable.changeEmpty(true);
-            orderTableDao.save(savedOrderTable);
+            orderTableRepository.save(savedOrderTable);
 
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_항목들이_비어있으면_예외가_발생한다() {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, List.of());
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), List.of());
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_항목들에_메뉴가_중복되면_예외가_발생한다() {
-            final OrderLineItem orderLineItem = orderLineItems.get(0);
-            orderLineItems.add(orderLineItem);
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
+            orderLineItems.add(orderLineItems.get(0));
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_항목이_존재하지_않으면_예외가_발생한다() {
-            orderLineItems.get(0).setMenuId(orderLineItems.get(0).getMenuId() + 1);
+            orderLineItems.add(new OrderLineItemCreateRequest(orderLineItems.get(0).getMenuId() + 1, 1));
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
 
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @Test
     void 주문의_목록을_조회한다() {
-        final List<Order> expected = orderService.list();
+        final List<OrderResponse> expected = orderService.list();
         for (int i = 0; i < 3; i++) {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-            expected.add(orderService.create(order));
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            expected.add(orderService.create(request));
         }
 
-        final List<Order> result = orderService.list();
+        final List<OrderResponse> result = orderService.list();
 
         assertSoftly(softly -> {
             softly.assertThat(result).hasSize(expected.size());
@@ -153,32 +157,36 @@ class OrderServiceTest {
         @ParameterizedTest
         @ValueSource(strings = {"MEAL", "COMPLETION"})
         void 주문의_상태를_정상적으로_변경한다(final String status) {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-            final Order savedOrder = orderService.create(order);
-            final Order changeStatusOrder = new Order(null, null, status, null, null);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            final OrderResponse response = orderService.create(request);
+            final OrderChangeStatusRequest changeStatusRequest = new OrderChangeStatusRequest(status);
 
-            orderService.changeOrderStatus(savedOrder.getId(), changeStatusOrder);
-            final Order changeOrder = orderDao.findById(savedOrder.getId()).get();
+            orderService.changeOrderStatus(response.getId(), changeStatusRequest);
+            final Order changeOrder = orderRepository.findById(response.getId())
+                    .orElseThrow(IllegalArgumentException::new);
 
-            assertThat(changeOrder.getOrderStatus()).isEqualTo(status);
+            assertThat(changeOrder.getOrderStatus().name()).isEqualTo(status);
         }
 
         @Test
         void 주문의_상태가_계산_완료일때_예외가_발생한다() {
-            final Order savedOrder = orderDao.save(new Order(null, savedOrderTable.getId(), "COMPLETION", LocalDateTime.now(), orderLineItems));
-            final Order changeStatusOrder = new Order(null, null, "MEAL", null, null);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            final OrderResponse response = orderService.create(request);
+            final Order savedOrder = orderRepository.findById(response.getId()).orElseThrow(IllegalArgumentException::new);
+            savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeStatusOrder))
+            final OrderChangeStatusRequest changeStatusRequest = new OrderChangeStatusRequest("MEAL");
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeStatusRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문이_존재하지_않으면_예외가_발생한다() {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-            final Order savedOrder = orderService.create(order);
-            final Order changeStatusOrder = new Order(null, null, "MEAL", null, null);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            final OrderResponse response = orderService.create(request);
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId() + 1, changeStatusOrder))
+            final OrderChangeStatusRequest changeStatusRequest = new OrderChangeStatusRequest("MEAL");
+            assertThatThrownBy(() -> orderService.changeOrderStatus(response.getId() + 1, changeStatusRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -16,15 +16,15 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+    @NotNull
+    @Embedded
+    private MenuProductQuantity quantity;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
-    @NotNull
-    @Embedded
-    private MenuProductQuantity quantity;
 
     public MenuProduct() {
     }

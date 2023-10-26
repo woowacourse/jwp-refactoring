@@ -21,7 +21,7 @@ public class Menu {
     @NotNull
     @Embedded
     private MenuPrice price;
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 

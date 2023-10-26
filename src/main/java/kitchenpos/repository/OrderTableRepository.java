@@ -8,6 +8,4 @@ import java.util.List;
 
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
     List<OrderTable> findAllByTableGroup(TableGroup tableGroup);
-
-    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }
