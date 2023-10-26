@@ -25,7 +25,7 @@ public class Product {
     @AttributeOverride(name = "value", column = @Column(name = "price"))
     private Price price;
 
-    public Product() {}
+    protected Product() {}
 
     public Product(final String name, final Price price) {
         this.name = name;

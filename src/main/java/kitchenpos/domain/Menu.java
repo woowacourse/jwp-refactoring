@@ -40,17 +40,7 @@ public class Menu {
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu() {}
-
-    public Menu(
-            final String name,
-            final Price price,
-            final MenuGroup menuGroup
-    ) {
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
-    }
+    protected Menu() {}
 
     public Menu(
             final String name,

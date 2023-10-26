@@ -49,21 +49,21 @@ class OrderLineItemRepositoryTest {
     private OrderRepository orderRepository;
 
     private List<Menu> menus;
-    private Order order;
+    private OrderTable orderTable;
 
     @BeforeEach
     void setUp() {
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
         final Product product = productRepository.save(ProductFixture.상품_엔티티_생성());
         menus = menuRepository.saveAll(MenuFixture.메뉴_엔티티들_생성(3, menuGroup, List.of(product)));
-        final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_엔티티_생성());
-        order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
+        orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_엔티티_생성());
     }
 
     @Test
     void 주문_아이디를_통해_모든_주문_항목을_조회한다() {
         // given
-        final List<OrderLineItem> orderLineItems = orderLineItemRepository.saveAll(OrderLineItemFixture.주문_상품들_생성(order, menus));
+        final List<OrderLineItem> orderLineItems = OrderLineItemFixture.주문_상품들_생성(menus);
+        final Order order = orderRepository.save(Order.of(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
 
         // when
         final List<OrderLineItem> actual = orderLineItemRepository.findAllByOrderId(order.getId());

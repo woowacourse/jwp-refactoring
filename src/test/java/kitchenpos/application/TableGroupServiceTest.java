@@ -188,7 +188,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void 그룹_해제시_특정_주문_테이블_아이디들_중_조리_혹은_식사_상태인_것이_존재한다면_예외를_반환한다() {
             // given
-            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.주문_테이블_엔티티들_생성(2));
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));

@@ -39,17 +39,7 @@ public class Order {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {}
-
-    public Order(
-            final OrderTable orderTable,
-            final OrderStatus orderStatus,
-            final LocalDateTime orderedTime
-    ) {
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-    }
+    protected Order() {}
 
     public Order(
             final OrderTable orderTable,

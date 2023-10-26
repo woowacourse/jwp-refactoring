@@ -72,7 +72,7 @@ public class OrderService {
         for (final OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
             final Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                                             .orElseThrow(() -> new NotFoundMenuException("해당 메뉴가 존재하지 않습니다."));
-            final OrderLineItem orderLineItem = orderLineItemDto.toEntity(null, menu);
+            final OrderLineItem orderLineItem = orderLineItemDto.toEntity(menu);
             savedOrderLineItems.add(orderLineItem);
         }
 

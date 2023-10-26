@@ -15,7 +15,7 @@ public class MenuGroup {
 
     private String name;
 
-    public MenuGroup() {}
+    protected MenuGroup() {}
 
     public MenuGroup(final String name) {
         this.name = name;
@@ -23,10 +23,6 @@ public class MenuGroup {
 
     public Long getId() {
         return id;
-    }
-
-    public void updateId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {

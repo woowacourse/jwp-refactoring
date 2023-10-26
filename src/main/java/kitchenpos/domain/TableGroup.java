@@ -27,7 +27,7 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY)
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup() {}
+    protected TableGroup() {}
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.createdDate = createdDate;
