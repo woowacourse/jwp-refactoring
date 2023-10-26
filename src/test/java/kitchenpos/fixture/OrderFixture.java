@@ -23,16 +23,7 @@ public class OrderFixture {
         return new OrderChangeDto(status.name());
     }
 
-    public static Order 주문(OrderTable orderTable) {
-        Order order = new Order();
-        order.addOrderTable(orderTable);
-        return order;
-    }
-
-    public static Order 주문(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.addOrderTable(orderTable);
-        order.addOrderLineItems(orderLineItems);
-        return order;
+    public static Order 주문(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        return new Order(orderTable.getId(), orderLineItems);
     }
 }

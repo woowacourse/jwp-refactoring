@@ -83,9 +83,7 @@ class TableServiceTest extends ServiceTest {
             menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableRepository.save(주문테이블(3, false));
-
-            final var order = 주문(테이블);
-            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order = 주문(테이블, List.of(주문상품(후라이드메뉴, 1)));
             order.changeOrderStatus(orderStatus);
             orderRepository.save(order);
 

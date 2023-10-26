@@ -47,7 +47,7 @@ class OrderServiceTest extends ServiceTest {
 
             // then
             final var findOrder = orderRepository.findById(response.getId()).get();
-            assertThat(findOrder.getOrderTable()).isEqualTo(테이블);
+            assertThat(findOrder.getOrderTableId()).isEqualTo(테이블.getId());
             assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
             assertThat(findOrder.getOrderLineItems().size()).isEqualTo(1);
         }
@@ -131,8 +131,7 @@ class OrderServiceTest extends ServiceTest {
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order = 주문(테이블);
-            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order = 주문(테이블, List.of(주문상품(후라이드메뉴, 1)));
             orderRepository.save(order);
 
             final var request = 주문상태_변경_요청(OrderStatus.MEAL);
@@ -176,8 +175,7 @@ class OrderServiceTest extends ServiceTest {
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order = 주문(테이블);
-            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order = 주문(테이블, List.of(주문상품(후라이드메뉴, 1)));
             order.changeOrderStatus(OrderStatus.COMPLETION);
             orderRepository.save(order);
 
@@ -205,12 +203,10 @@ class OrderServiceTest extends ServiceTest {
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order1 = 주문(테이블);
-            order1.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order1 = 주문(테이블, List.of(주문상품(후라이드메뉴, 1)));
             orderRepository.save(order1);
 
-            final var order2 = 주문(테이블);
-            order2.addOrderLineItems(List.of(주문상품(후라이드메뉴, 3)));
+            final var order2 = 주문(테이블, List.of(주문상품(후라이드메뉴, 3)));
             orderRepository.save(order2);
 
             final var 주문목록 = List.of(order1, order2);

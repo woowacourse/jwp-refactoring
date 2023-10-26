@@ -27,7 +27,7 @@ public class OrderDto {
                 .stream()
                 .map(orderLineItem -> OrderLineItemDto.toDto(orderLineItem, order.getId()))
                 .collect(Collectors.toList());
-        return new OrderDto(order.getId(), order.getOrderTable().getId(), order.getOrderStatus().name(), order.getOrderedTime(),
+        return new OrderDto(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(), order.getOrderedTime(),
                 orderLineItemDtos);
     }
 

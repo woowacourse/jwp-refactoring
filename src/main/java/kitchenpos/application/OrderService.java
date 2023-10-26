@@ -7,45 +7,38 @@ import kitchenpos.domain.MenuSnapShot;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderChangeDto;
 import kitchenpos.dto.OrderCreateDto;
 import kitchenpos.dto.OrderDto;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
-    private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(final MenuRepository menuRepository, final OrderTableRepository orderTableRepository,
-                        final OrderRepository orderRepository) {
+    public OrderService(final MenuRepository menuRepository,
+                        final OrderRepository orderRepository, final OrderValidator orderValidator) {
         this.menuRepository = menuRepository;
-        this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderDto create(final OrderCreateDto request) {
         final Order order = getOrder(request);
-        orderRepository.save(order);
+        orderValidator.validate(order);
 
+        orderRepository.save(order);
         return OrderDto.toDto(order);
     }
 
     private Order getOrder(final OrderCreateDto request) {
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        final Order order = new Order();
-        order.addOrderTable(orderTable);
-        order.addOrderLineItems(getOrderLineItems(request));
-
-        return order;
+        return new Order(request.getOrderTableId(), getOrderLineItems(request));
     }
 
     private List<OrderLineItem> getOrderLineItems(final OrderCreateDto request) {

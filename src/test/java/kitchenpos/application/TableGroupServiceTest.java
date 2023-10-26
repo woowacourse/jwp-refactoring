@@ -137,8 +137,7 @@ class TableGroupServiceTest extends ServiceTest {
             테이블1.group(테이블그룹);
             테이블2.group(테이블그룹);
 
-            final var order = 주문(테이블1);
-            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order = 주문(테이블1, List.of(주문상품(후라이드메뉴, 1)));
             order.changeOrderStatus(orderStatus);
             orderRepository.save(order);
 
