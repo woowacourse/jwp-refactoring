@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
-import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.table.TableService;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;

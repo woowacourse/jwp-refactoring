@@ -2,12 +2,12 @@ package kitchenpos.fixture;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderLineItemRequest;
-import kitchenpos.application.dto.request.OrderUpdateStatusRequest;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {

@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.application.product.ProductService;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

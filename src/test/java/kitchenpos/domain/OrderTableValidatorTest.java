@@ -1,9 +1,10 @@
 package kitchenpos.domain;
 
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.application.ServiceTest;
+import kitchenpos.domain.table.OrderTableValidator;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;

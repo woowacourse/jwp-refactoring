@@ -1,10 +1,10 @@
 package kitchenpos.fixture;
 
 import java.util.List;
-import kitchenpos.application.dto.request.TableCreateRequest;
-import kitchenpos.application.dto.request.TableUpdateEmptyRequest;
-import kitchenpos.application.dto.request.TableUpdateNumberOfGuestsRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.dto.request.TableCreateRequest;
+import kitchenpos.dto.request.TableUpdateEmptyRequest;
+import kitchenpos.dto.request.TableUpdateNumberOfGuestsRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {

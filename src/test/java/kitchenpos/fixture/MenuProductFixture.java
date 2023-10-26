@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuProductFixture {

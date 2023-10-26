@@ -2,9 +2,9 @@ package kitchenpos.fixture;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TableGroupFixture {

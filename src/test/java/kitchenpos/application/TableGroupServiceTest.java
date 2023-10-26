@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.tablegroup.TableGroupService;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
