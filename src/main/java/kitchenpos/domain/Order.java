@@ -12,8 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.domain.OrderStatus.COOKING;
 
 @Entity
 public class Order {
@@ -33,22 +36,30 @@ public class Order {
     public Order() {
     }
 
-    public Order(
-            final Long id,
+    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
+    private Order(
             final OrderTable orderTable,
             final OrderStatus orderStatus,
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order of(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime now) {
-        return new Order(null, orderTable, orderStatus, now, null);
+    public static Order ofCooking(final OrderTable orderTable, final Map<Menu, Long> menuWithQuantityMap) {
+        final Order order = new Order(orderTable, COOKING, LocalDateTime.now());
+        order.orderLineItems = menuWithQuantityMap.keySet().stream()
+                .map(menu -> OrderLineItem.of(order, menu, menuWithQuantityMap.get(menu)))
+                .collect(Collectors.toList());
+        return order;
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
@@ -59,19 +70,11 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }

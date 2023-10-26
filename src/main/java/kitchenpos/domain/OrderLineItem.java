@@ -23,22 +23,26 @@ public class OrderLineItem {
     private Menu menu;
     private long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
+
+    private OrderLineItem(final Long id, final Order order, final Menu menu, final long quantity) {
+        this.id = id;
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public static OrderLineItem of(final Order order, final Menu menu, final long quantity) {
+        return new OrderLineItem(null, order, menu, quantity);
+    }
+
 
     public Long getId() {
         return id;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
     public Menu getMenu() {
         return menu;
-    }
-
-    public long getQuantity() {
-        return quantity;
     }
 }
