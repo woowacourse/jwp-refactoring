@@ -1,4 +1,4 @@
-package kitchenpos.domain.validator.service;
+package kitchenpos.domain.ordertable.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

@@ -1,4 +1,4 @@
-package kitchenpos.domain.group.service;
+package kitchenpos.domain.ordertable.service;
 
 import java.util.List;
 import kitchenpos.config.DomainComponent;

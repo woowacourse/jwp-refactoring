@@ -1,4 +1,4 @@
-package kitchenpos.domain.whatthisnameis.service;
+package kitchenpos.domain.tablestate.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
