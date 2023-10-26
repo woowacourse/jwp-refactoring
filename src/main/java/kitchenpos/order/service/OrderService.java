@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.order.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,13 +7,13 @@ import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

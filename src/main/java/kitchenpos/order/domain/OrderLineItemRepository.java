@@ -1,6 +1,5 @@
-package kitchenpos.repository;
+package kitchenpos.order.domain;
 
-import kitchenpos.domain.OrderLineItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
