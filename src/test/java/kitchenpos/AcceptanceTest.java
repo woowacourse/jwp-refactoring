@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuProductRequest;
 import kitchenpos.menu.application.dto.MenuRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
@@ -59,16 +60,26 @@ class AcceptanceTest {
                 .findFirst()
                 .orElseThrow();
 
+        List<Long> productIds = Arrays.asList(restTemplate.getForObject("/api/products",
+                ProductResponse[].class)).stream()
+                .map(ProductResponse::getId)
+                .collect(Collectors.toList());;
+
         assertSoftly(softAssertions -> {
             // 상품 업데이트 테스트
             softAssertions.assertThat(updatedProductResponse.getBody().getId()).isNotEqualTo(1L);
             softAssertions.assertThat(updatedProductResponse.getBody().getName()).isEqualTo("kong");
             softAssertions.assertThat(updatedProductResponse.getBody().getPrice()).isEqualTo(BigDecimal.valueOf(10000));
 
-            // 주문 조회 시 기존 상품 정보 확인 테스트
+            // 메뉴 조회 시 기존 상품 정보 확인 테스트
             softAssertions.assertThat(updatedProductMenuResponse.getMenuProductResponses()).hasSize(1);
             softAssertions.assertThat(updatedProductMenuResponse.getMenuProductResponses().get(0).getProductId())
                     .isNotEqualTo(updatedProductResponse.getBody().getId()); // 새롭게 저장된 상품 정보와 매핑되지 않고, 기존 상품 정보에 매핑된다.
+
+            // 상품 조회 시 변경된 상품 조회 테스트
+            softAssertions.assertThat(productIds).doesNotContain(createdMenuResponse.getBody()
+                    .getMenuProductResponses().get(0).getProductId());
+            softAssertions.assertThat(productIds).containsAnyOf(updatedProductResponse.getBody().getId());
         });
     }
 
@@ -88,7 +99,7 @@ class AcceptanceTest {
 
         MenuRequest menuRequest = new MenuUpdateRequest(1L, "kong", BigDecimal.valueOf(1000), 1L,
                 List.of(new MenuProductRequest(1L, 10)));
-        ResponseEntity<MenuResponse> createdMenuResponse = restTemplate.exchange("/api/menus",
+        ResponseEntity<MenuResponse> updatedMenuResponse = restTemplate.exchange("/api/menus",
                 HttpMethod.PUT,
                 new HttpEntity<>(menuRequest),
                 MenuResponse.class);
@@ -101,11 +112,25 @@ class AcceptanceTest {
                 .findFirst()
                 .orElseThrow();
 
+        List<Long> menuIds = Arrays.asList(restTemplate.getForObject("/api/menus",
+                        MenuResponse[].class)).stream()
+                .map(MenuResponse::getId)
+                .collect(Collectors.toList());;
+
+
         assertSoftly(softAssertions -> {
             // 메뉴 업데이트 확인
-            softAssertions.assertThat(createdMenuResponse.getBody().getName()).isEqualTo("kong");
-            softAssertions.assertThat(createdMenuResponse.getBody().getPrice()).isEqualTo(BigDecimal.valueOf(1000));
+            softAssertions.assertThat(updatedMenuResponse.getBody().getName()).isEqualTo("kong");
+            softAssertions.assertThat(updatedMenuResponse.getBody().getPrice()).isEqualTo(BigDecimal.valueOf(1000));
 
+            // 주문 조회 시 기존 메뉴 조회 확인 테스트
+            softAssertions.assertThat(updatedMenuOrderResponse.getOrderLineItemResponses().get(0))
+                    .isNotEqualTo(updatedMenuResponse.getBody().getId());
+
+            // 메뉴 조회 시 변경된 메뉴 조회 테스트
+            softAssertions.assertThat(menuIds).doesNotContain(createdOrderResponse.getBody()
+                    .getOrderLineItemResponses().get(0).getMenuId());
+            softAssertions.assertThat(menuIds).containsAnyOf(updatedMenuResponse.getBody().getId());
         });
     }
 }

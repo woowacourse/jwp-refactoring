@@ -61,4 +61,8 @@ public class OrderResponse {
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
+
+    public List<OrderLineItemResponse> getOrderLineItemResponses() {
+        return orderLineItemResponses;
+    }
 }
