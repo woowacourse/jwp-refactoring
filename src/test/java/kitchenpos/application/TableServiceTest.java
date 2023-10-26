@@ -5,6 +5,7 @@ import kitchenpos.application.dto.ChangeNumberOfQuestsCommand;
 import kitchenpos.application.dto.ChangeTableEmptyCommand;
 import kitchenpos.application.dto.CreateTableCommand;
 import kitchenpos.application.dto.domain.OrderTableDto;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
@@ -154,7 +155,7 @@ class TableServiceTest extends ServiceTest {
 
         private OrderLineItem 주문_상품_만들기() {
             final var 메뉴 = menuRepository.findAll().get(0);
-            return new OrderLineItem(null, 메뉴.getId(), 1);
+            return new OrderLineItem(null, 메뉴.getId(), "메뉴이름", Money.of(10_000), 1);
         }
 
         @Test

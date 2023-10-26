@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.List;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemFixture;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -97,7 +98,7 @@ class OrderTableTest {
     void 주문할_수_있다() {
         //given
         OrderTable orderTable = new OrderTable(2, false);
-        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, 1L, 1L));
+        List<OrderLineItem> orderLineItems = List.of(OrderLineItemFixture.id_없는_주문항목());
 
         //when
         Order order = orderTable.order(orderLineItems);

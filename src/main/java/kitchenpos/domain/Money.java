@@ -6,7 +6,6 @@ import javax.persistence.Access;
 import javax.persistence.Embeddable;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNull;
 import static javax.persistence.AccessType.FIELD;
 
 @Embeddable

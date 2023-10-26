@@ -3,10 +3,11 @@ package kitchenpos.domain;
 import java.lang.reflect.Field;
 import java.util.List;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 
+import static kitchenpos.domain.order.OrderLineItemFixture.id_없는_주문항목;
+import static kitchenpos.domain.order.OrderLineItemFixture.주문항목;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,17 +15,14 @@ import static org.junit.platform.commons.util.ReflectionUtils.HierarchyTraversal
 
 class OrderTest {
 
-    public static final Order 주문_fixture = new Order(2L,
-            List.of(new OrderLineItem(1L, 1L, 1L), new OrderLineItem(2L, 2L, 1L))
-    );
+    public static final Order 주문_fixture = new Order(2L, List.of(id_없는_주문항목(), 주문항목(2L)));
 
     @Test
     void id_가_같으면_동등하다() throws IllegalAccessException {
         //given
         Field id = ReflectionUtils.findFields(Order.class, field -> field.getName().equals("id"), TOP_DOWN).get(0);
         Order 주문_객체 = 주문_fixture;
-        Order 다른_주문_객체 = new Order(3L,
-                List.of(new OrderLineItem(1L, 1L, 1L), new OrderLineItem(2L, 2L, 1L)));
+        Order 다른_주문_객체 = new Order(3L, List.of(id_없는_주문항목(), 주문항목(2L)));
 
         id.setAccessible(true);
         id.set(주문_객체, 1L);
