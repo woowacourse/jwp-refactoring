@@ -4,7 +4,7 @@ import java.util.List;
 import kitchenpos.application.dto.order.OrderCreateRequest;
 import kitchenpos.application.dto.order.OrderLineItemRequest;
 
-public class OrderCreateRequestFixture {
+public abstract class OrderCreateRequestFixture {
 
     public static OrderCreateRequest orderCreateRequest(final Long orderTableId,
                                                         final List<OrderLineItemRequest> orderLineItems) {
