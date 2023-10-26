@@ -42,7 +42,8 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
@@ -106,7 +107,7 @@ public class Order {
         }
 
         public OrderFactory addMenu(final Menu menu, final long quantity) {
-            order.addOrderLineItem(new OrderLineItem(order, menu, quantity));
+            order.addOrderLineItem(new OrderLineItem(menu, quantity));
             return this;
         }
 

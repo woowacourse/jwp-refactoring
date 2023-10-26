@@ -36,7 +36,7 @@ public class OrderResponse {
                 order.getOrderStatus(),
                 order.getOrderedTime(),
                 order.getOrderLineItems().stream()
-                        .map(OrderLineItemResponse::from)
+                        .map(orderLineItem -> OrderLineItemResponse.from(orderLineItem, order.getId()))
                         .collect(Collectors.toList())
         );
     }
@@ -80,10 +80,10 @@ public class OrderResponse {
             this.quantity = quantity;
         }
 
-        public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
+        public static OrderLineItemResponse from(final OrderLineItem orderLineItem, final Long orderId) {
             return new OrderLineItemResponse(
                     orderLineItem.getSeq(),
-                    orderLineItem.getOrderId(),
+                    orderId,
                     orderLineItem.getMenuId(),
                     orderLineItem.getQuantity()
             );
