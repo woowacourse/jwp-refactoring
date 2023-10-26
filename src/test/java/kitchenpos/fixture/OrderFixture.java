@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.order_lineitem.OrderLineItem;
+import kitchenpos.domain.order.order_lineitem.OrderLineItems;
 import kitchenpos.domain.table.OrderTable;
 
 public class OrderFixture {

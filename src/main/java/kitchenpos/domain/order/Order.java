@@ -2,6 +2,8 @@ package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,9 +11,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import kitchenpos.domain.order.order_lineitem.OrderLineItems;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.support.AggregateReference;
 import kitchenpos.exception.OrderException;
 
 @Entity
@@ -21,8 +24,9 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
-    @ManyToOne
-    private final OrderTable orderTable;
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "order_table_id"))
+    private final AggregateReference<OrderTable> orderTable;
     @Embedded
     private final OrderLineItems orderLineItems;
     private final LocalDateTime orderedTime;
@@ -37,26 +41,18 @@ public class Order {
     }
 
     public Order(
-            final OrderTable orderTable,
-            final OrderLineItems orderLineItems
+            final AggregateReference<OrderTable> orderTable,
+            final OrderLineItems orderLineItems,
+            final OrderValidator orderValidator,
+            final LocalDateTime orderedTime
     ) {
-        validateOrderTable(orderTable);
         validateOrderLineItems(orderLineItems);
         this.id = null;
         this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING;
         this.orderLineItems = orderLineItems;
-        this.orderedTime = LocalDateTime.now();
-    }
-
-    private void validateOrderTable(final OrderTable orderTable) {
-        if (Objects.isNull(orderTable)) {
-            throw new OrderException.NoTableException();
-        }
-
-        if (orderTable.isEmpty()) {
-            throw new OrderException.EmptyTableException();
-        }
+        this.orderedTime = orderedTime;
+        orderValidator.validate(this);
     }
 
     private void validateOrderLineItems(final OrderLineItems orderLineItems) {
@@ -77,7 +73,7 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
+    public AggregateReference<OrderTable> getOrderTable() {
         return orderTable;
     }
 

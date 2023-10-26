@@ -1,14 +1,16 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.order.order_lineitem;
 
 import java.util.Objects;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.support.AggregateReference;
 import kitchenpos.exception.OrderException;
 
 @Entity
@@ -18,8 +20,9 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long seq;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private final Menu menu;
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "menu_id"))
+    private final AggregateReference<Menu> menu;
     private final Long quantity;
 
     protected OrderLineItem() {
@@ -28,18 +31,16 @@ public class OrderLineItem {
         this.quantity = null;
     }
 
-    public OrderLineItem(final Menu menu, final Long quantity) {
-        validateMenu(menu);
+    public OrderLineItem(
+            final AggregateReference<Menu> menu,
+            final Long quantity,
+            final OrderLineValidator orderLineValidator
+    ) {
         validateQuantity(quantity);
         this.seq = null;
         this.menu = menu;
         this.quantity = quantity;
-    }
-
-    private void validateMenu(final Menu menu) {
-        if (Objects.isNull(menu)) {
-            throw new OrderException.NoMenuException();
-        }
+        orderLineValidator.validate(this);
     }
 
     private void validateQuantity(final Long quantity) {
@@ -52,7 +53,7 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Menu getMenu() {
+    public AggregateReference<Menu> getMenu() {
         return menu;
     }
 

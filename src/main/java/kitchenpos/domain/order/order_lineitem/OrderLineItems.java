@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.order.order_lineitem;
 
 import java.util.List;
 import java.util.Objects;
