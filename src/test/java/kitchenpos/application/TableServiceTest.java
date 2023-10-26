@@ -76,7 +76,6 @@ class TableServiceTest {
         //given
         final OrderTable orderTable = OrderTableTestSupport.builder().empty(true).build();
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(false);
         given(orderTableRepository.save(orderTable)).willReturn(orderTable);
 
         final var request = new OrderTableChangeEmptyRequest(true);
@@ -111,7 +110,6 @@ class TableServiceTest {
         final var request = new OrderTableChangeEmptyRequest(false);
         final OrderTable savedOrder = OrderTableTestSupport.builder().tableGroup(null).empty(false).build();
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(savedOrder));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(true);
 
         //when
 

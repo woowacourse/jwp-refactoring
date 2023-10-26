@@ -136,7 +136,6 @@ class TableGroupServiceTest {
         //given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
         given(orderTableRepository.findAllByTableGroupId(anyLong())).willReturn(tableGroup.getOrderTablesValue());
-        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
 
         //when
 
@@ -150,7 +149,6 @@ class TableGroupServiceTest {
         //given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
         given(orderTableRepository.findAllByTableGroupId(anyLong())).willReturn(tableGroup.getOrderTablesValue());
-        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
 
         //when
 
