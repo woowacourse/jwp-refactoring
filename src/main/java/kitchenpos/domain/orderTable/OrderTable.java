@@ -1,11 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.domain.orderTable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,8 +14,8 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
     @Column(name = "number_of_guests")
     private int numberOfGuests;
     @Column(name = "empty", columnDefinition = "BIT")
@@ -26,9 +25,8 @@ public class OrderTable {
     public OrderTable() {
     }
 
-
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -38,7 +36,14 @@ public class OrderTable {
     }
 
     public boolean hasTableGroup() {
-        return tableGroup != null;
+        return tableGroupId != null;
+    }
+
+    public void updateTableGroupId(Long tableGroupId) {
+        if (hasTableGroup()) {
+            throw new IllegalArgumentException();
+        }
+        this.tableGroupId = tableGroupId;
     }
 
     public void updateEmpty(Boolean empty) {
@@ -56,16 +61,12 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public void addTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public void removeTableGroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
     public int getNumberOfGuests() {
