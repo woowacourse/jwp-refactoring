@@ -6,10 +6,10 @@ import static java.util.stream.Collectors.toList;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupRequest;
-import kitchenpos.dto.TableGroupRequest.OrderTableIdRequest;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.dto.tablegroup.TableGroupRequest;
+import kitchenpos.dto.tablegroup.TableGroupRequest.OrderTableIdRequest;
 
 public class TableGroupFixture {
 
@@ -19,7 +19,7 @@ public class TableGroupFixture {
 
     public static TableGroup 단체_지정(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        tableGroup.changeOrderTables(orderTables);
+        tableGroup.group(orderTables);
         return tableGroup;
     }
 
