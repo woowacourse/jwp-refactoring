@@ -1,10 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.*;
-import kitchenpos.ui.dto.OrderTableCreateRequest;
-import kitchenpos.ui.dto.OrderTableUpdateEmptyRequest;
-import kitchenpos.ui.dto.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.Product.repository.ProductRepository;
+import kitchenpos.menu.repository.MenuProductRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.order.presentation.dto.OrderTableCreateRequest;
+import kitchenpos.order.presentation.dto.OrderTableUpdateEmptyRequest;
+import kitchenpos.order.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +19,7 @@ import java.util.List;
 import static kitchenpos.TestFixtureFactory.새로운_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TableServiceTest extends ServiceTest {
+class OrderTableServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupRepository tableGroupRepository;

@@ -1,14 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.MenuCreateRequest;
-import kitchenpos.ui.dto.MenuProductCreateRequest;
+import kitchenpos.Product.domain.Product;
+import kitchenpos.Product.repository.ProductRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.presentation.dto.MenuCreateRequest;
+import kitchenpos.menu.presentation.dto.MenuProductCreateRequest;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.TestFixtureFactory.*;
+import static kitchenpos.TestFixtureFactory.새로운_메뉴_그룹;
+import static kitchenpos.TestFixtureFactory.새로운_상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -44,7 +44,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 등록된_상품들을_메뉴로_등록한다() {
         final MenuProductCreateRequest 메뉴_상품_생성_요청 = new MenuProductCreateRequest(상품.getId(), 3L);
-        final MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
+        final MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", new BigDecimal("30.00"), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
 
         final Menu menu = menuService.create(메뉴_생성_요청);
 
@@ -67,7 +67,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴의_목록을_조회한다() {
         final MenuProductCreateRequest 메뉴_상품_생성_요청 = new MenuProductCreateRequest(상품.getId(), 3L);
-        final MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
+        final MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", new BigDecimal("30.00"), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
 
         menuService.create(메뉴_생성_요청);
 
