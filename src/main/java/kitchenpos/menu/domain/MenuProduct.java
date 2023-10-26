@@ -3,6 +3,7 @@ package kitchenpos.menu.domain;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,6 +20,9 @@ public class MenuProduct {
     private Long seq;
     @OneToOne
     private Product product;
+    private String name;
+    @Embedded
+    private Price price;
     private long quantity;
 
     protected MenuProduct() {
@@ -34,6 +38,8 @@ public class MenuProduct {
         this.seq = seq;
         this.product = product;
         this.quantity = quantity;
+        this.name = product.getName();
+        this.price = product.getPrice();
     }
 
     public MenuProduct(final Product product, final long quantity) {
@@ -54,5 +60,13 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
     }
 }
