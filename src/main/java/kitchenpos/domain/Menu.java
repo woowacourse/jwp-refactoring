@@ -1,52 +1,73 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
-import java.util.List;
+import static javax.persistence.GenerationType.IDENTITY;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
-    private BigDecimal price;
+
+    @Column(nullable = false)
+    private Price price;
+
+    @Column(nullable = false)
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @Embedded
+    private MenuProducts menuProducts = new MenuProducts();
+
+    protected Menu() {
+    }
+
+    public Menu(final String name, final Price price, final Long menuGroupId) {
+        this(null, name, price, menuGroupId);
+    }
+
+    public Menu(final Long id, final String name, final Price price, final Long menuGroupId) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+    }
+
+    public void validateMenuPrice(final Price productSum) {
+        if (this.price.isGreaterThan(productSum)) {
+            throw new IllegalArgumentException("메뉴의 가격이 상품 가격들의 합보다 큽니다.");
+        }
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public void addMenuProduct(final MenuProduct menuProduct) {
+        this.menuProducts.addProduct(menuProduct);
     }
 }

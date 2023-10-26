@@ -8,17 +8,25 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import java.util.stream.Collectors;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,16 +38,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -49,250 +57,170 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
+        final TableGroup tableGroup = new TableGroup(10L);
+        final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, false);
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
+        final Menu menu2 = new Menu(11L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
-        final Menu menu1 = new Menu();
-        menu1.setId(10L);
-        menu1.setName("후라이드 양념 세트");
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                orderTable.getId(),
+                OrderStatus.COOKING.name(),
+                List.of(new OrderLineItemCreateRequest(menu1.getId(), 1),
+                        new OrderLineItemCreateRequest(menu2.getId(), 1))
+        );
 
-        final Menu menu2 = new Menu();
-        menu2.setId(11L);
-        menu2.setName("후라이드 간장 세트");
+        final Order order = new Order(1L, null, OrderStatus.COOKING.name());
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1);
-        orderLineItem1.setMenuId(menu1.getId());
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getId(), 1);
+        order.addOrderLineItem(orderLineItem1);
+        order.addOrderLineItem(orderLineItem2);
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1);
-        orderLineItem2.setMenuId(menu2.getId());
-
-        order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
-
-        given(menuDao.countByIdIn(any()))
+        given(menuRepository.countByIdIn(any()))
                 .willReturn(2L);
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1000L);
-        order.setOrderTableId(orderTable.getId());
+        final Order updatedOrder = new Order(
+                order.getId(),
+                orderTable.getId(),
+                order.getOrderStatus(),
+                order.getOrderLineItems()
+        );
 
-        given(orderTableDao.findById(order.getOrderTableId()))
+        given(orderTableRepository.findById(any()))
                 .willReturn(Optional.of(orderTable));
 
-        given(orderDao.save(any()))
-                .willReturn(order);
-
-        given(orderLineItemDao.save(orderLineItem1))
-                .willReturn(orderLineItem1);
-
-        given(orderLineItemDao.save(orderLineItem2))
-                .willReturn(orderLineItem2);
+        given(orderRepository.save(any()))
+                .willReturn(updatedOrder);
 
         // when & then
-        assertThat(orderService.create(order)).isEqualTo(order);
-        then(menuDao).should(times(1)).countByIdIn(any());
-        then(orderTableDao).should(times(1)).findById(anyLong());
-        then(orderDao).should(times(1)).save(any());
-        then(orderLineItemDao).should(times(2)).save(any());
-    }
-
-    @DisplayName("주문 항목이 존재하지 않으면 등록할 수 없다.")
-    @Test
-    void create_FailWhenOrderLineItemsNotExist() {
-        // given
-        final Order order = new Order();
-        order.setId(1L);
-
-        // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 메뉴가 존재하지 않습니다.");
+        assertThat(orderService.create(orderCreateRequest)).isEqualTo(updatedOrder.getId());
+        then(menuRepository).should(times(1)).countByIdIn(any());
+        then(orderTableRepository).should(times(1)).findById(anyLong());
+        then(orderRepository).should(times(1)).save(any());
+        then(orderLineItemRepository).should(times(2)).save(any());
     }
 
     @DisplayName("주문 항목에 존재하는 메뉴가 존재하지 않는 메뉴이면 등록할 수 없다.")
     @Test
     void create_FailWhenMenuNotExist() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
+        final Order order = new Order(1L, 100L, OrderStatus.COOKING.name());
 
-        final Menu menu1 = new Menu();
-        menu1.setId(10L);
-        menu1.setName("후라이드 양념 세트");
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1);
-        orderLineItem1.setMenuId(menu1.getId());
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                100L,
+                OrderStatus.COOKING.name(),
+                List.of(new OrderLineItemCreateRequest(menu1.getId(), 1))
+        );
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1);
-        orderLineItem2.setMenuId(11L);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, 11L, 1);
 
-        order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
+        order.addOrderLineItem(orderLineItem1);
+        order.addOrderLineItem(orderLineItem2);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("상품이 존재하지 않습니다.");
-    }
-
-    @DisplayName("존재하지 않는 주문 테이블이 포함되어 있으면 등록할 수 없다.")
-    @Test
-    void create_FailWhenOrderTableNotExist() {
-        // given
-        final Order order = new Order();
-        order.setId(1L);
-
-        final Menu menu1 = new Menu();
-        menu1.setId(10L);
-        menu1.setName("후라이드 양념 세트");
-
-        final Menu menu2 = new Menu();
-        menu2.setId(11L);
-        menu2.setName("후라이드 간장 세트");
-
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1);
-        orderLineItem1.setMenuId(menu1.getId());
-
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1);
-        orderLineItem2.setMenuId(menu2.getId());
-
-        order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
-
-        given(menuDao.countByIdIn(any()))
-                .willReturn(2L);
-
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1000L);
-        order.setOrderTableId(orderTable.getId());
-
-        given(orderTableDao.findById(order.getOrderTableId()))
-                .willReturn(Optional.of(orderTable));
-
-        // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
 
     @DisplayName("주문 테이블의 상태가 비어있으면 등록할 수 없다.")
     @Test
     void create_FailWhenOrderTableIsEmpty() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
+        final Order order = new Order(1L, 100L, OrderStatus.COOKING.name());
 
-        final Menu menu1 = new Menu();
-        menu1.setId(10L);
-        menu1.setName("후라이드 양념 세트");
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
+        final Menu menu2 = new Menu(11L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
-        final Menu menu2 = new Menu();
-        menu2.setId(11L);
-        menu2.setName("후라이드 간장 세트");
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                100L,
+                OrderStatus.COOKING.name(),
+                List.of(new OrderLineItemCreateRequest(menu1.getId(), 1),
+                        new OrderLineItemCreateRequest(menu2.getId(), 1))
+        );
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1);
-        orderLineItem1.setMenuId(menu1.getId());
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getId(), 1);
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1);
-        orderLineItem2.setMenuId(menu2.getId());
+        order.addOrderLineItem(orderLineItem1);
+        order.addOrderLineItem(orderLineItem2);
 
-        order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
-
-        given(menuDao.countByIdIn(any()))
+        given(menuRepository.countByIdIn(any()))
                 .willReturn(2L);
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1000L);
-        orderTable.setEmpty(true);
-        order.setOrderTableId(orderTable.getId());
+        final TableGroup tableGroup = new TableGroup(10L);
+        final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, true);
 
-        given(orderTableDao.findById(order.getOrderTableId()))
+        final Order udpatedOrder = new Order(
+                order.getId(),
+                orderTable.getId(),
+                order.getOrderStatus(),
+                order.getOrderLineItems()
+        );
+
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블의 상태가 비어있습니다.");
+                .hasMessage("테이블의 상태가 비어 있습니다.");
     }
 
     @DisplayName("주문 목록을 조회할 수 있다.")
     @Test
     void list() {
         // given
-        final Order order1 = new Order();
-        order1.setId(1L);
-
-        final Order order2 = new Order();
-        order2.setId(2L);
-
+        final Order order1 = new Order(1L, null, OrderStatus.COOKING.name());
+        final Order order2 = new Order(2L, null, OrderStatus.COOKING.name());
         final List<Order> orders = List.of(order1, order2);
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(order1.getId());
+        final List<OrderResponse> responses = orders.stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toUnmodifiableList());
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(order2.getId());
-
-        given(orderDao.findAll())
+        given(orderRepository.findAll())
                 .willReturn(orders);
-        given(orderLineItemDao.findAllByOrderId(order1.getId()))
-                .willReturn(List.of(orderLineItem1));
-        given(orderLineItemDao.findAllByOrderId(order2.getId()))
-                .willReturn(List.of(orderLineItem2));
 
         // when & then
-        assertThat(orderService.list()).isEqualTo(orders);
-        then(orderDao).should(times(1)).findAll();
-        then(orderLineItemDao).should(times(2)).findAllByOrderId(anyLong());
+        assertThat(orderService.list()).usingRecursiveComparison().isEqualTo(responses);
+        then(orderRepository).should(times(1)).findAll();
     }
 
     @DisplayName("특정 주문의 상태를 변경할 수 있다.")
     @Test
     void changeOrderStatus() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        final Order order = new Order(1L, null, OrderStatus.COOKING.name());
+        final OrderUpdateStatusRequest updateRequest = new OrderUpdateStatusRequest(OrderStatus.MEAL.name());
+        final Order updatedOrder = new Order(1L, null, OrderStatus.MEAL.name());
 
-        given(orderDao.findById(1L))
+        given(orderRepository.findById(1L))
                 .willReturn(Optional.of(order));
-        given(orderDao.save(order))
-                .willReturn(order);
-        given(orderLineItemDao.findAllByOrderId(order.getId()))
-                .willReturn(List.of(new OrderLineItem()));
+
+        given(orderRepository.save(any()))
+                .willReturn(updatedOrder);
 
         // when
-        orderService.changeOrderStatus(1L, order);
+        orderService.changeOrderStatus(1L, updateRequest);
 
         // then
-        then(orderDao).should(times(1)).findById(1L);
-        then(orderDao).should(times(1)).save(order);
-        then(orderLineItemDao).should(times(1)).findAllByOrderId(1L);
+        then(orderRepository).should(times(1)).findById(1L);
+        then(orderRepository).should(times(1)).save(any());
     }
 
     @DisplayName("해당 주문이 존재하지 않으면 변경할 수 없다.")
     @Test
     void changeOrderStatus_FailWhenOrderNotExist() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.MEAL.name());
+        final OrderUpdateStatusRequest updateRequest = new OrderUpdateStatusRequest(OrderStatus.MEAL.name());
+        final Order order = new Order(1L, null, OrderStatus.MEAL.name());
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(2L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(2L, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 주문입니다.");
     }
@@ -301,15 +229,14 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_FailWhenOrderStatusAlreadyCompletion() {
         // given
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setId(1L);
+        final OrderUpdateStatusRequest updateRequest = new OrderUpdateStatusRequest(OrderStatus.COMPLETION.name());
+        final Order order = new Order(1L, null, OrderStatus.COMPLETION.name());
 
-        given(orderDao.findById(1L))
+        given(orderRepository.findById(1L))
                 .willReturn(Optional.of(order));
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 완료된 주문입니다.");
     }

@@ -1,84 +1,85 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final MenuProductRepository menuProductRepository,
+            final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public Long create(final MenuCreateRequest request) {
+        validateMenuGroup(request);
+        final List<MenuProductCreateRequest> menuProductCreateRequests = request.getMenuProductRequests();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴의 가격이 올바르지 않습니다.");
-        }
+        final Menu menu = new Menu(request.getName(), new Price(request.getPrice()), request.getMenuGroupId());
+        validateMenuPrice(menuProductCreateRequests, menu);
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
-        }
-
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴의 가격이 상품 가격들의 합보다 큽니다.");
-        }
-
-        final Menu savedMenu = menuDao.save(menu);
-
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        final Menu savedMenu = menuRepository.save(menu);
+        saveMenuProduct(menuProductCreateRequests, savedMenu);
+        return savedMenu.getId();
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+    private void validateMenuGroup(final MenuCreateRequest request) {
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
+    }
 
-        return menus;
+    private void validateMenuPrice(final List<MenuProductCreateRequest> menuProductCreateRequests, final Menu menu) {
+        Price sum = Price.ZERO;
+        for (final MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
+            final Product product = productRepository.findById(menuProductCreateRequest.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+            sum = sum.add(product.getPrice().multiply(menuProductCreateRequest.getQuantity()));
+        }
+        menu.validateMenuPrice(sum);
+    }
+
+    private void saveMenuProduct(final List<MenuProductCreateRequest> menuProductCreateRequests, final Menu savedMenu) {
+        for (final MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
+            final MenuProduct menuProduct = new MenuProduct(
+                    savedMenu,
+                    menuProductCreateRequest.getProductId(),
+                    menuProductCreateRequest.getQuantity()
+            );
+            MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
+            savedMenu.addMenuProduct(savedMenuProduct);
+        }
+    }
+
+    public List<MenuResponse> list() {
+        List<Menu> menus = menuRepository.findAll();
+        return menus.stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toUnmodifiableList());
     }
 }
