@@ -35,7 +35,7 @@ public class OrderService {
         return OrderDto.from(orderRepository.save(order));
     }
 
-    public Order toDomain(CreateOrderCommand command) {
+    private Order toDomain(CreateOrderCommand command) {
         List<OrderLineItemRequest> orderLineItemRequests = command.getOrderLineItemRequests();
         List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
                 .map(this::toDomain)
@@ -43,7 +43,7 @@ public class OrderService {
         return new Order(command.getOrderTableId(), orderLineItems);
     }
 
-    public OrderLineItem toDomain(OrderLineItemRequest command) {
+    private OrderLineItem toDomain(OrderLineItemRequest command) {
         Long menuId = command.getMenuId();
         Menu menu = menuRepository.getById(menuId);
         return new OrderLineItem(null, new MenuVo(menuId, menu.getName(), menu.getPrice()), command.getQuantity());
