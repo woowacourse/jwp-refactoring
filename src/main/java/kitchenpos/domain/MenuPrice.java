@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -9,6 +10,7 @@ public class MenuPrice {
     private static final BigDecimal MIN_PRICE = BigDecimal.ZERO;
     private static final BigDecimal MAX_PRICE = BigDecimal.valueOf(Math.pow(10, 17));
 
+    @Column(nullable = false)
     private BigDecimal price;
 
     public MenuPrice() {
