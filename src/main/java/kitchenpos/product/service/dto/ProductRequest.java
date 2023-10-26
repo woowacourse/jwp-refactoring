@@ -1,4 +1,4 @@
-package kitchenpos.application.dto.request;
+package kitchenpos.product.service.dto;
 
 import kitchenpos.common.vo.Price;
 

@@ -6,11 +6,11 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.request.MenuProductRequest;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.menu.service.dto.MenuProductRequest;
+import kitchenpos.menu.service.dto.MenuRequest;
+import kitchenpos.menugroup.service.dto.MenuGroupResponse;
+import kitchenpos.menu.service.dto.MenuResponse;
+import kitchenpos.product.service.dto.ProductResponse;
 import kitchenpos.common.vo.Price;
 import kitchenpos.menu.service.MenuService;
 import kitchenpos.menugroup.service.MenuGroupService;

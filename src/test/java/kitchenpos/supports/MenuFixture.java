@@ -3,9 +3,9 @@ package kitchenpos.supports;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.application.dto.request.MenuProductRequest;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.menu.service.dto.MenuProductRequest;
+import kitchenpos.menu.service.dto.MenuRequest;
+import kitchenpos.product.service.dto.ProductResponse;
 import kitchenpos.common.vo.Price;
 
 public class MenuFixture {

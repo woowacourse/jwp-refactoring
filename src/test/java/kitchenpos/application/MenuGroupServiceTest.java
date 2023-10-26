@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.application.dto.request.MenuGroupRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.menugroup.service.dto.MenuGroupRequest;
+import kitchenpos.menugroup.service.dto.MenuGroupResponse;
 import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.IntegrationTest;
