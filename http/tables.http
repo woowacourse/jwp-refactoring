@@ -4,18 +4,18 @@ Content-Type: application/json
 
 {
   "numberOfGuests": 0,
-  "empty": true
+  "orderable": true
 }
 
 ###
 GET {{host}}/api/tables
 
 ###
-PUT {{host}}/api/tables/1/empty
+PUT {{host}}/api/tables/1/orderable
 Content-Type: application/json
 
 {
-  "empty": false
+  "orderable": false
 }
 
 ###
@@ -27,19 +27,19 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/api/tables/1/empty
+PUT {{host}}/api/tables/1/orderable
 Content-Type: application/json
 
 {
-  "empty": true
+  "orderable": true
 }
 
 ###
-PUT {{host}}/api/tables/2/empty
+PUT {{host}}/api/tables/2/orderable
 Content-Type: application/json
 
 {
-  "empty": true
+  "orderable": false
 }
 
 ###
