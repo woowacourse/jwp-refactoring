@@ -1,17 +1,10 @@
-package kitchenpos.order.domain;
-
-import kitchenpos.table.domain.TableGroup;
+package kitchenpos.table.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class OrderTable {
-
-    @OneToMany(mappedBy = "orderTable")
-    private final List<Order> orders = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +27,12 @@ public class OrderTable {
                       final TableGroup tableGroup,
                       final int numberOfGuests,
                       final boolean empty) {
-        validateNumberOfGuests(numberOfGuests);
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("테이블 당 인원 수는 음수가 될 수 없습니다.");
+        }
+        if (numberOfGuests == 0 && !empty) {
+            throw new IllegalArgumentException("인원 수가 0 일때는 비지않은 테이블로 지정할 수 없습니다.");
+        }
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -46,55 +44,28 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void placeOrder(final Order order) {
-        validateAbleToOrder();
-        orders.add(order);
-    }
-
-    private void validateAbleToOrder() {
-        if (empty) {
-            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
-        }
-    }
-
     public void group(final TableGroup tableGroup) {
-        validateAbleToGroup();
-        changeEmpty(false);
-        this.tableGroup = tableGroup;
-    }
-
-    private void validateAbleToGroup() {
         if (!empty) {
             throw new IllegalArgumentException("이미 주문 상태인 테이블을 단체로 지정할 수 없습니다.");
         }
-        if (tableGroup != null) {
+        if (this.tableGroup != null) {
             throw new IllegalArgumentException("이미 단체에 속한 테이블을 단체로 지정할 수 없습니다.");
         }
+        this.tableGroup = tableGroup;
     }
 
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("테이블 당 인원 수는 음수가 될 수 없습니다.");
-        }
-    }
 
     public void unGroup() {
-        validateAbleToUnGroup();
-        this.tableGroup = null;
-        changeEmpty(false);
-    }
-
-    private void validateAbleToUnGroup() {
         if (tableGroup == null) {
             throw new IllegalArgumentException("테이블이 그룹에 이미 속해있지 않습니다.");
         }
-        if (hasAnyOrderInProgress()) {
-            throw new IllegalArgumentException("이미 조리 또는 식사 중인 주문이 존재하면 테이블을 나눌 수 없습니다.");
-        }
+        this.tableGroup = null;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
-        validateNumberOfGuests(numberOfGuests);
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("테이블 당 인원 수는 음수가 될 수 없습니다.");
+        }
         if (empty) {
             throw new IllegalArgumentException("빈 테이블의 인원 수를 변경할 수 없습니다.");
         }
@@ -102,26 +73,16 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
-        validateAbleToChangeEmpty();
-        this.empty = empty;
-    }
+        if (empty) {
+            if (tableGroup != null) {
+                throw new IllegalArgumentException("단체로 지정된 테이블을 비울 수 없습니다.");
+            }
 
-    private void validateAbleToChangeEmpty() {
-        if (Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException("단체로 지정된 테이블을 비울 수 없습니다.");
+            this.empty = true;
+            this.numberOfGuests = 0;
+            return;
         }
-        if (hasAnyOrderInProgress()) {
-            throw new IllegalArgumentException("조리 또는 식사 중인 테이블을 비울 수 없습니다.");
-        }
-    }
-
-    private boolean hasAnyOrderInProgress() {
-        return orders.stream()
-                .anyMatch(Order::isInProgress);
-    }
-
-    public List<Order> getOrders() {
-        return orders;
+        this.empty = false;
     }
 
     public Long getId() {
@@ -140,16 +101,20 @@ public class OrderTable {
         return empty;
     }
 
+    public boolean hasTableGroup() {
+        return this.tableGroup != null;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final OrderTable that = (OrderTable) o;
-        return Objects.equals(orders, that.orders);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orders);
+        return Objects.hash(id);
     }
 }

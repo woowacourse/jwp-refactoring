@@ -1,10 +1,10 @@
 package kitchenpos.table.presentation;
 
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.presentation.dto.OrderTableCreateRequest;
 import kitchenpos.order.presentation.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.order.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.OrderTableService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,15 +13,15 @@ import java.util.List;
 
 @RestController
 public class TableRestController {
-    private final TableService tableService;
+    private final OrderTableService orderTableService;
 
-    public TableRestController(final TableService tableService) {
-        this.tableService = tableService;
+    public TableRestController(final OrderTableService orderTableService) {
+        this.orderTableService = orderTableService;
     }
 
     @PostMapping("/api/tables")
     public ResponseEntity<OrderTable> create(@RequestBody final OrderTableCreateRequest request) {
-        final OrderTable created = tableService.create(request);
+        final OrderTable created = orderTableService.create(request);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
@@ -31,7 +31,7 @@ public class TableRestController {
     @GetMapping("/api/tables")
     public ResponseEntity<List<OrderTable>> list() {
         return ResponseEntity.ok()
-                .body(tableService.findAll())
+                .body(orderTableService.findAll())
                 ;
     }
 
@@ -41,7 +41,7 @@ public class TableRestController {
             @RequestBody final OrderTableUpdateEmptyRequest request
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeEmpty(orderTableId, request))
+                .body(orderTableService.changeEmpty(orderTableId, request))
                 ;
     }
 
@@ -51,7 +51,7 @@ public class TableRestController {
             @RequestBody final OrderTableUpdateNumberOfGuestsRequest request
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(orderTableId, request))
+                .body(orderTableService.changeNumberOfGuests(orderTableId, request))
                 ;
     }
 }

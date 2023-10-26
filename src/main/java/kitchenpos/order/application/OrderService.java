@@ -5,7 +5,7 @@ import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.presentation.dto.OrderCreateRequest;
 import kitchenpos.order.presentation.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.repository.OrderLineItemRepository;
@@ -38,21 +38,26 @@ public class OrderService {
     }
 
     public Order create(final OrderCreateRequest request) {
-        // 주문 저장
         final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+        if(orderTable.isEmpty()){
+            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
+        }
         final Order order = new Order(orderTable);
         final Order savedOrder = orderRepository.save(order);
 
-        // 주문 아이템 저장
-        final List<OrderLineItemCreateRequest> orderLineItemRequests = request.getOrderLineItems();
+        saveOrderListItem(request, savedOrder);
+        return order;
+    }
 
+    private void saveOrderListItem(final OrderCreateRequest request,
+                                   final Order savedOrder) {
+        final List<OrderLineItemCreateRequest> orderLineItemRequests = request.getOrderLineItems();
         if (orderLineItemRequests.isEmpty()) {
             throw new IllegalArgumentException("주문할 항목은 최소 1개 이상이어야 합니다.");
         }
 
         validateMenuToOrder(orderLineItemRequests);
 
-        // OrderLineItem -> order, menu, quantity
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemCreateRequest orderLineItemRequest : orderLineItemRequests) {
             final Menu menu = menuRepository.getById(orderLineItemRequest.getMenuId());
@@ -63,7 +68,6 @@ public class OrderService {
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItemRepository.save(orderLineItem);
         }
-        return order;
     }
 
     private void validateMenuToOrder(final List<OrderLineItemCreateRequest> orderLineItems) {
@@ -80,7 +84,6 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    @Transactional
     public Order changeOrderStatus(final Long orderId,
                                    final String orderStatus) {
         final Order savedOrder = orderRepository.getById(orderId);

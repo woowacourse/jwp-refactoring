@@ -44,6 +44,11 @@ public class MenuService {
                 request.getPrice(),
                 menuGroupRepository.getById(request.getMenuGroupId())
         );
+        final Menu savedMenu = saveMenuProduct(menuProductCreateRequestList, menu);
+        return savedMenu;
+    }
+
+    private Menu saveMenuProduct(final List<MenuProductCreateRequest> menuProductCreateRequestList, final Menu menu) {
         final Menu savedMenu = menuRepository.save(menu);
 
         for (final MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequestList) {
@@ -66,7 +71,7 @@ public class MenuService {
         }
         final List<Price> prices = getPrices(request);
 
-        final Price productPriceSum = Price.sum(prices); // 상품들의 가격의 합
+        final Price productPriceSum = Price.sum(prices);
         if (productPriceSum.isLessThan(menuPrice)){
             throw new IllegalArgumentException("메뉴에 속한 상품 금액의 합은 메뉴의 가격보다 크거나 같아야 합니다.");
         }

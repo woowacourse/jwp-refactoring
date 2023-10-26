@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -35,7 +36,6 @@ public class Order {
 
     public Order(final OrderTable orderTable) {
         this.orderTable = orderTable;
-        orderTable.placeOrder(this);
         this.orderStatus = COOKING;
     }
 

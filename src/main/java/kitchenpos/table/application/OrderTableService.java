@@ -1,10 +1,12 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.application.OrderVerificationEvent;
 import kitchenpos.order.presentation.dto.OrderTableCreateRequest;
 import kitchenpos.order.presentation.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.order.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +14,15 @@ import java.util.List;
 
 @Transactional
 @Service
-public class TableService {
-    private final OrderTableRepository orderTableRepository;
+public class OrderTableService {
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
+
+    public OrderTableService(final OrderTableRepository orderTableRepository,
+                             final ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     public OrderTable create(final OrderTableCreateRequest request) {
@@ -32,6 +38,8 @@ public class TableService {
                                   final OrderTableUpdateEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        publisher.publishEvent(new OrderVerificationEvent(this, savedOrderTable.getId()));
+
         savedOrderTable.changeEmpty(request.isEmpty());
 
         return savedOrderTable;
