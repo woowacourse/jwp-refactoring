@@ -1,14 +1,13 @@
-package kitchenpos.tablegroup.eventlistener;
+package kitchenpos.ordertable.eventlistener;
 
 import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.TableGroupCreatedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Component
 public class TableGroupEventListener {
@@ -20,20 +19,15 @@ public class TableGroupEventListener {
     }
 
     @EventListener
-    public void createTableGroup(TableGroup tableGroup) {
-        validateOrderTables(tableGroup);
-        saveOrderTables(tableGroup);
+    public void createTableGroup(TableGroupCreatedEvent event) {
+        validateOrderTables(event);
+        saveOrderTables(event);
     }
 
-    private void validateOrderTables(TableGroup tableGroup) {
-        List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
+    private void validateOrderTables(TableGroupCreatedEvent event) {
+        List<Long> orderTableIds = event.getOrderTableIds();
+        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
         if (orderTables.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
@@ -45,9 +39,11 @@ public class TableGroupEventListener {
         }
     }
 
-    private void saveOrderTables(TableGroup tableGroup) {
-        final Long tableGroupId = tableGroup.getId();
-        for (final OrderTable OrderTable : tableGroup.getOrderTables()) {
+    private void saveOrderTables(TableGroupCreatedEvent event) {
+        final Long tableGroupId = event.getId();
+        List<Long> orderTableIds = event.getOrderTableIds();
+        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        for (final OrderTable OrderTable : orderTables) {
             OrderTable.group(tableGroupId);
             orderTableDao.save(OrderTable);
         }

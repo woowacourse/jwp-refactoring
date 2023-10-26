@@ -1,12 +1,12 @@
-package kitchenpos.tablegroup.eventlistener;
+package kitchenpos.ordertable.eventlistener;
 
 import kitchenpos.order.dao.OrderDao;
-import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.dao.TableGroupDao;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.dto.TableUngroupDto;
+import kitchenpos.tablegroup.dto.TableGroupUngroupEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +28,8 @@ public class TableUnGroupEventListener {
     }
 
     @EventListener
-    public void ungroup(TableUngroupDto tableUngroupDto) {
-        TableGroup tableGroup = tableGroupDao.findById(tableUngroupDto.getId())
+    public void ungroup(TableGroupUngroupEvent event) {
+        TableGroup tableGroup = tableGroupDao.findById(event.getId())
                 .orElseThrow(IllegalArgumentException::new);
 
         final List<OrderTable> orderTables = findOrderTables(tableGroup);

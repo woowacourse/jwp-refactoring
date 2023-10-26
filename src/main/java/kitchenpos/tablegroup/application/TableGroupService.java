@@ -1,9 +1,10 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.tablegroup.dto.TableUngroupDto;
 import kitchenpos.tablegroup.dao.TableGroupDao;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.TableGroupCreatedEvent;
 import kitchenpos.tablegroup.dto.TableGroupDto;
+import kitchenpos.tablegroup.dto.TableGroupUngroupEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,8 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupDto create(final TableGroupDto tableGroupDto) {
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), tableGroupDto.getOrderTables());
-        eventPublisher.publishEvent(tableGroup);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), tableGroupDto.getOrderTableIds());
+        eventPublisher.publishEvent(TableGroupCreatedEvent.from(tableGroup));
         return TableGroupDto.from(tableGroupDao.save(tableGroup));
     }
 
@@ -34,7 +35,7 @@ public class TableGroupService {
                 .orElseThrow(IllegalArgumentException::new);
 
         tableGroup.ungroup();
-        eventPublisher.publishEvent(new TableUngroupDto(tableGroup.getId()));
+        eventPublisher.publishEvent(new TableGroupUngroupEvent(tableGroup.getId()));
         tableGroupDao.save(tableGroup);
     }
 }

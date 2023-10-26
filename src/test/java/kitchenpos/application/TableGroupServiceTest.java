@@ -50,12 +50,12 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = new OrderTable(1L, null, 2, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-
-        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
-        TableGroup tableGroup = tableGroupDto.toDomain();
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+
+        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTableIds);
+        TableGroup tableGroup = tableGroupDto.toDomain();
 
         given(orderTableDao.findAllByIdIn(orderTableIds))
                 .willReturn(orderTables);
@@ -66,7 +66,7 @@ class TableGroupServiceTest {
         TableGroupDto result = tableGroupService.create(tableGroupDto);
 
         // then
-        assertThat(result.getOrderTables()).containsAll(orderTables);
+        assertThat(result.getOrderTableIds()).containsAll(orderTableIds);
     }
 
     @Test
@@ -75,13 +75,12 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = new OrderTable(1L, 1L, 2, false);
         OrderTable orderTable2 = new OrderTable(2L, 1L, 3, false);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-
-        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
-        TableGroup tableGroup = tableGroupDto.toDomain();
-
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+
+        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTableIds);
+        TableGroup tableGroup = tableGroupDto.toDomain();
 
         given(orderTableDao.findAllByIdIn(orderTableIds))
                 .willReturn(orderTables);
@@ -99,13 +98,12 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = new OrderTable(1L, 1L, 2, true);
         OrderTable orderTable2 = new OrderTable(2L, 1L, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-
-        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
-        TableGroup tableGroup = tableGroupDto.toDomain();
-
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+
+        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTableIds);
+        TableGroup tableGroup = tableGroupDto.toDomain();
 
         given(orderTableDao.findAllByIdIn(orderTableIds))
                 .willReturn(orderTables);
@@ -123,13 +121,12 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = new OrderTable(1L, 1L, 2, true);
         OrderTable orderTable2 = new OrderTable(2L, 1L, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-
-        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
-        TableGroup tableGroup = tableGroupDto.toDomain();
-
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+
+        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTableIds);
+        TableGroup tableGroup = tableGroupDto.toDomain();
 
         given(orderTableDao.findAllByTableGroupId(tableGroup.getId()))
                 .willReturn(orderTables);
