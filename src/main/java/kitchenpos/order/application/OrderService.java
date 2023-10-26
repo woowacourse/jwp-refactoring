@@ -1,24 +1,21 @@
 package kitchenpos.order.application;
 
-import kitchenpos.common.ValidateOrderTableOrderStatusEvent;
-import kitchenpos.common.ValidateOrderTablesOrderStatusEvent;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.exception.MenuNotFoundException;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.order.exception.OrderNotFoundException;
 import kitchenpos.product.domain.Price;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.menu.exception.MenuNotFoundException;
-import kitchenpos.order.exception.OrderNotFoundException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,17 +75,5 @@ public class OrderService {
         savedOrder.changeOrderStatus(orderStatusRequest.getOrderStatus());
 
         return OrderResponse.from(savedOrder);
-    }
-
-    @EventListener
-    public void validateOrderStatus(final ValidateOrderTableOrderStatusEvent validateOrderTableOrderStatusEvent) {
-        orderRepository.findAllByOrderTableId(validateOrderTableOrderStatusEvent.getOrderTableId())
-                .forEach(Order::validateOrderComplete);
-    }
-
-    @EventListener
-    public void validateOrdersStatus(final ValidateOrderTablesOrderStatusEvent validateOrderTablesOrderStatusEvent) {
-        orderRepository.findByOrderTableIdIn(validateOrderTablesOrderStatusEvent.getOrderTableIds())
-                .forEach(Order::validateOrderComplete);
     }
 }
