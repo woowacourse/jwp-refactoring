@@ -1,13 +1,9 @@
-package kitchenpos.domain;
-
-import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NEGATIVE_EXCEPTION;
-import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NULL_EXCEPTION;
+package kitchenpos.vo;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.exception.PriceException;
 
 @Embeddable
 public class Price {
@@ -36,13 +32,13 @@ public class Price {
 
     private void checkNull(BigDecimal value) {
         if (value == null) {
-            throw new PriceException(PRICE_IS_NULL_EXCEPTION);
+            throw new IllegalArgumentException("가격은 NULL일 수 없습니다.");
         }
     }
 
     private void checkPositive(BigDecimal value) {
         if (value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new PriceException(PRICE_IS_NEGATIVE_EXCEPTION);
+            throw new IllegalArgumentException("가격은 음수가 될 수 없습니다.");
         }
     }
 

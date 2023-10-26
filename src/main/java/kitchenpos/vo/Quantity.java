@@ -1,11 +1,8 @@
-package kitchenpos.domain;
-
-import static kitchenpos.exception.QuantityExceptionType.VALUE_NEGATIVE_EXCEPTION;
+package kitchenpos.vo;
 
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.exception.QuantityException;
 
 @Embeddable
 public class Quantity {
@@ -25,7 +22,7 @@ public class Quantity {
 
     private void checkNegative(long value) {
         if (value < 0) {
-            throw new QuantityException(VALUE_NEGATIVE_EXCEPTION);
+            throw new IllegalArgumentException("수량은 음수가 될 수 없습니다.");
         }
     }
 
@@ -37,8 +34,8 @@ public class Quantity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Quantity quantity1 = (Quantity) o;
-        return value == quantity1.value;
+        Quantity quantity = (Quantity) o;
+        return value == quantity.value;
     }
 
     @Override

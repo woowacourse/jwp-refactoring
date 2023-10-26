@@ -1,11 +1,8 @@
-package kitchenpos.domain;
-
-import static kitchenpos.exception.NumberOfGuestsExceptionType.NEGATIVE_VALUE_EXCEPTION;
+package kitchenpos.vo;
 
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.exception.NumberOfGuestsException;
 
 @Embeddable
 public class NumberOfGuests {
@@ -25,7 +22,7 @@ public class NumberOfGuests {
 
     private void checkNegative(int value) {
         if (value < 0) {
-            throw new NumberOfGuestsException(NEGATIVE_VALUE_EXCEPTION);
+            throw new IllegalArgumentException("손님 수는 음수가 될 수 없습니다.");
         }
     }
 
