@@ -1,6 +1,5 @@
 package kitchenpos.order.domain;
 
-import java.util.List;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -12,15 +11,6 @@ public class OrderValidator {
 
     public OrderValidator(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
-    }
-
-    public void validatePlace(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new OrderException("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
-        }
-        if (orderTableRepository.getById(orderTableId).isEmpty()) {
-            throw new OrderException("비어있는 테이블에서는 주문할 수 없습니다.");
-        }
     }
 
     public void validatePlace(Order order) {
