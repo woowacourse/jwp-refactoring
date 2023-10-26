@@ -55,7 +55,7 @@ class MenuProductsTest {
         assertThat(menuProducts.isInvalidPrice(price)).isTrue();
     }
 
-    @DisplayName("메뉴 가격이 메뉴 상품들의 가격 합보다 같거나 작으면 True를 반환한다.")
+    @DisplayName("메뉴 가격이 메뉴 상품들의 가격 합보다 같거나 작으면 False를 반환한다.")
     @ParameterizedTest
     @ValueSource(longs = {32000L, 31000L})
     void isInvalidPrice_False(long validPrice) {

@@ -71,7 +71,7 @@ class MenuTest {
         assertDoesNotThrow(() -> Menu.create("메뉴명", BigDecimal.ZERO, 두마리메뉴));
     }
 
-    @DisplayName("메뉴에 상품을 추가 시, 메뉴 가격이 상품 가격의 합보다 작으면 예외가 발생한다.")
+    @DisplayName("메뉴에 상품을 추가 시, 메뉴 가격이 상품 가격의 합보다 크면 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(longs = {33000L, 34000L})
     void updateMenuProducts_FailWithInvalidPrice(Long invalidPrice) {
@@ -84,7 +84,7 @@ class MenuTest {
                 .hasMessage("메뉴 금액의 합계는 각 상품들의 금액 합계보다 클 수 없습니다.");
     }
 
-    @DisplayName("메뉴에 상품을 추가 시, 메뉴 가격이 상품 가격의 합보다 크면 정상적으로 추가된다.")
+    @DisplayName("메뉴에 상품을 추가 시, 메뉴 가격이 상품 가격의 합보다 작으면 정상적으로 추가된다.")
     @ParameterizedTest
     @ValueSource(longs = {32000L, 30000L})
     void updateMenuProducts(Long validPrice) {
