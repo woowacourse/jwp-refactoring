@@ -8,7 +8,7 @@ public class TableUpdateNumberOfGuestsRequest {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public TableUpdateNumberOfGuestsRequest() {
+    protected TableUpdateNumberOfGuestsRequest() {
     }
 
     public Integer getNumberOfGuests() {

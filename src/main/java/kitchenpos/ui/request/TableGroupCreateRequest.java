@@ -10,7 +10,7 @@ public class TableGroupCreateRequest {
         this.orderTableIds = orderTableIds;
     }
 
-    public TableGroupCreateRequest() {
+    protected TableGroupCreateRequest() {
     }
 
     public List<Long> getOrderTableIds() {

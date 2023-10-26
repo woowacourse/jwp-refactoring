@@ -8,7 +8,7 @@ public class OrderUpdateOrderStatusRequest {
         this.orderStatus = orderStatus;
     }
 
-    public OrderUpdateOrderStatusRequest() {
+    protected OrderUpdateOrderStatusRequest() {
     }
 
     public String getOrderStatus() {

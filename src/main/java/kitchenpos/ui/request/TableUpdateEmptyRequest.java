@@ -8,7 +8,7 @@ public class TableUpdateEmptyRequest {
         this.empty = empty;
     }
 
-    public TableUpdateEmptyRequest() {
+    protected TableUpdateEmptyRequest() {
     }
 
     public Boolean getEmpty() {
