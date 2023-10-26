@@ -23,10 +23,17 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Long menuId, final String menuName, final Money menuPrice,
-                         final long quantity) {
+    public static OrderLineItem of(final Long seq, final Long menuId, final String menuName, final Money menuPrice,
+                                   final long quantity) {
+        return new OrderLineItem(seq, new MenuVo(menuId, menuName, menuPrice), quantity);
+    }
+
+    public OrderLineItem(final Long seq, final MenuVo menu, final long quantity) {
         this.seq = seq;
-        this.menu = new MenuVo(menuId, menuName, menuPrice);
+        this.menu = menu;
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("수량은 1개 이상이어야 합니다.");
+        }
         this.quantity = quantity;
     }
 
