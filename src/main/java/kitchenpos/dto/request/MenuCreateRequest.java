@@ -1,12 +1,17 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
 public class MenuCreateRequest {
+    @NotNull
     private String name;
+    @NotNull
     private BigDecimal price;
+    @NotNull
     private Long menuGroupId;
+    @NotNull
     private List<MenuProductRequest> menuProducts;
 
     public MenuCreateRequest() {

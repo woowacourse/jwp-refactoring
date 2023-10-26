@@ -33,6 +33,12 @@ public class MenuPrice {
         return price.compareTo(MIN_PRICE) < 0;
     }
 
+    public void compareTo(final BigDecimal menuProductsPrice) {
+        if (price.compareTo(menuProductsPrice) > 0) {
+            throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 금액들의 합보다 작거나 같아야 합니다.");
+        }
+    }
+
     public BigDecimal getPrice() {
         return price;
     }

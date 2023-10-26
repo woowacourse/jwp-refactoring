@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,34 +42,29 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        if (Objects.isNull(request.getName())
-                || Objects.isNull(request.getPrice())
-                || Objects.isNull(request.getMenuGroupId())
-                || Objects.isNull(request.getMenuProducts())) {
-            throw new IllegalArgumentException();
-        }
+        final MenuName menuName = new MenuName(request.getName());
+        final MenuPrice menuPrice = new MenuPrice(request.getPrice());
+        final BigDecimal menuProductsPrice = calculateMenuProductsPrice(request.getMenuProducts());
+        menuPrice.compareTo(menuProductsPrice);
 
-        final BigDecimal price = request.getPrice();
-
-        final List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProduct : menuProductRequests) {
-            final Product product = findProductById(menuProduct.getProductId());
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final Menu menu = new Menu(
-                new MenuName(request.getName()),
-                new MenuPrice(request.getPrice()),
-                findMenuGroupById(request.getMenuGroupId())
-        );
+        final Menu menu = new Menu(menuName, menuPrice, findMenuGroupById(request.getMenuGroupId()));
         final Menu savedMenu = menuRepository.save(menu);
+        saveMenuProducts(request.getMenuProducts(), savedMenu);
 
-        for (final MenuProductRequest menuProductRequest : request.getMenuProducts()) {
+        return convertToResponse(savedMenu);
+    }
+
+    private BigDecimal calculateMenuProductsPrice(final List<MenuProductRequest> menuProductRequests) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
+            final Product product = findProductById(menuProductRequest.getProductId());
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
+        }
+        return sum;
+    }
+
+    private void saveMenuProducts(final List<MenuProductRequest> menuProductRequests, final Menu savedMenu) {
+        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
             final MenuProduct menuProduct = new MenuProduct(
                     savedMenu,
                     findProductById(menuProductRequest.getProductId()),
@@ -78,18 +72,6 @@ public class MenuService {
             );
             menuProductRepository.save(menuProduct);
         }
-
-        return convertToResponse(savedMenu);
-    }
-
-    private Product findProductById(final Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(IllegalArgumentException::new);
-    }
-
-    private MenuGroup findMenuGroupById(final Long menuGroupId) {
-        return menuGroupRepository.findById(menuGroupId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<MenuResponse> list() {
@@ -116,5 +98,15 @@ public class MenuService {
                 menuProduct.getProduct().getId(),
                 menuProduct.getQuantity()
         );
+    }
+
+    private Product findProductById(final Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private MenuGroup findMenuGroupById(final Long menuGroupId) {
+        return menuGroupRepository.findById(menuGroupId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
