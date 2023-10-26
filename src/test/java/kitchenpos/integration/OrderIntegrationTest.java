@@ -5,12 +5,15 @@ import kitchenpos.menu.MenuProduct;
 import kitchenpos.menu.MenuRepository;
 import kitchenpos.menugroup.MenuGroup;
 import kitchenpos.menugroup.MenuGroupRepository;
+import kitchenpos.order.MenuHistoryRecorder;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderService;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.product.Product;
 import kitchenpos.product.ProductRepository;
+import kitchenpos.request.OrderCreateRequest;
+import kitchenpos.request.OrderLineItemRequest;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.OrderTableRepository;
 import org.junit.jupiter.api.Nested;
@@ -41,6 +44,9 @@ class OrderIntegrationTest extends IntegrationTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
 
+    @Autowired
+    private MenuHistoryRecorder menuHistoryRecorder;
+
     @Test
     void 주문_전체_조회_시_주문_항목을_같이_조회할_수_있다() {
         Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
@@ -49,12 +55,12 @@ class OrderIntegrationTest extends IntegrationTest {
                 new MenuProduct(1, product.getId())
         )));
         List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(menu.getId(), 1)
+                new OrderLineItem(menu.getId(), 1, menuHistoryRecorder)
         );
         OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
 
         Order order = new Order(orderLineItems, orderTable.getId());
-        Order saved = orderService.create(order);
+        Order saved = orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
         assertAll(
                 () -> assertThat(orderService.list()).hasSize(1),
@@ -67,9 +73,8 @@ class OrderIntegrationTest extends IntegrationTest {
 
         @Test
         void 주문_항목이_없으면_저장할_수_없다() {
-            List<OrderLineItem> orderLineItems = List.of();
-            OrderTable orderTable = new OrderTable(3, false);
-            assertThatThrownBy(() -> orderService.create(new Order(orderLineItems, 1L)))
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
+            assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(), List.of())))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("주문 항목이 비어있으면 생성할 수 없다.");
         }
@@ -81,13 +86,14 @@ class OrderIntegrationTest extends IntegrationTest {
             Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
                     new MenuProduct(1, product.getId())
             )));
-            List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(menu.getId(), 1),
-                    new OrderLineItem(menu.getId(), 1)
-            );
             OrderTable orderTable = new OrderTable(3, false);
-            assertThatThrownBy(() -> orderService.create(new Order(orderLineItems, 1L)))
-                    .isInstanceOf(IllegalArgumentException.class)
+            assertThatThrownBy(() -> orderService.create(
+                    new OrderCreateRequest(
+                            orderTable.getId(),
+                            List.of(new OrderLineItemRequest(menu.getId(), 1),
+                                    new OrderLineItemRequest(menu.getId(), 1))
+                    )
+            )).isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("한번의 주문에서 중복 메뉴를 주문할 수 없습니다.");
         }
 
@@ -102,12 +108,12 @@ class OrderIntegrationTest extends IntegrationTest {
                     new MenuProduct(1, product.getId())
             )));
             List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(menu.getId(), 1),
-                    new OrderLineItem(menu2.getId(), 1)
+                    new OrderLineItem(menu.getId(), 1, menuHistoryRecorder),
+                    new OrderLineItem(menu2.getId(), 1, menuHistoryRecorder)
             );
             OrderTable orderTable = orderTableRepository.save(new OrderTable(3, true));
 
-            assertThatThrownBy(() -> orderService.create(new Order(orderLineItems, orderTable.getId())))
+            assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1)))))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("테이블이 비어있으면 주문할 수 없습니다.");
         }
@@ -121,11 +127,11 @@ class OrderIntegrationTest extends IntegrationTest {
                             List.of(new MenuProduct(1, product.getId())))
             );
             List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(menu.getId(), 1)
+                    new OrderLineItem(menu.getId(), 1, menuHistoryRecorder)
             );
 
             Order order = new Order(orderLineItems, -1L);
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(-1L, List.of(new OrderLineItemRequest(menu.getId(), 1)))))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("주문 테이블이 존재하지 않습니다.");
         }
@@ -138,12 +144,12 @@ class OrderIntegrationTest extends IntegrationTest {
                     new MenuProduct(1, product.getId())
             )));
             List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(menu.getId(), 1)
+                    new OrderLineItem(menu.getId(), 1, menuHistoryRecorder)
             );
             OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
 
             Order order = new Order(orderLineItems, orderTable.getId());
-            Order saved = orderService.create(order);
+            Order saved = orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
 
             assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());

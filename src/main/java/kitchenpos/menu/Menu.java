@@ -58,8 +58,8 @@ public class Menu extends AbstractAggregateRoot<Menu> {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 
     public Long getMenuGroupId() {

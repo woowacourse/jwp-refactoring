@@ -1,6 +1,7 @@
 package kitchenpos.integration;
 
 import kitchenpos.menu.Menu;
+import kitchenpos.order.MenuHistoryRecorder;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderRepository;
@@ -36,6 +37,9 @@ class TableIntegrationTest extends IntegrationTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
 
+    @Autowired
+    private MenuHistoryRecorder menuHistoryRecorder;
+
     @Nested
     class 테이블을_비울_때 {
 
@@ -56,7 +60,7 @@ class TableIntegrationTest extends IntegrationTest {
         void 주문_상태가_완료가_아니면_비울_수_없다(OrderStatus orderStatus) {
             Menu menu = fixtureFactory.메뉴_생성(fixtureFactory.메뉴_그룹_생성().getId(), fixtureFactory.제품_생성());
             OrderTable orderTable = tableService.create(new OrderTable(1, false));
-            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), orderTable.getId());
+            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1, menuHistoryRecorder)), orderTable.getId());
             order.changeOrderStatus(orderStatus);
             orderRepository.save(order);
 
@@ -157,7 +161,7 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable = tableService.create(new OrderTable(1, true));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
             TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
-            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), orderTable.getId());
+            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1, menuHistoryRecorder)), orderTable.getId());
             order.changeOrderStatus(orderStatus);
             orderRepository.save(order);
 

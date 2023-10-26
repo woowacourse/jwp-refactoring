@@ -1,5 +1,8 @@
 package kitchenpos.order;
 
+import kitchenpos.menu.MenuHistory;
+
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,16 +17,17 @@ public class OrderLineItem {
     @Id
     private Long seq;
 
-    private Long menuId;
+    @Embedded
+    private MenuHistory menuHistory;
 
     private long quantity;
 
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
+    public OrderLineItem(Long menuId, long quantity, MenuHistoryRecorder menuHistoryRecorder) {
         this.seq = null;
-        this.menuId = menuId;
+        this.menuHistory = menuHistoryRecorder.record(menuId);
         this.quantity = quantity;
     }
 
@@ -31,11 +35,15 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public MenuHistory getMenuHistory() {
+        return menuHistory;
     }
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public Long getMenuId() {
+        return menuHistory.getMenuId();
     }
 }

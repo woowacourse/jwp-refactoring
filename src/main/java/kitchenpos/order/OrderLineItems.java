@@ -7,7 +7,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Embeddable
 public class OrderLineItems {
@@ -21,18 +20,7 @@ public class OrderLineItems {
 
     public OrderLineItems(List<OrderLineItem> collection) {
         validateSize(collection);
-        validateDuplicatedMenu(collection);
         this.collection = collection;
-    }
-
-    private void validateDuplicatedMenu(List<OrderLineItem> collection) {
-        int menuCount = collection.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toSet()).size();
-        int orderLineItemSize = collection.size();
-        if (menuCount != orderLineItemSize) {
-            throw new IllegalArgumentException("한번의 주문에서 중복 메뉴를 주문할 수 없습니다.");
-        }
     }
 
     private void validateSize(List<OrderLineItem> collection) {
