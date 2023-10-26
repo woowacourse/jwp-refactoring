@@ -50,7 +50,7 @@ public class TableGroupService {
         if (CollectionUtils.isEmpty(orderTables)) {
             throw new KitchenposException(TABLE_GROUP_UNDER_BOUNCE);
         }
-        final List<OrderTable> savedOrderTables = orderTableRepository.findByIds(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
             throw new KitchenposException(ORDER_TABLE_IN_TABLE_GROUP_NOT_FOUND_OR_DUPLICATED);
