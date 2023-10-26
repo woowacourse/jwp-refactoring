@@ -2,10 +2,10 @@ package kitchenpos.support.fixture.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.application.dto.menu.MenuCreateRequest;
+import kitchenpos.application.dto.menu.MenuProductRequest;
 
-public class MenuCreateRequestFixture {
+public abstract class MenuCreateRequestFixture {
 
     public static MenuCreateRequest menuCreateRequest(final String name,
                                                       final Long price,
@@ -16,7 +16,7 @@ public class MenuCreateRequestFixture {
     public static MenuCreateRequest menuCreateRequest(final String name,
                                                       final Long price,
                                                       final Long menuGroupId,
-                                                      final List<MenuProduct> menuProducts) {
+                                                      final List<MenuProductRequest> menuProducts) {
         return new MenuCreateRequest(name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
     }
 }
