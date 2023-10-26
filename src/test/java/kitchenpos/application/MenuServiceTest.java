@@ -121,6 +121,14 @@ class MenuServiceTest {
         }
 
         @Test
+        void 메뉴_그룹이_없으면_예외가_발생한다() {
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.ONE, null, menuProducts);
+
+            assertThatThrownBy(() -> menuService.create(menu))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
+        @Test
         void 메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
             final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.ONE, savedMenuGroupId + 1, menuProducts);
 

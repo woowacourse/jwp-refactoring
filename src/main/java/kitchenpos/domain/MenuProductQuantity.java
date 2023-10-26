@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 @Embeddable
 public class MenuProductQuantity {
@@ -12,7 +13,14 @@ public class MenuProductQuantity {
     }
 
     public MenuProductQuantity(final long quantity) {
+        validation(quantity);
         this.quantity = quantity;
+    }
+
+    private void validation(final long quantity) {
+        if (Objects.isNull(quantity)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public long getQuantity() {

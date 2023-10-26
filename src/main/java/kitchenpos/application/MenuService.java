@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,9 +47,9 @@ public class MenuService {
         final MenuPrice menuPrice = new MenuPrice(request.getPrice());
         final BigDecimal menuProductsPrice = calculateMenuProductsPrice(request.getMenuProducts());
         menuPrice.compareTo(menuProductsPrice);
+        final MenuGroup menuGroup = findMenuGroupById(request.getMenuGroupId());
 
-        final Menu menu = new Menu(menuName, menuPrice, findMenuGroupById(request.getMenuGroupId()));
-        final Menu savedMenu = menuRepository.save(menu);
+        final Menu savedMenu = menuRepository.save(new Menu(menuName, menuPrice, menuGroup));
         saveMenuProducts(request.getMenuProducts(), savedMenu);
 
         return convertToResponse(savedMenu);
@@ -101,12 +102,12 @@ public class MenuService {
     }
 
     private Product findProductById(final Long productId) {
-        return productRepository.findById(productId)
+        return productRepository.findById(Objects.requireNonNull(productId))
                 .orElseThrow(IllegalArgumentException::new);
     }
 
     private MenuGroup findMenuGroupById(final Long menuGroupId) {
-        return menuGroupRepository.findById(menuGroupId)
+        return menuGroupRepository.findById(Objects.requireNonNull(menuGroupId))
                 .orElseThrow(IllegalArgumentException::new);
     }
 }
