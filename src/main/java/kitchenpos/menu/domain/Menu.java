@@ -37,7 +37,7 @@ public class Menu extends BaseEntity {
     세트 메뉴가 단품을 시킨것 보다 가격이 높은지 검증
     */
     public void addMenuProduct(MenuProduct menuProduct) {
-        long total = menuProducts.calculateTotalPrice() + menuProduct.calculatePrice();
+        final long total = menuProducts.calculateTotalPrice() + menuProduct.calculatePrice();
         if (price.getPrice().intValue() > total) {
             throw new IllegalArgumentException("메뉴 가격은 단품을 가격보다 높을 수 없습니다.");
         }

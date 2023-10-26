@@ -32,12 +32,12 @@ public class MenuMapper {
         this.publisher = publisher;
     }
 
-    public Menu toDomain(MenuCreateRequest request) {
+    public Menu toDomain(final MenuCreateRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final Menu menu = menuRepository.save(new Menu(request.getName(), Price.of(request.getPrice()), menuGroup));
 
         for (MenuProductRequest menuProduct : request.getMenuProducts()) {
-            ProductEventDto productEventDto = new ProductEventDto();
+            final ProductEventDto productEventDto = new ProductEventDto();
             productEventDto.setId(menuProduct.getProductId());
 
             publisher.publishEvent(productEventDto);

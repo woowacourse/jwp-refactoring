@@ -16,7 +16,7 @@ public class OrderTableResponse {
         this.empty = empty;
     }
 
-    public static OrderTableResponse of(OrderTable orderTable) {
+    public static OrderTableResponse of(final OrderTable orderTable) {
         Long tableGroupId = null;
         if (orderTable.getTableGroup() != null) {
             tableGroupId = orderTable.getTableGroup().getId();

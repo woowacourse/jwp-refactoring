@@ -12,7 +12,7 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse of(OrderLineItem orderLineItem) {
+    public static OrderLineItemResponse of(final OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(
                 orderLineItem.getMenuId(), orderLineItem.getQuantity()
         );

@@ -14,9 +14,13 @@ public class OrderResponse {
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
 
-    private OrderResponse(final Long id, final OrderTableResponse orderTable, final OrderStatus orderStatus,
-                         final LocalDateTime orderedTime,
-                         final List<OrderLineItemResponse> orderLineItems) {
+    private OrderResponse(
+            final Long id,
+            final OrderTableResponse orderTable,
+            final OrderStatus orderStatus,
+            final LocalDateTime orderedTime,
+            final List<OrderLineItemResponse> orderLineItems
+    ) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -24,7 +28,7 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse of(Order order){
+    public static OrderResponse of(final Order order) {
         List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems()
                 .stream()
                 .map(OrderLineItemResponse::of)

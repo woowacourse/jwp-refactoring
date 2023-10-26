@@ -38,7 +38,7 @@ public class OrderMapper {
         final Order order = orderRepository.save(new Order(orderTable));
 
         for (OrderLineRequest orderLineItem : request.getOrderLineItems()) {
-            MenuEventDto menuEventDto = new MenuEventDto();
+            final MenuEventDto menuEventDto = new MenuEventDto();
             menuEventDto.setId(orderLineItem.getMenuId());
             publisher.publishEvent(menuEventDto);
 
