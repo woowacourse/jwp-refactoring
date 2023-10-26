@@ -7,6 +7,6 @@ import kitchenpos.domain.OrderLineItem;
 public class OrderLineItemFixture {
 
     public static OrderLineItem 주문상품(Menu menu, long quantity) {
-        return new OrderLineItem(MenuSnapShot.make(menu), quantity);
+        return new OrderLineItem(menu.getId(), MenuSnapShot.make(menu), quantity);
     }
 }

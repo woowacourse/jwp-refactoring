@@ -13,6 +13,8 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
+    private Long menuId;
+
     @Embedded
     private MenuSnapShot menuSnapShot;
 
@@ -21,9 +23,14 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final MenuSnapShot menuSnapShot, final long quantity) {
+    public OrderLineItem(final Long menuId, final MenuSnapShot menuSnapShot, final long quantity) {
+        this.menuId = menuId;
         this.menuSnapShot = menuSnapShot;
         this.quantity = quantity;
+    }
+
+    public Long getMenuId() {
+        return menuId;
     }
 
     public Long getSeq() {

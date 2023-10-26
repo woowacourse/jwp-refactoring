@@ -8,8 +8,6 @@ import javax.persistence.Embedded;
 @Embeddable
 public class MenuSnapShot {
 
-    private Long menuId;
-
     private String originalMenuName;
 
     @Embedded
@@ -21,20 +19,15 @@ public class MenuSnapShot {
     public MenuSnapShot() {
     }
 
-    public MenuSnapShot(final Long menuId, final String originalMenuName, final Price originalMenuPrice,
+    public MenuSnapShot(final String originalMenuName, final Price originalMenuPrice,
                         final Long originalMenuGroupId) {
-        this.menuId = menuId;
         this.originalMenuName = originalMenuName;
         this.originalMenuPrice = originalMenuPrice;
         this.originalMenuGroupId = originalMenuGroupId;
     }
 
     public static MenuSnapShot make(final Menu menu) {
-        return new MenuSnapShot(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId());
-    }
-
-    public Long getMenuId() {
-        return menuId;
+        return new MenuSnapShot(menu.getName(), menu.getPrice(), menu.getMenuGroup().getId());
     }
 
     public String getOriginalMenuName() {

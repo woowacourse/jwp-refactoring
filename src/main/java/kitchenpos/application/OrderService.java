@@ -53,7 +53,7 @@ public class OrderService {
                 .map(orderLineItemDto -> {
                     Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                             .orElseThrow(IllegalArgumentException::new);
-                    return new OrderLineItem(MenuSnapShot.make(menu), orderLineItemDto.getQuantity());
+                    return new OrderLineItem(menu.getId(), MenuSnapShot.make(menu), orderLineItemDto.getQuantity());
                 })
                 .collect(Collectors.toList());
     }
