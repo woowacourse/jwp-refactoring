@@ -10,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -23,11 +25,10 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //    @ManyToOne
-//    @JoinColumn(name = "order_table_id")
-//    private OrderTable orderTable;
-    private Long orderTableId;
-
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+    //    private Long orderTableId;
     @Column
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -74,10 +75,10 @@ public class Order {
         this.orderLineItems.addAll(orderLineItems);
     }
 
-    public void place(OrderValidator orderValidator) {
-        orderValidator.validate(this);
-        this.orderStatus = OrderStatus.Ordered;
-    }
+//    public void place(OrderValidator orderValidator) {
+//        orderValidator.validate(this);
+//        this.orderStatus = OrderStatus.Ordered;
+//    }
 
     public void updateStatus(final Order order) {
         validateStatus();

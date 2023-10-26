@@ -7,7 +7,7 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.ProductRepository;
-import kitchenpos.ui.dto.MenuProductDto;
+import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -46,10 +46,10 @@ public class MenuService {
     }
 
     private List<MenuProduct> getMenuProducts(final MenuRequest menuRequest, final Menu menu) {
-        final List<MenuProductDto> menuProductRequests = menuRequest.getMenuProducts();
+        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
         final List<MenuProduct> menuProducts = new ArrayList<>();
 
-        for (MenuProductDto request : menuProductRequests) {
+        for (MenuProductRequest request : menuProductRequests) {
             final Product product = productRepository.findById(request.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴상품입니다. 메뉴를 등록할 수 없습니다."));
             menuProducts.add(new MenuProduct(request.getSeq(), menu, product, request.getQuantity()));

@@ -23,14 +23,14 @@ public class ProductService {
         final Product product = new Product(productRequest.getName(), productRequest.getPrice());
         final Product saved = productRepository.save(product);
 
-        return ProductResponse.of(saved);
+        return ProductResponse.from(saved);
     }
 
     @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         List<Product> products = productRepository.findAll();
 
-        return products.stream().map(ProductResponse::of)
+        return products.stream().map(ProductResponse::from)
                 .collect(Collectors.toList());
     }
 }

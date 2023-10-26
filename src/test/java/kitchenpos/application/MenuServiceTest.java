@@ -8,7 +8,7 @@ import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.ProductRepository;
-import kitchenpos.ui.dto.MenuProductDto;
+import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,13 +47,13 @@ class MenuServiceTest {
 
     private MenuGroup menuGroup;
     private Product product;
-    private MenuProductDto menuProductDto;
+    private MenuProductRequest menuProductRequest;
 
     @BeforeEach
     void setUp() {
         this.menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         this.product = productRepository.save(new Product("상품1", new BigDecimal(10000)));
-        this.menuProductDto = new MenuProductDto(1L, 1L, product.getId(), 4L);
+        this.menuProductRequest = new MenuProductRequest(1L, product.getId(), 4L);
     }
 
     @Nested
@@ -62,9 +62,9 @@ class MenuServiceTest {
         void 메뉴를_등록한다() {
             MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
             Product product = productRepository.save(new Product("productName", BigDecimal.valueOf(10000L)));
-            MenuProductDto menuProductDto = new MenuProductDto(1L, product.getId(), product.getId(), 3L);
+            MenuProductRequest menuProductRequest = new MenuProductRequest(1L, product.getId(), 3L);
 
-            MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("30000.00"), menuGroup.getId(), List.of(menuProductDto));
+            MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("30000.00"), menuGroup.getId(), List.of(menuProductRequest));
             MenuResponse savedMenu = menuService.create(menuRequest);
 
             assertSoftly(softly -> {
@@ -75,13 +75,13 @@ class MenuServiceTest {
                         .isEqualTo(menuRequest);
                 softly.assertThat(savedMenu.getMenuProducts()).hasSize(1)
                         .extracting("seq")
-                        .containsOnly(menuProductDto.getSeq());
+                        .containsOnly(menuProductRequest.getSeq());
             });
         }
 
         @Test
         void 메뉴_가격이_0원_미만이면_등록할_수_없다() {
-            MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(-1), menuGroup.getId(), List.of(menuProductDto));
+            MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(-1), menuGroup.getId(), List.of(menuProductRequest));
 
             assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -91,7 +91,7 @@ class MenuServiceTest {
         @Test
         void 포함될_메뉴_그룹이_존재하지_않으면_등록할_수_없다() {
             long notExistMenuGroupId = 100000L;
-            MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("30000.00"), notExistMenuGroupId, List.of(menuProductDto));
+            MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("30000.00"), notExistMenuGroupId, List.of(menuProductRequest));
 
             assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -101,7 +101,7 @@ class MenuServiceTest {
         @Test
         void 메뉴_상품이_존재하지_않으면_등록할_수_없다() {
             long notExistMenuId = Long.MIN_VALUE;
-            MenuProductDto notExistMenuProduct = new MenuProductDto(notExistMenuId, 1L, 2L);
+            MenuProductRequest notExistMenuProduct = new MenuProductRequest(notExistMenuId, 1L, 2L);
             MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("30000.00"), menuGroup.getId(), List.of(notExistMenuProduct));
 
             assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -112,8 +112,8 @@ class MenuServiceTest {
         @Test
         void 메뉴의_가격이_메뉴_상품들의_가격_합보다_비싸면_등록할_수_없다() {
             Product product1 = new Product("상품2", new BigDecimal(10001));
-            MenuProductDto menuProductDto2 = new MenuProductDto(product1.getId(), 1L, 1L);
-            MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("50000.00"), menuGroup.getId(), List.of(menuProductDto, menuProductDto2));
+            MenuProductRequest menuProductRequest2 = new MenuProductRequest(product1.getId(), 1L, 1L);
+            MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("50000.00"), menuGroup.getId(), List.of(menuProductRequest, menuProductRequest2));
 
             assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);

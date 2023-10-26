@@ -5,6 +5,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,11 +27,9 @@ public class Menu {
     private String name;
     @Column
     private BigDecimal price;
-//    @ManyToOne
-//    @JoinColumn(name = "menu_group_id")
-//    private MenuGroup menuGroup;
-
-    private Long menuGroupId;
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();

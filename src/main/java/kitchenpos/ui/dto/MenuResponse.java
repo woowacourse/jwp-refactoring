@@ -11,17 +11,17 @@ public class MenuResponse {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProducts;
+    private List<MenuProductResponse> menuProducts;
 
     public static MenuResponse from(Menu menu) {
         return new MenuResponse(menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
                 menu.getMenuGroup().getId(),
-                MenuProductDto.of(menu.getMenuProducts()));
+                MenuProductResponse.of(menu.getMenuProducts()));
     }
 
-    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProducts) {
+    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProductResponse> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -41,7 +41,11 @@ public class MenuResponse {
         return price;
     }
 
-    public List<MenuProductDto> getMenuProducts() {
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public List<MenuProductResponse> getMenuProducts() {
         return menuProducts;
     }
 }
