@@ -23,7 +23,7 @@ public class OrderCreateCommand {
         return orderTableId;
     }
 
-    public List<OrderLineItemCreateCommand> createOrderLineItemRequests() {
+    public List<OrderLineItemCreateCommand> orderLineItemCreateCommands() {
         return orderLineItemCreateCommands;
     }
 }

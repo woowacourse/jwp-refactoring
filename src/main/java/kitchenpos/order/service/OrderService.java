@@ -38,7 +38,6 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    // TODO: 패키지 양방향 의존 발생
     @Transactional
     public Order create(OrderCreateCommand command) {
         OrderTable orderTable = orderTableRepository.getById(command.orderTableId());
