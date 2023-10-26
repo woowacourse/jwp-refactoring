@@ -83,6 +83,11 @@ public class OrderTable {
         }
     }
 
+    public void group(final TableGroup tableGroup) {
+        this.empty = false;
+        this.tableGroup = tableGroup;
+    }
+
     public void addOrder(final Order order) {
         this.orders.add(order);
     }
