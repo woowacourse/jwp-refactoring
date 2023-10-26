@@ -36,14 +36,16 @@ public class TableGroup {
 
     public static TableGroup of(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
+
         final TableGroup tableGroup = new TableGroup(createdDate, orderTables);
         addOrderTables(orderTables, tableGroup);
+
         return tableGroup;
     }
 
     private static void validateOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new InvalidOrderTablesSize("주문 테이블은 3개 이상 있어야 합니다.");
+            throw new InvalidOrderTablesSize("주문 테이블은 2개 이상 있어야 합니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {

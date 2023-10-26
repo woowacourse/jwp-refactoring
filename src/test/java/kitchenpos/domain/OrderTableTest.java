@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import kitchenpos.domain.exception.InvalidUpdateNumberOfGuestsException;
+import kitchenpos.fixture.OrderTableFixture;
 import org.assertj.core.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -39,7 +40,8 @@ class OrderTableTest {
         @Test
         void 주문_테이블의_그룹을_해제한다() {
             // given
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of());
+            final List<OrderTable> orderTables = OrderTableFixture.빈_테이블_엔티티들_생성(2);
+            final TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), orderTables);
             final OrderTable orderTable = new OrderTable(0, true);
             orderTable.updateTableGroup(tableGroup);
 
@@ -61,7 +63,7 @@ class OrderTableTest {
         @ValueSource(ints = {0, 1})
         void 주문_테이블의_사용자수를_수정한다(final int numberOfGuests) {
             // given
-            final OrderTable orderTable = new OrderTable(0, true);
+            final OrderTable orderTable = new OrderTable(0, false);
 
             // when
             orderTable.updateNumberOfGuests(numberOfGuests);
@@ -74,7 +76,7 @@ class OrderTableTest {
         @Test
         void 주문_테이블의_사용자수를_음수로_수정하면_예외를_반환한다() {
             // given
-            final OrderTable orderTable = new OrderTable(0, true);
+            final OrderTable orderTable = new OrderTable(0, false);
 
             // when & then
             assertThatThrownBy(() -> orderTable.updateNumberOfGuests(-5))

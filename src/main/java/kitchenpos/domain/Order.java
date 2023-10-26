@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.application.exception.InvalidOrderStatusToChangeException;
 import kitchenpos.domain.exception.InvalidOrderLineItemsToOrder;
 import kitchenpos.domain.exception.InvalidOrderTableToOrder;
 import org.springframework.util.CollectionUtils;
@@ -99,7 +100,14 @@ public class Order {
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
+        validateOrderStatus();
         this.orderStatus = orderStatus;
+    }
+
+    private void validateOrderStatus() {
+        if (Objects.equals(OrderStatus.COMPLETION, orderStatus)) {
+            throw new InvalidOrderStatusToChangeException("주문이 상태가 계산 완료라면 상태를 변경할 수 없다.");
+        }
     }
 
     public LocalDateTime getOrderedTime() {

@@ -132,29 +132,30 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void 주문_테이블의_empty_값_변경시_단체_지정_아이디가_null이_아니라면_예외를_반환한다() {
             // given
-            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_엔티티_생성());
-            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(List.of(orderTable)));
-            final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
+            final OrderTable targetOrderTable = orderTables.get(0);
+            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
             final ChangeOrderTableEmptyRequest changeEmptyRequest = new ChangeOrderTableEmptyRequest(true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changeEmptyRequest))
+            assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTable.getId(), changeEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 특정_주문_테이블중_조리_혹은_식사_상태인_것이_존재한다면_예외를_반환한다() {
             // given
-            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_엔티티_생성());
-            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(List.of(orderTable)));
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
+            final OrderTable targetOrderTable = orderTables.get(0);
+            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
-            orderRepository.save(OrderFixture.조리_상태의_주문_엔티티_생성(orderTable, menu));
+            orderRepository.save(OrderFixture.조리_상태의_주문_엔티티_생성(targetOrderTable, menu));
             final ChangeOrderTableEmptyRequest changeEmptyRequest = new ChangeOrderTableEmptyRequest(true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeEmptyRequest))
+            assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTable.getId(), changeEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

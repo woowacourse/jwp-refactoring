@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.application.exception.InvalidOrderStatusToChangeException;
 import kitchenpos.application.exception.NotFoundMenuException;
 import kitchenpos.application.exception.NotFoundOrDuplicateMenuToOrderExcpetion;
 import kitchenpos.application.exception.NotFoundOrderException;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,15 +101,8 @@ public class OrderService {
         final Order order = orderRepository.findById(orderId)
                                                 .orElseThrow(() -> new NotFoundOrderException("해당 주문이 존재하지 않습니다."));
 
-        validateOrderStatus(order);
         order.updateOrderStatus(OrderStatus.valueOf(changeStatusRequest.getOrderStatus()));
 
         return OrderResponse.from(order);
-    }
-
-    private void validateOrderStatus(final Order order) {
-        if (Objects.equals(OrderStatus.COMPLETION, order.getOrderStatus())) {
-            throw new InvalidOrderStatusToChangeException("주문이 상태가 계산 완료라면 상태를 변경할 수 없다.");
-        }
     }
 }

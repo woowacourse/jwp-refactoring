@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.application.exception.InvalidChangeOrderTableNumberOfGuests;
 import kitchenpos.application.exception.NotFoundOrderTableException;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -80,17 +79,8 @@ public class TableService {
         final OrderTable savedOrderTable =
                 orderTableRepository.findById(orderTableId)
                                     .orElseThrow(() -> new NotFoundOrderTableException("해당 주문 테이블이 존재하지 않습니다."));
-
-        validateOrderTableIsEmpty(savedOrderTable);
-
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.from(savedOrderTable);
-    }
-
-    private void validateOrderTableIsEmpty(final OrderTable savedOrderTable) {
-        if (savedOrderTable.isEmpty()) {
-            throw new InvalidChangeOrderTableNumberOfGuests("주문 테이블이 빈 상태라면 사용자 수를 변경할 수 없습니다.");
-        }
     }
 }

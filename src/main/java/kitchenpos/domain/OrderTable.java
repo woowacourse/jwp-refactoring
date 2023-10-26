@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.application.exception.InvalidChangeOrderTableNumberOfGuests;
 import kitchenpos.domain.exception.InvalidUpdateNumberOfGuestsException;
 
 import javax.persistence.Entity;
@@ -47,8 +48,16 @@ public class OrderTable {
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
+        validateOrderTableIsEmpty();
         validateNumberOfGuests(numberOfGuests);
+
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateOrderTableIsEmpty() {
+        if (isEmpty()) {
+            throw new InvalidChangeOrderTableNumberOfGuests("주문 테이블이 빈 상태라면 사용자 수를 변경할 수 없습니다.");
+        }
     }
 
     public void updateEmpty(final boolean empty) {
