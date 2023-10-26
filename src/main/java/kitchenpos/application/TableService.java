@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -35,16 +33,8 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyChangeRequest request) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-        validateOrderTableForChangeEmpty(savedOrderTable);
         savedOrderTable.changeEmpty(request.getEmpty());
         return orderTableRepository.save(savedOrderTable);
-    }
-
-    private void validateOrderTableForChangeEmpty(final OrderTable orderTable) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리중 or 식사중인 주문이 포함되어 있습니다.");
-        }
     }
 
     @Transactional

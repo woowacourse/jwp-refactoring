@@ -15,9 +15,7 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuValidator menuValidator;
 
-    public MenuService(
-            final MenuRepository menuRepository,
-            final MenuValidator menuValidator) {
+    public MenuService(final MenuRepository menuRepository, final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
         this.menuValidator = menuValidator;
     }

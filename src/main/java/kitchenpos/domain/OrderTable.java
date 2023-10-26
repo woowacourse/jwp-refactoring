@@ -6,9 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-public class OrderTable {
+public class OrderTable extends AbstractAggregateRoot<OrderTable> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +48,7 @@ public class OrderTable {
     }
 
     public void unbindGroup() {
+        registerEvent(new OrderTableUpdateEvent(id));
         this.empty = false;
         this.tableGroupId = null;
     }
@@ -55,7 +57,7 @@ public class OrderTable {
         if (tableGroupId != null) {
             throw new IllegalArgumentException("테이블 그룹 아이디가 null이 아닙니다.");
         }
-
+        registerEvent(new OrderTableUpdateEvent(id));
         this.empty = empty;
     }
 

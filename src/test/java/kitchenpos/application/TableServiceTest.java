@@ -19,6 +19,7 @@ import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.OrderTableEmptyChangeRequest;
 import kitchenpos.dto.OrderTableNumberOfGuestsChangeRequest;
 import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.exception.OrderTableUpdateException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +117,7 @@ class TableServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableUpdateException.class);
         }
 
         @Test
@@ -130,7 +131,7 @@ class TableServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableUpdateException.class);
         }
     }
 

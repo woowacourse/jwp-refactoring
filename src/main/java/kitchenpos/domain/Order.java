@@ -8,12 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.exception.OrderTableUpdateException;
 import kitchenpos.exception.InvalidOrderException;
 
 @Entity(name = "orders")
 public class Order {
 
-    public static final List<String> INVALID_STATUS_FOR_CHANGE_ORDER_TABLE_EMPTY = List.of(OrderStatus.COOKING.name(),
+    public static final List<String> INVALID_STATUS_WHEN_UPDATE_ORDER_TABLE = List.of(OrderStatus.COOKING.name(),
             OrderStatus.MEAL.name());
 
     @Id
@@ -77,9 +78,9 @@ public class Order {
         this.orderStatus = orderStatus.name();
     }
 
-    public void validatePossibleToChangeEmptyOfOrderTable() {
-        if (INVALID_STATUS_FOR_CHANGE_ORDER_TABLE_EMPTY.contains(this.orderStatus)) {
-            throw new IllegalArgumentException("조리중 or 식사중인 주문이 포함되어 있습니다.");
+    public void validatePossibleToUpdateOrderTable() {
+        if (INVALID_STATUS_WHEN_UPDATE_ORDER_TABLE.contains(this.orderStatus)) {
+            throw new OrderTableUpdateException("조리중 or 식사중인 주문이 포함되어 있습니다.");
         }
     }
 

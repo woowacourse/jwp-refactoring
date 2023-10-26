@@ -15,13 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -43,22 +40,6 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        validateOrderTablesForUnGroup(orderTables);
-        orderTables.forEach(this::unbindTableFromGroup);
-    }
-
-    private void validateOrderTablesForUnGroup(final List<OrderTable> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리중 or 식사중인 주문이 포함되어 있습니다.");
-        }
-    }
-
-    private void unbindTableFromGroup(final OrderTable orderTable) {
-        orderTable.unbindGroup();
-        orderTableRepository.save(orderTable);
+        orderTables.forEach(OrderTable::unbindGroup);
     }
 }

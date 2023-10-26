@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTableEmptyChangeEvent;
+import kitchenpos.domain.OrderTableUpdateEvent;
 import kitchenpos.domain.repository.OrderRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class OrderEventListener {
@@ -16,8 +17,9 @@ public class OrderEventListener {
     }
 
     @EventListener
-    void validatePossibleToChangeOrderTableEmpty(final OrderTableEmptyChangeEvent event) {
+    @Transactional
+    public void validatePossibleToUpdateOrderTable(final OrderTableUpdateEvent event) {
         orderRepository.findAllByOrderTableId(event.getOrderTableId())
-                .forEach(Order::validatePossibleToChangeEmptyOfOrderTable);
+                .forEach(Order::validatePossibleToUpdateOrderTable);
     }
 }

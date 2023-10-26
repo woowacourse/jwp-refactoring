@@ -1,9 +1,9 @@
 package kitchenpos.domain;
 
-public class OrderTableEmptyChangeEvent {
+public class OrderTableUpdateEvent {
     private final Long orderTableId;
 
-    public OrderTableEmptyChangeEvent(final Long orderTableId) {
+    public OrderTableUpdateEvent(final Long orderTableId) {
         this.orderTableId = orderTableId;
     }
 
