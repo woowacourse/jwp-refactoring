@@ -23,7 +23,12 @@ public class MenuValidator {
         this.menuGroupRepository = menuGroupRepository;
     }
 
-    public void validateMenuProducts(MenuProducts menuProducts, BigDecimal menuPrice) {
+    public void validate(MenuProducts menuProducts, BigDecimal menuPrice, Long menuGroupId) {
+        validateMenuProducts(menuProducts, menuPrice);
+        validateMenuGroup(menuGroupId);
+    }
+
+    private void validateMenuProducts(MenuProducts menuProducts, BigDecimal menuPrice) {
         List<Long> productIds = extractProductIds(menuProducts);
         List<Product> products = productRepository.findAllById(productIds);
 
@@ -63,7 +68,7 @@ public class MenuValidator {
         return productPrice * productQuantity;
     }
 
-    public void validateMenuGroup(Long menuGroupId) {
+    private void validateMenuGroup(Long menuGroupId) {
         if (menuGroupRepository.existsById(menuGroupId)) {
             return;
         }

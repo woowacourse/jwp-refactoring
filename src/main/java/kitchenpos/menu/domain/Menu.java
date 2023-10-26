@@ -45,8 +45,7 @@ public class Menu {
             MenuValidator menuValidator
     ) {
         validate(name, price, menuGroupId);
-        menuValidator.validateMenuProducts(menuProducts, price);
-        menuValidator.validateMenuGroup(menuGroupId);
+        menuValidator.validate(menuProducts, price, menuGroupId);
 
         this.name = name;
         this.price = price;
