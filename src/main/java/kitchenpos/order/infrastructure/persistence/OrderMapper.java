@@ -4,7 +4,7 @@ import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order.domain.OrderTable;
 
 public class OrderMapper {
 

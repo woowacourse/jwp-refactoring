@@ -1,4 +1,4 @@
-package kitchenpos.order_table.application;
+package kitchenpos.order.application;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,10 +16,11 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.infrastructure.persistence.MenuRepositoryImpl;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.infrastructure.persistence.MenuGroupRepositoryImpl;
+import kitchenpos.order.application.TableService;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.infrastructure.persistence.OrderRepositoryImpl;
-import kitchenpos.order_table.domain.OrderTable;
-import kitchenpos.order_table.infrastructure.persistence.OrderTableRepositoryImpl;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.infrastructure.persistence.OrderTableRepositoryImpl;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.infrastructure.persistence.ProductRepositoryImpl;
 import kitchenpos.support.ServiceIntegrationTest;

@@ -1,10 +1,10 @@
-package kitchenpos.order_table.infrastructure.persistence;
+package kitchenpos.order.infrastructure.persistence;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.order_table.domain.OrderTable;
-import kitchenpos.order_table.domain.repository.OrderTableRepository;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -1,9 +1,9 @@
-package kitchenpos.order_table.api;
+package kitchenpos.order.api;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.order_table.application.TableService;
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order.application.TableService;
+import kitchenpos.order.domain.OrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

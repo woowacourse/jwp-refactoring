@@ -2,7 +2,6 @@ package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.order_table.domain.OrderTable;
 
 public class Order {
 

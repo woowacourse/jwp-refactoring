@@ -1,6 +1,6 @@
-package kitchenpos.order_table.infrastructure.persistence;
+package kitchenpos.order.infrastructure.persistence;
 
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order.domain.OrderTable;
 
 public class OrderTableMapper {
 

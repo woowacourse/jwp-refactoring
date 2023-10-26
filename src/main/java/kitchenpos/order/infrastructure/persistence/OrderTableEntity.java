@@ -1,4 +1,4 @@
-package kitchenpos.order_table.infrastructure.persistence;
+package kitchenpos.order.infrastructure.persistence;
 
 public class OrderTableEntity {
 

@@ -1,4 +1,4 @@
-package kitchenpos.order_table.domain;
+package kitchenpos.order.domain;
 
 public class OrderTable {
 

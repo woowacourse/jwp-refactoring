@@ -1,8 +1,8 @@
-package kitchenpos.order_table.domain.repository;
+package kitchenpos.order.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order.domain.OrderTable;
 
 public interface OrderTableRepository {
 

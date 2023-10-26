@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order.domain.OrderTable;
 
 public class OrderTableFixture {
 
