@@ -46,6 +46,11 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupRepository.save(request.toTableGroup());
 
+        return TableGroupQueryResponse.of(savedTableGroup,
+                new OrderTables(groupOrderTables(savedOrderTables, savedTableGroup)));
+    }
+
+    private List<OrderTable> groupOrderTables(OrderTables savedOrderTables, TableGroup savedTableGroup) {
         final List<OrderTable> initializedOrderTabled = new ArrayList<>();
         for (final OrderTable orderTable : savedOrderTables.getOrderTables()) {
             initializedOrderTabled.add(
@@ -53,7 +58,7 @@ public class TableGroupService {
                             orderTable.getNumberOfGuests(), false))
             );
         }
-        return TableGroupQueryResponse.of(savedTableGroup, new OrderTables(initializedOrderTabled));
+        return initializedOrderTabled;
     }
 
     private void validateTableGroupCreateRequest(final OrderTables savedOrderTables,
