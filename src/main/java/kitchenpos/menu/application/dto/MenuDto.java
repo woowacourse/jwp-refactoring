@@ -27,7 +27,7 @@ public class MenuDto {
         Long id = menu.getId();
         String name = menu.getName();
         BigDecimal price = menu.getPrice();
-        Long menuGroupId = menu.getId();
+        Long menuGroupId = menu.getMenuGroupId();
         List<MenuProductDto> menuProducts = menu.getMenuProducts().stream()
                 .map(MenuProductDto::from)
                 .collect(Collectors.toList());

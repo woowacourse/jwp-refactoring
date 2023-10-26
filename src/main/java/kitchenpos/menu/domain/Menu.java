@@ -2,13 +2,7 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.menu.exception.MenuException;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -25,8 +19,8 @@ public class Menu {
     @Embedded
     private MenuPrice price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private MenuGroup menuGroup;
+    @Column(name = "menuGroupId")
+    private Long menuGroupId;
 
     @Embedded
     private MenuProducts menuProducts;
@@ -34,15 +28,15 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(MenuName name, MenuPrice price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(null, name, price, menuGroupId);
     }
 
-    public Menu(Long id, MenuName name, MenuPrice price, MenuGroup menuGroup) {
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
+        this.name = new MenuName(name);
+        this.price = new MenuPrice(price);
+        this.menuGroupId = menuGroupId;
         this.menuProducts = new MenuProducts();
     }
 
@@ -70,8 +64,8 @@ public class Menu {
         return price.getPrice();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

@@ -34,9 +34,9 @@ class OrderRepositoryTest extends RepositoryTest {
     @Test
     void 주문을_조회할_때_주문_아이템과_함께_조회횐다() {
         // given
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(new MenuGroupName("one plus one")));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("one plus one"));
         Product product = productRepository.save(new Product(new ProductName("pizza"), new ProductPrice(BigDecimal.valueOf(14000L))));
-        Menu menu = new Menu(new MenuName("pizza one plus one"), new MenuPrice(BigDecimal.valueOf(27000L)), menuGroup);
+        Menu menu = new Menu("pizza one plus one", BigDecimal.valueOf(27000L), menuGroup.getId());
         MenuProduct menuProduct = new MenuProduct(product, new MenuProductQuantity(2L));
         menu.addMenuProducts(List.of(menuProduct));
         menuRepository.save(menu);

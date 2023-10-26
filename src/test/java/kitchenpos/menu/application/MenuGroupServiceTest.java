@@ -3,9 +3,8 @@ package kitchenpos.menu.application;
 import kitchenpos.MockServiceTest;
 import kitchenpos.menu.application.dto.CreateMenuGroupDto;
 import kitchenpos.menu.application.dto.MenuGroupDto;
-import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuGroupName;
+import kitchenpos.menu.domain.MenuGroupRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -29,12 +28,8 @@ class MenuGroupServiceTest extends MockServiceTest {
         MenuGroupDto expectedSecondMenuGroup = new MenuGroupDto(2L, "물고기");
         List<MenuGroupDto> expected = List.of(expectedFirstMenuGroup, expectedSecondMenuGroup);
 
-        MenuGroup mockFirstMenuGroup = new MenuGroup(
-                1L,
-                new MenuGroupName("고기"));
-        MenuGroup mockSecondMenuGroup = new MenuGroup(
-                2L,
-                new MenuGroupName("물고기"));
+        MenuGroup mockFirstMenuGroup = new MenuGroup(1L, "고기");
+        MenuGroup mockSecondMenuGroup = new MenuGroup(2L, "물고기");
 
         BDDMockito.given(menuGroupRepository.findAll())
                 .willReturn(List.of(mockFirstMenuGroup, mockSecondMenuGroup));
@@ -53,9 +48,7 @@ class MenuGroupServiceTest extends MockServiceTest {
 
         CreateMenuGroupDto createMenuGroupDto = new CreateMenuGroupDto("고기");
 
-        MenuGroup mockReturnMenuGroup = new MenuGroup(
-                1L,
-                new MenuGroupName("고기"));
+        MenuGroup mockReturnMenuGroup = new MenuGroup(1L, "고기");
 
         BDDMockito.given(menuGroupRepository.save(BDDMockito.any(MenuGroup.class)))
                 .willReturn(mockReturnMenuGroup);
@@ -73,10 +66,7 @@ class MenuGroupServiceTest extends MockServiceTest {
         MenuGroupDto expected = new MenuGroupDto(1L, "");
 
         CreateMenuGroupDto createMenuGroupDto = new CreateMenuGroupDto("");
-
-        MenuGroup mockReturnMenuGroup = new MenuGroup(
-                1L,
-                new MenuGroupName(""));
+        MenuGroup mockReturnMenuGroup = new MenuGroup(1L, "");
 
         BDDMockito.given(menuGroupRepository.save(BDDMockito.any(MenuGroup.class)))
                 .willReturn(mockReturnMenuGroup);

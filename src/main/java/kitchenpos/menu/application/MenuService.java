@@ -3,12 +3,14 @@ package kitchenpos.menu.application;
 import kitchenpos.menu.application.dto.CreateMenuDto;
 import kitchenpos.menu.application.dto.CreateMenuProductDto;
 import kitchenpos.menu.application.dto.MenuDto;
-import kitchenpos.menu.domain.*;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProductQuantity;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.exception.MenuGroupException;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.exception.ProductException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,20 +38,20 @@ public class MenuService {
 
     @Transactional
     public MenuDto create(CreateMenuDto createMenuDto) {
-        MenuGroup menuGroup = findMenuGroup(createMenuDto.getMenuGroupId());
-        Menu menu = new Menu(
-                new MenuName(createMenuDto.getName()),
-                new MenuPrice(createMenuDto.getPrice()),
-                menuGroup);
+        Long menuGroupId = createMenuDto.getMenuGroupId();
+        checkMenuGroupExists(menuGroupId);
+        Menu menu = new Menu(createMenuDto.getName(), createMenuDto.getPrice(), menuGroupId);
         List<MenuProduct> menuProducts = makeMenuProducts(createMenuDto.getMenuProducts());
         menu.addMenuProducts(menuProducts);
         menu = menuRepository.save(menu);
         return MenuDto.from(menu);
     }
 
-    private MenuGroup findMenuGroup(Long menuGroupId) {
-        return menuGroupRepository.findById(menuGroupId)
-                .orElseThrow(() -> new MenuGroupException("존재하지 않는 메뉴 그룹입니다."));
+    private void checkMenuGroupExists(Long menuGroupId) {
+        if (menuGroupRepository.existsById(menuGroupId)) {
+            return;
+        }
+        throw new MenuGroupException("존재하지 않는 메뉴 그룹입니다.");
     }
 
     private List<MenuProduct> makeMenuProducts(List<CreateMenuProductDto> createMenuProductDtos) {

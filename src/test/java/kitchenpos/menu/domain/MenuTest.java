@@ -1,11 +1,10 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.BaseTest;
+import kitchenpos.menu.exception.MenuException;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductName;
 import kitchenpos.product.domain.ProductPrice;
-import kitchenpos.menu.exception.MenuException;
-import kitchenpos.menu.domain.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -36,10 +35,7 @@ class MenuTest extends BaseTest {
         MenuProduct secondMenuProduct = new MenuProduct(secondProduct, secondQuantity);
         List<MenuProduct> menuProducts = List.of(firstMenuProduct, secondMenuProduct);
 
-        Menu menu = new Menu(
-                new MenuName("테스트메뉴"),
-                new MenuPrice(menuPrice),
-                new MenuGroup(1L, new MenuGroupName("테스트메뉴그룹")));
+        Menu menu = new Menu("테스트메뉴", menuPrice, 1L);
 
         // when, then
         Assertions.assertThatNoException()
@@ -68,10 +64,7 @@ class MenuTest extends BaseTest {
         MenuProduct secondMenuProduct = new MenuProduct(secondProduct, secondQuantity);
         List<MenuProduct> menuProducts = List.of(firstMenuProduct, secondMenuProduct);
 
-        Menu menu = new Menu(
-                new MenuName("테스트메뉴"),
-                new MenuPrice(menuPrice),
-                new MenuGroup(1L, new MenuGroupName("테스트메뉴그룹")));
+        Menu menu = new Menu("테스트메뉴", menuPrice, 1L);
 
         // when, then
         Assertions.assertThatThrownBy(() -> menu.addMenuProducts(menuProducts))

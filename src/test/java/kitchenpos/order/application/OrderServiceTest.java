@@ -1,26 +1,23 @@
 package kitchenpos.order.application;
 
 import kitchenpos.MockServiceTest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.exception.MenuException;
 import kitchenpos.order.application.dto.CreateOrderDto;
 import kitchenpos.order.application.dto.CreateOrderLineItemDto;
 import kitchenpos.order.application.dto.OrderDto;
 import kitchenpos.order.application.dto.UpdateOrderStatusDto;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuName;
-import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.order.domain.GuestNumber;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemQuantity;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.menu.exception.MenuException;
+import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.exception.OrderException;
 import kitchenpos.order.exception.OrderTableException;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderTableRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -52,8 +49,8 @@ class OrderServiceTest extends MockServiceTest {
     void 주문_목록을_조회한다() {
         // given
         OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
-        Menu chicken = new Menu(new MenuName("chicken"), new MenuPrice(BigDecimal.TEN), null);
-        Menu pizza = new Menu(new MenuName("pizza"), new MenuPrice(BigDecimal.ONE), null);
+        Menu chicken = new Menu("chicken", BigDecimal.TEN, null);
+        Menu pizza = new Menu("pizza", BigDecimal.ONE, null);
 
         Order order = new Order(LocalDateTime.now());
         OrderLineItem orderLineItem = new OrderLineItem(chicken, new OrderLineItemQuantity(1L));
@@ -79,8 +76,8 @@ class OrderServiceTest extends MockServiceTest {
         // given
         OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
 
-        Menu chicken = new Menu(new MenuName("chicken"), new MenuPrice(BigDecimal.TEN), null);
-        Menu pizza = new Menu(new MenuName("pizza"), new MenuPrice(BigDecimal.ONE), null);
+        Menu chicken = new Menu("chicken", BigDecimal.TEN, null);
+        Menu pizza = new Menu("pizza", BigDecimal.ONE, null);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(orderTable));
@@ -169,8 +166,8 @@ class OrderServiceTest extends MockServiceTest {
         // given
         OrderTable orderTable = new OrderTable(new GuestNumber(10), true);
 
-        Menu chicken = new Menu(new MenuName("chicken"), new MenuPrice(BigDecimal.TEN), null);
-        Menu pizza = new Menu(new MenuName("pizza"), new MenuPrice(BigDecimal.ONE), null);
+        Menu chicken = new Menu("chicken", BigDecimal.TEN, null);
+        Menu pizza = new Menu("pizza", BigDecimal.ONE, null);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(orderTable));
