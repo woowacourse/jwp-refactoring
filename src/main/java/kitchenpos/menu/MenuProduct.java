@@ -52,6 +52,14 @@ public class MenuProduct {
         return name;
     }
 
+    public Long getProductId() {
+        return productId;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
     public Quantity getQuantity() {
         return quantity;
     }
