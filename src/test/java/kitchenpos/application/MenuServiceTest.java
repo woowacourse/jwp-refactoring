@@ -79,7 +79,7 @@ class MenuServiceTest {
         assertThat(created.getName()).isEqualTo(request.getName());
         assertThat(created.getPrice())
             .isEqualTo(
-                new MenuProducts(List.of(menuProduct1, menuProduct2), menu).calculatePrice().getValue().longValue());
+                new MenuProducts(List.of(menuProduct1, menuProduct2)).calculatePrice().getValue().longValue());
     }
 
     @DisplayName("메뉴의 MemberGroupId 가 존재하지 않으면 예외가 발생한다.")

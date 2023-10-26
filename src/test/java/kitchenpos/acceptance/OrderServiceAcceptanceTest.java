@@ -59,7 +59,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)), menuGroup);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
         final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), List.of(
@@ -83,7 +83,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)), menuGroup);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
         orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
@@ -106,7 +106,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)), menuGroup);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
         orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
@@ -143,7 +143,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)), menuGroup);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
         final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new Price(BigDecimal.valueOf(20L)),
@@ -181,7 +181,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)), menuGroup);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
         final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new Price(BigDecimal.TEN), menu);

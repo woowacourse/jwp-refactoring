@@ -32,13 +32,13 @@ public class Menu {
     public Menu(final Long id, final String name, final List<MenuProduct> menuProducts, final Long menuGroupId) {
         this.id = id;
         this.name = name;
-        this.menuProducts = new MenuProducts(menuProducts, this);
+        this.menuProducts = new MenuProducts(menuProducts);
         this.price = this.menuProducts.calculatePrice();
         this.menuGroupId = menuGroupId;
     }
 
-    public static Menu forSave(final String name, final List<MenuProduct> menuProducts, final MenuGroup menuGroup) {
-        return new Menu(null, name, menuProducts, menuGroup.getId());
+    public static Menu forSave(final String name, final List<MenuProduct> menuProducts, final Long menuGroupId) {
+        return new Menu(null, name, menuProducts, menuGroupId);
     }
 
     public Long getId() {

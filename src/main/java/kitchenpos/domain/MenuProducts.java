@@ -17,8 +17,7 @@ public class MenuProducts {
     protected MenuProducts() {
     }
 
-    public MenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
-//        menuProducts.forEach(menuProduct -> menuProduct.joinMenu(menu.getId()));
+    public MenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 
