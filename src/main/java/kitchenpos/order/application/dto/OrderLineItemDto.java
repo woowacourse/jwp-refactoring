@@ -2,34 +2,43 @@ package kitchenpos.order.application.dto;
 
 import kitchenpos.order.domain.OrderLineItem;
 
+import java.math.BigDecimal;
+
 public class OrderLineItemDto {
 
     private Long seq;
-    private Long menuId;
     private Long quantity;
+    private String name;
+    private BigDecimal price;
 
-    public OrderLineItemDto(Long seq, Long menuId, Long quantity) {
+    public OrderLineItemDto(Long seq, Long quantity, String name, BigDecimal price) {
         this.seq = seq;
-        this.menuId = menuId;
         this.quantity = quantity;
+        this.name = name;
+        this.price = price;
     }
 
     public static OrderLineItemDto from(OrderLineItem orderLineItem) {
         Long seq = orderLineItem.getSeq();
-        Long menuId = orderLineItem.getMenu().getId();
         Long quantity = orderLineItem.getQuantity();
-        return new OrderLineItemDto(seq, menuId, quantity);
+        String name = orderLineItem.getName();
+        BigDecimal price = orderLineItem.getPrice();
+        return new OrderLineItemDto(seq, quantity, name, price);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
     public Long getQuantity() {
         return quantity;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 }

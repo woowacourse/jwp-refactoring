@@ -10,11 +10,9 @@ import kitchenpos.order.application.dto.OrderDto;
 import kitchenpos.order.application.dto.UpdateOrderStatusDto;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemQuantity;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.OrderException;
-import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.exception.OrderTableException;
@@ -48,11 +46,8 @@ class OrderServiceTest extends MockServiceTest {
     @Test
     void 주문_목록을_조회한다() {
         // given
-        Menu chicken = new Menu("chicken", BigDecimal.TEN, null);
-        Menu pizza = new Menu("pizza", BigDecimal.ONE, null);
-
-        OrderLineItem orderLineItem = new OrderLineItem(chicken, new OrderLineItemQuantity(1L));
-        OrderLineItem orderLineItem1 = new OrderLineItem(pizza, new OrderLineItemQuantity(2L));
+        OrderLineItem orderLineItem = new OrderLineItem(1L, "chicken", BigDecimal.TEN);
+        OrderLineItem orderLineItem1 = new OrderLineItem(2L, "pizza", BigDecimal.ONE);
         Order order = new Order(
                 1L,
                 List.of(orderLineItem, orderLineItem1),

@@ -9,7 +9,6 @@ import kitchenpos.order.application.dto.OrderDto;
 import kitchenpos.order.application.dto.UpdateOrderStatusDto;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemQuantity;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.OrderException;
@@ -65,8 +64,8 @@ public class OrderService {
         Set<OrderLineItem> orderLineItems = new HashSet<>();
         for (CreateOrderLineItemDto createOrderLineItem : createOrderLineItems) {
             Menu menu = findMenu(createOrderLineItem.getMenuId());
-            OrderLineItemQuantity quantity = new OrderLineItemQuantity(createOrderLineItem.getQuantity());
-            OrderLineItem orderLineItem = new OrderLineItem(menu, quantity);
+            Long quantity = createOrderLineItem.getQuantity();
+            OrderLineItem orderLineItem = new OrderLineItem(quantity, menu.getName(), menu.getPrice());
             orderLineItems.add(orderLineItem);
         }
         validateOrderLineItemIsNotEmpty(orderLineItems);

@@ -1,17 +1,8 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.RepositoryTest;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductQuantity;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,32 +17,16 @@ class OrderRepositoryTest extends RepositoryTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
-
-    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @Test
     void 주문을_조회할_때_주문_아이템과_함께_조회횐다() {
         // given
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("one plus one"));
-        Product product = productRepository.save(new Product("pizza", BigDecimal.valueOf(14000L)));
-        Menu menu = new Menu("pizza one plus one", BigDecimal.valueOf(27000L), menuGroup.getId());
-        MenuProduct menuProduct = new MenuProduct(product, new MenuProductQuantity(2L));
-        menu.addMenuProducts(List.of(menuProduct));
-        menuRepository.save(menu);
-
         OrderTable orderTable = new OrderTable(10, false);
         orderTableRepository.save(orderTable);
 
-        OrderLineItem orderLineItem = new OrderLineItem(menu, new OrderLineItemQuantity(1L));
-        OrderLineItem orderLineItem_2 = new OrderLineItem(menu, new OrderLineItemQuantity(2L));
+        OrderLineItem orderLineItem = new OrderLineItem(1L, "item", BigDecimal.TEN);
+        OrderLineItem orderLineItem_2 = new OrderLineItem(2L, "item2", BigDecimal.TEN);
         Order order = new Order(orderTable.getId(), List.of(orderLineItem, orderLineItem_2), LocalDateTime.now());
         orderRepository.save(order);
         em.flush();
