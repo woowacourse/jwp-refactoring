@@ -6,14 +6,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.common.annotation.ServiceTest;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.presentation.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.presentation.dto.request.ChangeOrderStatusRequest;
-import kitchenpos.tablegroup.presentation.dto.request.CreateTableGroupRequest;
 import kitchenpos.ordertable.presentation.dto.request.OrderTableRequest;
 import kitchenpos.support.TestSupporter;
 import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.presentation.dto.request.CreateTableGroupRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -109,8 +109,10 @@ class TableGroupServiceTest {
         void 테이블_그룹을_해제할_때_주문의_상태가_하나라도_COMPLETION_이_아니라면_예외가_발생한다(final String orderStatus) {
             // given
             final TableGroup tableGroup = testSupporter.createTableGroup();
+            testSupporter.createOrderTable(tableGroup.getId());
+            testSupporter.createOrderTable(tableGroup.getId());
 
-            final List<OrderTable> orderTables = tableGroup.getOrderTables();
+            final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
             final Order order1 = testSupporter.createOrder(orderTables.get(0));
             final Order order2 = testSupporter.createOrder(orderTables.get(1));

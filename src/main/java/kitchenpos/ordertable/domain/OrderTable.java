@@ -2,13 +2,9 @@ package kitchenpos.ordertable.domain;
 
 import java.util.Objects;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupOrderStatusValidator;
 
 @Entity
@@ -18,9 +14,7 @@ public class OrderTable {
     @Id
     private Long id;
 
-    @JoinColumn(name = "table_group_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     private int numberOfGuests;
 
@@ -29,24 +23,24 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final TableGroup tableGroup,
+    public OrderTable(final Long tableGroupId,
                       final int numberOfGuests,
                       final boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable(final Long id,
-                      final TableGroup tableGroup,
+                      final Long tableGroupId,
                       final int numberOfGuests,
                       final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public boolean isGrouped() {
-        return tableGroup != null;
+        return tableGroupId != null;
     }
 
     public void changeEmpty(final boolean empty,
@@ -66,13 +60,13 @@ public class OrderTable {
         }
     }
 
-    public void group(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void group(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void ungroup(final TableGroupOrderStatusValidator tableGroupOrderStatusValidator) {
         tableGroupOrderStatusValidator.validateOrderStatus(this.id);
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
@@ -80,8 +74,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -113,7 +107,7 @@ public class OrderTable {
     public String toString() {
         return "OrderTable{" +
                 "id=" + id +
-                ", tableGroupId=" + tableGroup.getId() +
+                ", tableGroupId=" + tableGroupId +
                 ", numberOfGuests=" + numberOfGuests +
                 ", empty=" + empty +
                 '}';

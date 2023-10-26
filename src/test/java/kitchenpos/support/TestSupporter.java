@@ -4,21 +4,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.order.domain.vo.MenuInfo;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.domain.vo.MenuInfo;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -80,6 +80,13 @@ public class TestSupporter {
         return orderTableRepository.save(orderTable);
     }
 
+    public OrderTable createOrderTable(final Long tableGroupId) {
+        final OrderTable orderTable = new OrderTable(tableGroupId,
+                                                     0,
+                                                     false);
+        return orderTableRepository.save(orderTable);
+    }
+
     public Order createOrder() {
         final OrderTable orderTable = createOrderTable();
         final Menu menu = createMenu();
@@ -104,11 +111,7 @@ public class TestSupporter {
     }
 
     public TableGroup createTableGroup() {
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                                                     new ArrayList<>());
-        final OrderTable orderTable1 = new OrderTable(null, 0, true);
-        final OrderTable orderTable2 = new OrderTable(null, 0, true);
-        tableGroup.addOrderTables(List.of(orderTable1, orderTable2));
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         return tableGroupRepository.save(tableGroup);
     }
 }
