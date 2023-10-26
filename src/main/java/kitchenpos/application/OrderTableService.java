@@ -27,9 +27,9 @@ public class OrderTableService {
     }
 
     @Transactional
-    public Long create(final Long tableGroupId, final int numberOfGuests) {
+    public Long create(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         OrderTableGroup orderTableGroup = tableGroupRepository.getById(tableGroupId);
-        OrderTable orderTable = new OrderTable(orderTableGroup, numberOfGuests);
+        OrderTable orderTable = new OrderTable(orderTableGroup, numberOfGuests, empty);
         return orderTableRepository.save(orderTable).getId();
     }
 

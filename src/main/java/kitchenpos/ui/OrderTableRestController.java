@@ -18,20 +18,20 @@ public class OrderTableRestController {
         this.orderTableService = orderTableService;
     }
 
-    @PostMapping("/api/order-tables/{tableGroupId}")
+    @PostMapping("/api/tables/{tableGroupId}")
     public ResponseEntity<Long> create(@PathVariable final Long tableGroupId, @RequestBody final OrderTableCreateRequest request) {
-        Long orderTableId = orderTableService.create(tableGroupId, request.getNumberOfGuests());
+        Long orderTableId = orderTableService.create(tableGroupId, request.getNumberOfGuests(), request.isEmpty());
         final URI uri = URI.create("/api/orders/" + orderTableId);
         return ResponseEntity.created(uri).build();
     }
 
-    @GetMapping("/api/order-tables")
+    @GetMapping("/api/tables")
     public ResponseEntity<List<OrderTableResponse>> findAll() {
         List<OrderTableResponse> responses = orderTableService.findAll();
         return ResponseEntity.ok().body(responses);
     }
 
-    @PatchMapping("/api/order-tables/{orderTableId}/is-empty")
+    @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<Void> updateIsEmpty(
             @PathVariable final Long orderTableId,
             @RequestParam final boolean isEmpty
@@ -40,7 +40,7 @@ public class OrderTableRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/api/order-tables/{orderTableId}/number-of-guests")
+    @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<Void> updateNumberOfGuest(
             @PathVariable final Long orderTableId,
             @RequestParam final int numberOfGuests
