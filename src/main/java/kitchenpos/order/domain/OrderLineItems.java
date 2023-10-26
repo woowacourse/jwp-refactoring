@@ -1,6 +1,10 @@
 package kitchenpos.order.domain;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,13 +13,13 @@ public class OrderLineItems {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "order_id", nullable = false)
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    private List<OrderLineItem> orderLineItems;
 
-    public OrderLineItems() {
+    protected OrderLineItems() {
     }
 
-    public void add(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems.addAll(orderLineItems);
+    public OrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = new ArrayList<>(orderLineItems);
     }
 
     public List<OrderLineItem> getOrderLineItems() {

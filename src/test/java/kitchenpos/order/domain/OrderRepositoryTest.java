@@ -50,11 +50,9 @@ class OrderRepositoryTest extends RepositoryTest {
         OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
         orderTableRepository.save(orderTable);
 
-        Order order = new Order(LocalDateTime.now());
         OrderLineItem orderLineItem = new OrderLineItem(menu, new OrderLineItemQuantity(1L));
         OrderLineItem orderLineItem_2 = new OrderLineItem(menu, new OrderLineItemQuantity(2L));
-        order.addOrderLineItems(List.of(orderLineItem, orderLineItem_2));
-        orderTable.addOrder(order);
+        Order order = new Order(orderTable.getId(), List.of(orderLineItem, orderLineItem_2), LocalDateTime.now());
         orderRepository.save(order);
         em.flush();
         em.clear();

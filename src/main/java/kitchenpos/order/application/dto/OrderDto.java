@@ -24,7 +24,7 @@ public class OrderDto {
 
     public static OrderDto from(Order order) {
         Long id = order.getId();
-        Long orderTableId = order.getOrderTable().getId();
+        Long orderTableId = order.getOrderTableId();
         String orderStatus = order.getOrderStatus().name();
         LocalDateTime orderedTime = order.getOrderedTime();
         List<OrderLineItemDto> orderLineItems = order.getOrderLineItems().stream()
