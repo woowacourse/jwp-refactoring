@@ -10,28 +10,20 @@ import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.OrderValidator;
 import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
-        this.menuRepository = menuRepository;
+    public OrderService(final OrderRepository orderRepository, final OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -40,24 +32,10 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
                 .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
-        validateExistMenu(orderLineItemRequests, orderLineItems);
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(request.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        orderValidator.validate(order);
         return OrderResponse.toResponse(orderRepository.save(order));
-    }
-
-    private void validateExistMenu(final List<OrderLineItemRequest> orderLineItemRequests,
-                           final List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public List<OrderResponse> list() {
@@ -72,6 +50,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
+        orderValidator.validateOrderStatus(savedOrder.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);
 
         return OrderResponse.toResponse(orderRepository.save(savedOrder));

@@ -73,7 +73,7 @@ public abstract class ServiceTest {
     }
 
     protected Order 단일_주문_저장(final OrderTable orderTable, final OrderLineItem... orderLineItems) {
-        final var order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItems));
+        final var order = new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItems));
         return orderRepository.save(order);
     }
 }

@@ -7,16 +7,13 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -25,10 +22,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(value = STRING)
     private OrderStatus orderStatus;
@@ -41,35 +35,13 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        this(orderTable, orderStatus, orderedTime, new ArrayList<>());
-    }
-
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        validate(orderTable, orderLineItems);
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         for (final OrderLineItem orderLineItem : orderLineItems) {
             addOrderLineItems(orderLineItem);
-        }
-    }
-
-    private void validate(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        validateEmptyOrderTable(orderTable);
-        validateEmptyOrderLineItems(orderLineItems);
-    }
-
-    private void validateEmptyOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateEmptyOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
         }
     }
 
@@ -78,9 +50,6 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
-            throw new IllegalArgumentException();
-        }
         this.orderStatus = orderStatus;
     }
 
@@ -88,8 +57,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
