@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.domain;
+package kitchenpos.order.domain;
 
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TableGroupValidatorTest {
+class TableGroupValidatorImplTest {
 
     @Autowired
     private TableGroupValidator tableGroupValidator;
