@@ -2,19 +2,21 @@ package kitchenpos.domain;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 @Access(value = AccessType.FIELD)
 public class NumberOfGuests {
 
-    private int numberOfGuests;
+    @Column(name = "number_of_guests")
+    private int value;
 
     protected NumberOfGuests() {
     }
 
-    private NumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    private NumberOfGuests(final int value) {
+        this.value = value;
     }
 
     public static NumberOfGuests from(final int numberOfGuests) {
@@ -28,7 +30,7 @@ public class NumberOfGuests {
         }
     }
 
-    public int getNumberOfGuests() {
-        return numberOfGuests;
+    public int getValue() {
+        return value;
     }
 }

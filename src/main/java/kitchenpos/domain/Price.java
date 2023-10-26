@@ -4,19 +4,21 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 @Access(value = AccessType.FIELD)
 public class Price implements Comparable<Price> {
 
-    private BigDecimal price;
+    @Column(name = "price")
+    private BigDecimal value;
 
     protected Price() {
     }
 
-    private Price(final BigDecimal price) {
-        this.price = price;
+    private Price(final BigDecimal value) {
+        this.value = value;
     }
 
     public static Price from(BigDecimal price) {
@@ -31,23 +33,23 @@ public class Price implements Comparable<Price> {
     }
 
     public Price add(Price other) {
-        return from(price.add(other.price));
+        return from(value.add(other.value));
     }
 
     public Price multiply(Price other) {
-        return from(price.multiply(other.price));
+        return from(value.multiply(other.value));
     }
 
     public Price multiply(long quantity) {
-        return from(price.multiply(BigDecimal.valueOf(quantity)));
+        return from(value.multiply(BigDecimal.valueOf(quantity)));
     }
 
     @Override
     public int compareTo(final Price other) {
-        return price.compareTo(other.price);
+        return value.compareTo(other.value);
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getValue() {
+        return value;
     }
 }

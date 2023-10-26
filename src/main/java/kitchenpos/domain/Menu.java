@@ -19,6 +19,7 @@ public class Menu {
 
     private String name;
 
+    @Embedded
     private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY)
