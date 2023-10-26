@@ -1,6 +1,8 @@
-package kitchenpos.table;
+package kitchenpos.tablegroup;
 
-import kitchenpos.table.validator.UnGroupValidator;
+import kitchenpos.table.OrderTable;
+import kitchenpos.table.OrderTableRepository;
+import kitchenpos.table.OrderTables;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

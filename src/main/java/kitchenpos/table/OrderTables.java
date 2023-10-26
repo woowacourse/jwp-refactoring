@@ -1,5 +1,7 @@
 package kitchenpos.table;
 
+import kitchenpos.tablegroup.TableGroup;
+
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
