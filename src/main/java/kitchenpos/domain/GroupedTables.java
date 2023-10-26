@@ -9,20 +9,20 @@ import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable
-public class OrderTables {
+public class GroupedTables {
 
     private static final int ORDER_TABLE_MIN_SIZE = 2;
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
-    public OrderTables(final List<OrderTable> orderTables) {
+    public GroupedTables(final List<OrderTable> orderTables) {
         validate(orderTables);
         this.orderTables = orderTables;
         orderTables.forEach(orderTable -> orderTable.changeEmpty(false));
     }
 
-    protected OrderTables() {
+    protected GroupedTables() {
     }
 
     private void validate(final List<OrderTable> orderTables) {
@@ -42,6 +42,15 @@ public class OrderTables {
                 throw new IllegalArgumentException();
             }
         }
+    }
+
+    public void bindTablesToGroup(final Long tableGroupId) {
+        orderTables.forEach(orderTable -> orderTable.bindGroup(tableGroupId));
+    }
+
+    public void unbindTablesFromGroup() {
+        orderTables.forEach(OrderTable::unbindGroup);
+        orderTables.clear();
     }
 
     public List<OrderTable> getOrderTables() {

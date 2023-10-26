@@ -69,7 +69,7 @@ class OrderServiceTest {
         menu = menuRepository.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(),
                 List.of(new MenuProduct(null, product.getId(), 1))));
         orderTable = orderTableRepository.save(new OrderTable(6, true));
-        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(6, true));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(6, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2)));
     }
 

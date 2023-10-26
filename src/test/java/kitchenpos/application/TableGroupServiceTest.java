@@ -16,6 +16,7 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.exception.OrderTableUpdateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -173,28 +174,28 @@ class TableGroupServiceTest {
         void 주문_상태가_식사중인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, true));
-            final TableGroup tableGroup = tableGroupRepository.save(
-                    new TableGroup(LocalDateTime.now(), List.of(invalidTable, dummyTables.get(0))));
+            final TableGroup tableGroup = tableGroupService.create(
+                    new TableGroupRequest(List.of(invalidTable.getId(), dummyTables.get(0).getId())));
             orderRepository.save(new Order(invalidTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1))));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableUpdateException.class);
         }
 
         @Test
         void 주문_상태가_조리중인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, true));
+            final TableGroup tableGroup = tableGroupService.create(
+                    new TableGroupRequest(List.of(invalidTable.getId(), dummyTables.get(0).getId())));
             orderRepository.save(new Order(invalidTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1))));
-            final TableGroup tableGroup = tableGroupRepository.save(
-                    new TableGroup(LocalDateTime.now(), List.of(invalidTable, dummyTables.get(0))));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(1L))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableUpdateException.class);
         }
     }
 }

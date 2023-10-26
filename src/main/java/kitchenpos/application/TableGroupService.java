@@ -1,15 +1,13 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.UnGroupEvent;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.TableGroupRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,17 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(final OrderTableRepository orderTableRepository,
+                             final TableGroupRepository tableGroupRepository,
+                             final ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
     public TableGroup create(final TableGroupRequest request) {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(request.getOrderTableIds());
         validateOrderTablesIsExist(request, savedOrderTables);
-        return tableGroupRepository.save(new TableGroup(savedOrderTables));
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(savedOrderTables));
+        tableGroup.bindTablesToGroup();
+        return tableGroup;
     }
 
     private static void validateOrderTablesIsExist(final TableGroupRequest request,
@@ -39,7 +43,9 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        orderTables.forEach(OrderTable::unbindGroup);
+        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 그룹입니다."));
+        publisher.publishEvent(new UnGroupEvent(tableGroup.getGroupedTables()));
+        tableGroupRepository.save(tableGroup);
     }
 }

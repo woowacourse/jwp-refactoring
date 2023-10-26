@@ -6,14 +6,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-public class OrderTable extends AbstractAggregateRoot<OrderTable> {
+public class OrderTable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private final Long id;
 
     @Column(name = "table_group_id")
     private Long tableGroupId;
@@ -47,8 +46,11 @@ public class OrderTable extends AbstractAggregateRoot<OrderTable> {
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
+    public void bindGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
     public void unbindGroup() {
-        registerEvent(new OrderTableUpdateEvent(id));
         this.empty = false;
         this.tableGroupId = null;
     }
@@ -57,7 +59,6 @@ public class OrderTable extends AbstractAggregateRoot<OrderTable> {
         if (tableGroupId != null) {
             throw new IllegalArgumentException("테이블 그룹 아이디가 null이 아닙니다.");
         }
-        registerEvent(new OrderTableUpdateEvent(id));
         this.empty = empty;
     }
 
@@ -67,10 +68,6 @@ public class OrderTable extends AbstractAggregateRoot<OrderTable> {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public int getNumberOfGuests() {
