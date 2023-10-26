@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.product.application.dto.ProductRequest;
 import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.application.dto.ProductUpdateRequest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,17 @@ public class ProductService {
     }
 
     public List<ProductResponse> list() {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findAllByDeletedFalse();
         return products.stream()
                 .map(ProductResponse::of)
                 .collect(Collectors.toList());
+    }
+
+    public ProductResponse update(final ProductUpdateRequest productUpdateRequest) {
+        Product product = productRepository.getById(productUpdateRequest.getProductId());
+        product.delete();
+
+        Product updatedProduct = productRepository.save(productUpdateRequest.toEntity());
+        return ProductResponse.of(updatedProduct);
     }
 }

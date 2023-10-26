@@ -16,4 +16,13 @@ public abstract class ProductException extends KitchenPosException {
             super(INVALID_PRODUCT_NAME_MESSAGE);
         }
     }
+
+    public static class NotExistsProductException extends ProductException {
+
+        private static final String NOT_EXISTS_PRODUCT_MESSAGE = "상품이 존재하지 않습니다. 상품 번호: ";
+
+        public NotExistsProductException(final Long id) {
+            super(NOT_EXISTS_PRODUCT_MESSAGE + id);
+        }
+    }
 }

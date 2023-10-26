@@ -21,6 +21,9 @@ public class Product {
     private String name;
     @Embedded
     private Price price;
+    @Column
+    @NonNull
+    private boolean deleted = false;
 
     protected Product() {
     }
@@ -39,6 +42,10 @@ public class Product {
         if (name == null || name.isEmpty()) {
             throw new InvalidProductNameException();
         }
+    }
+
+    public void delete() {
+        deleted = true;
     }
 
     public Long getId() {
