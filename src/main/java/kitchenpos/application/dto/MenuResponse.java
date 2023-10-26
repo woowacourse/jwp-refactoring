@@ -3,7 +3,7 @@ package kitchenpos.application.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuPrice;
+import kitchenpos.domain.Price;
 
 public class MenuResponse {
 
@@ -27,9 +27,9 @@ public class MenuResponse {
         final List<MenuProductResponse> menuProducts = menu.getMenuProducts().stream()
             .map(MenuProductResponse::from)
             .collect(Collectors.toList());
-        final MenuPrice menuPrice = menu.getPrice();
+        final Price price = menu.getPrice();
 
-        return new MenuResponse(menu.getId(), menu.getName(), menuPrice.getValue().intValue(), menuProducts);
+        return new MenuResponse(menu.getId(), menu.getName(), price.getValue().intValue(), menuProducts);
     }
 
     public Long getId() {

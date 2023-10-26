@@ -21,7 +21,7 @@ public class Menu {
     private String name;
 
     @Embedded
-    private MenuPrice price;
+    private Price price;
 
     @Embedded
     private MenuProducts menuProducts;
@@ -63,7 +63,7 @@ public class Menu {
         return name;
     }
 
-    public MenuPrice getPrice() {
+    public Price getPrice() {
         return price;
     }
 
@@ -76,8 +76,8 @@ public class Menu {
     }
 
     public boolean hasSamePrice(final int price) {
-        final MenuPrice givenMenuPrice = new MenuPrice(BigDecimal.valueOf(price));
+        final Price givenPrice = new Price(BigDecimal.valueOf(price));
 
-        return this.price.equals(givenMenuPrice);
+        return this.price.equals(givenPrice);
     }
 }

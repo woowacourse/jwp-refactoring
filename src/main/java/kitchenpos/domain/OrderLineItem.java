@@ -19,7 +19,7 @@ public class OrderLineItem {
     private String name;
 
     @Embedded
-    private MenuPrice price;
+    private Price price;
 
     private long quantity;
 
@@ -34,7 +34,7 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final long quantity, final String name, final MenuPrice price,
+    public OrderLineItem(final Long seq, final long quantity, final String name, final Price price,
                          final Menu menu) {
         this.seq = seq;
         this.name = name;
@@ -43,7 +43,7 @@ public class OrderLineItem {
         this.menu = menu;
     }
 
-    public static OrderLineItem forSave(final long quantity, final String name, final MenuPrice price,
+    public static OrderLineItem forSave(final long quantity, final String name, final Price price,
                                         final Menu menu) {
         return new OrderLineItem(null, quantity, name, price, menu);
     }

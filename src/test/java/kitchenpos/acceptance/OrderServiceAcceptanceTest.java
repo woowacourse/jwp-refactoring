@@ -13,12 +13,12 @@ import kitchenpos.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -150,9 +150,9 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuGroup.addMenu(menu);
         menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new MenuPrice(BigDecimal.valueOf(20L)),
+        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new Price(BigDecimal.valueOf(20L)),
                                                                    menu);
-        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "치킨", new MenuPrice(BigDecimal.valueOf(40L)),
+        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "치킨", new Price(BigDecimal.valueOf(40L)),
                                                                    menu);
 
         final Order order = Order.forSave(OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2));
@@ -190,8 +190,8 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuGroup.addMenu(menu);
         menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new MenuPrice(BigDecimal.TEN), menu);
-        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "피자", new MenuPrice(BigDecimal.TEN), menu);
+        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new Price(BigDecimal.TEN), menu);
+        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "피자", new Price(BigDecimal.TEN), menu);
 
         final Order order = Order.forSave(OrderStatus.COMPLETION, List.of(orderLineItem1, orderLineItem2));
         orderTable.addOrder(order);

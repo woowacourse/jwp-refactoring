@@ -6,15 +6,15 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class MenuPrice {
+public class Price {
 
     @Column(name = "price")
     private BigDecimal value;
 
-    public MenuPrice() {
+    public Price() {
     }
 
-    public MenuPrice(final BigDecimal value) {
+    public Price(final BigDecimal value) {
         validate(value);
         this.value = value;
     }
@@ -37,8 +37,8 @@ public class MenuPrice {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final MenuPrice menuPrice = (MenuPrice) o;
-        return Objects.equals(value, menuPrice.value);
+        final Price price = (Price) o;
+        return Objects.equals(value, price.value);
     }
 
     @Override

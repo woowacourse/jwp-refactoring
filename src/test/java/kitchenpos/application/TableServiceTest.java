@@ -10,11 +10,11 @@ import java.util.List;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.application.dto.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ class TableServiceTest {
 
         given(orderTableRepository.getById(orderTableId))
             .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.singletonList(
-                new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null))))));
+                new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null))))));
 
         // when
         // then

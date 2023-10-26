@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MenuPriceTest {
+class PriceTest {
 
     @DisplayName("메뉴의 가격이 null 이면 예외가 발생한다.")
     @Test
@@ -14,7 +14,7 @@ class MenuPriceTest {
         // given
         // when
         // then
-        assertThatThrownBy(() -> new MenuPrice(null))
+        assertThatThrownBy(() -> new Price(null))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -24,7 +24,7 @@ class MenuPriceTest {
         // given
         // when
         // then
-        assertThatThrownBy(() -> new MenuPrice(BigDecimal.valueOf(-1000L)))
+        assertThatThrownBy(() -> new Price(BigDecimal.valueOf(-1000L)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

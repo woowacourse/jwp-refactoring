@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableIdRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
-import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -157,10 +157,10 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = List.of(
             new OrderTable(1L, 2, true, List.of(new Order(1L, OrderStatus.COOKING,
                                                           List.of(
-                                                              new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null))))),
+                                                              new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null))))),
             new OrderTable(2L, 2, true, List.of(new Order(1L, OrderStatus.COOKING,
                                                           List.of(
-                                                              new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))))
+                                                              new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))))
         );
         final TableGroup tableGroup = new TableGroup(1L, orderTables);
 

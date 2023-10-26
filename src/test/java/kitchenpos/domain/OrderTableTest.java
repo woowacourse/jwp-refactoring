@@ -15,7 +15,7 @@ class OrderTableTest {
     void changeEmpty() {
         // given
         final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
-            new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
+            new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))));
 
         // when
         orderTable.changeEmpty(true);
@@ -29,7 +29,7 @@ class OrderTableTest {
     void changeEmpty_failProceedingTable() {
         // given
         final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
-            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))));
 
         // when
         // then
@@ -41,11 +41,11 @@ class OrderTableTest {
     void addOrder() {
         // given
         final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
-            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))));
 
         // when
         final Order addedOrder = new Order(2L, OrderStatus.COOKING,
-                                           List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)));
+                                           List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)));
         orderTable.addOrder(addedOrder);
 
         // then
@@ -57,13 +57,13 @@ class OrderTableTest {
     void addOrder_failEmptyTable() {
         // given
         final OrderTable orderTable = new OrderTable(1L, 0, true, List.of(
-            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))));
 
         // when
         // then
         assertThatThrownBy(
             () -> orderTable.addOrder(
-                new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
+                new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))));
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경한다.")
@@ -71,7 +71,7 @@ class OrderTableTest {
     void changeNumberOfGuests() {
         // given
         final OrderTable orderTable = new OrderTable(1L, 1, false, List.of(
-            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))));
 
         // when
         final int changedNumberOfGuests = 5;
@@ -86,7 +86,7 @@ class OrderTableTest {
     void changeNumberOfGuests_failEmptyTable() {
         // given
         final OrderTable orderTable = new OrderTable(1L, 0, true, List.of(
-            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))));
 
         // when
         // then

@@ -20,7 +20,7 @@ class MenuTest {
         final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2));
 
         // then
-        assertThat(menu.getPrice()).isEqualTo(new MenuPrice(BigDecimal.valueOf(5000L)));
+        assertThat(menu.getPrice()).isEqualTo(new Price(BigDecimal.valueOf(5000L)));
     }
 
     @DisplayName("메뉴에 메뉴 상품을 등록한다.")

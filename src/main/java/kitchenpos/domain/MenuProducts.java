@@ -20,12 +20,12 @@ public class MenuProducts {
         this.menuProducts = menuProducts;
     }
 
-    public MenuPrice calculatePrice() {
+    public Price calculatePrice() {
         final BigDecimal result = menuProducts.stream()
             .map(MenuProduct::getPrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new MenuPrice(result);
+        return new Price(result);
     }
 
     public List<MenuProduct> getMenuProducts() {

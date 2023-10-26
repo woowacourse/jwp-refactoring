@@ -15,7 +15,7 @@ class OrderTest {
     void changeOrderStatus() {
         // given
         final Order order = new Order(1L, OrderStatus.COOKING,
-                                      List.of(new OrderLineItem(1L, 1L, "피자", new MenuPrice(BigDecimal.TEN), null)));
+                                      List.of(new OrderLineItem(1L, 1L, "피자", new Price(BigDecimal.TEN), null)));
 
         // when
         order.changeOrderStatus(OrderStatus.COMPLETION);
@@ -29,7 +29,7 @@ class OrderTest {
     void changeOrderStatus_failAlreadyCompletion() {
         // given
         final Order order = new Order(1L, OrderStatus.COMPLETION,
-                                      List.of(new OrderLineItem(1L, 1L, "피자", new MenuPrice(BigDecimal.TEN), null)));
+                                      List.of(new OrderLineItem(1L, 1L, "피자", new Price(BigDecimal.TEN), null)));
 
         // when
         // then

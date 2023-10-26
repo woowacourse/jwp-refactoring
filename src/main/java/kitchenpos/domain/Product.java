@@ -15,7 +15,7 @@ public class Product {
     private Long id;
     private String name;
     @Embedded
-    private MenuPrice price;
+    private Price price;
 
     protected Product() {
     }
@@ -23,7 +23,7 @@ public class Product {
     public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
-        this.price = new MenuPrice(price);
+        this.price = new Price(price);
     }
 
     public static Product forSave(final String name, final BigDecimal price) {
