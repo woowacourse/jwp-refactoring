@@ -38,6 +38,13 @@ public class MenuProduct {
         return product.getPrice().multiply(quantity);
     }
 
+    public void assignMenu(Menu menu) {
+        if (this.menu != null) {
+            throw new IllegalArgumentException("이미 메뉴가 할당된 상품입니다.");
+        }
+        this.menu = menu;
+    }
+
     public Long getId() {
         return id;
     }

@@ -41,9 +41,7 @@ public class Menu {
 
     public void addMenuProducts(List<MenuProduct> menuProducts) {
         for (MenuProduct menuProduct : menuProducts) {
-            if (menuProduct.getMenu().getId() != id) {
-                throw new IllegalArgumentException("해당 메뉴의 상품이 아닙니다.");
-            }
+            menuProduct.assignMenu(this);
             this.menuProducts.add(menuProduct);
         }
         validatePrice();

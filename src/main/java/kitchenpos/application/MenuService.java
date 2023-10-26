@@ -38,7 +38,7 @@ public class MenuService {
         MenuGroup menuGroup = findMenuGroup(request.getMenuGroupId());
         Menu menu = new Menu(null, request.getName(), new Price(request.getPrice()), menuGroup.getId(),
             new ArrayList<>());
-        menu.addMenuProducts(makeMenuProducts(menu, request.getMenuProducts()));
+        menu.addMenuProducts(makeMenuProducts(request.getMenuProducts()));
 
         return MenuResponse.of(menuRepository.save(menu));
     }
@@ -51,7 +51,7 @@ public class MenuService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
     }
 
-    private List<MenuProduct> makeMenuProducts(Menu menu, List<MenuProductCreateRequest> menuProducts) {
+    private List<MenuProduct> makeMenuProducts(List<MenuProductCreateRequest> menuProducts) {
         List<Product> products = menuProducts.stream()
             .map(req -> req.getProductId())
             .collect(collectingAndThen(toList(), productRepository::findAllByIdIn));
@@ -59,7 +59,7 @@ public class MenuService {
             throw new IllegalArgumentException("존재 하지 않는 상품이 있습니다.");
         }
         return products.stream()
-            .map(product -> new MenuProduct(null, product, menu, findQuantity(menuProducts, product.getId())))
+            .map(product -> new MenuProduct(null, product, null, findQuantity(menuProducts, product.getId())))
             .collect(toList());
     }
 

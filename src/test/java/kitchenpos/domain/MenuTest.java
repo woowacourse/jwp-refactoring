@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 class MenuTest {
 
     @Test
-    void 해당_메뉴의_상품이_아닌_것을_넣으면_예외() {
+    void 이미_메뉴에_등록된_메뉴_상품을_넣으면_예외() {
         // given
         Menu menu = new Menu(
             1L,
@@ -38,7 +38,7 @@ class MenuTest {
         // when && then
         Assertions.assertThatThrownBy(() -> menu.addMenuProducts(newMenuProducts))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("해당 메뉴의 상품이 아닙니다.");
+            .hasMessage("이미 메뉴가 할당된 상품입니다.");
     }
 
 }
