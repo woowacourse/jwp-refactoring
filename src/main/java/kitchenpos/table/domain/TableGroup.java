@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import kitchenpos.table.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -25,9 +24,8 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(mappedBy = "tableGroupId")
     private List<OrderTable> orderTables = new ArrayList<>();
-
 
     protected TableGroup() {
     }
@@ -65,7 +63,7 @@ public class TableGroup {
             final List<OrderTable> orderTables
     ) {
         orderTables.stream()
-                .filter(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup()))
+                .filter(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()))
                 .findAny()
                 .ifPresent(orderTable -> {
                     throw new IllegalArgumentException("orderTable 은 비어있어야 하고, 소속된 table group이 없어야 합니다.");
@@ -74,7 +72,7 @@ public class TableGroup {
 
     public void updateTableGroupInOrderTable(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
-        orderTables.forEach(orderTable -> orderTable.updateTableGroup(this));
+        orderTables.forEach(orderTable -> orderTable.updateTableGroup(id));
     }
 
     public void ungroup() {

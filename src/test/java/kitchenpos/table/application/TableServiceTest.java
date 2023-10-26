@@ -127,7 +127,7 @@ class TableServiceTest extends ServiceTest {
 
             TableGroup newTableGroup = new TableGroup(LocalDateTime.now(), List.of(savedOrderTable, savedOrderTable2));
             TableGroup savedTableGroup = tableGroupRepository.save(newTableGroup);
-            savedOrderTable.updateTableGroup(savedTableGroup);
+            savedOrderTable.updateTableGroup(savedTableGroup.getId());
 
             TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(false);
 

@@ -1,15 +1,12 @@
 package kitchenpos.table.domain;
 
 import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -18,9 +15,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column
+    private Long tableGroupId;
 
     @Embedded
     private NumberOfGuests numberOfGuests;
@@ -33,26 +29,26 @@ public class OrderTable {
 
     private OrderTable(
             final Long id,
-            final TableGroup tableGroup,
+            final Long tableGroupId,
             final NumberOfGuests numberOfGuests,
             final boolean empty
     ) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public OrderTable(
-            final TableGroup tableGroup,
+            final Long tableGroupId,
             final int numberOfGuests,
             final boolean empty
     ) {
-        this(null, tableGroup, new NumberOfGuests(numberOfGuests), empty);
+        this(null, tableGroupId, new NumberOfGuests(numberOfGuests), empty);
     }
 
-    public void updateTableGroup(final TableGroup group) {
-        this.tableGroup = group;
+    public void updateTableGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         this.empty = false;
     }
 
@@ -73,7 +69,7 @@ public class OrderTable {
     }
 
     private void validateTableGroup() {
-        if (Objects.nonNull(this.tableGroup)) {
+        if (Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException("이미 속해있는 table group이 있습니다.");
         }
     }
@@ -82,11 +78,8 @@ public class OrderTable {
         return id;
     }
 
-    public Optional<Long> getTableGroupId() {
-        if (tableGroup == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(tableGroup.getId());
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public NumberOfGuests getNumberOfGuests() {
@@ -95,9 +88,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
     }
 }

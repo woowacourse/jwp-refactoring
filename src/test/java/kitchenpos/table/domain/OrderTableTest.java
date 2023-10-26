@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -31,7 +29,7 @@ class OrderTableTest {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2));
 
         assertDoesNotThrow(
-                () -> orderTable.updateTableGroup(tableGroup)
+                () -> orderTable.updateTableGroup(tableGroup.getId())
         );
     }
 
@@ -76,10 +74,7 @@ class OrderTableTest {
 
     @Test
     void 테이블_그룹이_있는_테이블_상태_수정_시_예외_발생() {
-        final OrderTable orderTable = new OrderTable(null, 0, true);
-        final OrderTable orderTable2 = new OrderTable(null, 0, true);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2));
-        orderTable.updateTableGroup(tableGroup);
+        final OrderTable orderTable = new OrderTable(1L, 0, true);
 
         assertThatThrownBy(
                 () -> orderTable.updateEmpty(false)

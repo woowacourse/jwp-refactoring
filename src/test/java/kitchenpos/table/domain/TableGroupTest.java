@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -51,7 +49,7 @@ class TableGroupTest {
     @Test
     void 테이블_그룹_생성_시_테이블이_이미_속한_그룹이_있으면_예외_발생() {
         final OrderTable orderTable = new OrderTable(null, 0, true);
-        final OrderTable orderTable2 = new OrderTable(new TableGroup(), 0, true);
+        final OrderTable orderTable2 = new OrderTable(1L, 0, true);
 
         assertThatThrownBy(
                 () -> new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2))
@@ -65,7 +63,7 @@ class TableGroupTest {
         final OrderTable orderTable2 = new OrderTable(null, 0, true);
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2));
 
-        assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup);
+        assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroup.getId());
     }
 
     @Test
@@ -78,8 +76,8 @@ class TableGroupTest {
 
         assertSoftly(softly -> {
                     assertThat(tableGroup.getOrderTables()).isNull();
-                    assertThat(orderTable.getTableGroup()).isNull();
-                    assertThat(orderTable2.getTableGroup()).isNull();
+            assertThat(orderTable.getTableGroupId()).isNull();
+            assertThat(orderTable2.getTableGroupId()).isNull();
                 }
         );
     }

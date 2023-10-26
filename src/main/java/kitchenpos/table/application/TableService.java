@@ -1,10 +1,7 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.application.mapper.OrderTableMapper;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.OrderTableResponse;
@@ -19,15 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
     public TableService(
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderTableRepository orderTableRepository,
+            final OrderTableValidator orderTableValidator
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     public OrderTableResponse create(final TableCreateRequest request) {
@@ -49,19 +46,10 @@ public class TableService {
             final TableUpdateEmptyRequest request
     ) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
-        validateOrderStatus(orderTable);
+        orderTableValidator.validateOrderStatus(orderTable);
         orderTable.updateEmpty(request.isEmpty());
 
         return OrderTableMapper.toOrderTableResponse(orderTable);
-    }
-
-    private void validateOrderStatus(final OrderTable orderTable) {
-        final List<Long> orderTableIds = List.of(orderTable.getId());
-        final List<OrderStatus> statuses = Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, statuses)) {
-            throw new IllegalArgumentException("상태가 COOKING, MEAL인 주문이 존재합니다.");
-        }
     }
 
     public OrderTableResponse changeNumberOfGuests(
