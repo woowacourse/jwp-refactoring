@@ -2,14 +2,14 @@ package kitchenpos.ordertable.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.application.dto.OrderTableChangeGuestRequest;
 import kitchenpos.ordertable.application.dto.OrderTableChangeStatusRequest;
 import kitchenpos.ordertable.application.dto.OrderTableRequest;
 import kitchenpos.ordertable.application.dto.OrderTableResponse;
+import kitchenpos.ordertable.domain.OrderStatusCheckEvent;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -45,10 +45,7 @@ public class TableService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
         savedOrderTable.validateOrderTableHasTableGroupId();
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-            List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("요리중이거나 식사중인 주문 테이블은 상태를 변경할 수 없습니다.");
-        }
+        publisher.publishEvent(new OrderStatusCheckEvent(orderTableId));
         savedOrderTable.changeEmptyStatus(request.isEmpty());
         return OrderTableResponse.from(savedOrderTable);
     }

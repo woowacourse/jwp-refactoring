@@ -51,7 +51,7 @@ class TableServiceTest {
     @Test
     void create_orderTable() {
         // given
-        final OrderTableRequest request = new OrderTableRequest(5, true);
+        final OrderTableRequest request = new OrderTableRequest(5, false);
 
         // when
         final OrderTableResponse result = tableService.create(request);
