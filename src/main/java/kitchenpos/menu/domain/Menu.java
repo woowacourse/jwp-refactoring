@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.value.Price;
 
@@ -28,9 +27,8 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     @OneToMany(fetch = LAZY, mappedBy = "menuId")
     private List<MenuProduct> menuProducts;
@@ -41,12 +39,12 @@ public class Menu {
     public Menu(
             final String name,
             final Price price,
-            final MenuGroup menuGroup,
+            final Long menuGroupId,
             final List<MenuProduct> menuProducts
     ) {
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
@@ -54,16 +52,16 @@ public class Menu {
             final Long id,
             final String name,
             final Price price,
-            final MenuGroup menuGroup,
+            final Long menuGroupId,
             final List<MenuProduct> menuProducts
     ) {
-        this(name, price, menuGroup, menuProducts);
+        this(name, price, menuGroupId, menuProducts);
         this.id = id;
         this.menuProducts = menuProducts;
     }
 
     public static Menu of(final Menu menu, final List<MenuProduct> menuProducts) {
-        return new Menu(menu.id, menu.name, menu.price, menu.menuGroup, menuProducts);
+        return new Menu(menu.id, menu.name, menu.price, menu.menuGroupId, menuProducts);
     }
 
     public Long getId() {
@@ -82,8 +80,8 @@ public class Menu {
         return price.getPrice();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
