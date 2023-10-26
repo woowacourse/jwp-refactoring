@@ -13,9 +13,6 @@ import kitchenpos.menu.domain.MenuPrice;
 @Entity
 public class OrderLineItem {
 
-    private static final int MIN_QUANTITY = 1;
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -37,16 +34,6 @@ public class OrderLineItem {
         this.name = MenuName.from(name);
         this.price = MenuPrice.from(price);
         this.quantity = quantity;
-    }
-
-    private void validate(String name, BigDecimal price, Long quantity) {
-        validateQuantity(quantity);
-    }
-
-    private void validateQuantity(Long quantity) {
-        if (quantity < MIN_QUANTITY) {
-            throw new IllegalArgumentException("주문 메뉴의 수량은 1개 이상어이야 합니다.");
-        }
     }
 
     public static OrderLineItem create(String name, BigDecimal price, Long quantity) {
