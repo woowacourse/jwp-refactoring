@@ -45,7 +45,6 @@ public class OrderTableService {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         validateOrderStatusIsCookingAndMeal(orderTableId);
         savedOrderTable.updateEmpty(isEmpty);
-        orderTableRepository.save(savedOrderTable);
     }
 
     private void validateOrderStatusIsCookingAndMeal(Long orderTableId) {
