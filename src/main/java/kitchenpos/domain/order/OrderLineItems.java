@@ -18,7 +18,7 @@ public class OrderLineItems {
     public static final String MENU_AND_QUANTITY_SIZE_NOT_MATCH_ERROR_MESSAGE = "메뉴와 수량의 개수가 일치하지 않습니다.";
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = true)
     private List<OrderLineItem> orderLineItems;
 
     protected OrderLineItems() {
@@ -50,10 +50,6 @@ public class OrderLineItems {
         if (menuIds.size() != quantities.size()) {
             throw new IllegalArgumentException(MENU_AND_QUANTITY_SIZE_NOT_MATCH_ERROR_MESSAGE);
         }
-    }
-
-    public void setOrder(final Order order) {
-        orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(order));
     }
 
     public List<OrderLineItem> getOrderLineItems() {

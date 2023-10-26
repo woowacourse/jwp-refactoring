@@ -44,7 +44,6 @@ public class OrderService {
 
         final OrderTable orderTable = findOrderTable(request);
         final Order order = Order.of(orderTable, orderLineItems);
-        orderLineItems.setOrder(order);
         return OrderResponse.of(orderRepository.save(order));
     }
 
