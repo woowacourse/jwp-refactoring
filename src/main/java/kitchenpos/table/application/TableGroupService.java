@@ -11,7 +11,7 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.repository.TableGroupRepository;
-import kitchenpos.table.presentation.dto.CreateTableGroupRequest;
+import kitchenpos.table.presentation.dto.request.CreateTableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.common.annotation.ServiceTest;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.presentation.dto.CreateProductRequest;
+import kitchenpos.product.presentation.dto.request.CreateProductRequest;
 import kitchenpos.support.TestSupporter;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

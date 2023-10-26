@@ -1,4 +1,4 @@
-package kitchenpos.order.presentation.dto;
+package kitchenpos.order.presentation.dto.request;
 
 public class ChangeOrderStatusRequest {
 
