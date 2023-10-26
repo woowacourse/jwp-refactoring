@@ -1,8 +1,8 @@
 package kitchenpos.order.application;
 
-import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.order.dao.OrderedMenuDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -22,13 +22,13 @@ public class OrderService {
     private final ApplicationEventPublisher eventPublisher;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final MenuDao menuDao;
+    private final OrderedMenuDao orderedMenuDao;
 
-    public OrderService(ApplicationEventPublisher eventPublisher, OrderDao orderDao, OrderLineItemDao orderLineItemDao, MenuDao menuDao) {
+    public OrderService(ApplicationEventPublisher eventPublisher, OrderDao orderDao, OrderLineItemDao orderLineItemDao, OrderedMenuDao orderedMenuDao) {
         this.eventPublisher = eventPublisher;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.menuDao = menuDao;
+        this.orderedMenuDao = orderedMenuDao;
     }
 
     @Transactional
@@ -47,11 +47,11 @@ public class OrderService {
     private void validateMenu(Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
-        final List<Long> menuIds = orderLineItems.stream()
+        final List<Long> orderedMenuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != orderedMenuDao.countByIdIn(orderedMenuIds)) {
             throw new IllegalArgumentException();
         }
     }

@@ -64,6 +64,8 @@ class MenuServiceTest {
                 .willReturn(Optional.of(product));
         given(menuDao.save(any()))
                 .willReturn(menu);
+        given(menuDao.findById(any()))
+                .willReturn(Optional.of(menu));
         given(menuProductDao.save(any()))
                 .willReturn(menuProduct);
     }

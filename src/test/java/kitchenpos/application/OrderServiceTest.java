@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.order.dao.OrderedMenuDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -38,7 +38,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @MockBean
-    private MenuDao menuDao;
+    private OrderedMenuDao orderedMenuDao;
 
     @MockBean
     private OrderTableDao orderTableDao;
@@ -59,7 +59,7 @@ class OrderServiceTest {
 
         Order order = new Order(1L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
 
-        given(menuDao.countByIdIn(any()))
+        given(orderedMenuDao.countByIdIn(any()))
                 .willReturn((long) orderLineItems.size());
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.of(orderTable));
