@@ -30,6 +30,10 @@ public class MenuEntity {
                 menu.getMenuGroupId());
     }
 
+    public Menu toMenu() {
+        return new Menu(id, name, new Price(price), menuGroupId);
+    }
+
     public Menu toMenu(final List<MenuProduct> menuProducts) {
         return new Menu(id, name, new Price(price), menuGroupId, menuProducts);
     }

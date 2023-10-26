@@ -20,14 +20,15 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public Menu(final Long id, final String name, final Price price, final Long menuGroupId) {
+        this(id, name, price, menuGroupId, new ArrayList<>());
+    }
+
     public Menu(final String name, final Price price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(final Long id, final String name, final Price price, final Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
-    }
 
     public Long getId() {
         return id;

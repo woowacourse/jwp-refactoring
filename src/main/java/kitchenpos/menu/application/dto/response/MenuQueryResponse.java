@@ -26,7 +26,7 @@ public class MenuQueryResponse {
 
     public MenuQueryResponse() {
     }
- 
+
     public static MenuQueryResponse from(final Menu menu) {
         return new MenuQueryResponse(
                 menu.getId(),
@@ -35,7 +35,7 @@ public class MenuQueryResponse {
                 menu.getMenuGroupId(),
                 menu.getMenuProducts()
                         .stream()
-                        .map(MenuProductQueryResponse::from)
+                        .map(menuProduct -> MenuProductQueryResponse.from(menu.getId(), menuProduct))
                         .collect(Collectors.toList()));
     }
 

@@ -1,6 +1,7 @@
 package kitchenpos.menu.persistence;
 
 import kitchenpos.menu.application.entity.MenuEntity;
+import kitchenpos.menu.application.entity.MenuProductEntity;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuRepository;
@@ -32,10 +33,10 @@ public class MenuRepositoryImpl implements MenuRepository {
     private List<MenuProduct> saveMenuProducts(final Menu entity, final MenuEntity savedMenu) {
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : entity.getMenuProducts()) {
-            final MenuProduct savedMenuProduct = new MenuProduct(savedMenu.getId(),
+            final MenuProductEntity savedMenuProduct = new MenuProductEntity(savedMenu.getId(),
                     menuProduct.getProductId(), menuProduct.getQuantity());
 
-            savedMenuProducts.add(menuProductDao.save(savedMenuProduct));
+            savedMenuProducts.add(menuProductDao.save(savedMenuProduct).toMenuProduct());
         }
         return savedMenuProducts;
     }
@@ -44,7 +45,13 @@ public class MenuRepositoryImpl implements MenuRepository {
     public List<Menu> findAll() {
         return menuDao.findAll()
                 .stream()
-                .map(menu -> menu.toMenu(menuProductDao.findAllByMenuId(menu.getId())))
+                .map(menu -> {
+                    final List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId())
+                            .stream()
+                            .map(MenuProductEntity::toMenuProduct)
+                            .collect(Collectors.toList());
+                    return menu.toMenu(menuProducts);
+                })
                 .collect(Collectors.toList());
     }
 
