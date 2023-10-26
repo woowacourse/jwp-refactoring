@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Price;
-import kitchenpos.domain.product.Product;
+import kitchenpos.common.Price;
+import kitchenpos.product.Product;
 import kitchenpos.ui.dto.ProductRequest;
 
 import java.util.List;
