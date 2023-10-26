@@ -112,9 +112,11 @@ public abstract class RepositoryTest {
     }
 
     private TableGroup prepareTableGroup() {
+        OrderTable table1 = orderTableRepository.save(new OrderTable(null, null, 10, true));
+        OrderTable table2 = orderTableRepository.save(new OrderTable(null, null, 7, true));
         return tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), List.of(
-            new OrderTable(null, null, 10, true),
-            new OrderTable(null, null, 7, true)
+            table1,
+            table2
         )));
     }
 
