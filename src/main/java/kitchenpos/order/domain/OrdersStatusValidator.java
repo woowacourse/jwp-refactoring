@@ -24,8 +24,13 @@ public class OrdersStatusValidator implements OrderTablesValidator {
 
     public void validateUngroupAvailable(final Long orderTableId) {
         final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        if (!orders.stream().allMatch(Order::isCompleted)) {
-            throw new IllegalArgumentException("Cannot ungroup non-completed table.");
+        if (validateAllOrdersCompleted(orders)) {
+            return;
         }
+        throw new IllegalArgumentException("Cannot ungroup non-completed table.");
+    }
+
+    private boolean validateAllOrdersCompleted(final List<Order> orders) {
+        return orders.stream().allMatch(Order::isCompleted);
     }
 }
