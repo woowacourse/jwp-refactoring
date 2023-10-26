@@ -44,10 +44,10 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.getById(command.orderTableId());
         Order order = new Order(orderTable, COOKING);
 
-        List<OrderLineItemCreateCommand> orderLineItemCommands = command.createOrderLineItemRequests();
-        for (OrderLineItemCreateCommand orderLineItemRequest : orderLineItemCommands) {
-            Menu menu = menuRepository.getById(orderLineItemRequest.menuId());
-            OrderLineItem orderLineItem = new OrderLineItem(order, menu.id(), new Quantity(orderLineItemRequest.quantity()));
+        List<OrderLineItemCreateCommand> orderLineItemCommands = command.orderLineItemCreateCommands();
+        for (OrderLineItemCreateCommand orderLineItemCommand : orderLineItemCommands) {
+            Menu menu = menuRepository.getById(orderLineItemCommand.menuId());
+            OrderLineItem orderLineItem = new OrderLineItem(order, menu.id(), new Quantity(orderLineItemCommand.quantity()));
             orderLineItemRepository.save(orderLineItem);
         }
 
