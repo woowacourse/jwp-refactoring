@@ -40,6 +40,12 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public void validateChangeOrderStatus() {
+        if (OrderStatus.COMPLETION == this.orderStatus) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }

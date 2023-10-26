@@ -57,7 +57,7 @@ public class TableService {
             final Long orderTableId,
             final OrderTableChangeNumberOfGuestsRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
-        orderTable.validateChangeNumberOfGuests();
+        orderTable.validateIsEmpty();
         orderTable.updateNumberOfGuests(new OrderTableNumberOfGuests(request.getNumberOfGuests()));
         return convertToResponse(orderTable);
     }

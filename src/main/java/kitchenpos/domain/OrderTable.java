@@ -57,7 +57,7 @@ public class OrderTable {
         }
     }
 
-    public void validateChangeNumberOfGuests() {
+    public void validateIsEmpty() {
         if (empty) {
             throw new IllegalArgumentException();
         }
