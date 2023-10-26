@@ -1,40 +1,59 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderLineItem {
-    private Long seq;
-    private Long orderId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "seq")
+    private Long id;
+
     private Long menuId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Order order;
+
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public OrderLineItem() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public OrderLineItem(Long id, Long menuId, Order order, long quantity) {
+        this.id = id;
+        this.menuId = menuId;
+        this.order = order;
+        this.quantity = quantity;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public OrderLineItem assignOrder(Order order) {
+        if (this.order != null) {
+            throw new IllegalArgumentException("이미 해당 주문 상품은 주문에 포함되었습니다.");
+        }
+        this.order = order;
+        return this;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public Long getId() {
+        return id;
     }
 
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public Order getOrder() {
+        return order;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

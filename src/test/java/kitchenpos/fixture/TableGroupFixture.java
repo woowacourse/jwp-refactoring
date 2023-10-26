@@ -34,10 +34,13 @@ public final class TableGroupFixture {
     }
 
     public TableGroup build() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return new TableGroup(
+            id,
+            createdDate,
+            orderTables == null ? List.of(
+                new OrderTable(null, null, 100, true),
+                new OrderTable(null, null, 100, true))
+                : orderTables
+        );
     }
 }

@@ -46,12 +46,13 @@ public final class OrderFixture {
     }
 
     public Order build() {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
+        Order order = new Order(
+            id,
+            orderTableId,
+            orderStatus,
+            orderedTime,
+            orderLineItems
+        );
         return order;
     }
 }

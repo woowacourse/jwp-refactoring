@@ -1,13 +1,16 @@
 package kitchenpos.fixture;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public final class OrderTableFixture {
 
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
-    private boolean empty;
+    private boolean empty = true;
 
     private OrderTableFixture() {
     }
@@ -37,11 +40,14 @@ public final class OrderTableFixture {
     }
 
     public OrderTable build() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(
+            id,
+            tableGroupId == null ? null : new TableGroup(tableGroupId, LocalDateTime.now(), List.of(
+                OrderTableFixture.builder().build(),
+                OrderTableFixture.builder().build()
+            )),
+            numberOfGuests,
+            empty
+        );
     }
 }

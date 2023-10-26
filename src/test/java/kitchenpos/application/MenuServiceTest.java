@@ -4,24 +4,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -36,17 +41,29 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
-    @Mock
-    private MenuDao menuDao;
+    private static final Product PRODUCT_1000 = ProductFixture.builder()
+        .withName("1000상품")
+        .withId(1L)
+        .withPrice(1000L)
+        .build();
+
+    private static final Product PRODUCT_500 = ProductFixture.builder()
+        .withName("500상품")
+        .withId(2L)
+        .withPrice(500L)
+        .build();
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private ProductDao productDao;
+    private MenuProductRepository menuProductRepository;
+
+    @Mock
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -60,44 +77,48 @@ class MenuServiceTest {
             @Test
             void 메뉴_생성_시_가격이_음수라면_예외() {
                 // given
-                Menu menu = MenuFixture.builder()
-                    .withPrice(-1000L)
-                    .build();
+                MenuCreateRequest request = new MenuCreateRequest(null, BigDecimal.valueOf(-1000L), null,
+                    null);
 
                 // when && then
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
             }
 
             @Test
             void 메뉴_생성_시_가격을_보내지_않으면_예외() {
                 // given
-                Menu menu = MenuFixture.builder()
-                    .build();
+                MenuCreateRequest request = new MenuCreateRequest("상품", null, null,
+                    null);
 
                 // when && then
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
             }
 
             @Test
             void 메뉴_상품_가격의_총합이_메뉴의_가격보다_높으면_예외() {
                 // given
-                MenuCreateHelper menuCreateHelper = new MenuCreateHelper(1L, "menu", 1L);
-                menuCreateHelper.withMenuProduct(1L, "상품1", 1000L, 5L);
-                menuCreateHelper.withMenuProduct(1L, "상품2", 100L, 3L);
-                menuCreateHelper.price(5400L);
+                MenuCreateRequest request = new MenuCreateRequest(
+                    "상품",
+                    BigDecimal.valueOf(6600),
+                    1L,
+                    List.of(
+                        new MenuProductCreateRequest(1L, 5L),
+                        new MenuProductCreateRequest(2L, 3L))
+                );
 
-                given(menuGroupDao.existsById(anyLong()))
-                    .willReturn(true);
-                given(productDao.findById(anyLong()))
-                    .willReturn(
-                        Optional.of(menuCreateHelper.products.get(0)),
-                        Optional.of(menuCreateHelper.products.get(1))
-                    );
+                given(menuGroupRepository.findById(anyLong()))
+                    .willReturn(Optional.of(new MenuGroup(null, "menuGroup")));
+
+                given(productRepository.findAllByIdIn(anyList()))
+                    .willReturn(List.of(
+                        PRODUCT_1000,
+                        PRODUCT_500
+                    ));
 
                 // when && then
-                assertThatThrownBy(() -> menuService.create(menuCreateHelper.menu))
+                assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -105,71 +126,78 @@ class MenuServiceTest {
         @Test
         void 메뉴_그룹이_저장된_메뉴_그룹이_아니면_예외() {
             // given
-            long nonExistentMenuGroupId = 1L;
-            Menu menu = MenuFixture.builder()
-                .withPrice(1000L)
-                .withMenuGroupId(nonExistentMenuGroupId)
-                .build();
+            MenuCreateRequest request = new MenuCreateRequest(
+                "상",
+                BigDecimal.valueOf(5400),
+                1L,
+                List.of(new MenuProductCreateRequest(1L, 5L)));
 
-            given(menuGroupDao.existsById(nonExistentMenuGroupId))
-                .willReturn(false);
+            given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
 
             // when && then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 존재하지_않는_상품을_메뉴_상품에_넣으면_예외() {
             // given
-            Menu menu = MenuFixture.builder()
-                .withPrice(1000L)
-                .withMenuGroupId(1L)
-                .withMenuProducts(
-                    List.of(
-                        MenuProductFixture.builder()
-                            .withProductId(1L)
-                            .build())
-                )
-                .build();
+            MenuCreateRequest request = new MenuCreateRequest(
+                "상품",
+                BigDecimal.valueOf(5400),
+                1L,
+                List.of(new MenuProductCreateRequest(1L, 5L)));
 
-            given(menuGroupDao.existsById(anyLong()))
-                .willReturn(true);
-            given(productDao.findById(anyLong()))
-                .willReturn(Optional.empty());
+            given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(null, "menuGroup")));
+            given(productRepository.findAllByIdIn(anyList()))
+                .willReturn(Collections.emptyList());
 
             // when && then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 생성_완료() {
-            // given
+            String menuName = "name";
+            BigDecimal menuPrice = BigDecimal.valueOf(5400);
             long menuGroupId = 1L;
-            long menuId = 1L;
-            MenuCreateHelper menuCreateHelper = new MenuCreateHelper(menuId, "menu", menuGroupId);
-            menuCreateHelper.withMenuProduct(1L, "상품1", 1000L, 5L);
-            menuCreateHelper.withMenuProduct(1L, "상품2", 100L, 3L);
-            menuCreateHelper.price(5300L);
+            MenuProductCreateRequest firstMenuProductRequest = new MenuProductCreateRequest(1L, 5L);
+            MenuProductCreateRequest secondMenuProductRequest = new MenuProductCreateRequest(2L, 3L);
+            MenuCreateRequest request = new MenuCreateRequest(
+                menuName,
+                menuPrice,
+                menuGroupId,
+                List.of(
+                    firstMenuProductRequest,
+                    secondMenuProductRequest)
+            );
 
-            given(menuGroupDao.existsById(anyLong()))
-                .willReturn(true);
-            List<Product> products = menuCreateHelper.products;
-            given(productDao.findById(anyLong()))
-                .willReturn(
-                    Optional.of(products.get(0)),
-                    Optional.of(products.get(1))
-                );
-            Menu menu = menuCreateHelper.menu;
-            List<MenuProduct> menuProducts = menu.getMenuProducts();
-            given(menuDao.save(any()))
+            given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(null, "menuGroup")));
+            given(productRepository.findAllByIdIn(anyList()))
+                .willReturn(List.of(
+                    PRODUCT_1000,
+                    PRODUCT_500
+                ));
+
+            Long menuId = 1L;
+            Menu menu = new Menu(
+                menuId,
+                menuName,
+                new Price(menuPrice),
+                menuGroupId,
+                List.of(
+                    new MenuProduct(1L, PRODUCT_1000, null, 5),
+                    new MenuProduct(2L, PRODUCT_500, null, 3))
+            );
+            given(menuRepository.save(any()))
                 .willReturn(menu);
-            given(menuProductDao.save(any()))
-                .willReturn(menuProducts.get(0), menuProducts.get(1));
 
             // when
-            Menu actual = menuService.create(menu);
+            MenuResponse actual = menuService.create(request);
 
             // then
             assertSoftly(softAssertions -> {
@@ -180,53 +208,33 @@ class MenuServiceTest {
             });
         }
 
-        private class MenuCreateHelper {
-
-            private Menu menu;
-            private List<Product> products = new ArrayList<>();
-
-            public MenuCreateHelper(Long menuId, String name, Long menuGroupId) {
-                this.menu = new Menu(menuId, name, null, menuGroupId, new ArrayList<>());
-            }
-
-            public MenuProduct withMenuProduct(Long productId, String name, Long price, Long quantity) {
-                Product product = new Product(productId, name, BigDecimal.valueOf(price));
-                products.add(product);
-                List<MenuProduct> menuProducts = menu.getMenuProducts();
-                MenuProduct newMenuProduct = new MenuProduct(menuProducts.size() + 1L, menu.getId(), productId, quantity);
-                menuProducts.add(newMenuProduct);
-                menu.setMenuProducts(menuProducts);
-                return newMenuProduct;
-            }
-
-            public Menu price(Long price){
-                this.menu.setPrice(BigDecimal.valueOf(price));
-                return menu;
-            }
-        }
     }
 
     @Test
     void 메뉴_목록_검색() {
         // given
-        MenuProduct firstMenuProduct = MenuProductFixture.builder().build();
-        MenuProduct secondMenuProduct = MenuProductFixture.builder().build();
+        long menuId = 1L;
+        MenuProduct firstMenuProduct = MenuProductFixture.builder()
+            .withMenuId(menuId)
+            .build();
+        MenuProduct secondMenuProduct = MenuProductFixture.builder()
+            .withMenuId(menuId)
+            .build();
 
         List<MenuProduct> ofFirstMenu = List.of(firstMenuProduct, secondMenuProduct);
         Menu menu = MenuFixture.builder()
-            .withId(1L)
-            .withMenuProducts(ofFirstMenu)
+            .withId(menuId)
+            .withName("상품")
+            .withPrice(0L)
             .build();
 
-        given(menuDao.findAll())
+        given(menuRepository.findAll())
             .willReturn(List.of(menu));
-        given(menuProductDao.findAllByMenuId(anyLong()))
-            .willReturn(ofFirstMenu);
 
         // when
-        List<Menu> actual = menuService.list();
+        List<MenuResponse> actual = menuService.list();
 
         // then
-        assertThat(actual).isEqualTo(List.of(menu));
+        assertThat(actual).hasSize(1);
     }
 }
