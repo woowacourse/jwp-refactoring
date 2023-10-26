@@ -20,8 +20,8 @@ public class OrderLineItemQueryResponse {
     public OrderLineItemQueryResponse() {
     }
 
-    public static OrderLineItemQueryResponse from(final OrderLineItem orderLineItem) {
-        return new OrderLineItemQueryResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(),
+    public static OrderLineItemQueryResponse of(final Long orderId, final OrderLineItem orderLineItem) {
+        return new OrderLineItemQueryResponse(orderLineItem.getSeq(), orderId,
                 orderLineItem.getMenuId(), orderLineItem.getQuantity());
     }
 

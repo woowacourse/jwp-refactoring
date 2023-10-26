@@ -1,6 +1,7 @@
 package kitchenpos.order.persistence;
 
 import kitchenpos.order.application.entity.OrderEntity;
+import kitchenpos.order.application.entity.OrderLineItemEntity;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
@@ -26,19 +27,19 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Order save(final Order entity) {
-        final Order savedOrder = orderDao.save(OrderEntity.from(entity)).toOrder();
+        final OrderEntity savedOrder = orderDao.save(OrderEntity.from(entity));
 
         final OrderLineItems savedOrderLineItems = saveOrderLineItems(entity, savedOrder);
-        return new Order(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus(),
-                savedOrder.getOrderedTime(), savedOrderLineItems);
+        return savedOrder.toOrder(savedOrderLineItems);
     }
 
-    private OrderLineItems saveOrderLineItems(final Order entity, final Order savedOrder) {
+    private OrderLineItems saveOrderLineItems(final Order entity, final OrderEntity savedOrder) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : entity.getOrderLineItems().getOrderLineItems()) {
-            savedOrderLineItems.add(orderLineItemDao.save(
-                    new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(),
-                            orderLineItem.getQuantity())));
+            savedOrderLineItems.add(
+                    orderLineItemDao.save(OrderLineItemEntity.of(savedOrder.getId(), new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(),
+                            orderLineItem.getQuantity()))
+                    ).toOrderLineItem());
         }
         return new OrderLineItems(savedOrderLineItems);
     }
@@ -57,9 +58,12 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         final List<Order> result = new ArrayList<>();
         for (final Order order : orders) {
+            final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId())
+                    .stream()
+                    .map(OrderLineItemEntity::toOrderLineItem)
+                    .collect(Collectors.toList());
             result.add(new Order(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
-                    order.getOrderedTime(),
-                    new OrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()))));
+                    order.getOrderedTime(), new OrderLineItems(orderLineItems)));
         }
 
         return result;

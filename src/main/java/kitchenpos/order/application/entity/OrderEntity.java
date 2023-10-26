@@ -1,6 +1,7 @@
 package kitchenpos.order.application.entity;
 
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,10 @@ public class OrderEntity {
 
     public Order toOrder() {
         return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime);
+    }
+
+    public Order toOrder(final OrderLineItems orderLineItems) {
+        return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime, orderLineItems);
     }
 
     public Long getId() {
