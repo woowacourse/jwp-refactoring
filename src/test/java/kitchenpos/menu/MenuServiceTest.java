@@ -1,6 +1,7 @@
 package kitchenpos.menu;
 
 import kitchenpos.ServiceTestHelper;
+import kitchenpos.menugroup.MenuGroup;
 import kitchenpos.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

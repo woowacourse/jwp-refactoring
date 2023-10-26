@@ -1,4 +1,4 @@
-package kitchenpos.menu;
+package kitchenpos.menugroup;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
