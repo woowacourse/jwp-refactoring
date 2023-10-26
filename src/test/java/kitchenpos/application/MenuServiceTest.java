@@ -84,13 +84,13 @@ class MenuServiceTest {
     }
 
     @Test
-    void 메뉴_상품들의_가격의_합이_메뉴_가격과_같지_않으면_예외_발생한다() {
+    void 메뉴_상품들의_가격의_합이_메뉴_가격보다_크면_예외_발생한다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(MENU_GROUP1);
         Product product = productRepository.save(PRODUCT_1);
 
         MenuCreateRequest menu =
-                new MenuCreateRequest("치킨메뉴", new BigDecimal("30000.00"),
+                new MenuCreateRequest("치킨메뉴", new BigDecimal("33000.00"),
                         menuGroup.getId(), List.of(new MenuProductCreateRequest(1L, 2)));
 
         // when, then

@@ -34,6 +34,7 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -50,14 +51,14 @@ public class Menu {
         menuProducts.add(menuProduct);
     }
 
-    public void validatePrice() {
+    private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
     public void checkProductPriceSumEqualsPrice(BigDecimal sum) {
-        if (price.compareTo(sum) != 0) {
+        if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
     }

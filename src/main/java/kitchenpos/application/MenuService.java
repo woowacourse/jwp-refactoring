@@ -6,7 +6,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.request.MenuCreateRequest;
@@ -24,13 +23,11 @@ public class MenuService {
 
     private MenuRepository menuRepository;
     private MenuGroupRepository menuGroupRepository;
-    private MenuProductRepository menuProductRepository;
     private ProductRepository productRepository;
 
-    public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository, MenuProductRepository menuProductRepository, ProductRepository productRepository) {
+    public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
@@ -38,9 +35,7 @@ public class MenuService {
         MenuGroup menuGroup = getMenugroup(menuCreateRequest);
 
         Menu menu = new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuGroup, new ArrayList<>());
-
-        menu.validatePrice();
-
+        
         MenuProducts menuProducts = getMenuProducts(menuCreateRequest);
 
         menu.checkProductPriceSumEqualsPrice(menuProducts.calculateSum());
