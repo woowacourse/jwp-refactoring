@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -48,9 +49,10 @@ public class OrderService {
     private void saveOrderLineItems(final List<Long> menuIds, final List<Integer> quantities, final Order order) {
         for (int index = 0; index < menuIds.size(); index++) {
             final Long menuId = menuIds.get(index);
+            final Menu menu = menuRepository.getById(menuId);
             final Integer quantity = quantities.get(index);
 
-            order.addOrderLineItem(new OrderLineItem(order, menuId, quantity));
+            order.addOrderLineItem(new OrderLineItem(order, menu.getName(), menu.getPrice(), quantity));
         }
     }
 

@@ -40,6 +40,14 @@ public class Menu {
         return name;
     }
 
+    public MenuPrice getPrice() {
+        return price;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
     public void addMenuProduct(MenuProduct menuProduct) {
         this.menuProducts.add(menuProduct);
     }
