@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.support.NamedParameterJdbcDataAccessor;
+import kitchenpos.infrastructure.NamedParameterJdbcDataAccessor;
 import kitchenpos.tablegroup.persistence.TableGroupDataAccessor;
 import kitchenpos.tablegroup.persistence.dto.TableGroupDataDto;
 import org.springframework.dao.EmptyResultDataAccessException;

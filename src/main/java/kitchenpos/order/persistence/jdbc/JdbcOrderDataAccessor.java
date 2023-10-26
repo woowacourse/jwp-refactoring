@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
+import kitchenpos.infrastructure.NamedParameterJdbcDataAccessor;
 import kitchenpos.order.persistence.OrderDataAccessor;
 import kitchenpos.order.persistence.dto.OrderDataDto;
-import kitchenpos.support.NamedParameterJdbcDataAccessor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -69,7 +69,7 @@ public class JdbcOrderDataAccessor extends NamedParameterJdbcDataAccessor implem
     @Override
     public List<OrderDataDto> findAll() {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
-        return jdbcTemplate.query(sql, ORDER_DATA_DTO_ROW_MAPPER);
+        return namedParameterJdbcTemplate.query(sql, ORDER_DATA_DTO_ROW_MAPPER);
     }
 
     @Override

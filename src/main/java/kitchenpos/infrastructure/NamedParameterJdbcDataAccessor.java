@@ -1,4 +1,4 @@
-package kitchenpos.support;
+package kitchenpos.infrastructure;
 
 import javax.sql.DataSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
