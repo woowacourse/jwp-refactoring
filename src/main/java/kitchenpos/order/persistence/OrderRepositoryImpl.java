@@ -46,7 +46,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Optional<Order> findById(final Long id) {
-        return orderDao.findById(id).map(OrderEntity::toOrder);
+        final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(id)
+                .stream()
+                .map(OrderLineItemEntity::toOrderLineItem)
+                .collect(Collectors.toList());
+        return orderDao.findById(id).map(orderEntity -> orderEntity.toOrder(new OrderLineItems(orderLineItems)));
     }
 
     @Override
