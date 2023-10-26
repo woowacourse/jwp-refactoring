@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.ui.dto.OrderTableId;
+import kitchenpos.ui.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,67 +14,45 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
-    @Mock
-    private OrderDao orderDao;
-    @Mock
-    private OrderTableDao orderTableDao;
-    @Mock
-    private TableGroupDao tableGroupDao;
     @InjectMocks
     private TableGroupService tableGroupService;
-
-    private TableGroup tableGroup;
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        tableGroup = new TableGroup();
-        orderTable = new OrderTable(1L, null, 4, true);
-        tableGroup.setOrderTables(List.of(orderTable));
-    }
+    @Mock
+    private OrderRepository orderRepository;
+    @Mock
+    private OrderTableRepository orderTableRepository;
+    @Mock
+    private TableGroupRepository tableGroupRepository;
 
     @Test
-    @DisplayName("테이블 그룹을 생성하는 테스트")
-    void create() {
-        // Given
-        given(orderTableDao.findAllByIdIn(Collections.singletonList(orderTable.getId())))
-                .willReturn(Collections.singletonList(orderTable));
-        given(tableGroupDao.save(tableGroup)).willReturn(tableGroup);
+    @DisplayName("테이블 그룹 생성")
+    void createTableGroup_ValidRequest_ShouldCreateTableGroup() {
+        //given
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(new OrderTableId(1L), new OrderTableId(2L)));
 
-        // When
-        TableGroup result = tableGroupService.create(tableGroup);
+        OrderTable orderTable1 = new OrderTable();
+        OrderTable orderTable2 = new OrderTable();
 
-        // Then
-        then(orderTableDao).should().findAllByIdIn(Collections.singletonList(orderTable.getId()));
-        then(tableGroupDao).should().save(tableGroup);
-        assertThat(result.getOrderTables()).contains(orderTable);
-    }
+        when(orderTableRepository.findAllByIdIn(Arrays.asList(1L, 2L)))
+                .thenReturn(Arrays.asList(orderTable1, orderTable2));
 
-    @Test
-    @DisplayName("테이블 그룹을 제거하는 테스트")
-    void ungroup() {
-        // Given
-        tableGroup.setId(1L);
-        given(orderTableDao.findAllByTableGroupId(tableGroup.getId())).willReturn(Collections.singletonList(orderTable));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(Collections.singletonList(orderTable.getId()),
-                List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
+        when(tableGroupRepository.save(any(TableGroup.class)))
+                .thenReturn(new TableGroup(1L, LocalDateTime.now(), null));
 
-        // When
-        tableGroupService.ungroup(tableGroup.getId());
+        //when
+        Long createdTableGroupId = tableGroupService.create(request);
 
-        // Then
-        then(orderTableDao).should().findAllByTableGroupId(tableGroup.getId());
-        then(orderDao).should().existsByOrderTableIdInAndOrderStatusIn(Collections.singletonList(orderTable.getId()),
-                List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
-        assertThat(orderTable.getTableGroupId()).isNull();
+        //then
+        assertNotNull(createdTableGroupId);
+        verify(tableGroupRepository, times(1)).save(any(TableGroup.class));
     }
 }

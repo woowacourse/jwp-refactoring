@@ -1,13 +1,20 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import kitchenpos.domain.Menu;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderStatusRequest;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,104 +22,83 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Mock
-    private OrderLineItemDao orderLineItemDao;
-    @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Test
-    @DisplayName("주문 생성 성공")
-    void create() {
-        //given
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
-        final Order order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of(orderLineItem));
+    @DisplayName("주문한다.")
+    void testCreateOrder() {
+        // given
+        long expectedOrderId = 1L;
+        OrderCreateRequest request = new OrderCreateRequest(1L, Arrays.asList(
+                new OrderLineItemRequest(1L, 1L),
+                new OrderLineItemRequest(2L, 2L)
+        ));
+        OrderTable orderTable = mock(OrderTable.class);
+        Menu menu1 = mock(Menu.class);
+        Menu menu2 = mock(Menu.class);
+        Order order = mock(Order.class);
 
-        given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(orderTableDao.findById(1L)).willReturn(Optional.of(new OrderTable(1L, null, 2, false)));
-        given(orderDao.save(any())).willReturn(order);
-        given(orderLineItemDao.save(any())).willReturn(orderLineItem);
+        given(menu1.getId()).willReturn(1L);
+        given(menu2.getId()).willReturn(2L);
+        given(orderTableRepository.getById(anyLong())).willReturn(orderTable);
+        given(menuRepository.findByIdIn(anyList())).willReturn(List.of(menu1, menu2));
+        given(order.getId()).willReturn(expectedOrderId);
+        given(orderRepository.save(any(Order.class))).willReturn(order);
 
-        //when
-        final Order result = orderService.create(order);
+        // when
+        Long result = orderService.order(request);
 
-        //then
-        assertThat(result).isNotNull();
-        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-    }
-
-    @Test
-    @DisplayName("모든 주문 조회")
-    void list_size_1() {
-        //given
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
-        final Order order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of(orderLineItem));
-
-        given(orderDao.findAll()).willReturn(List.of(order));
-        given(orderLineItemDao.findAllByOrderId(1L)).willReturn(List.of(orderLineItem));
-
-        //when
-        final List<Order> result = orderService.list();
-
-        //then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-    }
-
-    @Test
-    @DisplayName("모든 주문 조회")
-    void list_size_2() {
-        //given
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L, 1L, 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2L, 2L, 2);
-
-        final Order order1 = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of(orderLineItem1));
-        final Order order2 = new Order(2L, 2L, OrderStatus.MEAL.name(), LocalDateTime.now().minusHours(1), List.of(orderLineItem2));
-
-        given(orderDao.findAll()).willReturn(List.of(order1, order2));
-        given(orderLineItemDao.findAllByOrderId(1L)).willReturn(List.of(orderLineItem1));
-        given(orderLineItemDao.findAllByOrderId(2L)).willReturn(List.of(orderLineItem2));
-
-        //when
-        final List<Order> result = orderService.list();
-
-        //then
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0).getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-        assertThat(result.get(1).getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
-        assertThat(result.get(0).getOrderLineItems()).hasSize(1);
-        assertThat(result.get(1).getOrderLineItems()).hasSize(1);
+        // then
+        assertThat(result).isEqualTo(expectedOrderId);
+        verify(orderTableRepository).getById(anyLong());
+        verify(menuRepository).findByIdIn(anyList());
+        verify(orderRepository).save(any(Order.class));
     }
 
 
     @Test
-    @DisplayName("주문 상태 변경")
-    void changeOrderStatus() {
-        //given
-        final Order order = new Order(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), null);
-        given(orderDao.findById(1L)).willReturn(Optional.of(new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), null)));
-        given(orderDao.save(any())).willReturn(order);
+    @DisplayName("주문를 조회한다.")
+    void testFindAllOrders() {
+        // given
+        Order order1 = new Order();
+        Order order2 = new Order();
+        given(orderRepository.findAll()).willReturn(Arrays.asList(order1, order2));
 
-        //when
-        final Order result = orderService.changeOrderStatus(1L, order);
+        // when
+        List<OrderResponse> results = orderService.findAll();
 
-        //then
-        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        // then
+        assertEquals(2, results.size());
+        verify(orderRepository).findAll();
     }
 
+    @Test
+    @DisplayName("주문의 상태를 변경한다.")
+    void testChangeOrderStatus() {
+        // given
+        Long orderId = 1L;
+        final OrderStatusRequest orderStatusRequest = new OrderStatusRequest(COOKING);
+        Order savedOrder = mock(Order.class);
+
+        given(orderRepository.getById(anyLong())).willReturn(savedOrder);
+
+        // when
+        OrderResponse result = orderService.changeOrderStatus(orderId, orderStatusRequest);
+
+        // then
+        assertNotNull(result);
+        verify(savedOrder).updateOrderStatus(orderStatusRequest.getOrderStatus());
+    }
 }

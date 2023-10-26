@@ -1,98 +1,59 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderTableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
 class TableServiceTest {
-    @Mock
-    private OrderDao orderDao;
-    @Mock
-    private OrderTableDao orderTableDao;
-    @InjectMocks
+
+    @Autowired
     private TableService tableService;
 
-    private OrderTable orderTable;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @BeforeEach
-    void setUp() {
-        orderTable = new OrderTable(1L, null, 4, true);
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Test
+    @DisplayName("테이블을 생성한다.")
+    void createTable() {
+        //given
+        OrderTableCreateRequest request = new OrderTableCreateRequest(4, true);
+
+        //when
+        Long createdTableId = tableService.create(request);
+        OrderTable savedTable = orderTableRepository.findById(createdTableId).get();
+
+        //then
+        assertThat(createdTableId).isNotNull();
+        assertThat(savedTable).isNotNull();
+        assertThat(savedTable.getNumberOfGuests()).isEqualTo(4);
+        assertThat(savedTable.isEmpty()).isTrue();
     }
 
     @Test
-    @DisplayName("테이블을 만드는 테스트")
-    void create() {
-        // Given
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(orderTable);
+    @DisplayName("테이블의 인원수변경할 때 잘못된 숫자를 입력 시 예외")
+    void changeNumberOfGuests_InvalidRequest_ShouldThrowException() {
+        //given
+        OrderTableCreateRequest request = new OrderTableCreateRequest(4, true);
+        Long tableId = tableService.create(request);
 
-        // When
-        OrderTable result = tableService.create(orderTable);
-
-        // Then
-        then(orderTableDao).should().save(any(OrderTable.class));
-        assertThat(result).isEqualTo(orderTable);
-    }
-
-    @Test
-    @DisplayName("테이블을 조회하는 테스트")
-    void list() {
-        // Given
-        given(orderTableDao.findAll()).willReturn(List.of(orderTable));
-
-        // When
-        List<OrderTable> result = tableService.list();
-
-        // Then
-        then(orderTableDao).should().findAll();
-        assertThat(result).containsExactly(orderTable);
-    }
-
-    @Test
-    @DisplayName("테이블을 비워주는 테스트")
-    void changeEmpty() {
-        // Given
-        given(orderTableDao.findById(orderTable.getId())).willReturn(Optional.of(orderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(),
-                List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
-
-        // When
-        OrderTable result = tableService.changeEmpty(orderTable.getId(), orderTable);
-
-        // Then
-        then(orderTableDao).should().findById(orderTable.getId());
-        then(orderDao).should().existsByOrderTableIdAndOrderStatusIn(orderTable.getId(),
-                List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
-        assertThat(result.isEmpty()).isTrue();
-    }
-
-    @Test
-    @DisplayName("테이블의 인원수를 바꿔주는 테스트")
-    void changeNumberOfGuests() {
-        // Given
-        given(orderTableDao.findById(orderTable.getId())).willReturn(Optional.of(orderTable));
-
-        // When
-        OrderTable result = tableService.changeNumberOfGuests(orderTable.getId(), orderTable);
-
-        // Then
-        then(orderTableDao).should().findById(orderTable.getId());
-        assertThat(result.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+        //when
+        //then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, -1))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

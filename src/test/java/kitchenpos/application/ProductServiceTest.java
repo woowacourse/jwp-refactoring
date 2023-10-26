@@ -1,63 +1,59 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.ui.dto.ProductCreateRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.assertj.core.api.Assertions.assertThat;
 
-
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
 class ProductServiceTest {
-    @Mock
-    private ProductDao productDao;
-    @InjectMocks
+
+    @Autowired
     private ProductService productService;
 
-    private Product product;
+    @Autowired
+    private ProductRepository productRepository;
 
-    @BeforeEach
-    void setUp() {
-        product = new Product(1L, "강정치킨", BigDecimal.valueOf(17000));
+    @Test
+    @DisplayName("제품을 생성하고 ID를 반환한다.")
+    void createProduct() {
+        // Given
+        ProductCreateRequest request = new ProductCreateRequest("강정치킨", new BigDecimal("17000"));
+
+        // When
+        Long productId = productService.create(request);
+
+        // Then
+        assertThat(productId).isNotNull();
+        final Product product = productRepository.findById(productId).get();
+        assertThat(product.getName()).isEqualTo("강정치킨");
+        assertThat(product.getPrice()).isEqualTo(new BigDecimal("17000"));
     }
 
     @Test
-    @DisplayName("상품을 만드는 테스트")
-    void create() {
+    @DisplayName("모든 제품을 조회한다.")
+    void findAllProducts() {
         // Given
-        given(productDao.save(product)).willReturn(product);
+        productService.create(new ProductCreateRequest("제품1", new BigDecimal("1000")));
+        productService.create(new ProductCreateRequest("제품2", new BigDecimal("2000")));
 
         // When
-        Product savedProduct = productService.create(product);
+        List<ProductResponse> products = productService.findAll();
 
         // Then
-        then(productDao).should().save(product);
-        assertThat(savedProduct).isEqualTo(product);
-    }
-
-    @Test
-    @DisplayName("상품을 불러오는 테스트")
-    void list() {
-        // Given
-        given(productDao.findAll()).willReturn(List.of(product));
-
-        // When
-        List<Product> products = productService.list();
-
-        // Then
-        then(productDao).should().findAll();
-        assertThat(products).hasSize(1);
-        assertThat(products).contains(product);
+        assertThat(products).hasSize(8);
+        assertThat(products.stream().anyMatch(product -> product.getName().equals("제품1"))).isTrue();
+        assertThat(products.stream().anyMatch(product -> product.getName().equals("제품2"))).isTrue();
     }
 }
