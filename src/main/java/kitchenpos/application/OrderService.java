@@ -65,16 +65,16 @@ public class OrderService {
     }
 
     private List<OrderLineItem> convertToOrderLineItem(final OrderRequest orderRequest) {
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         for (final OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
             final Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                                             .orElseThrow(() -> new NotFoundMenuException("해당 메뉴가 존재하지 않습니다."));
             final OrderLineItem orderLineItem = orderLineItemDto.toEntity(menu);
-            savedOrderLineItems.add(orderLineItem);
+            orderLineItems.add(orderLineItem);
         }
 
-        return savedOrderLineItems;
+        return orderLineItems;
     }
 
     private List<Long> convertToIds(final List<OrderLineItemDto> orderLineItemDtos) {

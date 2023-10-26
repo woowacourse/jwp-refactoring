@@ -49,13 +49,21 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTableDtos.stream()
                                                        .map(OrderTableDto::getId)
                                                        .collect(Collectors.toList());
-        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        final List<OrderTable> orderTables = findAllOrderTables(orderTableDtos, orderTableIds);
 
+        return orderTables;
+    }
+
+    private List<OrderTable> findAllOrderTables(final List<OrderTableDto> orderTableDtos, final List<Long> orderTableIds) {
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateOrderTables(orderTableDtos, orderTables);
+        return orderTables;
+    }
+
+    private static void validateOrderTables(final List<OrderTableDto> orderTableDtos, final List<OrderTable> orderTables) {
         if (orderTables.size() != orderTableDtos.size()) {
             throw new NotFoundOrderTableException("존재하지 않는 주문 테이블이 있습니다.");
         }
-
-        return orderTables;
     }
 
     @Transactional

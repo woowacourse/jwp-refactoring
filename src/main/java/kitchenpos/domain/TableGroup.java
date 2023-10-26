@@ -49,9 +49,13 @@ public class TableGroup {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-                throw new InvalidOrderTableToTableGroup("주문 테이블이 테이블 그룹을 만들 수 없는 상태입니다.");
-            }
+            validateOrderTableHasTableGroup(orderTable);
+        }
+    }
+
+    private static void validateOrderTableHasTableGroup(final OrderTable orderTable) {
+        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            throw new InvalidOrderTableToTableGroup("주문 테이블이 테이블 그룹을 만들 수 없는 상태입니다.");
         }
     }
 

@@ -53,8 +53,8 @@ public class TableService {
         final OrderTable orderTable =
                 orderTableRepository.findById(orderTableId)
                                     .orElseThrow(() -> new NotFoundOrderTableException("해당 주문 테이블이 존재하지 않습니다."));
-
         validateOrder(orderTableId, orderTable);
+
         orderTable.updateEmpty(changeEmtpyRequest.isEmpty());
 
         return OrderTableResponse.from(orderTable);

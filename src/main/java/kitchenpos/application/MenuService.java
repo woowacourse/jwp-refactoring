@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
@@ -53,7 +54,7 @@ public class MenuService {
     }
 
     private List<MenuProduct> convertToMenuProducts(final List<MenuProductDto> menuProductDtos) {
-        final Map<Long, Product> products = findAllProduct(menuProductDtos);
+        final Map<Long, Product> products = findAllProducts(menuProductDtos);
 
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductDto menuProductDto : menuProductDtos) {
@@ -64,18 +65,27 @@ public class MenuService {
         return menuProducts;
     }
 
-    private Map<Long, Product> findAllProduct(final List<MenuProductDto> menuProductDtos) {
+    private Map<Long, Product> findAllProducts(final List<MenuProductDto> menuProductDtos) {
         final List<Long> productIds = menuProductDtos.stream()
                                                      .map(MenuProductDto::getProductId)
                                                      .collect(Collectors.toList());
+        final Map<Long, Product> products = findProductsWithId(productIds);
+
+        return products;
+    }
+
+    private Map<Long, Product> findProductsWithId(final List<Long> productIds) {
         final Map<Long, Product> products = productRepository.findAllByIdIn(productIds).stream()
                                                              .collect(Collectors.toMap(Product::getId, product -> product));
+        validateProducts(productIds, products);
 
+        return products;
+    }
+
+    private static void validateProducts(final List<Long> productIds, final Map<Long, Product> products) {
         if (products.size() != productIds.size()) {
             throw new NotFoundProductException("존재하지 않는 상품이 있습니다.");
         }
-
-        return products;
     }
 
     @Transactional(readOnly = true)
