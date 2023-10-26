@@ -21,8 +21,12 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    @OneToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(
+            name = "ordered_menu_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_order_line_item_ordered_menu")
+    )
+    @OneToOne(fetch = FetchType.LAZY)
     private OrderedMenu orderedMenu;
 
     @Column(nullable = false)
