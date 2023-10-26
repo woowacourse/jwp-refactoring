@@ -9,16 +9,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OrderTableTest {
 
     @Test
-    void 테이블_그룹이_되어_있으면_비울_수_없다() {
-        OrderTable orderTable = new OrderTable(3, false, true);
-
-        assertThatThrownBy(() -> orderTable.changeEmpty(false))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 테이블이_비어있으면_손님_수를_변경할_수_없다() {
-        OrderTable orderTable = new OrderTable(3, true, false);
+        OrderTable orderTable = new OrderTable(3, true);
 
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(3))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -27,7 +19,7 @@ class OrderTableTest {
     @ValueSource(ints = {0, -1})
     @ParameterizedTest
     void 손님_수를_바꿀_때_양수이어야_한다(int numberOfGuests) {
-        OrderTable orderTable = new OrderTable(3, false, false);
+        OrderTable orderTable = new OrderTable(3, false);
 
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(numberOfGuests))
                 .isInstanceOf(IllegalArgumentException.class);

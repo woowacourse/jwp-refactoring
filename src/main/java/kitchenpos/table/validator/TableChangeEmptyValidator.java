@@ -19,7 +19,7 @@ public class TableChangeEmptyValidator {
     }
 
     public void validate(Long orderTableId) {
-        if (orderTableRepository.getById(orderTableId).isGrouped()) {
+        if (orderTableRepository.getById(orderTableId).hasTableGroup()) {
             throw new IllegalArgumentException("그룹된 테이블을 비울 수 없습니다.");
         }
 

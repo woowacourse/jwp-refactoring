@@ -6,6 +6,7 @@ import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderRepository;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.table.OrderTable;
+import kitchenpos.table.OrderTableRepository;
 import kitchenpos.table.TableService;
 import kitchenpos.tablegroup.TableGroup;
 import kitchenpos.tablegroup.TableGroupService;
@@ -32,13 +33,16 @@ class TableIntegrationTest extends IntegrationTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
     @Nested
     class 테이블을_비울_때 {
 
         @Test
         void 그룹이_되어_있으면_비울_수_없다() {
-            OrderTable orderTable1 = tableService.create(new OrderTable(1, true, false));
-            OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
+            OrderTable orderTable1 = tableService.create(new OrderTable(1, true));
+            OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
             tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
@@ -51,7 +55,7 @@ class TableIntegrationTest extends IntegrationTest {
         @ParameterizedTest
         void 주문_상태가_완료가_아니면_비울_수_없다(OrderStatus orderStatus) {
             Menu menu = fixtureFactory.메뉴_생성(fixtureFactory.메뉴_그룹_생성().getId(), fixtureFactory.제품_생성());
-            OrderTable orderTable = tableService.create(new OrderTable(1, false, false));
+            OrderTable orderTable = tableService.create(new OrderTable(1, false));
             Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), orderTable.getId());
             order.changeOrderStatus(orderStatus);
             orderRepository.save(order);
@@ -73,17 +77,19 @@ class TableIntegrationTest extends IntegrationTest {
 
         @Test
         void 정상_생성_테스트() {
-            OrderTable orderTable = tableService.create(new OrderTable(1, true, false));
-            OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
+            OrderTable orderTable = tableService.create(new OrderTable(1, true));
+            OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
             TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
 
-            assertThat(tableGroup.getOrderTables()).containsExactlyInAnyOrder(orderTable, orderTable2);
+            List<OrderTable> results = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
+
+            assertThat(results).hasSize(2);
         }
 
         @Test
         void 두개_미만의_테이블로_그룹할_수_없다() {
-            OrderTable orderTable = tableService.create(new OrderTable(1, true, false));
+            OrderTable orderTable = tableService.create(new OrderTable(1, true));
 
             assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId())))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -92,8 +98,8 @@ class TableIntegrationTest extends IntegrationTest {
 
         @Test
         void 비어있지_않은_테이블은_그룹할_수_없다() {
-            OrderTable orderTable = tableService.create(new OrderTable(1, false, false));
-            OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
+            OrderTable orderTable = tableService.create(new OrderTable(1, false));
+            OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
             assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId())))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -102,24 +108,27 @@ class TableIntegrationTest extends IntegrationTest {
 
         @Test
         void 이미_그룹으로_지정된_테이블은_그룹할_수_없다() {
-            OrderTable orderTable = tableService.create(new OrderTable(1, true, true));
-            OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
+            OrderTable orderTable = tableService.create(new OrderTable(1, true));
+            OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
+
+            tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
 
             assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId())))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("이미 그룹으로 지정된 테이블은 그룹으로 지정할 수 없습니다.");
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 테이블을_비어있지_않은_상태로_만든다() {
-            OrderTable orderTable = tableService.create(new OrderTable(1, true, false));
-            OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
+            OrderTable orderTable = tableService.create(new OrderTable(1, true));
+            OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
             TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
 
+            List<OrderTable> results = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
+
             assertAll(
-                    () -> assertThat(tableGroup.getOrderTables()).isNotEmpty(),
-                    () -> assertThat(tableGroup.getOrderTables()).allMatch(OrderTable::isNotEmpty)
+                    () -> assertThat(results).isNotEmpty(),
+                    () -> assertThat(results).allMatch(OrderTable::isNotEmpty)
             );
         }
     }
@@ -129,26 +138,24 @@ class TableIntegrationTest extends IntegrationTest {
 
         @Test
         void 정상_해제_테스트() {
-            OrderTable orderTable = tableService.create(new OrderTable(1, true, false));
-            OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
+            OrderTable orderTable = tableService.create(new OrderTable(1, true));
+            OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
             TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
 
-            TableGroup ungrouped = tableGroupService.ungroup(tableGroup.getId());
+            tableGroupService.ungroup(tableGroup.getId());
 
-            assertAll(
-                    () -> assertThat(orderTable.isGrouped()).isFalse(),
-                    () -> assertThat(orderTable2.isGrouped()).isFalse(),
-                    () -> assertThat(ungrouped.getOrderTables()).isEmpty()
-            );
+            List<OrderTable> results = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
+
+            assertThat(results).isEmpty();
         }
 
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         @ParameterizedTest
         void 주문이_완료가_아니면_그룹_해제할_수_없다(OrderStatus orderStatus) {
             Menu menu = fixtureFactory.메뉴_생성(fixtureFactory.메뉴_그룹_생성().getId(), fixtureFactory.제품_생성());
-            OrderTable orderTable = tableService.create(new OrderTable(1, true, false));
-            OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
+            OrderTable orderTable = tableService.create(new OrderTable(1, true));
+            OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
             TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
             Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), orderTable.getId());
             order.changeOrderStatus(orderStatus);

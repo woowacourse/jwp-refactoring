@@ -1,8 +1,5 @@
 package kitchenpos.tablegroup;
 
-import kitchenpos.table.OrderTable;
-import kitchenpos.table.OrderTableRepository;
-import kitchenpos.table.OrderTables;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,43 +8,33 @@ import java.util.List;
 @Service
 public class TableGroupService {
 
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final UnGroupValidator unGroupValidator;
+    private final GroupManager groupManager;
 
     public TableGroupService(
-            final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository,
-            UnGroupValidator unGroupValidator
+            TableGroupRepository tableGroupRepository,
+            GroupManager groupManager
     ) {
-        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.unGroupValidator = unGroupValidator;
+        this.groupManager = groupManager;
     }
 
     @Transactional
-    public TableGroup create(final List<Long> tableIds) {
+    public TableGroup create(List<Long> tableIds) {
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(tableIds);
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
 
-        if (tableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        groupManager.group(tableIds, tableGroup.getId());
 
-        OrderTables orderTables = new OrderTables(savedOrderTables);
-        TableGroup tableGroup = orderTables.group();
-
-        return tableGroupRepository.save(tableGroup);
+        return tableGroup;
     }
 
     @Transactional
-    public TableGroup ungroup(final Long tableGroupId) {
+    public TableGroup ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블 그룹이 존재하지 않습니다."));
 
-        unGroupValidator.validate(tableGroup);
-
-        tableGroup.unGroup();
+        groupManager.unGroup(tableGroupId);
 
         return tableGroup;
     }

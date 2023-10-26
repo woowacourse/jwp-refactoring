@@ -15,24 +15,23 @@ public class OrderTable {
     @Id
     private Long id;
 
+    private Long tableGroupId;
+
     private int numberOfGuests;
 
     private boolean empty;
 
-    private boolean grouped;
-
     public OrderTable() {
     }
 
-    public OrderTable(int numberOfGuests, boolean empty, boolean grouped) {
+    public OrderTable(int numberOfGuests, boolean empty) {
         this.id = null;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        this.grouped = grouped;
     }
 
     public void changeEmpty(boolean empty) {
-        if (this.grouped) {
+        if (hasTableGroup()) {
             throw new IllegalArgumentException("그룹된 테이블을 비울 수 없습니다.");
         }
         this.empty = empty;
@@ -50,15 +49,20 @@ public class OrderTable {
     }
 
     public boolean hasTableGroup() {
-        return this.grouped;
+        return this.tableGroupId != null;
     }
 
     public boolean hasNoTableGroup() {
-        return !this.grouped;
+        return this.tableGroupId == null;
+    }
+
+    public void group(Long tableGroupId) {
+        this.empty = false;
+        this.tableGroupId = tableGroupId;
     }
 
     public void unGroup() {
-        this.grouped = false;
+        this.tableGroupId = null;
         this.empty = true;
     }
 
@@ -68,10 +72,6 @@ public class OrderTable {
 
     public void makeFull() {
         this.empty = false;
-    }
-
-    public void makeGrouped() {
-        this.grouped = true;
     }
 
     public Long getId() {
@@ -84,10 +84,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public boolean isGrouped() {
-        return grouped;
     }
 
     @Override
