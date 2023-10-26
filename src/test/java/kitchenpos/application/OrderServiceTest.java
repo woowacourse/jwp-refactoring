@@ -1,14 +1,17 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderDto;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.order.dao.OrderedMenuDao;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderDto;
+import kitchenpos.ordertable.dao.OrderTableDao;
+import kitchenpos.ordertable.domain.OrderTable;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -19,8 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -28,6 +29,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+@SuppressWarnings("NonAsciiCharacters")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 @SpringBootTest
 class OrderServiceTest {
 
@@ -35,7 +38,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @MockBean
-    private MenuDao menuDao;
+    private OrderedMenuDao orderedMenuDao;
 
     @MockBean
     private OrderTableDao orderTableDao;
@@ -49,15 +52,14 @@ class OrderServiceTest {
     @Test
     void 주문을_생성한다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
-        OrderTable orderTable = new OrderTable(1L, null, 0 , false);
+        OrderTable orderTable = new OrderTable(1L, null, 0, false);
 
         Order order = new Order(1L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
 
-        given(menuDao.countByIdIn(any()))
+        given(orderedMenuDao.countByIdIn(any()))
                 .willReturn((long) orderLineItems.size());
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.of(orderTable));
@@ -81,11 +83,10 @@ class OrderServiceTest {
     @Test
     void 주문을_전체_조회한다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
-        OrderTable orderTable = new OrderTable(1L, null, 0 ,false);
+        OrderTable orderTable = new OrderTable(1L, null, 0, false);
 
         Order order1 = new Order(1L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         Order order2 = new Order(2L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
@@ -104,9 +105,7 @@ class OrderServiceTest {
     @CsvSource(value = {"COOKING:MEAL", "COOKING:COMPLETION", "MEAL:COMPLETION", "COOKING:COOKING", "MEAL:MEAL"}, delimiter = ':')
     void 주문_상태를_변경한다(OrderStatus fromStatus, OrderStatus toStatus) {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(1L);
-        orderLineItem.setOrderId(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
         Order order = new Order(1L, fromStatus.name(), LocalDateTime.now(), orderLineItems);
@@ -131,9 +130,7 @@ class OrderServiceTest {
     @CsvSource(value = {"COMPLETION:MEAL", "COMPLETION:COOKING", "COMPLETION:COMPLETION"}, delimiter = ':')
     void 주문_상태를_변경하면_예외를_던진다(OrderStatus fromStatus, OrderStatus toStatus) {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(1L);
-        orderLineItem.setOrderId(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
         Order order = new Order(1L, fromStatus.name(), LocalDateTime.now(), orderLineItems);

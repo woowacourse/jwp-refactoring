@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dto.MenuGroupDto;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.dao.MenuGroupDao;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.dto.MenuGroupDto;
+import kitchenpos.menugroup.application.MenuGroupService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;

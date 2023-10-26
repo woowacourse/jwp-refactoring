@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductDto;
+import kitchenpos.product.dao.ProductDao;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.dto.ProductDto;
+import kitchenpos.product.application.ProductService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;

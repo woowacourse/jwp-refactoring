@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuDto;
+import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menugroup.dao.MenuGroupDao;
+import kitchenpos.menu.dao.MenuProductDao;
+import kitchenpos.product.dao.ProductDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.dto.MenuDto;
+import kitchenpos.menu.application.MenuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -51,7 +52,7 @@ class MenuServiceTest {
     void setUp() {
         menuGroup = new MenuGroup(2L, "한마리메뉴");
 
-        menuProduct = new MenuProduct(1L, 1L, 2L, 2);
+        menuProduct = new MenuProduct(1L, 2L, 2);
 
         menu = new Menu(1L, "menu", BigDecimal.valueOf(2000), menuGroup.getId(), List.of(menuProduct));
 
@@ -63,6 +64,8 @@ class MenuServiceTest {
                 .willReturn(Optional.of(product));
         given(menuDao.save(any()))
                 .willReturn(menu);
+        given(menuDao.findById(any()))
+                .willReturn(Optional.of(menu));
         given(menuProductDao.save(any()))
                 .willReturn(menuProduct);
     }
@@ -159,7 +162,7 @@ class MenuServiceTest {
     void 메뉴를_전체_조회한다() {
         Menu menu2 = new Menu(2L, "menu2", BigDecimal.valueOf(4000), null, null);
 
-        MenuProduct menuProduct2 = new MenuProduct(1L, 2L, 2L, 1L);
+        MenuProduct menuProduct2 = new MenuProduct(1L, 2L, 1L);
 
         given(menuDao.findAll())
                 .willReturn(List.of(menu, menu2));
