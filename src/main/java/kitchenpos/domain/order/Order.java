@@ -30,12 +30,11 @@ public class Order {
     @Column(updatable = false)
     private LocalDateTime orderedTime;
 
-    public Order(final OrderTable orderTable) {
+    public Order(final OrderTable orderTable, final OrderLineItems orderLineItems) {
         this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING;
-        this.orderLineItems = new OrderLineItems();
+        this.orderLineItems = orderLineItems;
     }
-
 
     protected Order() {
     }

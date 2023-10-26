@@ -4,11 +4,13 @@ import kitchenpos.domain.dto.OrderRequest;
 import kitchenpos.domain.dto.OrderRequest.OrderLineItemRequest;
 import kitchenpos.domain.dto.OrderResponse;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,8 +36,16 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
     @Autowired
     private OrderTableRepository orderTableRepository;
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
+
+    private OrderLineItems orderLineItems;
+
+    @BeforeEach
+    void setUp() {
+        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2L);
+
+        orderLineItems = new OrderLineItems(List.of(orderLineItem1, orderLineItem2));
+    }
 
     @Test
     @DisplayName("모든 주문 목록을 조회한다.")
@@ -43,7 +53,7 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(0));
 
-        orderRepository.save(new Order(orderTable));
+        orderRepository.save(new Order(orderTable, orderLineItems));
 
         final List<Order> orders = orderRepository.findAll();
         final List<Long> expect = orders.stream()
@@ -67,7 +77,7 @@ class OrderServiceTest {
     class CreateTest {
 
         @Test
-        @DisplayName("생성된 주문의 상태는 COOKING이고 OrderLineItem의 OrderId는 생성된 주문의 id이다.")
+        @DisplayName("생성된 주문의 상태는 COOKING이다.")
         void createOrderTest() {
             // given
             final OrderTable table = orderTableRepository.save(new OrderTable(null, 0, false));
@@ -81,15 +91,6 @@ class OrderServiceTest {
 
             // then
             assertEquals(OrderStatus.COOKING.name(), response.getOrderStatus());
-
-            response.getOrderLineItemIds()
-                    .forEach(orderLineItemId -> {
-                        orderLineItemRepository.findById(orderLineItemId)
-                                .ifPresentOrElse(
-                                        actual -> assertEquals(response.getId(), actual.getOrder().getId()),
-                                        () -> fail("OrderLineItem이 존재하지 않습니다.")
-                                );
-                    });
         }
 
         @Test
@@ -147,7 +148,7 @@ class OrderServiceTest {
             // given
             final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            final Order order = orderRepository.save(new Order(table));
+            final Order order = orderRepository.save(new Order(table, orderLineItems));
 
             final OrderRequest request = new OrderRequest(null, orderStatus, null);
 
@@ -168,7 +169,7 @@ class OrderServiceTest {
             // given
             final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            final Order order = new Order(table);
+            final Order order = new Order(table, orderLineItems);
             order.updateOrderStatus(OrderStatus.COMPLETION);
             orderRepository.save(order);
 

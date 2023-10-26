@@ -2,17 +2,19 @@ package kitchenpos.domain.order;
 
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> values;
 
     public OrderLineItems(final List<OrderLineItem> values) {
@@ -31,17 +33,7 @@ public class OrderLineItems {
         return CollectionUtils.isEmpty(values);
     }
 
-    public List<Long> getMenuIds() {
-        return values.stream()
-                .map(value -> value.getMenu().getId())
-                .collect(Collectors.toList());
-    }
-
     public boolean isNotSameSize(final int size) {
         return values.size() != size;
-    }
-
-    public void updateOrder(final Order order) {
-        values.forEach(value -> value.setOrder(order));
     }
 }

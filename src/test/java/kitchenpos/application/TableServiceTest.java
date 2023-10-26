@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.dto.OrderTableRequest;
 import kitchenpos.domain.dto.OrderTableResponse;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -111,7 +112,7 @@ class TableServiceTest {
             // given
             final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            final Order order = new Order(table);
+            final Order order = new Order(table, new OrderLineItems(List.of()));
             order.updateOrderStatus(orderStatus);
             orderRepository.save(order);
 
@@ -132,7 +133,7 @@ class TableServiceTest {
             table.setEmpty(!emptyStatus);
             orderTableRepository.save(table);
 
-            final Order order = new Order(table);
+            final Order order = new Order(table, new OrderLineItems(List.of()));
             order.updateOrderStatus(OrderStatus.COMPLETION);
             orderRepository.save(order);
 

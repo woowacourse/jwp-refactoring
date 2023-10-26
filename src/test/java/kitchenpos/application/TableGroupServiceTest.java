@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.dto.TableGroupRequest;
 import kitchenpos.domain.dto.TableGroupResponse;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTables;
 import kitchenpos.domain.repository.OrderRepository;
@@ -207,8 +208,8 @@ class TableGroupServiceTest {
             final OrderTable table1 = orderTableRepository.save(new OrderTable(0));
             final OrderTable table2 = orderTableRepository.save(new OrderTable(0));
 
-            final Order order1 = new Order(table1);
-            final Order order2 = new Order(table2);
+            final Order order1 = new Order(table1, new OrderLineItems(List.of()));
+            final Order order2 = new Order(table2, new OrderLineItems(List.of()));
 
             order1.updateOrderStatus(orderStatus);
             order2.updateOrderStatus(orderStatus);
