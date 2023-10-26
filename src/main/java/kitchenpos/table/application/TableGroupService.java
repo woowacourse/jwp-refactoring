@@ -12,6 +12,7 @@ import kitchenpos.table.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class TableGroupService {
 
@@ -35,7 +36,6 @@ public class TableGroupService {
         this.ordersStatusValidator = ordersStatusValidator;
     }
 
-    @Transactional
     public TableGroupResult create(final TableGroupingRequest request) {
         final OrderTables orderTables = orderTablesMapper.from(request);
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
@@ -44,7 +44,6 @@ public class TableGroupService {
         return TableGroupResult.from(tableGroup);
     }
 
-    @Transactional
     public void ungroup(final Long ungroupTableId) {
         final OrderTables orderTables = orderTablesMapper.fromTable(ungroupTableId);
         orderTables.ungroup(ordersStatusValidator);

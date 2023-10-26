@@ -11,6 +11,7 @@ import kitchenpos.order.domain.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class OrderService {
 
@@ -28,7 +29,6 @@ public class OrderService {
         this.orderMapper = orderMapper;
     }
 
-    @Transactional
     public OrderResult create(final OrderCreationRequest request) {
         final Order order = orderMapper.from(request, orderValidator);
         orderRepository.save(order);
@@ -42,7 +42,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderResult changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order existOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);

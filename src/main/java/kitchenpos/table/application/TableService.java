@@ -13,6 +13,7 @@ import kitchenpos.table.domain.TableChangeNumberOfGuestValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class TableService {
 
@@ -30,7 +31,7 @@ public class TableService {
         this.ordersEmptyValidator = ordersEmptyValidator;
     }
 
-    @Transactional
+
     public OrderTableResult create(final OrderTableCreationRequest request) {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         return OrderTableResult.from(orderTableRepository.save(orderTable));
@@ -43,7 +44,6 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderTableResult changeEmpty(final Long orderTableId, final OrderTableEmptyStatusChangeRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
@@ -51,7 +51,6 @@ public class TableService {
         return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
 
-    @Transactional
     public OrderTableResult changeNumberOfGuests(
             final Long orderTableId,
             final OrderTableGuestAmountChangeRequest request

@@ -9,6 +9,7 @@ import kitchenpos.menu.domain.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class MenuService {
 
@@ -23,7 +24,6 @@ public class MenuService {
         this.menuMapper = menuMapper;
     }
 
-    @Transactional
     public MenuResult create(final MenuCreationRequest request) {
         final Menu menu = menuMapper.from(request);
         menuRepository.save(menu);
