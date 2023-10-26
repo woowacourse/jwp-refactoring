@@ -38,7 +38,7 @@ public class MenuResponse {
                 menu.getId(),
                 menu.getName(),
                 menu.getPriceValue(),
-                menu.getMenuGroup().getId(),
+                menu.getMenuGroupId(),
                 menuProductDtos
         );
     }

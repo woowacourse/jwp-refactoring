@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menu.service.MenuService;
@@ -50,7 +49,7 @@ class MenuRestControllerTest {
                 1L,
                 List.of()
         );
-        final Menu menu = getObject(Menu.class, 1L, "test", new Price(BigDecimal.ZERO), new MenuGroup(1L), List.of());
+        final Menu menu = getObject(Menu.class, 1L, "test", new Price(BigDecimal.ZERO), 1L, List.of());
 
         when(menuService.create(any()))
                 .thenReturn(MenuResponse.from(menu));
