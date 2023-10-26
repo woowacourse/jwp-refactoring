@@ -1,7 +1,7 @@
 package kitchenpos.application.dto.request;
 
 import java.util.List;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.common.vo.Price;
 
 public class MenuRequest {
 

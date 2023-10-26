@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.common.vo.Price;
 
 @Entity
 public class Menu {

@@ -2,8 +2,7 @@ package kitchenpos.supports;
 
 import java.math.BigDecimal;
 import kitchenpos.application.dto.request.ProductRequest;
-import kitchenpos.domain.vo.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.common.vo.Price;
 
 public class ProductFixture {
 

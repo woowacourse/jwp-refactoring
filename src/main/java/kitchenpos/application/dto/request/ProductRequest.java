@@ -1,6 +1,6 @@
 package kitchenpos.application.dto.request;
 
-import kitchenpos.domain.vo.Price;
+import kitchenpos.common.vo.Price;
 
 public class ProductRequest {
 

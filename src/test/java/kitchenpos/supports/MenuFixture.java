@@ -6,7 +6,7 @@ import java.util.List;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.common.vo.Price;
 
 public class MenuFixture {
 
