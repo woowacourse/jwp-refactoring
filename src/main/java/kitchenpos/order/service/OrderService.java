@@ -1,6 +1,5 @@
 package kitchenpos.order.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.exception.NoSuchDataException;
@@ -8,6 +7,7 @@ import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.type.OrderStatus;
+import kitchenpos.order.dto.OrderCreateEvent;
 import kitchenpos.order.dto.OrderLineItemsDto;
 import kitchenpos.order.dto.OrderTableIdValidateEvent;
 import kitchenpos.order.dto.request.ChangeOrderRequest;
@@ -58,21 +58,18 @@ public class OrderService {
         final Order order = Order.from(request.getOrderTableId());
 
         final Long orderId = orderRepository.save(order).getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        final List<OrderLineItem> orderLineItems = orderLineItemDtos.stream()
+
+        final OrderCreateEvent event = new OrderCreateEvent(request.getOrderLineItems(), orderId);
+
+        publisher.publishEvent(event);
+
+        final List<OrderLineItem> orderLineItems = event.getOrderLineItemsDtos().stream()
                 .map(OrderLineItem::from)
                 .collect(Collectors.toList());
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            final OrderLineItem newOrderLineItem = new OrderLineItem(
-                    orderLineItem.getSeq(),
-                    orderId,
-                    orderLineItem.getMenuId(),
-                    orderLineItem.getQuantity()
-            );
-            savedOrderLineItems.add(orderLineItemRepository.save(newOrderLineItem));
-        }
 
-        return OrderResponse.from(Order.of(order, savedOrderLineItems));
+        orderLineItemRepository.saveAll(orderLineItems);
+
+        return OrderResponse.from(Order.of(order, orderLineItems));
     }
 
     @Transactional(readOnly = true)
