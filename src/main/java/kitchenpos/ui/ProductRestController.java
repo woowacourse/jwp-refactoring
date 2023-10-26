@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
 import kitchenpos.ui.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class ProductRestController {
 
     @PostMapping("/api/products")
     public ResponseEntity<ProductResponse> create(@RequestBody final ProductCreateRequest request) {
-        final ProductResponse created = productService.create(request.toProduct());
+        final ProductResponse created = productService.create(request);
         final URI uri = URI.create("/api/products/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);
