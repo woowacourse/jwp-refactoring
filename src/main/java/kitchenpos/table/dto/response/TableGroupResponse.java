@@ -18,11 +18,11 @@ public class TableGroupResponse {
         this.orderTables = orderTables;
     }
 
-    public static TableGroupResponse of(final TableGroup tableGroup) {
+    public static TableGroupResponse of(final TableGroup tableGroup, final List<OrderTable> orderTables) {
         return new TableGroupResponse(
                 tableGroup.getId(),
                 tableGroup.getCreatedDate(),
-                tableGroup.getOrderTables().stream()
+                orderTables.stream()
                         .map(OrderTable::getId)
                         .collect(Collectors.toUnmodifiableList())
         );

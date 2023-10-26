@@ -40,10 +40,13 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        final TableGroup tableGroup = new TableGroup(savedOrderTables);
+        final TableGroup tableGroup = new TableGroup();
         tableGroupRepository.save(tableGroup);
 
-        return TableGroupResponse.of(tableGroup);
+        savedOrderTables.forEach(OrderTable::validateCanJoinTableGroup);
+        savedOrderTables.forEach(it -> it.joinTableGroup(tableGroup));
+
+        return TableGroupResponse.of(tableGroup, savedOrderTables);
     }
 
     @Transactional

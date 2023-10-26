@@ -1,14 +1,10 @@
 package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup {
@@ -19,17 +15,7 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    private List<OrderTable> orderTables;
-
     public TableGroup() {
-    }
-
-    public TableGroup(final List<OrderTable> orderTables) {
-        orderTables.forEach(OrderTable::validateCanJoinTableGroup);
-        orderTables.forEach(it -> it.joinTableGroup(this));
-
-        this.orderTables = orderTables;
         this.createdDate = LocalDateTime.now();
     }
 
@@ -39,9 +25,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 }
