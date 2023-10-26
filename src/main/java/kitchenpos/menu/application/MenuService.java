@@ -5,12 +5,12 @@ import kitchenpos.menu.application.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.application.dto.response.MenuQueryResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.Price;
-import kitchenpos.menu.domain.Product;
-import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.menu.domain.repository.ProductRepository;
-import kitchenpos.menu.persistence.MenuGroupRepositoryImpl;
 import kitchenpos.menu.persistence.MenuRepositoryImpl;
+import kitchenpos.menu_group.domain.repository.MenuGroupRepository;
+import kitchenpos.menu_group.persistence.MenuGroupRepositoryImpl;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +33,7 @@ public class MenuService {
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }
- 
+
     @Transactional
     public MenuQueryResponse create(final MenuCreateRequest request) {
         validateMenuRequest(request, new Price(request.getPrice()));
