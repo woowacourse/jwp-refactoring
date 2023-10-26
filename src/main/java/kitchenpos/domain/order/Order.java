@@ -1,6 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import kitchenpos.application.order.OrderValidator;
 
 @Entity(name = "orders")
 public class Order {
@@ -20,9 +21,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @JoinColumn(name = "order_table_id", nullable = false)
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -35,29 +35,30 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderLineItems orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public Order(final Long orderTableId, final OrderLineItems orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(
             final Long id,
-            final OrderTable orderTable,
+            final Long orderTableId,
             final OrderStatus orderStatus,
             final LocalDateTime orderedTime,
             final OrderLineItems orderLineItems
     ) {
-        validate(orderTable);
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public static void validate(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("테이블이 비었어요");
-        }
+    public static Order of(final Long orderTableId,
+                           final OrderLineItems orderLineItems,
+                           final OrderValidator orderValidator
+    ) {
+        orderValidator.validate(orderTableId, orderLineItems);
+        return new Order(orderTableId, orderLineItems);
     }
 
     public void changeStatus(final OrderStatus orderStatus) {
@@ -75,8 +76,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

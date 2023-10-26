@@ -11,21 +11,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.table.TableService;
+import kitchenpos.application.tablegroup.TableGroupService;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.ChangeEmptyRequest;
 import kitchenpos.dto.ChangeNumberOfGuestRequest;
 import kitchenpos.dto.OrderTableRequest;
@@ -64,7 +65,7 @@ class TableServiceTest extends BaseServiceTest {
         assertSoftly(softly -> {
             softly.assertThat(createdOrderTable.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
             softly.assertThat(createdOrderTable.isEmpty()).isTrue();
-            softly.assertThat(createdOrderTable.getTableGroup()).isNull();
+            softly.assertThat(createdOrderTable.getTableGroupId()).isNull();
             softly.assertThat(createdOrderTable.getId()).isNotNull();
         });
     }
@@ -121,13 +122,13 @@ class TableServiceTest extends BaseServiceTest {
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("분식"));
             final Product productD = productRepository.save(new Product("떡볶이", BigDecimal.TEN));
 
-            final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD, 2));
+            final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD.getId(), 2));
 
             final Menu menu = menuRepository.save(
-                    new Menu("떡순튀", BigDecimal.valueOf(20), menuGroup, new MenuProducts(menuProducts))
+                    new Menu("떡순튀", BigDecimal.valueOf(20), menuGroup.getId(), new MenuProducts(menuProducts))
             );
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(),2));
-            final Order order = new Order(savedTable, new OrderLineItems(orderLineItems));
+            final Order order = new Order(savedTable.getId(), new OrderLineItems(orderLineItems));
             orderRepository.save(order);
 
             final ChangeEmptyRequest changeEmptyRequest = new ChangeEmptyRequest(true);

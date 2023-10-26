@@ -12,13 +12,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
+import kitchenpos.application.menu.MenuService;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 
@@ -69,7 +69,7 @@ class MenuServiceTest extends BaseServiceTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(createdMenu.getPrice()).isEqualByComparingTo(menuRequest.getPrice());
-                softly.assertThat(createdMenu.getMenuGroup().getId()).isEqualTo(menuRequest.getMenuGroupId());
+                softly.assertThat(createdMenu.getMenuGroupId()).isEqualTo(menuRequest.getMenuGroupId());
                 softly.assertThat(createdMenu.getMenuProducts().getMenuProducts().size())
                         .isEqualTo(menuRequest.getMenuProductRequests().size());
             });

@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 
 public class MenuRequest {
     private String name;
@@ -27,8 +27,6 @@ public class MenuRequest {
         this.menuProductRequests = menuProductRequests;
     }
 
-
-
     public String getName() {
         return name;
     }
@@ -43,13 +41,5 @@ public class MenuRequest {
 
     public List<MenuProductRequest> getMenuProductRequests() {
         return menuProductRequests;
-    }
-
-    public Menu toMenu(final MenuGroup menuGroup, final Map<Long, Product> products) {
-        final List<MenuProduct> menuProducts = menuProductRequests.stream()
-                .map(request -> new MenuProduct(products.get(request.getProductId()), request.getQuantity()))
-                .collect(Collectors.toList());
-        return new Menu(name, price, menuGroup, new MenuProducts(menuProducts));
-
     }
 }

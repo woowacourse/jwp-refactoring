@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -15,19 +15,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.order.OrderService;
+import kitchenpos.application.table.TableService;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.ChangeOrderStatusRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
@@ -59,10 +59,10 @@ class OrderServiceTest extends BaseServiceTest {
         final MenuGroup boonsik = menuGroupRepository.save(new MenuGroup("분식"));
         final Product productD = productRepository.save(new Product("떡볶이", BigDecimal.TEN));
 
-        final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD, 2));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD.getId(), 2));
 
         final Menu menu = menuRepository.save(
-                new Menu("떡순튀", BigDecimal.valueOf(20), boonsik, new MenuProducts(menuProducts)));
+                new Menu("떡순튀", BigDecimal.valueOf(20), boonsik.getId(), new MenuProducts(menuProducts)));
         orderTable = tableService.create(new OrderTableRequest(4, false));
         orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
         orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
