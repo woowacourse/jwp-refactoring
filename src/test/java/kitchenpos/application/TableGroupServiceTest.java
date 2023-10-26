@@ -199,8 +199,8 @@ class TableGroupServiceTest {
         세명_테이블.groupBy(세명_네명_테이블_그룹);
         네명_테이블.groupBy(세명_네명_테이블_그룹);
 
-        orderRepository.save(new Order(세명_테이블, orderStatus));
-        orderRepository.save(new Order(네명_테이블, orderStatus));
+        orderRepository.save(new Order(세명_테이블.getId(), orderStatus));
+        orderRepository.save(new Order(네명_테이블.getId(), orderStatus));
 
         em.flush();
         em.clear();

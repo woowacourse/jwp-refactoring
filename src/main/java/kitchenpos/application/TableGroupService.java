@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -66,13 +68,20 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
-        validateCanUngroup(orderTables);
+        validateCanUngroup(getOrderTableIds(orderTables));
 
         ungroupOrderTables(orderTables);
     }
 
-    private void validateCanUngroup(final List<OrderTable> orderTables) {
-        final Orders orders = new Orders(orderRepository.findAllByOrderTableIn(orderTables));
+    private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                          .map(OrderTable::getId)
+                          .collect(Collectors.toList());
+    }
+
+    private void validateCanUngroup(final List<Long> orderTableIds) {
+        final List<Order> findOrders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
+        final Orders orders = new Orders(findOrders);
         if (orders.containsNotCompleteOrder()) {
             throw new IllegalArgumentException("테이블 그룹을 해제하려면 그룹화된 테이블의 모든 주문이 완료 상태이어야 합니다.");
         }

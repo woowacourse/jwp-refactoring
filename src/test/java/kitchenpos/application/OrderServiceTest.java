@@ -175,9 +175,9 @@ class OrderServiceTest {
 
         final OrderLineItem 후라이드_2개_메뉴_1개_주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
 
-        final Order 세명_테이블_주문 = orderRepository.save(new Order(세명_테이블, OrderStatus.COOKING));
+        final Order 세명_테이블_주문 = orderRepository.save(new Order(세명_테이블.getId(), OrderStatus.COOKING));
         세명_테이블_주문.addOrderLineItems(new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목)));
-        final Order 네명_테이블_주문 = orderRepository.save(new Order(네명_테이블, OrderStatus.COOKING));
+        final Order 네명_테이블_주문 = orderRepository.save(new Order(네명_테이블.getId(), OrderStatus.COOKING));
         네명_테이블_주문.addOrderLineItems(new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목)));
 
         em.flush();
@@ -200,7 +200,7 @@ class OrderServiceTest {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
-        final Order 주문 = orderRepository.save(new Order(주문_테이블, OrderStatus.COOKING));
+        final Order 주문 = orderRepository.save(new Order(주문_테이블.getId(), OrderStatus.COOKING));
         주문.addOrderLineItems(new OrderLineItems(List.of(주문항목)));
 
         em.flush();
@@ -222,7 +222,7 @@ class OrderServiceTest {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
-        final Order 완료된_주문 = orderRepository.save(new Order(주문_테이블, OrderStatus.COMPLETION));
+        final Order 완료된_주문 = orderRepository.save(new Order(주문_테이블.getId(), OrderStatus.COMPLETION));
         완료된_주문.addOrderLineItems(new OrderLineItems(List.of(주문항목)));
 
         em.flush();

@@ -11,25 +11,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OrderTest {
 
-    @Test
-    @DisplayName("주문을 생성할 때 테이블이 비어있으면 예외가 발생한다")
-    void order_emptyTable() {
-        // given
-        final OrderTable emptyOrderTable = new OrderTable(4, true);
-
-        // when
-        assertThatThrownBy(() -> new Order(emptyOrderTable, OrderStatus.COOKING))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("빈 테이블에는 주문을 생성할 수 없습니다.");
-    }
-
     @ParameterizedTest(name = "주문 상태가 {0}일 때")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @DisplayName("완료되지 않은 주문인지 판단할 때 완료되지 않은 주문이면 true를 반환한다")
     void isNotComplete_true(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order order = new Order(orderTable, orderStatus);
+        final Order order = new Order(orderTable.getId(), orderStatus);
 
         // when
         final boolean actual = order.isNotComplete();
@@ -43,7 +31,7 @@ class OrderTest {
     void isNotComplete_false() {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order order = new Order(orderTable, OrderStatus.COMPLETION);
+        final Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION);
 
         // when
         final boolean actual = order.isNotComplete();
@@ -57,7 +45,7 @@ class OrderTest {
     void changeOrderStatus_completeOrder() {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order completeOrder = new Order(orderTable, OrderStatus.COMPLETION);
+        final Order completeOrder = new Order(orderTable.getId(), OrderStatus.COMPLETION);
 
         // when
         assertThatThrownBy(() -> completeOrder.changeOrderStatus(OrderStatus.COOKING))

@@ -143,7 +143,7 @@ class TableServiceTest {
     void changeEmpty_invalidOrderStatus(final OrderStatus orderStatus) {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
-        orderRepository.save(new Order(두명_테이블, orderStatus));
+        orderRepository.save(new Order(두명_테이블.getId(), orderStatus));
 
         em.flush();
         em.clear();
