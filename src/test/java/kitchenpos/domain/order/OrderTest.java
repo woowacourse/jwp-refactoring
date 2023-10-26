@@ -3,7 +3,10 @@ package kitchenpos.domain.order;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OrderTest {
@@ -18,6 +21,35 @@ class OrderTest {
         assertThatThrownBy(() -> new Order(emptyOrderTable, OrderStatus.COOKING))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("빈 테이블에는 주문을 생성할 수 없습니다.");
+    }
+
+    @ParameterizedTest(name = "주문 상태가 {0}일 때")
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+    @DisplayName("완료되지 않은 주문인지 판단할 때 완료되지 않은 주문이면 true를 반환한다")
+    void isNotComplete_true(final OrderStatus orderStatus) {
+        // given
+        final OrderTable orderTable = new OrderTable(4, false);
+        final Order order = new Order(orderTable, orderStatus);
+
+        // when
+        final boolean actual = order.isNotComplete();
+
+        // then
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    @DisplayName("완료되지 않은 주문인지 판단할 때 완료된 주문이면 false를 반환한다")
+    void isNotComplete_false() {
+        // given
+        final OrderTable orderTable = new OrderTable(4, false);
+        final Order order = new Order(orderTable, OrderStatus.COMPLETION);
+
+        // when
+        final boolean actual = order.isNotComplete();
+
+        // then
+        assertThat(actual).isFalse();
     }
 
     @Test

@@ -57,6 +57,10 @@ public class Order extends BaseCreateTimeEntity {
         }
     }
 
+    public boolean isNotComplete() {
+        return orderStatus != OrderStatus.COMPLETION;
+    }
+
     public void changeOrderStatus(final OrderStatus newOrderStatus) {
         if (this.orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException("완료된 주문의 상태를 변경할 수 없습니다.");

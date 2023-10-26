@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -10,7 +10,6 @@ import kitchenpos.dto.CreateOrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -49,9 +48,8 @@ public class TableService {
     }
 
     private void validateCanChangeEmpty(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))
-        ) {
+        final Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTableId));
+        if (orders.containsNotCompleteOrder()) {
             throw new IllegalArgumentException("주문 상태가 조리중이거나 식사중인 주문이 남아있다면 테이블 상태를 변경할 수 없습니다.");
         }
     }
