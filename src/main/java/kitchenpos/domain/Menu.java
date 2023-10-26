@@ -28,22 +28,10 @@ public class Menu {
     public Menu() {
     }
 
-
-    public Menu(final Long id, final MenuName name, final MenuPrice price, final MenuGroup menuGroup) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
-    }
-
     public Menu(final MenuName name, final MenuPrice price, final MenuGroup menuGroup) {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-    }
-
-    public Menu(final long id, final String name, final BigDecimal price, final long menuGroup) {
-        this(id, new MenuName(name), new MenuPrice(price), new MenuGroup());
     }
 
     public Long getId() {

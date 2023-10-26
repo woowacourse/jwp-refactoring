@@ -26,24 +26,10 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Menu menu, final OrderLineItemQuantity quantity) {
-        this.seq = seq;
-        this.order = order;
-        this.menu = menu;
-        this.quantity = quantity;
-    }
-
     public OrderLineItem(final Order order, final Menu menu, final OrderLineItemQuantity quantity) {
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
-    }
-
-    public OrderLineItem(final long seq, final long orderId, final long menuId, final long quantity) {
-        this.seq = seq;
-        this.order = order;
-        this.menu = menu;
-        this.quantity = new OrderLineItemQuantity(quantity);
     }
 
     public Long getSeq() {

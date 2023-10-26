@@ -17,11 +17,6 @@ public class MenuGroup {
     public MenuGroup() {
     }
 
-    public MenuGroup(final Long id, final String name) {
-        this.id = id;
-        this.name = new MenuGroupName(name);
-    }
-
     public MenuGroup(final MenuGroupName name) {
         this.name = name;
     }

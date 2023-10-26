@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupName;
 import kitchenpos.domain.MenuName;
 import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.MenuProduct;
@@ -65,7 +66,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(null, "메뉴 그룹"));
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new MenuGroupName("메뉴 그룹")));
         final Product savedProduct = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE)));
         final Menu savedMenu = menuRepository.save(new Menu(new MenuName("메뉴"), new MenuPrice(BigDecimal.ONE), savedMenuGroup));
         final MenuProduct savedMenuProduct = menuProductRepository.save(new MenuProduct(savedMenu, savedProduct, new MenuProductQuantity(2)));

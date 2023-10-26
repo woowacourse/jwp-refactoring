@@ -7,7 +7,6 @@ public class OrderLineItemQuantity {
     private long quantity;
 
     public OrderLineItemQuantity() {
-
     }
 
     public OrderLineItemQuantity(final long quantity) {

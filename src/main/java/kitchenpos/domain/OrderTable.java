@@ -27,20 +27,6 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final OrderTableNumberOfGuests numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTable(final Long id, final Long tableGroup, final int numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroup = new TableGroup();
-        this.numberOfGuests = new OrderTableNumberOfGuests(numberOfGuests);
-        this.empty = empty;
-    }
-
     public OrderTable(final TableGroup tableGroup, final OrderTableNumberOfGuests numberOfGuests, final boolean empty) {
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;

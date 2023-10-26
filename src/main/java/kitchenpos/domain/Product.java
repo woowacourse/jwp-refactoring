@@ -23,12 +23,6 @@ public class Product {
     public Product() {
     }
 
-    public Product(final Long id, final String name, final BigDecimal price) {
-        this.id = id;
-        this.name = new ProductName(name);
-        this.price = new ProductPrice(price);
-    }
-
     public Product(final ProductName name, final ProductPrice price) {
         this.name = name;
         this.price = price;

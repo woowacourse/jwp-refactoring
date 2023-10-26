@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupName;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductName;
 import kitchenpos.domain.ProductPrice;
@@ -41,7 +42,7 @@ class MenuServiceTest {
     void setUp() {
         final Product product = new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE));
         final Product savedProduct = productRepository.save(product);
-        final MenuGroup menuGroup = new MenuGroup(null, "메뉴 그룹");
+        final MenuGroup menuGroup = new MenuGroup(new MenuGroupName("메뉴 그룹"));
         final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
         savedMenuGroupId = savedMenuGroup.getId();
         menuProducts.add(new MenuProductRequest(savedProduct.getId(), 2));

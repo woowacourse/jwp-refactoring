@@ -7,7 +7,6 @@ public class OrderTableNumberOfGuests {
     private int numberOfGuests;
 
     public OrderTableNumberOfGuests() {
-
     }
 
     public OrderTableNumberOfGuests(final int numberOfGuests) {

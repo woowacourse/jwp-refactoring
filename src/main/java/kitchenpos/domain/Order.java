@@ -30,23 +30,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        this.id = id;
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-    }
-
     public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-    }
-
-    public Order(final long id, final long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this.id = id;
-        this.orderTable = orderTable;
-        this.orderStatus = OrderStatus.valueOf(orderStatus);
         this.orderedTime = orderedTime;
     }
 
