@@ -1,15 +1,16 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.application.dto.ChangeNumberOfQuestsCommand;
-import kitchenpos.application.dto.ChangeTableEmptyCommand;
-import kitchenpos.application.dto.CreateTableCommand;
-import kitchenpos.application.dto.domain.OrderTableDto;
-import kitchenpos.domain.Money;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.table.application.ChangeNumberOfGuestsCommand;
+import kitchenpos.table.application.ChangeTableEmptyCommand;
+import kitchenpos.table.application.CreateTableCommand;
+import kitchenpos.table.application.OrderTableDto;
+import kitchenpos.Money;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ class TableServiceTest extends ServiceTest {
         void 성공() {
             //given
             OrderTable 테이블 = empty가_아닌_테이블_조회();
-            ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 9);
+            ChangeNumberOfGuestsCommand 커맨드 = new ChangeNumberOfGuestsCommand(테이블.getId(), 9);
 
             //when
             OrderTableDto 변경된_테이블 = tableService.changeNumberOfGuests(커맨드);
@@ -78,7 +79,7 @@ class TableServiceTest extends ServiceTest {
         void 인원이_음수면_예외가_발생한다() {
             //given
             OrderTable 테이블 = orderTableRepository.findAll().get(0);
-            ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), -1);
+            ChangeNumberOfGuestsCommand 커맨드 = new ChangeNumberOfGuestsCommand(테이블.getId(), -1);
 
             //expect
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(커맨드))
@@ -92,7 +93,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable 테이블 = orderTableRepository.save(테이블_엔티티);
             orderTableRepository.delete(테이블);
 
-            ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 1);
+            ChangeNumberOfGuestsCommand 커맨드 = new ChangeNumberOfGuestsCommand(테이블.getId(), 1);
 
             //expect
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(커맨드))
@@ -106,7 +107,7 @@ class TableServiceTest extends ServiceTest {
             테이블.changeEmpty(true);
             orderTableRepository.save(테이블);
 
-            ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 9);
+            ChangeNumberOfGuestsCommand 커맨드 = new ChangeNumberOfGuestsCommand(테이블.getId(), 9);
 
             //expect
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(커맨드))

@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
 import java.util.List;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

@@ -2,9 +2,10 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.CreateProductCommand;
-import kitchenpos.application.dto.domain.ProductDto;
-import kitchenpos.domain.product.Product;
+import kitchenpos.product.application.CreateProductCommand;
+import kitchenpos.product.application.ProductDto;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

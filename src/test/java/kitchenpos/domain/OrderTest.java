@@ -2,18 +2,15 @@ package kitchenpos.domain;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.commons.util.ReflectionUtils;
 
-import static kitchenpos.domain.order.OrderLineItemFixture.id_없는_주문항목;
-import static kitchenpos.domain.order.OrderLineItemFixture.주문항목;
-import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.domain.order.OrderStatus.NOT_STARTED;
+import static kitchenpos.order.OrderLineItemFixture.id_없는_주문항목;
+import static kitchenpos.order.OrderLineItemFixture.주문항목;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.platform.commons.util.ReflectionUtils.HierarchyTraversalMode.TOP_DOWN;

@@ -2,9 +2,10 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateMenuGroupCommand;
-import kitchenpos.application.dto.domain.MenuGroupDto;
-import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.menugroup.application.CreateMenuGroupCommand;
+import kitchenpos.menugroup.application.MenuGroupDto;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

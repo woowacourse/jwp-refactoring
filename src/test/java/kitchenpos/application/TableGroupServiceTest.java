@@ -1,20 +1,21 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.application.dto.CreateTableGroupCommand;
-import kitchenpos.application.dto.CreateTableGroupCommand.TableInGroup;
-import kitchenpos.application.dto.domain.TableGroupDto;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.tablegroup.application.CreateTableGroupCommand;
+import kitchenpos.tablegroup.application.CreateTableGroupCommand.TableInGroup;
+import kitchenpos.tablegroup.application.TableGroupDto;
+import kitchenpos.order.domain.Order;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static kitchenpos.domain.order.OrderLineItemFixture.id_없는_주문항목;
-import static kitchenpos.domain.order.OrderStatus.COMPLETION;
-import static kitchenpos.domain.order.OrderStatus.MEAL;
+import static kitchenpos.order.OrderLineItemFixture.id_없는_주문항목;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

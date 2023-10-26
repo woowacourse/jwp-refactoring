@@ -1,8 +1,9 @@
 package kitchenpos.domain;
 
 import java.util.List;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.Money;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
