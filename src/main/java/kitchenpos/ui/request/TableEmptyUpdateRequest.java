@@ -1,0 +1,17 @@
+package kitchenpos.ui.request;
+
+public class TableEmptyUpdateRequest {
+
+    private Boolean empty;
+
+    public TableEmptyUpdateRequest() {
+    }
+
+    public TableEmptyUpdateRequest(Boolean empty) {
+        this.empty = empty;
+    }
+
+    public Boolean getEmpty() {
+        return empty;
+    }
+}
