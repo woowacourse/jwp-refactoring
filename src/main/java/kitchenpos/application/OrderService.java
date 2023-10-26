@@ -32,23 +32,28 @@ public class OrderService {
 
     @Transactional
     public OrderDto create(final OrderCreateDto request) {
+        final Order order = getOrder(request);
+        orderRepository.save(order);
+
+        return OrderDto.toDto(order);
+    }
+
+    private Order getOrder(final OrderCreateDto request) {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         final Order order = new Order();
         order.addOrderTable(orderTable);
         order.addOrderLineItems(getOrderLineItems(request));
 
-        orderRepository.save(order);
-
-        return OrderDto.toDto(order);
+        return order;
     }
 
     private List<OrderLineItem> getOrderLineItems(final OrderCreateDto request) {
         return request.getOrderLineItems().stream()
-                .map(dto -> {
-                    Menu menu = menuRepository.findById(dto.getMenuId())
+                .map(orderLineItemDto -> {
+                    Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                             .orElseThrow(IllegalArgumentException::new);
-                    return new OrderLineItem(MenuSnapShot.make(menu), dto.getQuantity());
+                    return new OrderLineItem(MenuSnapShot.make(menu), orderLineItemDto.getQuantity());
                 })
                 .collect(Collectors.toList());
     }
