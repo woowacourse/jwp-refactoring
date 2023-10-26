@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,10 +50,10 @@ class OrderTablesTest {
     void ungroup() {
         // given
         final OrderTable orderTable1 = new OrderTable(1L, 1, true, List.of(
-            new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, null)))
+            new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))
         ));
         final OrderTable orderTable2 = new OrderTable(2L, 1, true, List.of(
-            new Order(2L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, null)))
+            new Order(2L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))
         ));
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
 
@@ -69,10 +70,10 @@ class OrderTablesTest {
     void ungroup_failNotCompletionOrder() {
         // given
         final OrderTable orderTable1 = new OrderTable(1L, 1, true, List.of(
-            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, null)))
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))
         ));
         final OrderTable orderTable2 = new OrderTable(2L, 1, true, List.of(
-            new Order(2L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, null)))
+            new Order(2L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))
         ));
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
 

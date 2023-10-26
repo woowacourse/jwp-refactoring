@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,9 +14,8 @@ class OrderTableTest {
     @Test
     void changeEmpty() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(new Order(1L, OrderStatus.COMPLETION,
-                                                                                     List.of(new OrderLineItem(1L, 1L,
-                                                                                                               null)))));
+        final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
+            new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
 
         // when
         orderTable.changeEmpty(true);
@@ -28,9 +28,8 @@ class OrderTableTest {
     @Test
     void changeEmpty_failProceedingTable() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(new Order(1L, OrderStatus.COOKING,
-                                                                                     List.of(new OrderLineItem(1L, 1L,
-                                                                                                               null)))));
+        final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
 
         // when
         // then
@@ -41,12 +40,12 @@ class OrderTableTest {
     @Test
     void addOrder() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(new Order(1L, OrderStatus.COOKING,
-                                                                                     List.of(new OrderLineItem(1L, 1L,
-                                                                                                               null)))));
+        final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
 
         // when
-        final Order addedOrder = new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, null)));
+        final Order addedOrder = new Order(2L, OrderStatus.COOKING,
+                                           List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)));
         orderTable.addOrder(addedOrder);
 
         // then
@@ -57,23 +56,22 @@ class OrderTableTest {
     @Test
     void addOrder_failEmptyTable() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 0, true, List.of(new Order(1L, OrderStatus.COOKING,
-                                                                                    List.of(new OrderLineItem(1L, 1L,
-                                                                                                              null)))));
+        final OrderTable orderTable = new OrderTable(1L, 0, true, List.of(
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
 
         // when
         // then
         assertThatThrownBy(
-            () -> orderTable.addOrder(new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, null)))));
+            () -> orderTable.addOrder(
+                new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 1, false, List.of(new Order(1L, OrderStatus.COOKING,
-                                                                                     List.of(new OrderLineItem(1L, 1L,
-                                                                                                               null)))));
+        final OrderTable orderTable = new OrderTable(1L, 1, false, List.of(
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
 
         // when
         final int changedNumberOfGuests = 5;
@@ -87,9 +85,8 @@ class OrderTableTest {
     @Test
     void changeNumberOfGuests_failEmptyTable() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 0, true, List.of(new Order(1L, OrderStatus.COOKING,
-                                                                                    List.of(new OrderLineItem(1L, 1L,
-                                                                                                              null)))));
+        final OrderTable orderTable = new OrderTable(1L, 0, true, List.of(
+            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))));
 
         // when
         // then

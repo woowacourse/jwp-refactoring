@@ -13,6 +13,7 @@ import kitchenpos.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -149,8 +150,10 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuGroup.addMenu(menu);
         menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, menu);
-        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, menu);
+        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new MenuPrice(BigDecimal.valueOf(20L)),
+                                                                   menu);
+        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "치킨", new MenuPrice(BigDecimal.valueOf(40L)),
+                                                                   menu);
 
         final Order order = Order.forSave(OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2));
         orderTable.addOrder(order);
@@ -174,9 +177,9 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
-    @DisplayName("")
+    @DisplayName("완료된 주문을 변경하려고 시도하면 예외가 발생한다.")
     @Test
-    void func() {
+    void changeOrderStatus_failCompletionOrder() {
         // given
         final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
@@ -187,8 +190,8 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuGroup.addMenu(menu);
         menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, menu);
-        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, menu);
+        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new MenuPrice(BigDecimal.TEN), menu);
+        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "피자", new MenuPrice(BigDecimal.TEN), menu);
 
         final Order order = Order.forSave(OrderStatus.COMPLETION, List.of(orderLineItem1, orderLineItem2));
         orderTable.addOrder(order);

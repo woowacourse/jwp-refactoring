@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,9 @@ class OrdersTest {
         // given
         final Orders orders = new Orders(
             List.of(
-                new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, null))),
-                new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, null))),
-                new Order(3L, OrderStatus.MEAL, List.of(new OrderLineItem(1L, 1L, null)))
+                new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null))),
+                new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null))),
+                new Order(3L, OrderStatus.MEAL, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null)))
             )
         );
 

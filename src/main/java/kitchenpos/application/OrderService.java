@@ -59,7 +59,8 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemCreateRequest request : orderLineItemCreateRequests) {
             final Menu menu = menuRepository.getById(request.getMenuId());
-            final OrderLineItem orderLineItem = OrderLineItem.forSave(request.getQuantity(), menu);
+            final OrderLineItem orderLineItem = OrderLineItem.forSave(request.getQuantity(), menu.getName(),
+                                                                      menu.getPrice(), menu);
             orderLineItems.add(orderLineItem);
         }
 

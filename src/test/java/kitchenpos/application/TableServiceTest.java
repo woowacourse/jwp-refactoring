@@ -4,11 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.application.dto.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -53,7 +55,7 @@ class TableServiceTest {
 
         given(orderTableRepository.getById(orderTableId))
             .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.singletonList(
-                new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, null))))));
+                new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new MenuPrice(BigDecimal.TEN), null))))));
 
         // when
         // then
