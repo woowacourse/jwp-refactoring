@@ -2,27 +2,27 @@ package fixture;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderBuilder {
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+    private OrderTable orderTable;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
     public static OrderBuilder init() {
         final OrderBuilder builder = new OrderBuilder();
         builder.id = null;
-        builder.orderTableId = 9L;
-        builder.orderStatus = "COOKING";
+        builder.orderTable = OrderTableBuilder.init().build();
+        builder.orderStatus = OrderStatus.COOKING;
         builder.orderedTime = LocalDateTime.now();
-        builder.orderLineItems = List.of(
-                OrderLineItemBuilder.init().menuId(1L).build(),
-                OrderLineItemBuilder.init().menuId(2L).build()
-        );
+        builder.orderLineItems = new ArrayList<>();
         return builder;
     }
 
@@ -31,12 +31,12 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder orderTableId(Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public OrderBuilder orderTable(OrderTable orderTable) {
+        this.orderTable = orderTable;
         return this;
     }
 
-    public OrderBuilder orderStatus(String orderStatus) {
+    public OrderBuilder orderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
         return this;
     }
@@ -52,12 +52,8 @@ public class OrderBuilder {
     }
 
     public Order build() {
-        final Order order = new Order();
-        order.setId(this.id);
-        order.setOrderTableId(this.orderTableId);
-        order.setOrderStatus(this.orderStatus);
-        order.setOrderedTime(this.orderedTime);
-        order.setOrderLineItems(this.orderLineItems);
+        final Order order = Order.create(this.orderTable, orderLineItems);
+        order.changeOrderStatus(orderStatus);
         return order;
     }
 }

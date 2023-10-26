@@ -1,17 +1,18 @@
 package fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableBuilder {
     private Long id;
-    private Long tableGroupId;
+    private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
     public static OrderTableBuilder init() {
         final OrderTableBuilder builder = new OrderTableBuilder();
         builder.id = null;
-        builder.tableGroupId = 1L;
+        builder.tableGroup = TableGroupBuilder.init().build();
         builder.numberOfGuests = 2;
         builder.empty = false;
         return builder;
@@ -22,8 +23,8 @@ public class OrderTableBuilder {
         return this;
     }
 
-    public OrderTableBuilder tableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public OrderTableBuilder tableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
         return this;
     }
 
@@ -38,12 +39,12 @@ public class OrderTableBuilder {
     }
 
     public OrderTable build() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(this.id);
-        orderTable.setTableGroupId(this.tableGroupId);
-        orderTable.setNumberOfGuests(this.numberOfGuests);
-        orderTable.setEmpty(this.empty);
-        return orderTable;
+        return new OrderTable(
+                id,
+                tableGroup,
+                numberOfGuests,
+                empty
+        );
     }
 }
 

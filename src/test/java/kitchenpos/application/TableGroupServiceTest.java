@@ -3,16 +3,20 @@ package kitchenpos.application;
 import fixture.OrderBuilder;
 import fixture.OrderTableBuilder;
 import fixture.TableGroupBuilder;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ui.request.OrderTableIdRequest;
+import kitchenpos.ui.request.TableGroupRequest;
+import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,100 +29,108 @@ class TableGroupServiceTest extends ServiceTest {
     TableGroupService tableGroupService;
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Autowired
-    TableGroupDao tableGroupDao;
+    TableGroupRepository tableGroupRepository;
 
     @Autowired
-    OrderDao orderDao;
-    
+    OrderRepository orderRepository;
+
     @Test
     void 테이블_그룹을_생성한다() {
-        TableGroup tableGroup = TableGroupBuilder.init().build();
-
-        TableGroup created = tableGroupService.create(tableGroup);
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(
+                        new OrderTableIdRequest(1L),
+                        new OrderTableIdRequest(2L)
+                )
+        );
+        final TableGroupResponse created = tableGroupService.create(tableGroupRequest);
 
         assertThat(created.getId()).isNotNull();
     }
 
     @Test
     void 주문_테이블이_2개_이하면_예외를_발생한다() {
-        TableGroup tableGroup = TableGroupBuilder.init()
-                .orderTables(List.of(OrderTableBuilder.init().id(1L).build()))
-                .build();
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(
+                        new OrderTableIdRequest(1L)
+                )
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void 테이블_그룹이_비어_있으면_예외를_발생한다() {
-        TableGroup tableGroup = TableGroupBuilder.init()
-                .orderTables(List.of())
-                .build();
+    void 테이블_그룹의_입력_테이블들이_비어_있으면_예외를_발생한다() {
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of());
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문테이블아이디들로_주문테이블을_조회해서_개수가_맞지_않으면_예외를_발생한다() {
-        TableGroup tableGroup = TableGroupBuilder.init()
-                .orderTables(
-                        List.of(
-                                OrderTableBuilder.init().id(1L).build(),
-                                OrderTableBuilder.init().id(100L).build()
-                        ))
-                .build();
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(
+                        new OrderTableIdRequest(1L),
+                        new OrderTableIdRequest(1000L)
+                )
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void 주문테이블중_빈_주문테이블이_있으면_예외를_발생한다() {
-        TableGroup tableGroup = TableGroupBuilder.init()
-                .orderTables(
-                        List.of(
-                                OrderTableBuilder.init().id(1L).build(),
-                                OrderTableBuilder.init().id(9L).build()
-                        ))
-                .build();
+    void 주문테이블들이_비어있지_않으면_예외를_발생한다() {
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(
+                        new OrderTableIdRequest(1L),
+                        new OrderTableIdRequest(10L)
+                )
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블그룹의_주문테이블들을_빈_테이블로_변경한다() {
         tableGroupService.ungroup(1L);
-        
-        List<OrderTable> allByTableGroupId = orderTableDao.findAllByTableGroupId(1L);
+
+        final List<OrderTable> allByTableGroupId = orderTableRepository.findAllByTableGroupId(1L);
         assertSoftly(softAssertions -> {
             for (OrderTable orderTable : allByTableGroupId) {
                 softAssertions.assertThat(orderTable.isEmpty()).isTrue();
             }
         });
     }
-    
+
     @Test
-    void 주문_테이블의_상태가_빈_상태면_주문_테이블_고객수를_변경하지_못한다() {
-        TableGroup tableGroup = TableGroupBuilder.init()
+    void 테이블_그룹에_조리중이나_식사중인_테이블이_있다면_언그룹을_못한다() {
+        final OrderTable orderTable1 = OrderTableBuilder.init()
+                .empty(false)
+                .tableGroup(null)
                 .build();
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-        OrderTable orderTable1 = OrderTableBuilder.init()
+        final OrderTable orderTable2 = OrderTableBuilder.init()
+                .empty(false)
+                .tableGroup(null)
                 .build();
-        OrderTable orderTable2 = OrderTableBuilder.init()
+        List<OrderTable> orderTables = new ArrayList<>();
+        orderTables.add(orderTable1);
+        orderTables.add(orderTable2);
+        final TableGroup tableGroup = TableGroupBuilder.init()
+                .orderTables(orderTables)
                 .build();
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-        Order order1 = OrderBuilder.init()
-                .orderTableId(savedOrderTable1.getId())
-                .orderStatus(OrderStatus.MEAL.name())
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final Order order1 = OrderBuilder.init()
+                .orderTable(orderTable1)
+                .orderStatus(OrderStatus.MEAL)
                 .build();
-        Order order2 = OrderBuilder.init()
-                .orderTableId(savedOrderTable2.getId())
-                .orderStatus(OrderStatus.COMPLETION.name())
+        final Order order2 = OrderBuilder.init()
+                .orderTable(orderTable2)
+                .orderStatus(OrderStatus.COMPLETION)
                 .build();
-        orderDao.save(order1);
-        orderDao.save(order2);
+        orderRepository.save(order1);
+        orderRepository.save(order2);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId())).isInstanceOf(IllegalArgumentException.class);
     }

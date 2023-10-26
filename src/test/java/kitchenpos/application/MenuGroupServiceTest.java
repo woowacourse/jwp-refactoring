@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import fixture.MenuGroupBuilder;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.ui.request.MenuGroupRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,22 +17,24 @@ class MenuGroupServiceTest extends ServiceTest {
     MenuGroupService menuGroupService;
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴그룹을_생성한다() {
-        MenuGroup menuGroup = MenuGroupBuilder.init()
-                .build();
-        MenuGroup created = menuGroupService.create(menuGroup);
+        final MenuGroupRequest request = new MenuGroupRequest("abc");
+
+        final MenuGroupResponse created = menuGroupService.create(request);
 
         assertThat(created).isNotNull();
     }
 
     @Test
     void 모든_메뉴그룹을_조회한다() {
-        List<MenuGroup> expected = menuGroupDao.findAll();
+        final List<MenuGroupResponse> expected = menuGroupRepository.findAll().stream()
+                .map(MenuGroupResponse::from)
+                .collect(Collectors.toList());
 
-        List<MenuGroup> actual = menuGroupService.list();
+        final List<MenuGroupResponse> actual = menuGroupService.list();
 
         assertThat(actual)
                 .usingRecursiveComparison()

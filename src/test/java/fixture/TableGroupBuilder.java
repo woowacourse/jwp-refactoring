@@ -4,6 +4,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TableGroupBuilder {
@@ -15,7 +16,7 @@ public class TableGroupBuilder {
         final TableGroupBuilder builder = new TableGroupBuilder();
         builder.id = null;
         builder.createdDate = LocalDateTime.now();
-        builder.orderTables = List.of(OrderTableBuilder.init().id(1L).build(), OrderTableBuilder.init().id(2L).build());
+        builder.orderTables = new ArrayList<>();
         return builder;
     }
 
@@ -35,10 +36,10 @@ public class TableGroupBuilder {
     }
 
     public TableGroup build() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(this.id);
-        tableGroup.setCreatedDate(this.createdDate);
-        tableGroup.setOrderTables(this.orderTables);
-        return tableGroup;
+        return new TableGroup(
+                id,
+                createdDate,
+                orderTables
+        );
     }
 }
