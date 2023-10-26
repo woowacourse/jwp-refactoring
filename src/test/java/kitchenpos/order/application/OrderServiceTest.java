@@ -262,7 +262,7 @@ class OrderServiceTest {
     }
 
     private MenuGroup saveMenuGroup() {
-        MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
+        MenuGroup menuGroup = MenuGroup.create("TestMenuGroup");
 
         return menuGroupRepository.save(menuGroup);
     }

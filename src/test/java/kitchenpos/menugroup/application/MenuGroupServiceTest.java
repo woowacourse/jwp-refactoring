@@ -47,8 +47,8 @@ class MenuGroupServiceTest {
     @Test
     void listSuccessTest() {
         //given
-        MenuGroup menuGroup1 = MenuGroup.from("TestMenuGroup1");
-        MenuGroup menuGroup2 = MenuGroup.from("TestMenuGroup2");
+        MenuGroup menuGroup1 = MenuGroup.create("TestMenuGroup1");
+        MenuGroup menuGroup2 = MenuGroup.create("TestMenuGroup2");
 
         menuGroupRepository.save(menuGroup1);
         menuGroupRepository.save(menuGroup2);

@@ -3,7 +3,6 @@ package kitchenpos.menugroup.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,16 +12,16 @@ class MenuGroupTest {
     @DisplayName("메뉴 그룹 이름이 null인 경우, 생성할 수 없다.")
     void createMenuGroupFailTest_ByNameIsNull() {
         //when then
-        assertThatThrownBy(() -> MenuGroup.from(null))
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("메뉴 그룹 이름은 null일 수 없습니다.");
+        assertThatThrownBy(() -> MenuGroup.create(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 그룹 이름은 1글자 이상, 255자 이하여야 합니다.");
     }
 
     @Test
     @DisplayName("메뉴 그룹 이름이 1글자 이하인 경우, 생성할 수 없다.")
     void createMenuGroupFailTest_ByNameLengthIsLessThanOne() {
         //when then
-        assertThatThrownBy(() -> MenuGroup.from(""))
+        assertThatThrownBy(() -> MenuGroup.create(""))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 그룹 이름은 1글자 이상, 255자 이하여야 합니다.");
     }
@@ -34,7 +33,7 @@ class MenuGroupTest {
         String menuGroupName = "a".repeat(256);
 
         //when then
-        assertThatThrownBy(() -> MenuGroup.from(menuGroupName))
+        assertThatThrownBy(() -> MenuGroup.create(menuGroupName))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 그룹 이름은 1글자 이상, 255자 이하여야 합니다.");
     }
@@ -46,7 +45,7 @@ class MenuGroupTest {
         String menuGroupName = "TestMenuGroupName";
 
         //when then
-        assertDoesNotThrow(() -> MenuGroup.from(menuGroupName));
+        assertDoesNotThrow(() -> MenuGroup.create(menuGroupName));
     }
 
 }
