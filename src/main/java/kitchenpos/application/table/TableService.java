@@ -38,41 +38,45 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeOrderable(final Long orderTableId, final ChangeOrderTableOrderableRequest request) {
-        final OrderTable savedOrderTable = convertToOrderTable(orderTableId);
-        if (orderRepository.existsByOrderTableId(orderTableId)) {
-            final Order savedOrder = convertToOrder(savedOrderTable);
-            checkOrderCompleted(savedOrder, savedOrderTable);
-        }
-        checkHasTableGroup(savedOrderTable);
+        final OrderTable savedOrderTable = findOrderTable(orderTableId);
+        validateIfOrderTableHasOrder(orderTableId, savedOrderTable);
+        validateIfOrderTableIsGrouped(savedOrderTable);
         savedOrderTable.setUnOrderable();
         return OrderTableResponse.of(savedOrderTable);
     }
 
-    private static void checkHasTableGroup(final OrderTable savedOrderTable) {
-        if (savedOrderTable.getTableGroup().isPresent()) {
+    private void validateIfOrderTableHasOrder(final Long orderTableId, final OrderTable savedOrderTable) {
+        if (orderRepository.existsByOrderTableId(orderTableId)) {
+            final Order savedOrder = findOrderByOrderTableId(savedOrderTable);
+            validateOrderCompleted(savedOrder, savedOrderTable);
+        }
+    }
+
+    private static void validateIfOrderTableIsGrouped(final OrderTable savedOrderTable) {
+        if (savedOrderTable.isGrouped()) {
             throw new OrderTableIsInTableGroupBadRequest(savedOrderTable.getId());
         }
     }
 
-    private void checkOrderCompleted(final Order order, final OrderTable orderTable) {
+    private void validateOrderCompleted(final Order order, final OrderTable orderTable) {
         if (order.isNotCompleted()) {
             throw new OrderIsNotCompletedBadRequestException(orderTable.getId());
         }
     }
 
-    private Order convertToOrder(final OrderTable savedOrderTable) {
+    private Order findOrderByOrderTableId(final OrderTable savedOrderTable) {
         return orderRepository.findByOrderTableId(savedOrderTable.getId())
                 .orElseThrow(OrderNotFoundException::new);
     }
 
-    private OrderTable convertToOrderTable(final long orderTableId) {
+    private OrderTable findOrderTable(final long orderTableId) {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
-        final OrderTable savedOrderTable = convertToOrderTable(orderTableId);
+        final OrderTable savedOrderTable = findOrderTable(orderTableId);
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.of(savedOrderTable);
     }

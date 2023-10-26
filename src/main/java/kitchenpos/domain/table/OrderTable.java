@@ -37,6 +37,10 @@ public class OrderTable {
         this.orderable = orderable;
     }
 
+    public boolean isGrouped() {
+        return Objects.nonNull(this.tableGroup);
+    }
+
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException(NUMBER_OF_GUESTS_IS_BELOW_ZERO_ERROR_MESSAGE);
