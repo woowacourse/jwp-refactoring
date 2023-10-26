@@ -26,7 +26,7 @@ class OrderTest {
     void 주문_생성_성공_주문_상태_조리() {
         // given
         final Product chicken = 치킨_8000원();
-        final MenuGroup menuGroup = new MenuGroup("양식");
+        final MenuGroup menuGroup = new MenuGroup(1L, "양식");
         final Menu menu = 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken));
 
         // when
@@ -49,7 +49,7 @@ class OrderTest {
     void 주문_상태_변경_실패_결제_완료() {
         // given
         final Product chicken = 치킨_8000원();
-        final MenuGroup menuGroup = new MenuGroup("양식");
+        final MenuGroup menuGroup = new MenuGroup(1L, "양식");
         final Menu menu = 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken));
         final Order order = 주문_생성_메뉴_당_1개씩_상태_설정(COMPLETION, List.of(menu));
 

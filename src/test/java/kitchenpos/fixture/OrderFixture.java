@@ -1,14 +1,8 @@
 package kitchenpos.fixture;
 
-import static kitchenpos.fixture.ProductFixture.치킨_8000원;
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.vo.OrderStatus;
@@ -30,13 +24,5 @@ public class OrderFixture {
         return menus.stream()
                 .map(menu -> new OrderLineItem(menu, quantity))
                 .collect(Collectors.toList());
-    }
-
-    public static List<OrderLineItem> 주문항목_1개_메뉴_1000원_할인_치킨() {
-        final BigDecimal price = BigDecimal.valueOf(7000);
-        final MenuGroup menuGroup = new MenuGroup("양식");
-        final Product product = 치킨_8000원();
-        final Menu menu = new Menu(1L, "1000원 할인 치킨", price, menuGroup, List.of(new MenuProduct(product, 1L)));
-        return List.of(new OrderLineItem(menu, 1L));
     }
 }

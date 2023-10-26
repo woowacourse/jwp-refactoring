@@ -17,7 +17,9 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JoinColumn(nullable = false, table = "table_group", name = "table_group_id", foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
+    @JoinColumn(table = "table_group", name = "table_group_id",
+            foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"),
+            nullable = false)
     private Long tableGroupId;
     @Column(nullable = false)
     private int numberOfGuests;

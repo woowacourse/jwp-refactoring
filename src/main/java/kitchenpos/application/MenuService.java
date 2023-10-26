@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
@@ -33,21 +32,24 @@ public class MenuService {
     }
 
     public Menu create(final MenuCreateRequest request) {
+        final Long menuGroupId = request.getMenuGroupId();
+        validateMenuGroup(menuGroupId);
         final Menu menu = new Menu(
                 request.getName(),
                 request.getPrice(),
-                findMenuGroup(request.getMenuGroupId()),
+                menuGroupId,
                 createMenuProducts(request.getMenuProducts())
         );
         return menuRepository.save(menu);
     }
 
-    private MenuGroup findMenuGroup(final Long menuGroupId) {
+    private void validateMenuGroup(final Long menuGroupId) {
         if (Objects.isNull(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹 아이디가 존재하지 않습니다.");
         }
-        return menuGroupRepository.findById(menuGroupId)
-                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 메뉴 그룹으로 메뉴를 생성할 수 없습니다."));
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("등록되지 않은 메뉴 그룹으로 메뉴를 생성할 수 없습니다.");
+        }
     }
 
     private List<MenuProduct> createMenuProducts(final List<MenuProductCreateRequest> menuProducts) {

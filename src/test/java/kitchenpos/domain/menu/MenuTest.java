@@ -24,7 +24,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 nullName,
                 BigDecimal.ZERO,
-                new MenuGroup("이벤트 메뉴"),
+                1L,
                 List.of(new MenuProduct(new Product("상품", ONE), 2))
         )).isInstanceOf(Exception.class);
     }
@@ -40,7 +40,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 name,
                 BigDecimal.ZERO,
-                new MenuGroup("이벤트 메뉴"),
+                1L,
                 List.of(new MenuProduct(new Product("상품", ONE), 2))
         )).isInstanceOf(Exception.class);
     }
@@ -55,7 +55,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 "순두부 정식",
                 nullPrice,
-                new MenuGroup("이벤트 메뉴"),
+                1L,
                 List.of(new MenuProduct(new Product("상품", ONE), 2))
         )).isInstanceOf(Exception.class);
     }
@@ -66,7 +66,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 "순두부 정식",
                 BigDecimal.valueOf(-1),
-                new MenuGroup("이벤트 메뉴"),
+                1L,
                 List.of(new MenuProduct(new Product("상품", ONE), 2))
         )).isInstanceOf(Exception.class);
     }
@@ -90,7 +90,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 "순두부 2인 정식",
                 menuPrice,
-                new MenuGroup("이벤트 메뉴"),
+                1L,
                 List.of(new MenuProduct(product1, 1), new MenuProduct(product2, 2))
         )).isInstanceOf(IllegalArgumentException.class);
     }

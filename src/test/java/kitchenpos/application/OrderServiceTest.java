@@ -16,9 +16,9 @@ import kitchenpos.IntegrationTest;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.request.OrderTableCreateRequest;
@@ -89,7 +89,7 @@ class OrderServiceTest extends IntegrationTest {
         // when
         final Menu actualMenu = menuService.create(
                 RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
-        final Menu fakeMenu = new Menu("x", BigDecimal.ONE, menuGroup, List.of(new MenuProduct(fakePizza, 1)));
+        final Menu fakeMenu = new Menu("x", BigDecimal.ONE, menuGroup.getId(), List.of(new MenuProduct(fakePizza, 1)));
 
         // then
         assertThatThrownBy(() -> orderService.create(RequestParser.of(orderTable, List.of(actualMenu, fakeMenu))))
