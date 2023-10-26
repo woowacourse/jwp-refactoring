@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,7 @@ class TableGroupCustomDaoTest {
     void cascadeSaving() {
         final OrderTable orderTable = new OrderTable(new NumberOfGuests(6), true);
         final OrderTable orderTable2 = new OrderTable(new NumberOfGuests(6), true);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2));
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new OrderTables(List.of(orderTable, orderTable2)));
 
         final TableGroup savedTableGroup = tableGroupCustomDao.save(tableGroup);
 

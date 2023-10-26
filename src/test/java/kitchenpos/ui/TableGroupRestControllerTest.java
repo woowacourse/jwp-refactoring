@@ -12,6 +12,7 @@ import java.util.Map;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +40,7 @@ class TableGroupRestControllerTest {
 
         final OrderTable orderTable = new OrderTable(1L, 1L, new NumberOfGuests(6), false);
         final OrderTable orderTable2 = new OrderTable(2L, 1L, new NumberOfGuests(9), false);
-        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), List.of(orderTable, orderTable2));
+        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), new OrderTables(List.of(orderTable, orderTable2)));
 
         final var request = Map.of(
                 "orderTables", List.of(

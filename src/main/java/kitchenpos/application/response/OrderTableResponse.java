@@ -3,9 +3,10 @@ package kitchenpos.application.response;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 
 public class OrderTableResponse {
@@ -34,12 +35,11 @@ public class OrderTableResponse {
                 orderTable.isEmpty());
     }
 
-    public static List<OrderTableResponse> from(final List<OrderTable> orderTables) {
-        return orderTables.stream().map(orderTable -> new OrderTableResponse(
-                        orderTable.getId(),
-                        orderTable.getTableGroupId(),
-                        orderTable.getNumberOfGuests(),
-                        orderTable.isEmpty()))
-                .collect(Collectors.toList());
+    public static List<OrderTableResponse> from(final OrderTables orderTables) {
+        final ArrayList<OrderTableResponse> orderTableResponses = new ArrayList<>();
+        for (OrderTable orderTable : orderTables) {
+            orderTableResponses.add(from(orderTable));
+        }
+        return orderTableResponses;
     }
 }

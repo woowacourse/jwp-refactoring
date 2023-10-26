@@ -8,6 +8,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class TableService {
     }
 
     public List<OrderTableResponse> list() {
-        return OrderTableResponse.from(orderTableDao.findAll());
+        return OrderTableResponse.from(new OrderTables(orderTableDao.findAll()));
     }
 
     @Transactional

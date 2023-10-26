@@ -1,64 +1,52 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupCustomDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupCustomDao tableGroupDao;
+    private final List<OrderTableUpGroupValidator> orderTableUpGroupValidators;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-                             final TableGroupCustomDao tableGroupDao) {
-        this.orderDao = orderDao;
+    public TableGroupService(final OrderTableDao orderTableDao, final TableGroupCustomDao tableGroupDao,
+                             final List<OrderTableUpGroupValidator> orderTableUpGroupValidators) {
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
+        this.orderTableUpGroupValidators = orderTableUpGroupValidators;
     }
 
     @Transactional
     public TableGroupResponse create(final List<Long> orderTableIds) {
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        if (savedOrderTables.size() < 2 || orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        final OrderTables orderTables = new OrderTables(orderTableDao.findAllByIdIn(orderTableIds));
+        validateOrderTables(orderTableIds, orderTables);
 
-        if (hasInvalidOrderTable(savedOrderTables)) {
-            throw new IllegalArgumentException();
-        }
-
-        return TableGroupResponse.from(tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables)));
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new OrderTables(orderTables.getOrderTables()));
+        return TableGroupResponse.from(tableGroupDao.save(tableGroup));
     }
 
-    private static boolean hasInvalidOrderTable(final List<OrderTable> savedOrderTables) {
-        return savedOrderTables.stream()
-                .anyMatch(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()));
+    private static void validateOrderTables(final List<Long> orderTableIds, final OrderTables orderTables) {
+        if (!orderTables.hasSize(orderTableIds.size())) {
+            throw new IllegalArgumentException();
+        }
+
+        if (!orderTables.isPersistableInTableGroup()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        final OrderTables orderTables = new OrderTables(orderTableDao.findAllByTableGroupId(tableGroupId));
+        orderTables.validateOrderTablesUnGroupable(orderTableUpGroupValidators);
 
         for (final OrderTable orderTable : orderTables) {
             orderTableDao.save(new OrderTable(orderTable.getId(), null, orderTable.getNumberOfGuests(), false));

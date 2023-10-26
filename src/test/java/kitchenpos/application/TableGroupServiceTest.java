@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
 @Import({TableGroupService.class, TableService.class, ProductService.class, TableGroupCustomDao.class, MenuService.class,
-        MenuGroupService.class, OrderService.class})
+        MenuGroupService.class, OrderService.class, OrderStatusValidator.class})
 class TableGroupServiceTest {
 
     @Autowired

@@ -1,8 +1,9 @@
 package kitchenpos.dao;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Repository;
 
@@ -24,17 +25,16 @@ public class TableGroupCustomDao {
 
     public TableGroup save(TableGroup entity) {
         final Long tableGroupId = tableGroupDao
-                .save(new TableGroup(entity.getId(), entity.getCreatedDate(), List.of()))
+                .save(new TableGroup(entity.getId(), entity.getCreatedDate(), new OrderTables(List.of())))
                 .getId();
 
-        final List<OrderTable> savedOrderTables = entity.getOrderTables()
-                .stream()
-                .map(orderTable ->
-                        orderTableDao.save(
-                                new OrderTable(orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(), false))
-                )
-                .collect(Collectors.toList());
+        final ArrayList<OrderTable> orderTables = new ArrayList<>();
+        for (OrderTable orderTable : entity.getOrderTables()) {
+            orderTables.add(orderTableDao.save(
+                    new OrderTable(orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(), false)
+            ));
+        }
 
-        return new TableGroup(tableGroupId, entity.getCreatedDate(), savedOrderTables);
+        return new TableGroup(tableGroupId, entity.getCreatedDate(), new OrderTables(orderTables));
     }
 }

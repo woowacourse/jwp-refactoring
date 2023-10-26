@@ -1,24 +1,23 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.MappedCollection;
+import org.springframework.data.relational.core.mapping.Embedded;
 
 public class TableGroup {
     @Id
     private Long id;
     private LocalDateTime createdDate;
-    @MappedCollection(idColumn = "TABLE_GROUP_ID", keyColumn = "ID")
-    private List<OrderTable> orderTables;
+    @Embedded.Empty
+    private OrderTables orderTables;
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(final Long id, final LocalDateTime createdDate, final OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(final LocalDateTime createdDate, final OrderTables orderTables) {
         this(null, createdDate, orderTables);
     }
 
@@ -30,7 +29,7 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getOrderTables() {
         return orderTables;
     }
 }
