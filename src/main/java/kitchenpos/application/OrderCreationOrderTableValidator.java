@@ -1,14 +1,16 @@
-package kitchenpos.domain;
+package kitchenpos.application;
 
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderOrderTableValidator implements OrderValidator {
+public class OrderCreationOrderTableValidator implements OrderCreationValidator {
 
     private final OrderTableDao orderTableDao;
 
-    public OrderOrderTableValidator(final OrderTableDao orderTableDao) {
+    public OrderCreationOrderTableValidator(final OrderTableDao orderTableDao) {
         this.orderTableDao = orderTableDao;
     }
 

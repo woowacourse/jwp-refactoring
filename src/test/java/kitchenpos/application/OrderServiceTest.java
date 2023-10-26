@@ -19,8 +19,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderOrderLineItemValidator;
-import kitchenpos.domain.OrderOrderTableValidator;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -33,8 +31,8 @@ import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
 @Import({ProductService.class, MenuService.class,
-        MenuGroupService.class, OrderService.class, TableService.class, OrderOrderLineItemValidator.class,
-        OrderOrderTableValidator.class})
+        MenuGroupService.class, OrderService.class, TableService.class, OrderCreationOrderLineItemValidator.class,
+        OrderCreationOrderTableValidator.class})
 class OrderServiceTest {
 
     @Autowired

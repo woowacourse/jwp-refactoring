@@ -9,18 +9,17 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
     private final OrderDao orderDao;
-    private final List<OrderValidator> orderValidators;
+    private final List<OrderCreationValidator> orderCreationValidators;
 
-    public OrderService(final OrderDao orderDao, final List<OrderValidator> orderValidators) {
+    public OrderService(final OrderDao orderDao, final List<OrderCreationValidator> orderCreationValidators) {
         this.orderDao = orderDao;
-        this.orderValidators = orderValidators;
+        this.orderCreationValidators = orderCreationValidators;
     }
 
     @Transactional
@@ -28,8 +27,8 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = convertToLineItems(orderLineItemRequests);
 
         final Order order = new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-        for (OrderValidator orderValidator : orderValidators) {
-            orderValidator.validate(order);
+        for (OrderCreationValidator orderCreationValidator : orderCreationValidators) {
+            orderCreationValidator.validate(order);
         }
 
         return OrderResponse.from(orderDao.save(order));

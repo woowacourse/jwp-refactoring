@@ -1,17 +1,19 @@
-package kitchenpos.domain;
+package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
-public class OrderOrderLineItemValidator implements OrderValidator {
+public class OrderCreationOrderLineItemValidator implements OrderCreationValidator {
 
     private final MenuDao menuDao;
 
-    public OrderOrderLineItemValidator(final MenuDao menuDao) {
+    public OrderCreationOrderLineItemValidator(final MenuDao menuDao) {
         this.menuDao = menuDao;
     }
 
