@@ -6,6 +6,7 @@ import kitchenpos.order.application.dto.UpdateOrderTableEmptyDto;
 import kitchenpos.order.application.dto.UpdateOrderTableGuestNumberDto;
 import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderValidator;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,13 @@ import java.util.stream.Collectors;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
-    public TableService(OrderTableRepository orderTableRepository) {
+    public TableService(
+            OrderTableRepository orderTableRepository,
+            OrderValidator orderValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -45,9 +50,8 @@ public class TableService {
     public OrderTableDto changeEmpty(UpdateOrderTableEmptyDto updateOrderTableEmptyDto) {
         Long id = updateOrderTableEmptyDto.getId();
         Boolean empty = updateOrderTableEmptyDto.getEmpty();
-
         OrderTable ordertable = findOrderTable(id);
-        ordertable.changeEmpty(empty);
+        ordertable.changeEmpty(empty, orderValidator);
 
         return OrderTableDto.from(ordertable);
     }
@@ -56,7 +60,6 @@ public class TableService {
     public OrderTableDto changeNumberOfGuests(UpdateOrderTableGuestNumberDto updateOrderTableGuestNumberDto) {
         Long id = updateOrderTableGuestNumberDto.getId();
         GuestNumber numberOfGuests = new GuestNumber(updateOrderTableGuestNumberDto.getNumberOfGuests());
-
         OrderTable orderTable = findOrderTable(id);
         orderTable.changeNumberOfGuests(numberOfGuests);
 

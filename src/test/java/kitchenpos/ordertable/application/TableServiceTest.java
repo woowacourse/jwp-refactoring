@@ -6,13 +6,12 @@ import kitchenpos.order.application.dto.OrderTableDto;
 import kitchenpos.order.application.dto.UpdateOrderTableEmptyDto;
 import kitchenpos.order.application.dto.UpdateOrderTableGuestNumberDto;
 import kitchenpos.ordertable.domain.GuestNumber;
-import kitchenpos.order.domain.Order;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.OrderValidator;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.OrderTableGuestNumberException;
-import kitchenpos.ordertable.application.TableService;
-import kitchenpos.ordertable.domain.OrderTableRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,9 @@ class TableServiceTest extends MockServiceTest {
 
     @Mock
     private OrderTableRepository orderTableRepository;
+
+    @Mock
+    private OrderValidator orderValidator;
 
     @Test
     void 주문테이블_목록을_조회한다() {
@@ -79,17 +81,13 @@ class TableServiceTest extends MockServiceTest {
     @Test
     void 주문테이블의_주문_가능_여부를_수정한다() {
         // given
-        Order order = new Order(LocalDateTime.now());
-        order.completeOrder();
         OrderTable ordertable = new OrderTable(
                 1L,
                 new GuestNumber(1),
                 false);
-        ordertable.addOrder(order);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(ordertable));
-
         UpdateOrderTableEmptyDto updateOrderTableEmptyDto
                 = new UpdateOrderTableEmptyDto(ordertable.getId(), true);
 
@@ -149,11 +147,11 @@ class TableServiceTest extends MockServiceTest {
                 new GuestNumber(1),
                 false);
 
-        Order order = new Order(LocalDateTime.now());
-        ordertable.addOrder(order);
-
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(ordertable));
+        BDDMockito.willThrow(new OrderTableException("주문테이블에 속한 주문이 요리중 또는 식사중이므로 상태를 변경할 수 없습니다."))
+                .given(orderValidator)
+                .validateOrder(BDDMockito.anyLong());
 
         UpdateOrderTableEmptyDto updateOrderTableEmptyDto
                 = new UpdateOrderTableEmptyDto(ordertable.getId(), true);

@@ -1,6 +1,5 @@
 package kitchenpos.ordertable.domain;
 
-import kitchenpos.order.domain.Order;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.TableGroupException;
 
@@ -11,9 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,9 +26,6 @@ public class OrderTable {
     private GuestNumber numberOfGuests;
 
     private Boolean empty;
-
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders = new ArrayList<>();
 
     protected OrderTable() {
     }
@@ -58,13 +51,11 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void changeEmpty(Boolean empty) {
+    public void changeEmpty(Boolean empty, OrderValidator orderValidator) {
         if (existsTableGroup()) {
             throw new OrderTableException("주문테이블이 테이블 그룹에 속해 상태를 변경할 수 없습니다.");
         }
-        for (Order order : orders) {
-            validateOrderStatusWhenChangeEmpty(order);
-        }
+        orderValidator.validateOrder(id);
         this.empty = empty;
     }
 
@@ -76,12 +67,6 @@ public class OrderTable {
         return !this.empty;
     }
 
-    private void validateOrderStatusWhenChangeEmpty(Order order) {
-        if (!order.isCompleted()) {
-            throw new OrderTableException("주문테이블에 속한 주문이 요리중 또는 식사중이므로 상태를 변경할 수 없습니다.");
-        }
-    }
-
     public void changeNumberOfGuests(GuestNumber numberOfGuests) {
         if (empty) {
             throw new OrderTableException("주문테이블이 주문을 할 수 없는 상태라 게스트 수를 변경할 수 없습니다.");
@@ -89,26 +74,10 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void addOrder(Order order) {
-        if (empty) {
-            throw new OrderTableException("주문테이블이 주문을 할 수 없는 상태라 주문을 추가할 수 없습니다.");
-        }
-        order.changeOrderTable(this);
-        orders.add(order);
-    }
-
-    public void ungroup() {
-        for (Order order : orders) {
-            validateOrderStatus(order);
-        }
+    public void ungroup(OrderValidator orderValidator) {
+        orderValidator.validateOrder(id);
         empty = false;
         tableGroup = null;
-    }
-
-    public void validateOrderStatus(Order order) {
-        if (!order.isCompleted()) {
-            throw new OrderTableException("주문테이블에 속한 주문이 요리중 또는 식사중이므로 상태를 변경할 수 없습니다.");
-        }
     }
 
     public Long getId() {
@@ -125,10 +94,6 @@ public class OrderTable {
 
     public Boolean getEmpty() {
         return empty;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
     @Override

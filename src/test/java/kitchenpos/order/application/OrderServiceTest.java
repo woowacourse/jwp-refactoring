@@ -8,15 +8,15 @@ import kitchenpos.order.application.dto.CreateOrderDto;
 import kitchenpos.order.application.dto.CreateOrderLineItemDto;
 import kitchenpos.order.application.dto.OrderDto;
 import kitchenpos.order.application.dto.UpdateOrderStatusDto;
-import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemQuantity;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.OrderException;
+import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.order.exception.OrderException;
 import kitchenpos.ordertable.exception.OrderTableException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -48,15 +48,15 @@ class OrderServiceTest extends MockServiceTest {
     @Test
     void 주문_목록을_조회한다() {
         // given
-        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
         Menu chicken = new Menu("chicken", BigDecimal.TEN, null);
         Menu pizza = new Menu("pizza", BigDecimal.ONE, null);
 
-        Order order = new Order(LocalDateTime.now());
         OrderLineItem orderLineItem = new OrderLineItem(chicken, new OrderLineItemQuantity(1L));
         OrderLineItem orderLineItem1 = new OrderLineItem(pizza, new OrderLineItemQuantity(2L));
-        order.addOrderLineItems(List.of(orderLineItem, orderLineItem1));
-        orderTable.addOrder(order);
+        Order order = new Order(
+                1L,
+                List.of(orderLineItem, orderLineItem1),
+                LocalDateTime.now());
 
         BDDMockito.given(orderRepository.findAllWithOrderLineItems())
                 .willReturn(List.of(order));
@@ -166,14 +166,8 @@ class OrderServiceTest extends MockServiceTest {
         // given
         OrderTable orderTable = new OrderTable(new GuestNumber(10), true);
 
-        Menu chicken = new Menu("chicken", BigDecimal.TEN, null);
-        Menu pizza = new Menu("pizza", BigDecimal.ONE, null);
-
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(orderTable));
-        BDDMockito.given(menuRepository.findById(BDDMockito.anyLong()))
-                .willReturn(Optional.of(chicken))
-                .willReturn(Optional.of(pizza));
 
         CreateOrderDto createOrderDto = new CreateOrderDto(
                 1L,
@@ -190,9 +184,10 @@ class OrderServiceTest extends MockServiceTest {
     @Test
     void 주문상태를_수정한다() {
         // given
-        Order order = new Order(LocalDateTime.now());
-        order.changeOrderTable(new OrderTable(new GuestNumber(1), false));
-        order.addOrderLineItems(Collections.emptyList());
+        Order order = new Order(
+                1L,
+                Collections.emptyList(),
+                LocalDateTime.now());
 
         BDDMockito.given(orderRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(order));
@@ -222,7 +217,10 @@ class OrderServiceTest extends MockServiceTest {
     @Test
     void 주문상태를_수정할_때_수정하려는_주문의_상태가_COMPLETION_이면_예외를_던진다() {
         // given
-        Order order = new Order(LocalDateTime.now());
+        Order order = new Order(
+                1L,
+                Collections.emptyList(),
+                LocalDateTime.now());
         order.completeOrder();
 
         BDDMockito.given(orderRepository.findById(BDDMockito.anyLong()))

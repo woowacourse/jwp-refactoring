@@ -1,21 +1,21 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.exception.MenuException;
 import kitchenpos.order.application.dto.CreateOrderDto;
 import kitchenpos.order.application.dto.CreateOrderLineItemDto;
 import kitchenpos.order.application.dto.OrderDto;
 import kitchenpos.order.application.dto.UpdateOrderStatusDto;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemQuantity;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.menu.exception.MenuException;
-import kitchenpos.order.exception.OrderException;
-import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.OrderException;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.exception.OrderTableException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,20 +45,20 @@ public class OrderService {
     @Transactional
     public OrderDto create(CreateOrderDto createOrderDto) {
         Long orderTableId = createOrderDto.getOrderTableId();
-        OrderTable orderTable = findOrderTable(orderTableId);
+        validateOrderTable(orderTableId);
         List<OrderLineItem> orderLineItems = makeOrderLineItems(createOrderDto.getOrderLineItems());
-
-        Order order = new Order(LocalDateTime.now());
-        order.addOrderLineItems(orderLineItems);
-        orderTable.addOrder(order);
+        Order order = new Order(orderTableId, orderLineItems, LocalDateTime.now());
         orderRepository.save(order);
 
         return OrderDto.from(order);
     }
 
-    private OrderTable findOrderTable(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
+    private void validateOrderTable(Long orderTableId) {
+        OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new OrderTableException("주문 테이블을 찾을 수 없어 주문을 진행할 수 없습니다."));
+        if (orderTable.getEmpty()) {
+            throw new OrderTableException("주문테이블이 주문을 할 수 없는 상태라 주문을 추가할 수 없습니다.");
+        }
     }
 
     private List<OrderLineItem> makeOrderLineItems(List<CreateOrderLineItemDto> createOrderLineItems) {

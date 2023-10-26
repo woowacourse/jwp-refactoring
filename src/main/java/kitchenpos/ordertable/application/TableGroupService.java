@@ -4,11 +4,12 @@ import kitchenpos.order.application.dto.CreateOrderTableIdDto;
 import kitchenpos.order.application.dto.CreateTableGroupDto;
 import kitchenpos.order.application.dto.TableGroupDto;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.OrderValidator;
 import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.TableGroupRepository;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.TableGroupException;
-import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.ordertable.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +22,15 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderValidator orderValidator;
 
-    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
+    public TableGroupService(
+            OrderTableRepository orderTableRepository,
+            TableGroupRepository tableGroupRepository,
+            OrderValidator orderValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -52,9 +58,9 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         checkTableGroupExists(tableGroupId);
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupIdWithOrders(tableGroupId);
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
+            orderTable.ungroup(orderValidator);
         }
     }
 
