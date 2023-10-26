@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateProductDto;
 import kitchenpos.application.dto.ReadProductDto;
 import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.repository.ProductRepository;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.ui.dto.request.CreateProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

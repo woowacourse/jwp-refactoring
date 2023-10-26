@@ -8,7 +8,7 @@ import java.util.List;
 import kitchenpos.application.dto.CreateMenuGroupDto;
 import kitchenpos.application.dto.ReadMenuGroupDto;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.exception.InvalidNameException;
 import kitchenpos.ui.dto.request.CreateMenuGroupRequest;

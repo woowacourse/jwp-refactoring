@@ -1,4 +1,4 @@
-package kitchenpos.domain.ordertable.service;
+package kitchenpos.domain.ordertable;
 
 import java.util.List;
 import kitchenpos.config.DomainComponent;
@@ -7,11 +7,9 @@ import kitchenpos.domain.exception.InvalidOrderTableException;
 import kitchenpos.domain.exception.InvalidOrderTableSizeException;
 import kitchenpos.domain.exception.InvalidOrderTableStatusException;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.repository.OrderRepository;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.repository.OrderTableRepository;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.tablegroup.TableGroup;
-import kitchenpos.domain.tablegroup.service.GroupingTableService;
+import kitchenpos.domain.tablegroup.GroupingTableService;
 import org.springframework.util.CollectionUtils;
 
 @DomainComponent

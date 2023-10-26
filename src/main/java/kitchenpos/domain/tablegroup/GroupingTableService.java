@@ -1,7 +1,6 @@
-package kitchenpos.domain.tablegroup.service;
+package kitchenpos.domain.tablegroup;
 
 import java.util.List;
-import kitchenpos.domain.tablegroup.TableGroup;
 
 public interface GroupingTableService {
 

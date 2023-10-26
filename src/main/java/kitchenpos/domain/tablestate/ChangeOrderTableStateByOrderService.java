@@ -1,13 +1,13 @@
-package kitchenpos.domain.tablestate.service;
+package kitchenpos.domain.tablestate;
 
 import java.util.List;
 import kitchenpos.config.DomainComponent;
 import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
 import kitchenpos.domain.exception.InvalidTableGroupException;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.service.ChangeOrderTableStateService;
+import kitchenpos.domain.ordertable.ChangeOrderTableStateService;
 
 @DomainComponent
 public class ChangeOrderTableStateByOrderService implements ChangeOrderTableStateService {
