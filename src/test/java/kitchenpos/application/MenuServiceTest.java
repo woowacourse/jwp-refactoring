@@ -12,16 +12,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuProductRequest;
-import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuProductResponse;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Nested;
@@ -110,14 +112,17 @@ class MenuServiceTest {
                     menuCreateRequest("menu", 190L, menuGroup.getId(), List.of(menuProductRequest));
 
             //when
-            final Menu savedMenu = menuService.create(request);
+            final MenuResponse response = menuService.create(request);
 
             //then
+            final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(response.getId());
+            final List<MenuProductResponse> expected = MenuProductResponse.listOf(menuProducts);
+
             assertAll(
-                    () -> assertThat(menuRepository.findById(savedMenu.getId())).isPresent(),
-                    () -> assertThat(menuProductRepository.findAllByMenuId(savedMenu.getId()))
+                    () -> assertThat(menuRepository.findById(response.getId())).isPresent(),
+                    () -> assertThat(expected)
                             .usingRecursiveComparison()
-                            .isEqualTo(savedMenu.getMenuProducts())
+                            .isEqualTo(response.getMenuProducts())
             );
         }
     }
@@ -139,11 +144,11 @@ class MenuServiceTest {
         menu2.addMenuProducts(List.of(menuProduct2));
 
         // when
-        final List<Menu> allMenu = menuService.list();
+        final List<MenuResponse> allMenu = menuService.list();
 
         // then
         assertThat(allMenu)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(menu1, menu2));
+                .isEqualTo(MenuResponse.listOf(List.of(menu1, menu2)));
     }
 }

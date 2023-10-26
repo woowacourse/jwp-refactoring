@@ -9,15 +9,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.support.ServiceTest;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
-import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -118,7 +119,7 @@ class TableGroupServiceTest {
             final TableGroupCreateRequest request = tableGroupCreateRequest(List.of(orderTable1, orderTable2));
 
             //when
-            final TableGroup savedTableGroup = tableGroupService.create(request);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
             //then
             final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(savedTableGroup.getId());

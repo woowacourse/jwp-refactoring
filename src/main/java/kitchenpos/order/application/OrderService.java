@@ -3,17 +3,18 @@ package kitchenpos.order.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
+import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,11 +40,12 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         final OrderLineItems orderLineItems = createOrderLineItems(request);
         final OrderTable orderTable = findSavedOrderTableById(request.getOrderTableId());
         validateOrderTableNotEmpty(orderTable);
-        return getCurrentlySavedOrder(orderTable, orderLineItems);
+        final Order savedOrder = getCurrentlySavedOrder(orderTable, orderLineItems);
+        return OrderResponse.from(savedOrder);
     }
 
     private OrderLineItems createOrderLineItems(final OrderCreateRequest request) {
@@ -92,7 +94,7 @@ public class OrderService {
         return new OrderLineItems(savedOrderLineItems);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
@@ -100,15 +102,15 @@ public class OrderService {
             order.registerOrderLineItems(new OrderLineItems(orderLineItems));
         }
 
-        return orders;
+        return OrderResponse.listOf(orders);
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order order = orderRepository.save(getStatusChangedOrder(orderId, request.getOrderStatus()));
         final List<OrderLineItem> savedOrderItems = orderLineItemRepository.findAllByOrderId(order.getId());
         order.registerOrderLineItems(new OrderLineItems(savedOrderItems));
-        return order;
+        return OrderResponse.from(order);
     }
 
     private Order getStatusChangedOrder(final Long orderId, final String orderStatus) {

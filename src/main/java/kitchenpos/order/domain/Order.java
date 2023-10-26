@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class Order {
@@ -46,8 +47,8 @@ public class Order {
         return orderedTime;
     }
 
-    public OrderLineItems getOrderLineItems() {
-        return orderLineItems;
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems.getItems();
     }
 
     public OrderStatus getOrderStatus() {

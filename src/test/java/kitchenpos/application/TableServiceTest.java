@@ -10,17 +10,18 @@ import static kitchenpos.support.fixture.dto.OrderTableCreateRequestFixture.orde
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
-import kitchenpos.ordertable.application.TableService;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,7 +51,7 @@ class TableServiceTest {
         final OrderTableCreateRequest request = orderTableCreateRequest(1, OrderTable.EMPTY);
 
         //when
-        final OrderTable savedOrderTable = tableService.create(request);
+        final OrderTableResponse savedOrderTable = tableService.create(request);
 
         //then
         assertThat(orderTableRepository.findById(savedOrderTable.getId())).isPresent();
@@ -105,7 +106,7 @@ class TableServiceTest {
             orderRepository.save(getOrder(orderTable.getId(), COMPLETION));
 
             //when
-            final OrderTable changedOrderTable =
+            final OrderTableResponse changedOrderTable =
                     tableService.changeEmpty(orderTable.getId(), orderTableChangeEmptyRequest(OrderTable.EMPTY));
 
             //then
@@ -158,7 +159,7 @@ class TableServiceTest {
             final OrderTable orderTable = orderTableRepository.save(getOrderTable(1, OrderTable.NOT_EMPTY));
 
             //when
-            final OrderTable updatedOrderTable =
+            final OrderTableResponse updatedOrderTable =
                     tableService.changeNumberOfGuests(orderTable.getId(), orderTableChangeNumberOfGuestsRequest(2));
 
             //then

@@ -14,20 +14,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
+import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,7 +123,8 @@ class OrderServiceTest {
             final OrderTable orderTable = orderTableRepository.save(getOrderTable(false));
 
             //when
-            final Order savedOrder = orderService.create(orderCreateRequest(orderTable.getId(), savedMenu.getId(), 1));
+            final OrderResponse savedOrder =
+                    orderService.create(orderCreateRequest(orderTable.getId(), savedMenu.getId(), 1));
 
             //then
             final Order findOrder = orderRepository.findById(savedOrder.getId()).get();
@@ -147,12 +149,12 @@ class OrderServiceTest {
         secondOrder.registerOrderLineItems(new OrderLineItems(List.of(secondOrderOrderLineItem)));
 
         //when
-        final List<Order> orders = orderService.list();
+        final List<OrderResponse> orders = orderService.list();
 
         //then
         assertThat(orders)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(firstOrder, secondOrder));
+                .isEqualTo(OrderResponse.listOf(List.of(firstOrder, secondOrder)));
     }
 
     @Nested
@@ -190,7 +192,7 @@ class OrderServiceTest {
             orderLineItemRepository.save(getOrderLineItem(order.getId(), savedMenu.getId(), 1));
 
             //when
-            final Order savedUpdatedOrder = orderService.changeOrderStatus(
+            final OrderResponse savedUpdatedOrder = orderService.changeOrderStatus(
                     order.getId(),
                     orderStatusChangeRequest(COMPLETION.name())
             );

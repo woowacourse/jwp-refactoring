@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menugroup.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menugroup.application.dto.MenuGroupResponse;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.support.ServiceTest;
@@ -28,7 +29,7 @@ class MenuGroupServiceTest {
         final MenuGroupCreateRequest menuGroup = menuGroupCreateRequest("menuGroup1");
 
         //when
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroup);
 
         //then
         assertThat(menuGroupRepository.findById(savedMenuGroup.getId())).isPresent();
@@ -41,11 +42,11 @@ class MenuGroupServiceTest {
         final MenuGroup menuGroup2 = menuGroupRepository.save(getMenuGroup("menuGroup2"));
 
         //when
-        final List<MenuGroup> result = menuGroupService.list();
+        final List<MenuGroupResponse> result = menuGroupService.list();
 
         //then
         assertThat(result)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(menuGroup1, menuGroup2));
+                .isEqualTo(MenuGroupResponse.listOf(List.of(menuGroup1, menuGroup2)));
     }
 }

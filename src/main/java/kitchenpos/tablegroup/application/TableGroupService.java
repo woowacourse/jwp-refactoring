@@ -3,13 +3,14 @@ package kitchenpos.tablegroup.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.ordertable.application.dto.OrderTableIdDto;
-import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.application.dto.OrderTableIdDto;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,14 +36,14 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> orderTables = getOrderTablesWithIds(request.getOrderTables());
         validateOrderTablesAllExist(request, orderTables);
         validateAllOrderTablesCanBeGrouped(orderTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroupCreatedAtNow());
         savedTableGroup.addOrderTables(orderTables);
         saveAllOrderTables(orderTables);
-        return savedTableGroup;
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     private List<OrderTable> getOrderTablesWithIds(final List<OrderTableIdDto> orderTables) {

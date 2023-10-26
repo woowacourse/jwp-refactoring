@@ -6,10 +6,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;
-import kitchenpos.product.application.ProductService;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class ProductServiceTest {
             final ProductCreateRequest product = productCreateRequest("product", 0L);
 
             //when
-            final Product savedProduct = productService.create(product);
+            final ProductResponse savedProduct = productService.create(product);
 
             //then
             assertThat(productRepository.findById(savedProduct.getId())).isPresent();
@@ -58,11 +59,11 @@ class ProductServiceTest {
         final Product chicken = productRepository.save(getProduct("product2", 10L));
 
         //when
-        final List<Product> products = productService.list();
+        final List<ProductResponse> products = productService.list();
 
         //then
         assertThat(products)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(pizza, chicken));
+                .isEqualTo(ProductResponse.listOf(List.of(pizza, chicken)));
     }
 }

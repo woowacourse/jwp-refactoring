@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.util.BigDecimalUtil;
 import org.springframework.stereotype.Service;
@@ -37,12 +38,12 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest menuCreateRequest) {
+    public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
         final Menu menu = createMenuByRequest(menuCreateRequest);
         final Menu savedMenu = menuRepository.save(menu);
         final List<MenuProduct> savedMenuProducts = saveAllMenuProducts(menu.getMenuProducts(), savedMenu.getId());
         savedMenu.addMenuProducts(savedMenuProducts);
-        return savedMenu;
+        return MenuResponse.from(savedMenu);
     }
 
     private Menu createMenuByRequest(final MenuCreateRequest request) {
@@ -98,7 +99,7 @@ public class MenuService {
         return savedMenuProducts;
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
@@ -106,6 +107,6 @@ public class MenuService {
             menu.addMenuProducts(menuProducts);
         }
 
-        return menus;
+        return MenuResponse.listOf(menus);
     }
 }

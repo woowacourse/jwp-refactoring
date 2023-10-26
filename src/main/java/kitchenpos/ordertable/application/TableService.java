@@ -1,12 +1,13 @@
 package kitchenpos.ordertable.application;
 
 import java.util.List;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,26 +29,28 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest request) {
-        return orderTableRepository.save(createOrderTableByRequest(request));
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
+        final OrderTable savedOrderTable = orderTableRepository.save(createOrderTableByRequest(request));
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     private OrderTable createOrderTableByRequest(final OrderTableCreateRequest request) {
         return new OrderTable(request.getNumberOfGuests(), request.isEmpty());
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return OrderTableResponse.listOf(orderTableRepository.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
         validateOrderTableGroupExist(orderTable);
         validateOrderTableOrderStatuses(orderTable);
         orderTable.changeEmpty(request.isEmpty());
 
-        return orderTableRepository.save(orderTable);
+        final OrderTable updateOrderTable = orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(updateOrderTable);
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {
@@ -68,13 +71,14 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId,
-                                           final OrderTableChangeNumberOfGuestsRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final OrderTableChangeNumberOfGuestsRequest request) {
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        return orderTableRepository.save(savedOrderTable);
+        final OrderTable updateOrderTable = orderTableRepository.save(savedOrderTable);
+        return OrderTableResponse.from(updateOrderTable);
     }
 }
