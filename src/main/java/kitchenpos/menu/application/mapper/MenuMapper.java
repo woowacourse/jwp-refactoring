@@ -21,7 +21,7 @@ public class MenuMapper {
         return Menu.of(
                 request.getName(),
                 request.getPrice(),
-                menuGroup,
+                menuGroup.getId(),
                 menuProducts
         );
     }

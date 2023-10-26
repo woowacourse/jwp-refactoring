@@ -15,16 +15,15 @@ import kitchenpos.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.product.domain.Product;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderUpdateStatusRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -50,10 +49,9 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
         Product product = productRepository.save(Product.of("후라이드", BigDecimal.valueOf(15_000L)));
         MenuProduct menuProduct = new MenuProduct(null, product, 1L);
-        Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup, List.of(menuProduct));
+        Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup.getId(), List.of(menuProduct));
         menu = menuRepository.save(newMenu);
-        orderLineItems = List.of(new OrderLineItem(null, menu, 1L)
-                , new OrderLineItem(null, menu, 1L));
+        orderLineItems = List.of(new OrderLineItem(null, menu, 1L), new OrderLineItem(null, menu, 1L));
     }
 
     @Nested
@@ -96,7 +94,8 @@ class OrderServiceTest extends ServiceTest {
             final Long wrongMenuId = -1L;
             OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(wrongMenuId, 1L);
             OrderLineItemRequest orderLineItemRequest2 = new OrderLineItemRequest(wrongMenuId, 1L);
-            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest, orderLineItemRequest2);
+            OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest,
+                    orderLineItemRequest2);
 
             // when, then
             assertThatThrownBy(

@@ -11,8 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.vo.Price;
 
@@ -29,9 +27,8 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id", nullable = false)
-    private MenuGroup menuGroup;
+    @Column(nullable = false)
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
@@ -42,7 +39,7 @@ public class Menu {
     private Menu(final Long id,
                  final String name,
                  final Price price,
-                 final MenuGroup menuGroup,
+                 final Long menuGroupId,
                  final List<MenuProduct> menuProducts) {
         updateMenuProducts(menuProducts);
         validateMenuPrice(price, calculateSumByMenuProducts(menuProducts));
@@ -50,21 +47,21 @@ public class Menu {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
     public static Menu of(final String name,
                           final BigDecimal price,
-                          final MenuGroup menuGroup,
+                          final Long menuGroupId,
                           final List<MenuProduct> menuProducts) {
-        return new Menu(null, name, new Price(price), menuGroup, menuProducts);
+        return new Menu(null, name, new Price(price), menuGroupId, menuProducts);
     }
 
     public static Menu of(final String name,
                           final BigDecimal price,
-                          final MenuGroup menuGroup) {
-        return new Menu(null, name, new Price(price), menuGroup, new ArrayList<>());
+                          final Long menuGroupId) {
+        return new Menu(null, name, new Price(price), menuGroupId, new ArrayList<>());
     }
 
     public void updateMenuProducts(final List<MenuProduct> menuProducts) {
@@ -102,7 +99,7 @@ public class Menu {
     }
 
     public Long getMenuGroupId() {
-        return menuGroup.getId();
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

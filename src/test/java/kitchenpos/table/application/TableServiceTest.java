@@ -14,14 +14,13 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.OrderTableResponse;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableUpdateEmptyRequest;
 import kitchenpos.table.dto.TableUpdateNumberOfGuestsRequest;
-import kitchenpos.table.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,7 @@ class TableServiceTest extends ServiceTest {
         final Product product = productRepository.save(Product.of("후라이드", BigDecimal.valueOf(15_000L)));
         final MenuProduct menuProduct = new MenuProduct(null, product, 1L);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
-        final Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup, List.of(menuProduct));
+        final Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup.getId(), List.of(menuProduct));
         menu = menuRepository.save(newMenu);
     }
 
