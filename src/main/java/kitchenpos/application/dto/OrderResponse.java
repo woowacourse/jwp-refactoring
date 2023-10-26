@@ -15,7 +15,7 @@ public class OrderResponse {
     private final LocalDateTime orderedTime;
     private final List<OrderLineItemResponse> orderLineItems;
 
-    public OrderResponse(
+    private OrderResponse(
             final Long id,
             final Long orderTableId,
             final String orderStatus,
@@ -68,7 +68,7 @@ public class OrderResponse {
         private final Long menuId;
         private final Long quantity;
 
-        public OrderLineItemResponse(
+        private OrderLineItemResponse(
                 final Long seq,
                 final Long orderId,
                 final Long menuId,
