@@ -48,13 +48,13 @@ public class OrderService {
                                       LocalDateTime.now(),
                                       new ArrayList<>());
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-                                                          .map(orderLineItemRequest -> convertFromDto(orderLineItemRequest, order))
+                                                          .map(orderLineItemRequest -> convertToOrderLineItem(orderLineItemRequest, order))
                                                           .collect(Collectors.toList());
         order.addOrderLineItems(orderLineItems);
         return orderRepository.save(order);
     }
 
-    private OrderLineItem convertFromDto(final OrderLineItemRequest request, final Order order) {
+    private OrderLineItem convertToOrderLineItem(final OrderLineItemRequest request, final Order order) {
         final Menu menu = menuRepository.findById(request.getMenuId())
                                         .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
         final MenuInfo menuInfo = MenuInfo.from(menu);

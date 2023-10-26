@@ -43,13 +43,13 @@ public class MenuService {
                                    menuGroup,
                                    new ArrayList<>());
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                                                      .map(menuProductRequest -> convertFromDto(menuProductRequest, menu))
+                                                      .map(menuProductRequest -> convertToMenuProduct(menuProductRequest, menu))
                                                       .collect(Collectors.toList());
         menu.addMenuProducts(menuProducts);
         return menuRepository.save(menu);
     }
 
-    private MenuProduct convertFromDto(final MenuProductRequest request, final Menu menu) {
+    private MenuProduct convertToMenuProduct(final MenuProductRequest request, final Menu menu) {
         final Product product = productRepository.findById(request.getProductId())
                                                  .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
         return new MenuProduct(request.getQuantity(),
