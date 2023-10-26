@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.product.domain.MenuValidator;
 import kitchenpos.product.domain.Product;
 import kitchenpos.vo.Price;
 
@@ -74,5 +75,9 @@ public class Menu {
                 new MenuProduct(product.getId(), productIdQuantityMap.get(product.getId()))
             )
             .forEach(menuProducts::add);
+    }
+
+    public void validateCreate(final MenuValidator menuValidator) {
+        menuValidator.validateMenuCreate(this);
     }
 }

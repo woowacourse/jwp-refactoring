@@ -1,9 +1,11 @@
 package kitchenpos.menu.application.dto;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Collectors.toUnmodifiableMap;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import kitchenpos.menu.domain.Menu;
 
 public class MenuDto {
@@ -60,5 +62,10 @@ public class MenuDto {
 
     public List<MenuProductDto> getMenuProducts() {
         return menuProducts;
+    }
+
+    public Map<Long, Long> getProductQuantityMap() {
+        return menuProducts.stream()
+            .collect(toUnmodifiableMap(MenuProductDto::getProductId, MenuProductDto::getQuantity));
     }
 }

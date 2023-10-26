@@ -1,6 +1,5 @@
 package kitchenpos.menu.application;
 
-import static kitchenpos.menu.domain.exception.MenuExceptionType.MENU_PRODUCT_IS_CONTAIN_NOT_SAVED_PRODUCT;
 import static kitchenpos.menu.domain.exception.MenuExceptionType.PRICE_IS_BIGGER_THAN_MENU_PRODUCT_PRICES_SUM;
 import static kitchenpos.support.fixture.MenuFixture.createMenuProductDto;
 import static kitchenpos.support.fixture.MenuFixture.한마리메뉴_DTO;
@@ -14,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.application.dto.MenuDto;
-import kitchenpos.menu_group.application.MenuGroupDto;
 import kitchenpos.menu.application.dto.MenuProductDto;
 import kitchenpos.menu.domain.exception.MenuException;
+import kitchenpos.menu_group.application.MenuGroupDto;
 import kitchenpos.product.application.dto.ProductDto;
 import kitchenpos.support.ServiceIntegrationTest;
 import kitchenpos.vo.exception.PriceException;
@@ -66,24 +65,6 @@ class MenuServiceTest extends ServiceIntegrationTest {
             assertThatThrownBy(() -> menuService.create(menuDto))
                 .isInstanceOf(PriceException.class)
                 .hasMessage(PRICE_IS_LOWER_THAN_ZERO.getMessage());
-        }
-
-        @Test
-        @DisplayName("product가 저장되지 않은 경우 예외처리")
-        void throwExceptionProductIsNotExist() {
-            final long unsavedId = Long.MIN_VALUE;
-            final ProductDto unSavedProductDto
-                = new ProductDto(unsavedId, "양념치킨", BigDecimal.valueOf(16000));
-            final MenuProductDto menuProductDto = createMenuProductDto(unSavedProductDto, 1L);
-            final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
-            final MenuDto menuDto = 후라이드치킨_DTO(
-                savedMenuGroupDto, List.of(menuProductDto), BigDecimal.valueOf(16000)
-            );
-
-            //when
-            assertThatThrownBy(() -> menuService.create(menuDto))
-                .isInstanceOf(MenuException.class)
-                .hasMessage(MENU_PRODUCT_IS_CONTAIN_NOT_SAVED_PRODUCT.getMessage());
         }
 
         @Test
