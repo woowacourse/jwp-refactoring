@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.ProductCreateRequest;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.exception.InvalidProductPriceException;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.controller.dto.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.exception.InvalidProductPriceException;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
