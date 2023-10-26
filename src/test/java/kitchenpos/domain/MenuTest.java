@@ -27,7 +27,8 @@ class MenuTest {
         final var menuProducts = Collections.<MenuProduct>emptyList();
 
         // when & then
-        assertThatThrownBy(() -> new Menu("망고 치킨", value, menuGroup, menuProducts))
+        final Long menuGroupId = menuGroup.getId();
+        assertThatThrownBy(() -> new Menu("망고 치킨", value, menuGroupId, menuProducts))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -41,7 +42,8 @@ class MenuTest {
 
         // when & then
         final BigDecimal price = BigDecimal.valueOf(1_000_000);
-        assertThatThrownBy(() -> new Menu("망고 치킨", price, menuGroup, menuProducts))
+        final Long menuGroupId = menuGroup.getId();
+        assertThatThrownBy(() -> new Menu("망고 치킨", price, menuGroupId, menuProducts))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

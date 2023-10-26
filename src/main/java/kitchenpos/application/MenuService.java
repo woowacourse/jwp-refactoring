@@ -39,7 +39,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(this::convertRequestToMenuProduct)
                 .collect(Collectors.toList());
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup.getId(), menuProducts);
 
         return MenuResponse.toResponse(menuRepository.save(menu));
     }

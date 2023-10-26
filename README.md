@@ -84,7 +84,7 @@
 
 ## 의존성 리팩터링
 
-- [ ] Menu -> MenuGroup
+- [X] Menu -> MenuGroup
   - AS-IS : 단방향 직접 참조
   ```mermaid
   graph LR
