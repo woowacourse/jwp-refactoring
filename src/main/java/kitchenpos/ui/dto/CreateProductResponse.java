@@ -12,6 +12,9 @@ public class CreateProductResponse {
 
     private BigDecimal price;
 
+    public CreateProductResponse() {
+    }
+
     public CreateProductResponse(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;

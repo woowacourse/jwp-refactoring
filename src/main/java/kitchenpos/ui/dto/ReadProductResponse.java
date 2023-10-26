@@ -12,6 +12,9 @@ public class ReadProductResponse {
 
     private BigDecimal price;
 
+    public ReadProductResponse() {
+    }
+
     public ReadProductResponse(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
