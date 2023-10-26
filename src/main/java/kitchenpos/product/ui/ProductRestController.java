@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +38,7 @@ public class ProductRestController {
                 ;
     }
 
-    @PatchMapping("/api/products")
+    @PutMapping("/api/products")
     public ResponseEntity<ProductResponse> update(@RequestBody final ProductUpdateRequest productUpdateRequest) {
         final kitchenpos.product.application.dto.ProductResponse created = productService.update(productUpdateRequest);
         final URI uri = URI.create("/api/products/" + created.getId());

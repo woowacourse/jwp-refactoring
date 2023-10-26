@@ -5,9 +5,12 @@ import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductResponse {
 
-    private final Long id;
-    private final Long productId;
-    private final Long quantity;
+    private Long id;
+    private Long productId;
+    private Long quantity;
+
+    private MenuProductResponse() {
+    }
 
     private MenuProductResponse(final Long id, final Long productId, final Long quantity) {
         this.id = id;

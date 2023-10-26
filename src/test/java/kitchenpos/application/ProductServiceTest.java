@@ -50,6 +50,6 @@ class ProductServiceTest {
     void list_success() {
         productService.list();
 
-        verify(productRepository, times(1)).findAll();
+        verify(productRepository, times(1)).findAllByDeletedFalse();
     }
 }

@@ -6,9 +6,12 @@ import kitchenpos.product.domain.Product;
 
 public class ProductResponse {
 
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
+    private Long id;
+    private String name;
+    private BigDecimal price;
+
+    private ProductResponse() {
+    }
 
     private ProductResponse(final Long id, final String name, final BigDecimal price) {
         this.id = id;

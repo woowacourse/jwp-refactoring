@@ -9,10 +9,13 @@ import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuResponse {
 
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
-    private final List<MenuProductResponse> menuProductResponses;
+    private Long id;
+    private String name;
+    private BigDecimal price;
+    private List<MenuProductResponse> menuProductResponses;
+
+    private MenuResponse() {
+    }
 
     private MenuResponse(final Long id,
                          final String name,
