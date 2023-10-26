@@ -20,7 +20,7 @@ public final class OrderResponse {
                 .stream()
                 .map(OrderLineItem::getSeq)
                 .collect(Collectors.toList());
-        return new OrderResponse(order.getId(), order.getOrderTable().getId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItemIds);
+        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItemIds);
     }
 
     private OrderResponse(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<Long> orderLineItemIds) {

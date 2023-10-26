@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.application.TableGroupService;
-import kitchenpos.table.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -118,7 +118,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroup beforeTableGroup = new TableGroup(LocalDateTime.now(), orderTables);
             beforeTableGroup = testFixtureBuilder.buildTableGroup(beforeTableGroup);
 
-            OrderTable tableGroupIdNotNullOrderTable = new OrderTable(beforeTableGroup, 3, true);
+            OrderTable tableGroupIdNotNullOrderTable = new OrderTable(beforeTableGroup.getId(), 3, true);
             tableGroupIdNotNullOrderTable = testFixtureBuilder.buildOrderTable(tableGroupIdNotNullOrderTable);
 
             orderTables.add(tableGroupIdNotNullOrderTable);
@@ -154,10 +154,10 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
             tableGroup = testFixtureBuilder.buildTableGroup(tableGroup);
 
-            OrderTable notCompletionOrdertable = new OrderTable(tableGroup, 3, false);
-            notCompletionOrdertable = testFixtureBuilder.buildOrderTable(notCompletionOrdertable);
+            OrderTable orderTable = new OrderTable(tableGroup.getId(), 3, false);
+            orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final Order notCompletionOrder = new Order(notCompletionOrdertable, orderStatus, LocalDateTime.now(), Collections.emptyList());
+            final Order notCompletionOrder = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList());
             testFixtureBuilder.buildOrder(notCompletionOrder);
 
             // when & then

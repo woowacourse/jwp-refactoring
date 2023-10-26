@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
@@ -18,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -41,19 +41,24 @@ public class OrderService {
 
     @Transactional
     public Long create(final OrderCreateRequest request) {
-        final List<OrderCreateRequest.OrderLineItemCreate> orderLineItemCreates = request.getOrderLineItemCreates();
+        final List<OrderCreateRequest.MenuSnapShot> menuSnapShots = request.getMenuSnapShots();
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        if (CollectionUtils.isEmpty(orderLineItemCreates)) {
+        if (CollectionUtils.isEmpty(menuSnapShots)) {
             throw new IllegalArgumentException();
         }
 
-        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
         final Order savedOrder = orderRepository.save(order);
 
-        for (final OrderCreateRequest.OrderLineItemCreate orderLineItem : orderLineItemCreates) {
-            savedOrder.addOrderLineItem(orderLineItemRepository.save(new OrderLineItem(savedOrder, menuRepository.findById(orderLineItem.getMenuId()).orElseThrow(IllegalArgumentException::new), orderLineItem.getQuantity())));
+        for (final OrderCreateRequest.MenuSnapShot menuSnapShot : menuSnapShots) {
+            final Menu menu = menuRepository.findById(menuSnapShot.getMenuId()).orElseThrow(IllegalArgumentException::new);
+            OrderSnapShotValidator.validate(menu,menuSnapShot);
+            savedOrder.addOrderLineItem(new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), menuSnapShot.getQuantity()));
         }
 
         return savedOrder.getId();

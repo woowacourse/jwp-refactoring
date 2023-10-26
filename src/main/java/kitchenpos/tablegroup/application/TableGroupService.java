@@ -1,18 +1,19 @@
-package kitchenpos.table.application;
+package kitchenpos.tablegroup.application;
 
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -46,8 +47,9 @@ public class TableGroupService {
                 .orElseThrow(IllegalArgumentException::new);
 
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                orderTables, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        final List<Long> orderTableIds = orderTables.stream().map(OrderTable::getId).collect(Collectors.toList());
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 

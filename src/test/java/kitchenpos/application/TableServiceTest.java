@@ -6,7 +6,7 @@ import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -117,7 +117,6 @@ class TableServiceTest extends ServiceTest {
             final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
             TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
             testFixtureBuilder.buildTableGroup(tableGroup);
-            orderTables.forEach(orderTable -> testFixtureBuilder.buildOrderTable(orderTable));
 
             // when & then
             final Long orderTableId = orderTable1.getId();
@@ -133,18 +132,14 @@ class TableServiceTest extends ServiceTest {
             OrderTable notCompletionOrdertable = new OrderTable(null, 3, false);
             notCompletionOrdertable = testFixtureBuilder.buildOrderTable(notCompletionOrdertable);
 
-            final Order notCompletionOrder = new Order(notCompletionOrdertable, orderStatus, LocalDateTime.now(), Collections.emptyList());
+            final Order notCompletionOrder = new Order(notCompletionOrdertable.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList());
             testFixtureBuilder.buildOrder(notCompletionOrder);
-
-            final OrderTable changingStatus = new OrderTable();
-            changingStatus.changeEmpty(!notCompletionOrdertable.isEmpty());
 
             // when & then
             final Long orderTableId = notCompletionOrdertable.getId();
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-
     }
 
     @DisplayName("주문 테이블 고객 수 변경")

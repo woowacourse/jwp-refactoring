@@ -25,7 +25,8 @@ class MenuTest {
             final String menuName = "menu";
             final BigDecimal price = new BigDecimal(1000);
             final long menuGroupId = 1L;
-            final List<MenuProduct> menuProducts = Collections.emptyList();
+            final Product product = new Product("product", new BigDecimal(3000));
+            final List<MenuProduct> menuProducts = List.of(new MenuProduct(product, 4));
 
             //when
             final Menu menu = new Menu(menuName, price, menuGroupId, menuProducts);
@@ -66,33 +67,6 @@ class MenuTest {
             // when & then
             assertThatThrownBy(() -> new Menu(menuName, price, menuGroupId, menuProducts))
                     .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
-
-    @DisplayName("메뉴 상품 엔티티 추가 테스트")
-    @Nested
-    class MenuProductAddTest {
-
-        @DisplayName("메뉴 상품 엔티티를 추가한다.")
-        @Test
-        void menuProductAddTest() {
-            //given
-            final String menuName = "menu";
-            final BigDecimal price = new BigDecimal(1000);
-            final long menuGroupId = 1L;
-            final List<MenuProduct> menuProducts = Collections.emptyList();
-            final Menu menu = new Menu(menuName, price, menuGroupId, menuProducts);
-
-            final Product product = new Product("name", new BigDecimal(100));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 3);
-            //when
-            menu.addMenuProduct(menuProduct);
-
-            //then
-            assertSoftly(softly -> {
-                softly.assertThat(menuProduct.getMenu()).isEqualTo(menu);
-                softly.assertThat(menu.getMenuProducts().size()).isEqualTo(1);
-            });
         }
     }
 }

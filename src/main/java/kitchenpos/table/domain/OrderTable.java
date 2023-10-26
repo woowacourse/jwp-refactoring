@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -15,9 +13,8 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
     @Column(nullable = false)
     private int numberOfGuests;
     @Column(nullable = false)
@@ -26,8 +23,8 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -40,16 +37,9 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
 
     public Long getTableGroupId() {
-        if (Objects.isNull(tableGroup)) {
-            return null;
-        }
-
-        return tableGroup.getId();
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -60,8 +50,8 @@ public class OrderTable {
         return empty;
     }
 
-    public void settingTableGroup(final TableGroup savedTableGroup) {
-        this.tableGroup = savedTableGroup;
+    public void joinTableGroupById(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void changeEmpty(final boolean empty) {
@@ -69,11 +59,11 @@ public class OrderTable {
     }
 
     public boolean isGroupable() {
-        return this.isEmpty() && Objects.isNull(this.tableGroup);
+        return this.isEmpty() && isTableGroupNull();
     }
 
     public boolean isTableGroupNull() {
-        return Objects.isNull(this.tableGroup);
+        return Objects.isNull(this.tableGroupId);
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {

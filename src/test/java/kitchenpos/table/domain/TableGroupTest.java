@@ -1,5 +1,6 @@
 package kitchenpos.table.domain;
 
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -71,8 +72,8 @@ class TableGroupTest {
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(tableGroup.getOrderTables().get(0).getTableGroup()).isNull();
-                softly.assertThat(tableGroup.getOrderTables().get(1).getTableGroup()).isNull();
+                softly.assertThat(tableGroup.getOrderTables().get(0).getTableGroupId()).isNull();
+                softly.assertThat(tableGroup.getOrderTables().get(1).getTableGroupId()).isNull();
             });
         }
     }

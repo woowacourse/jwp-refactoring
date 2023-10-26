@@ -1,12 +1,15 @@
-package kitchenpos.table.domain;
+package kitchenpos.tablegroup.domain;
 
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,7 +23,8 @@ public class TableGroup {
     private Long id;
     @Column(nullable = false)
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
@@ -29,7 +33,7 @@ public class TableGroup {
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validate(orderTables);
         for (final OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.settingTableGroup(this);
+            savedOrderTable.joinTableGroupById(this.id);
             savedOrderTable.changeEmpty(false);
         }
         this.createdDate = createdDate;
@@ -61,7 +65,7 @@ public class TableGroup {
 
     public void unGroup() {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.settingTableGroup(null);
+            orderTable.joinTableGroupById(null);
             orderTable.changeEmpty(false);
         }
     }

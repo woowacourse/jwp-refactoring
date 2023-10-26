@@ -1,27 +1,25 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableEvent;
 import kitchenpos.table.domain.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -51,10 +49,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(
-                savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        applicationEventPublisher.publishEvent(new OrderTableEvent(savedOrderTable.getId()));
 
         savedOrderTable.changeEmpty(empty);
 
