@@ -21,6 +21,7 @@ public class OrderTable {
     @NotNull
     @Embedded
     private OrderTableNumberOfGuests numberOfGuests;
+    @NotNull
     private boolean empty;
 
     public OrderTable() {
@@ -46,6 +47,18 @@ public class OrderTable {
 
     public void validateCreateTableGroup() {
         if (!this.empty || Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateChangeEmpty() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateChangeNumberOfGuests() {
+        if (empty) {
             throw new IllegalArgumentException();
         }
     }

@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +31,7 @@ public class TableService {
         final OrderTable orderTable = new OrderTable(
                 null,
                 new OrderTableNumberOfGuests(request.getNumberOfGuests()),
-                request.isEmpty()
+                request.getEmpty()
         );
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         return convertToResponse(savedOrderTable);
@@ -46,43 +45,33 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.updateEmpty(request.isEmpty());
-
-        return convertToResponse(orderTableRepository.save(savedOrderTable));
+        final OrderTable orderTable = findOrderTableById(orderTableId);
+        orderTable.validateChangeEmpty();
+        validateOrderStatus(orderTableId);
+        orderTable.updateEmpty(request.getEmpty());
+        return convertToResponse(orderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(
             final Long orderTableId,
             final OrderTableChangeNumberOfGuestsRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
+        final OrderTable orderTable = findOrderTableById(orderTableId);
+        orderTable.validateChangeNumberOfGuests();
+        orderTable.updateNumberOfGuests(new OrderTableNumberOfGuests(request.getNumberOfGuests()));
+        return convertToResponse(orderTable);
+    }
 
-        if (numberOfGuests < 0) {
+    private void validateOrderStatus(final Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+    private OrderTable findOrderTableById(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.updateNumberOfGuests(new OrderTableNumberOfGuests(numberOfGuests));
-
-        return convertToResponse(orderTableRepository.save(savedOrderTable));
     }
 
     private OrderTableResponse convertToResponse(final OrderTable orderTable) {
