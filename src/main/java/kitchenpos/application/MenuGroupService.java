@@ -19,7 +19,7 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupDto create(final MenuGroupCreateDto request) {
-        final MenuGroup menugroup = menuGroupRepository.save(request.toDomain());
+        final MenuGroup menugroup = menuGroupRepository.save(new MenuGroup(request.getName()));
 
         return MenuGroupDto.toDto(menugroup);
     }
