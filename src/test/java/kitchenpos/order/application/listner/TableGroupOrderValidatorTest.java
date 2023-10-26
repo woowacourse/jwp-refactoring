@@ -1,6 +1,5 @@
 package kitchenpos.order.application.listner;
 
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static kitchenpos.order.domain.exception.OrderExceptionType.ORDER_IS_NOT_COMPLETION;
 import static kitchenpos.support.fixture.TableFixture.비어있는_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,18 +14,18 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.support.ServiceIntegrationTest;
-import kitchenpos.table_group.application.TableGroupUnGroupValidationEvent;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table_group.application.dto.TableGroupDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class TableGroupUnGroupEventListenerTest extends ServiceIntegrationTest {
+class TableGroupOrderValidatorTest extends ServiceIntegrationTest {
 
     @Autowired
-    private TableGroupUnGroupEventListener eventListener;
+    private TableGroupOrderValidator eventListener;
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
@@ -37,15 +36,12 @@ class TableGroupUnGroupEventListenerTest extends ServiceIntegrationTest {
     void throwExceptionIfOrderIsNotCompletion() {
         //given
         final List<OrderTableDto> orderTableDtos = createOrderTableContainNoCompletion();
-
-        final List<Long> tableGroupIds = orderTableDtos.stream()
-            .map(OrderTableDto::getId)
-            .collect(toUnmodifiableList());
-        final TableGroupUnGroupValidationEvent event
-            = new TableGroupUnGroupValidationEvent(tableGroupIds);
+        final TableGroupDto tableGroupDto = tableGroupService.create(
+            new TableGroupDto(null, LocalDateTime.now(), orderTableDtos)
+        );
 
         //when
-        assertThatThrownBy(() -> eventListener.handle(event))
+        assertThatThrownBy(() -> eventListener.validateUngroup(tableGroupDto.getId()))
             .isInstanceOf(OrderException.class)
             .hasMessage(ORDER_IS_NOT_COMPLETION.getMessage());
     }

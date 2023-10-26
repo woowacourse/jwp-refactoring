@@ -19,7 +19,7 @@ public class TableChangeEmptyEventHandler {
     }
 
     @Transactional
-    @EventListener(TableChangeEmptyEvent.class)
+    @EventListener
     public void handle(final TableChangeEmptyEvent event) {
         orderRepository.findByOrderTableId(event.getOrderTableId())
             .ifPresent(this::validateOrderIsNotCompletion);
