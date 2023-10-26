@@ -49,14 +49,7 @@ public class OrderTables {
     }
 
     public void ungroup() {
-        for (OrderTable orderTable : value) {
-            if (orderTable.isCompleted()) {
-                orderTable.updateTableGroup(null);
-                orderTable.updateEmpty(false);
-                continue;
-            }
-            throw new IllegalArgumentException("계산을 완료한 테이블만 단체 지정을 해제할 수 있습니다.");
-        }
+        value.forEach(OrderTable::unGroup);
     }
 
     public List<OrderTable> getValue() {

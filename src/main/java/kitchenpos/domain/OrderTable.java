@@ -65,7 +65,7 @@ public class OrderTable {
 
     public void updateEmpty(final boolean empty) {
         validateTableGroup();
-        validateOrders();
+        validateOrdersCompleted();
         this.empty = empty;
     }
 
@@ -75,23 +75,16 @@ public class OrderTable {
         }
     }
 
-    private void validateOrders() {
-        for (Order order : orders) {
-            if (order.getOrderStatus().equals(OrderStatus.COMPLETION)) {
-                continue;
-            }
-            throw new IllegalArgumentException("조리, 식사 상태일 때는 빈 테이블로 변경할 수 없습니다.");
+    private void validateOrdersCompleted() {
+        if (isCompleted()) {
+            return;
         }
+        throw new IllegalArgumentException("조리, 식사 상태일 때는 빈 테이블로 변경할 수 없습니다.");
     }
 
     public boolean isCompleted() {
-        for (Order order : orders) {
-            if (order.isCompleted()) {
-                continue;
-            }
-            return false;
-        }
-        return true;
+        return orders.stream()
+                .allMatch(Order::isCompleted);
     }
 
     public int getNumberOfGuestsValue() {
@@ -100,5 +93,10 @@ public class OrderTable {
 
     public List<Order> getOrders() {
         return orders;
+    }
+
+    public void unGroup() {
+        tableGroup = null;
+        updateEmpty(false);
     }
 }
