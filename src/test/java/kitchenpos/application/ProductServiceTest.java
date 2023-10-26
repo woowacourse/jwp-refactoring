@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
-import kitchenpos.ui.dto.ProductCreateRequest;
-import kitchenpos.ui.dto.ProductResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -34,8 +34,8 @@ class ProductServiceTest {
 
         //then
         assertSoftly(softAssertions -> {
-            assertThat(product.getId()).isNotNull();
-            assertThat(product.getName()).isEqualTo("떡볶이");
+            softAssertions.assertThat(product.getId()).isNotNull();
+            softAssertions.assertThat(product.getName()).isEqualTo("떡볶이");
         });
     }
 

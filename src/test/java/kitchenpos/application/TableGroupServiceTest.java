@@ -1,15 +1,17 @@
 package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.OrderUpdateRequest;
-import kitchenpos.ui.dto.TableGroupCreateRequest;
-import kitchenpos.ui.dto.TableGroupOrderTableRequest;
-import kitchenpos.ui.dto.TableGroupResponse;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderUpdateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.dto.TableGroupOrderTableRequest;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -58,9 +59,9 @@ class TableGroupServiceTest {
 
             //then
             assertSoftly(softAssertions -> {
-                assertThat(tableGroup.getId()).isNotNull();
-                assertThat(tableGroup.getCreatedDate()).isNotNull();
-                assertThat(tableGroup.getOrderTables()).hasSize(2);
+                softAssertions.assertThat(tableGroup.getId()).isNotNull();
+                softAssertions.assertThat(tableGroup.getCreatedDate()).isNotNull();
+                softAssertions.assertThat(tableGroup.getOrderTables()).hasSize(2);
             });
         }
 
@@ -151,8 +152,8 @@ class TableGroupServiceTest {
 
         //then
         assertSoftly(softAssertions -> {
-            assertThat(beforeUngroup).hasSize(2);
-            assertThat(afterUngroup).isEmpty();
+            softAssertions.assertThat(beforeUngroup).hasSize(2);
+            softAssertions.assertThat(afterUngroup).isEmpty();
         });
     }
 

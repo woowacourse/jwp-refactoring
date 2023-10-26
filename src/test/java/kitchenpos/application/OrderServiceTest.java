@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderLineItemCreateRequest;
-import kitchenpos.ui.dto.OrderResponse;
-import kitchenpos.ui.dto.OrderUpdateRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderLineItemCreateRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.dto.OrderUpdateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -53,9 +53,9 @@ class OrderServiceTest {
 
             //then
             assertSoftly(softAssertions -> {
-                assertThat(order.getId()).isNotNull();
-                assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-                assertThat(order.getOrderedTime()).isNotNull();
+                softAssertions.assertThat(order.getId()).isNotNull();
+                softAssertions.assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+                softAssertions.assertThat(order.getOrderedTime()).isNotNull();
             });
         }
 
@@ -116,7 +116,7 @@ class OrderServiceTest {
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("주문 테이블이 없거나 빈 주문 테이블입니다.");
+                    .hasMessage("빈 주문 테이블입니다.");
         }
     }
 
@@ -143,8 +143,8 @@ class OrderServiceTest {
 
             //then
             assertSoftly(softAssertions -> {
-                assertThat(saved.getId()).isEqualTo(order.getId());
-                assertThat(saved.getOrderStatus()).isEqualTo(orderStatus);
+                softAssertions.assertThat(saved.getId()).isEqualTo(order.getId());
+                softAssertions.assertThat(saved.getOrderStatus()).isEqualTo(orderStatus);
             });
         }
 

@@ -1,20 +1,20 @@
 package kitchenpos;
 
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.ProductRepository;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,18 +56,18 @@ public class EntityFactory {
 
     public Order saveOrder(final OrderTable orderTable) {
         final Menu menu = saveMenu();
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), 2);
 
-        final Order request = new Order(orderTable, List.of(orderLineItem));
+        final Order request = new Order(orderTable.getId(), List.of(orderLineItem));
         return orderRepository.save(request);
     }
 
     public Order saveOrder() {
         final OrderTable orderTable = saveOrderTableWithNotEmpty();
         final Menu menu = saveMenu();
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), 2);
 
-        final Order request = new Order(orderTable, List.of(orderLineItem));
+        final Order request = new Order(orderTable.getId(), List.of(orderLineItem));
         return orderRepository.save(request);
     }
 
