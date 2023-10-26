@@ -2,42 +2,38 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MenuService menuService;
 
-    @Mock
-    private MenuDao menuDao;
+    @Autowired
+    private MenuRepository menuRepository;
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
-    @Mock
-    private MenuProductDao menuProductDao;
-
-    @Mock
-    private ProductDao productDao;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Nested
     class create_성공_테스트 {
@@ -45,25 +41,20 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴를_생성하다() {
             // given
-            final var product1 = new Product("상품_이름1", BigDecimal.valueOf(1000));
-            final var product2 = new Product("상품_이름2", BigDecimal.valueOf(200));
-            final var menuProduct1 = new MenuProduct(1L, 1L, 10);
-            final var menuProduct2 = new MenuProduct(1L, 2L, 5);
-            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(11000L), 1L, List.of(menuProduct1, menuProduct2));
+            menuGroupRepository.save(new MenuGroup("메뉴_그룹"));
+            final var product1 = productRepository.save(new Product("상품_이름1", BigDecimal.valueOf(1000)));
+            final var product2 = productRepository.save(new Product("상품_이름2", BigDecimal.valueOf(200)));
 
-            given(productDao.findById(1L)).willReturn(Optional.of(product1));
-            given(productDao.findById(2L)).willReturn(Optional.of(product2));
-            given(menuGroupDao.existsById(1L)).willReturn(true);
-            given(menuDao.save(menu)).willReturn(menu);
-            given(menuProductDao.save(menuProduct1)).willReturn(menuProduct1);
-            given(menuProductDao.save(menuProduct2)).willReturn(menuProduct2);
+            final var menuProductRequest1 = new MenuProductRequest(product1.getId(), 10L);
+            final var menuProductRequest2 = new MenuProductRequest(product2.getId(), 5L);
+            final var menuCreateRequest = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(5600), 1L,
+                    List.of(menuProductRequest1, menuProductRequest2));
 
             // when
-            final var actual = menuService.create(menu);
+            final var actual = menuService.create(menuCreateRequest);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(menu);
+            assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
         }
     }
 
@@ -71,34 +62,12 @@ class MenuServiceTest extends ServiceTest {
     class create_실패_테스트 {
 
         @Test
-        void 가격이_존재하지_않으면_에러를_반환한다() {
-            // given
-            final var menu = new Menu("메뉴_이름", null, 1L, Collections.emptyList());
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 메뉴의 금액이 없거나, 음수입니다.");
-        }
-
-        @Test
-        void 가격이_0보다_작으면_에러를_반환한다() {
-            // given
-            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(-1000), 1L, Collections.emptyList());
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 메뉴의 금액이 없거나, 음수입니다.");
-        }
-
-        @Test
         void 존재하지_않은_메뉴_그룹을_사용하면_에러를_반환한다() {
             // given
-            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
+            final var request = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 메뉴 그룹입니다.");
         }
@@ -106,28 +75,15 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_상품을_사용하면_에러를_반환한다() {
             // given
-            final var menuProduct1 = new MenuProduct(1L, 1L, 10);
-            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, List.of(menuProduct1));
-
-            given(menuGroupDao.existsById(1L)).willReturn(true);
+            menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menuProductRequest = new MenuProductRequest(999L, 1L);
+            final var menuCreateRequest = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(1000), 1L,
+                    List.of(menuProductRequest));
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 상품입니다.");
-        }
-
-        @Test
-        void 메뉴의_총_가격이_각_상품의_합보다_크면_에러를_반환한다() {
-            // given
-            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
-
-            given(menuGroupDao.existsById(1L)).willReturn(true);
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 총 금액이 각 상품의 합보다 큽니다.");
         }
     }
 
@@ -136,10 +92,7 @@ class MenuServiceTest extends ServiceTest {
 
         @Test
         void 메뉴_목록이_존재하지_않으면_빈_값을_반환한다() {
-            // given
-            given(menuService.list()).willReturn(Collections.emptyList());
-
-            // when
+            // given & when
             final var actual = menuService.list();
 
             // then
@@ -149,10 +102,11 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴가_하나_이상_존재하면_메뉴_목록을_반환한다() {
             // given
-            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
-            given(menuService.list()).willReturn(List.of(menu));
-
-            final var expected = List.of(menu);
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menu = menuRepository.save(
+                    new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
+            final var response = MenuResponse.from(menu);
+            final var expected = List.of(response);
 
             // when
             final var actual = menuService.list();

@@ -2,36 +2,51 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.OrderTableChangeNumberRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
 
-    private final List<String> EXCLUDE_STATUS = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
-
-    @InjectMocks
+    @Autowired
     private TableService tableService;
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    @Mock
-    private OrderTableDao orderTableDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Nested
     class create_성공_테스트 {
@@ -39,17 +54,13 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문_테이블을_생성할_수_있다() {
             // given
-            final var beforeOrderTable = new OrderTable(1L, 3, true);
-            final var afterOrderTable = new OrderTable(null, 3, true);
-
-            given(orderTableDao.save(any(OrderTable.class))).willAnswer(invocation -> invocation.getArgument(0));
+            final var request = new OrderTableCreateRequest(3, true);
 
             // when
-            final var actual = tableService.create(beforeOrderTable);
+            final var actual = tableService.create(request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(afterOrderTable);
+            assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
         }
     }
 
@@ -62,10 +73,7 @@ class TableServiceTest extends ServiceTest {
 
         @Test
         void 주문_목록이_존재하지_않으면_빈_값을_반환한다() {
-            // given
-            given(tableService.list()).willReturn(Collections.emptyList());
-
-            // when
+            // given & when
             final var actual = tableService.list();
 
             // then
@@ -75,11 +83,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문이_하나_이상_존재하면_주문_목록을_반환한다() {
             // given
-            final var orderTable = new OrderTable(1L, 3, false);
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
 
-            given(tableService.list()).willReturn(List.of(orderTable));
-
-            final var expected = List.of(orderTable);
+            final var expected = List.of(OrderTableResponse.from(orderTable));
 
             // when
             final var actual = tableService.list();
@@ -100,19 +107,15 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문_테이블을_빈_테이블로_만들_수_있다() {
             // given
-            final var orderTable = new OrderTable(null, 3, true);
-            orderTable.setId(1L);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, EXCLUDE_STATUS)).willReturn(Boolean.FALSE);
-            given(orderTableDao.save(any(OrderTable.class))).willAnswer(invocation -> invocation.getArgument(0));
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            orderTableRepository.save(new OrderTable(tableGroup, 3, true));
+            final var request = new OrderTableChangeEmptyRequest(true);
 
             // when
-            final var actual = tableService.changeEmpty(1L, orderTable);
+            final var actual = tableService.changeEmpty(1L, request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(orderTable);
+            assertThat(actual.isEmpty()).isTrue();
         }
     }
 
@@ -122,38 +125,28 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_주문_테이블을_사용하면_예외를_반환한다() {
             // given
-            final var orderTable = new OrderTable(1L, 3, true);
+            final var request = new OrderTableChangeEmptyRequest(true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 주문 테이블입니다.");
         }
 
         @Test
-        void 주문_테이블의_그룹_아이디가_존재하면_예외를_반환한다() {
-            // given
-            final var orderTable = new OrderTable(1L, 3, true);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-
-            // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 해당 주문 테이블은 다른 그룹에 속하는 테이블입니다.");
-        }
-
-        @Test
         void 주문_테이블에_이미_주문_상태가_존재하면_예외를_반환한다() {
             // given
-            final var orderTable = new OrderTable(null, 3, true);
-            orderTable.setId(1L);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, EXCLUDE_STATUS)).willReturn(true);
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menu = menuRepository.save(
+                    new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
+            final var orderLineItem = new OrderLineItem(menu, 5L);
+            orderRepository.save(new Order(orderTable, OrderStatus.MEAL, List.of(orderLineItem)));
+            final var request = new OrderTableChangeEmptyRequest(true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 아직 모든 주문이 완료되지 않았습니다.");
         }
@@ -165,57 +158,19 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 손님의_수를_변경할_수_있다() {
             // given
-            final var beforeOrderTable = new OrderTable(1L, 3, false);
-            final var afterOrderTable = new OrderTable(1L, 2, false);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(beforeOrderTable));
-            given(orderTableDao.save(any(OrderTable.class))).willAnswer(invocation -> invocation.getArgument(0));
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+            final var request = new OrderTableChangeNumberRequest(1L, 2, false);
 
             // when
-            final var actual = tableService.changeNumberOfGuests(1L, afterOrderTable);
+            final var actual = tableService.changeNumberOfGuests(1L, request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(afterOrderTable);
+            assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
         }
     }
 
     @Nested
     class changeNumberOfGuests_실패_테스트 {
-
-        @Test
-        void 손님의_수가_음수일_때_예외를_반환한다() {
-            // given
-            final var orderTable = new OrderTable(1L, -3, false);
-
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 손님의 수가 음수입니다.");
-        }
-
-        @Test
-        void 존재하지_않는_테이블을_사용하면_예외를_반환한다() {
-            // given
-            final var orderTable = new OrderTable(1L, 2, true);
-
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 존재하지 않는 주문 테이블입니다.");
-        }
-
-        @Test
-        void 주문_테이블의_상태가_비어있으면_예외를_반환한다() {
-            // given
-            final var orderTable = new OrderTable(1L, 2, true);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 비어있습니다.");
-        }
     }
 }

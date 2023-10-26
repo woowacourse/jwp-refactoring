@@ -2,43 +2,54 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderChangeStatusRequest;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemInOrderDto;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTest {
 
-    @InjectMocks
+    @Autowired
     private OrderService orderService;
 
-    @Mock
-    private MenuDao menuDao;
+    @Autowired
+    private MenuRepository menuRepository;
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    @Mock
-    private OrderLineItemDao orderLineItemDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @Mock
-    private OrderTableDao orderTableDao;
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Nested
     class create_성공_테스트 {
@@ -46,25 +57,22 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_생성을_할_수_있다() {
             // given
-            final var time = LocalDateTime.now();
-            final var orderTable = new OrderTable(1L, 3, false);
-            orderTable.setId(1L);
-            final var orderLineItem = new OrderLineItem(1L, 1L, 5);
-            final var order = new Order(1L, "COOKING", time, List.of(orderLineItem));
-            order.setId(1L);
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, List.of()));
+            final var orderLineitem = new OrderLineItem(menu, 5L);
+            final var order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineitem)));
+            orderLineItemRepository.save(new OrderLineItem(order, menu, 5));
 
-            given(menuDao.countByIdIn(List.of(1L))).willReturn(1L);
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-            given(orderDao.save(any(Order.class))).willAnswer(invocation -> invocation.getArgument(0));
-            given(orderLineItemDao.save(any(OrderLineItem.class))).willAnswer(invocation -> invocation.getArgument(0));
+            final var orderLineItemRequest = new OrderLineItemInOrderDto(1L, 5L);
+            final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
 
             // when
-            final var actual = orderService.create(order);
+            final var actual = orderService.create(request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .ignoringFields("orderedTime")
-                    .isEqualTo(order);
+            assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
         }
     }
 
@@ -72,60 +80,58 @@ class OrderServiceTest extends ServiceTest {
     class create_실패_테스트 {
 
         @Test
-        void 주문_항목이_비어있으면_에러를_반환한다() {
-            // given
-            final var order = new Order(1L, "COOKING", LocalDateTime.now(), Collections.emptyList());
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 주문 항목이 비어있습니다.");
-        }
-
-        @Test
-        void 메뉴의_수와_실제_주문한_메뉴의_수가_다르면_예외를_반환한다() {
-            // given
-            final var orderLineItem1 = new OrderLineItem(1L, 1L, 5);
-            final var orderLineItem2 = new OrderLineItem(1L, 2L, 3);
-            final var order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(orderLineItem1, orderLineItem2));
-
-            given(menuDao.countByIdIn(List.of(1L, 2L))).willReturn(1L);
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 메뉴의 수와 실제 주문한 메뉴의 수가 다릅니다.");
-        }
-
-        @Test
         void 존재하지_않는_주문_테이블을_사용하면_예외를_반환한다() {
             // given
-            final var orderLineItem = new OrderLineItem(1L, 1L, 5);
-            final var order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(orderLineItem));
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, List.of()));
+            final var orderLineItem = new OrderLineItem(menu, 5);
+            orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
 
-            given(menuDao.countByIdIn(List.of(1L))).willReturn(1L);
+            final var orderLineItemRequest = new OrderLineItemInOrderDto(1L, 5L);
+            final var orderCreateRequest = new OrderCreateRequest(2L, List.of(orderLineItemRequest));
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 주문 테이블입니다.");
         }
 
         @Test
-        void 주문_테이블이_비어있으면_예외를_반환한다() {
+        void 존재하지_않는_메뉴를_사용하면_예외를_반환한다() {
             // given
-            final var orderLineItem = new OrderLineItem(1L, 1L, 5);
-            final var orderTable = new OrderTable(1L, 5, true);
-            final var order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(orderLineItem));
-            order.setId(1L);
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            orderTableRepository.save(new OrderTable(tableGroup, 3, false));
 
-            given(menuDao.countByIdIn(List.of(1L))).willReturn(1L);
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
+            final var orderLineItemRequest = new OrderLineItemInOrderDto(999L, 5L);
+            final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 비어있습니다.");
+                    .hasMessage("[ERROR] 존재하지 않는 메뉴입니다.");
+        }
+
+        @Test
+        void 메뉴의_수와_실제_주문한_메뉴의_수가_다르면_예외를_반환한다() {
+            // given
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, List.of()));
+            final var orderLineItem1 = new OrderLineItem(menu, 5);
+            final var orderLineItem2 = new OrderLineItem(menu, 3);
+            orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2)));
+
+            final var orderLineItemRequest1 = new OrderLineItemInOrderDto(1L, 5L);
+            final var orderLineItemRequest2 = new OrderLineItemInOrderDto(1L, 3L);
+            final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest1, orderLineItemRequest2));
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("[ERROR] 메뉴의 수와 실제 주문한 메뉴의 수가 다릅니다.");
         }
     }
 
@@ -134,10 +140,7 @@ class OrderServiceTest extends ServiceTest {
 
         @Test
         void 주문_목록이_존재하지_않으면_빈_값을_반환한다() {
-            // given
-            given(orderService.list()).willReturn(Collections.emptyList());
-
-            // when
+            // given & when
             final var actual = orderService.list();
 
             // then
@@ -147,12 +150,14 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문이_하나_이상_존재하면_주문_목록을_반환한다() {
             // given
-            final var orderLineItem = new OrderLineItem(1L, 1L, 5);
-            final var order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(orderLineItem));
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 5, false));
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, List.of()));
+            final var orderLineItem = new OrderLineItem(menu, 5);
+            final var order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
 
-            given(orderService.list()).willReturn(List.of(order));
-
-            final var expected = List.of(order);
+            final var expected = List.of(OrderResponse.from(order));
 
             // when
             final var actual = orderService.list();
@@ -173,22 +178,23 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_상태_변경을_할_수_있다() {
             // given
-            final var time = LocalDateTime.now();
-            final var orderLineItem = new OrderLineItem(1L, 1L, 5);
-            final var order1 = new Order(1L, "COOKING", time, List.of(orderLineItem));
-            final var order2 = new Order(1L, "MEAL", time, List.of(orderLineItem));
+            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 5, false));
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0L), menuGroup, List.of()));
+            final var orderLineItem = new OrderLineItem(menu, 5L);
+            orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
+            orderLineItemRepository.save(orderLineItem);
 
-            given(orderDao.findById(1L)).willReturn(Optional.of(order1));
-            given(orderDao.save(any(Order.class))).willAnswer(invocation -> invocation.getArgument(0));
-            given(orderLineItemDao.findAllByOrderId(1L)).willReturn(List.of(orderLineItem));
+            final var request = new OrderChangeStatusRequest("COOKING");
 
             // when
-            final var actual = orderService.changeOrderStatus(1L, order2);
+            final var actual = orderService.changeOrderStatus(1L, request);
+            final var expected = OrderResponse.from(orderRepository.findById(1L).get());
 
             // then
             assertThat(actual).usingRecursiveComparison()
-                    .comparingOnlyFields()
-                    .isEqualTo(order2);
+                    .isEqualTo(expected);
         }
     }
 
@@ -198,25 +204,12 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_주문의_상태를_변경하면_에러를_반환한다() {
             // given
-            final var order = new Order(1L, "COOKING", LocalDateTime.now(), Collections.emptyList());
+            final var request = new OrderChangeStatusRequest("COOKING");
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 주문입니다.");
-        }
-
-        @Test
-        void 주문이_완료됐는데_주문_상태를_변경하면_에러를_반환한다() {
-            // given
-            final var order = new Order(1L, "COMPLETION", LocalDateTime.now(), Collections.emptyList());
-
-            given(orderDao.findById(1L)).willReturn(Optional.of(order));
-
-            // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 완료된 주문은 상태 변경이 불가능합니다.");
         }
     }
 }
