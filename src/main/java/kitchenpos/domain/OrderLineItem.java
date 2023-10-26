@@ -24,6 +24,10 @@ public class OrderLineItem {
         this.orderId = orderId;
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
     public Long getOrderId() {
         return orderId;
     }
