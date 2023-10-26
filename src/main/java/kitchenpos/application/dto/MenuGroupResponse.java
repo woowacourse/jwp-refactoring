@@ -1,7 +1,5 @@
 package kitchenpos.application.dto;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupResponse {
@@ -10,23 +8,16 @@ public class MenuGroupResponse {
 
     private String name;
 
-    private List<MenuResponse> menus;
-
     public MenuGroupResponse() {
     }
 
-    public MenuGroupResponse(final Long id, final String name, final List<MenuResponse> menus) {
+    public MenuGroupResponse(final Long id, final String name) {
         this.id = id;
         this.name = name;
-        this.menus = menus;
     }
 
     public static MenuGroupResponse from(final MenuGroup menuGroup) {
-        final List<MenuResponse> menus = menuGroup.getMenus().stream()
-            .map(MenuResponse::from)
-            .collect(Collectors.toList());
-
-        return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName(), menus);
+        return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 
     public Long getId() {
@@ -35,9 +26,5 @@ public class MenuGroupResponse {
 
     public String getName() {
         return name;
-    }
-
-    public List<MenuResponse> getMenus() {
-        return menus;
     }
 }

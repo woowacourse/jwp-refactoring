@@ -37,9 +37,8 @@ public class MenuService {
         validateMenuGroup(request.getMenuGroupId());
         final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final List<MenuProduct> menuProducts = createMenuProduct(request.getMenuProducts());
-        final Menu menu = Menu.forSave(request.getName(), menuProducts);
+        final Menu menu = Menu.forSave(request.getName(), menuProducts, menuGroup);
         validateMenuPrice(request.getPrice(), menu);
-        menu.joinMenuGroup(menuGroup);
 
         return MenuResponse.from(menuRepository.save(menu));
     }

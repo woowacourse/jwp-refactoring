@@ -17,7 +17,7 @@ class MenuTest {
         final MenuProduct menuProduct2 = new MenuProduct(2L, new Product(2L, "상품2", BigDecimal.valueOf(2000L)), 2L);
 
         // when
-        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2));
+        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2), 1L);
 
         // then
         assertThat(menu.getPrice()).isEqualTo(new Price(BigDecimal.valueOf(5000L)));
@@ -30,7 +30,7 @@ class MenuTest {
         final MenuProduct menuProduct = new MenuProduct(1L, new Product(1L, "상품", BigDecimal.TEN), 1L);
 
         // when
-        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct));
+        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct), 1L);
 
         // then
         assertThat(menu.getMenuProducts()).contains(menuProduct);

@@ -47,8 +47,8 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        final Menu menu1 = new Menu(1L, "후라이드", Collections.emptyList());
-        final Menu menu2 = new Menu(2L, "피자", Collections.emptyList());
+        final Menu menu1 = new Menu(1L, "후라이드", Collections.emptyList(), 1L);
+        final Menu menu2 = new Menu(2L, "피자", Collections.emptyList(), 1L);
         final List<OrderLineItem> orderLineItems = List.of(
             new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), menu1),
             new OrderLineItem(2L, 2L, "피자", new Price(BigDecimal.TEN), menu2));
@@ -129,8 +129,8 @@ class OrderServiceTest {
         given(menuRepository.countByIds(any()))
             .willReturn(2L);
         given(menuRepository.getById(any()))
-            .willReturn(new Menu(1L, "후라이드", Collections.emptyList()))
-            .willReturn(new Menu(2L, "양념", Collections.emptyList()));
+            .willReturn(new Menu(1L, "후라이드", Collections.emptyList(), 1L))
+            .willReturn(new Menu(2L, "양념", Collections.emptyList(), 1L));
 
         // when
         // then

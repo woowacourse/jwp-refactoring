@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class Menu {
@@ -26,33 +24,21 @@ public class Menu {
     @Embedded
     private MenuProducts menuProducts;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     protected Menu() {
     }
 
-    public Menu(final Long id, final String name, final List<MenuProduct> menuProducts) {
+    public Menu(final Long id, final String name, final List<MenuProduct> menuProducts, final Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.menuProducts = new MenuProducts(menuProducts, this);
         this.price = this.menuProducts.calculatePrice();
+        this.menuGroupId = menuGroupId;
     }
 
-    public static Menu forSave(final String name, final List<MenuProduct> menuProducts) {
-        return new Menu(null, name, menuProducts);
-    }
-
-    public void joinMenuGroup(final MenuGroup menuGroup) {
-        validateMenuGroup();
-        this.menuGroup = menuGroup;
-    }
-
-    private void validateMenuGroup() {
-        if (this.menuGroup != null) {
-            throw new IllegalArgumentException("메뉴 그룹이 이미 존재합니다.");
-        }
+    public static Menu forSave(final String name, final List<MenuProduct> menuProducts, final MenuGroup menuGroup) {
+        return new Menu(null, name, menuProducts, menuGroup.getId());
     }
 
     public Long getId() {
@@ -71,8 +57,8 @@ public class Menu {
         return new ArrayList<>(menuProducts.getMenuProducts());
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public boolean hasSamePrice(final int price) {

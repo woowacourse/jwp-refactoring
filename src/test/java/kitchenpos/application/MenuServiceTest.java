@@ -11,6 +11,7 @@ import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
@@ -53,13 +54,15 @@ class MenuServiceTest {
         final long menuGroupId = 1L;
         given(menuGroupRepository.existsById(menuGroupId))
             .willReturn(true);
+        given(menuGroupRepository.getById(any()))
+            .willReturn(new MenuGroup(1L, "메뉴그룹"));
 
         final MenuProduct menuProduct1 = new MenuProduct(1L, product1, 1L);
         final MenuProduct menuProduct2 = new MenuProduct(2L, product2, 2L);
         given(productRepository.getById(any()))
             .willReturn(product1, product2);
 
-        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2));
+        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2), 1L);
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
 
