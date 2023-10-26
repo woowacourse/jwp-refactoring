@@ -1,9 +1,12 @@
 package kitchenpos.menu;
 
+import kitchenpos.product.Product;
+import kitchenpos.product.ProductDao;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,21 +18,20 @@ public class MenuService {
 
     private final MenuDao menuDao;
     private final MenuProductDao menuProductDao;
+    private final ProductDao productDao;
 
-    public MenuService(
-            final ApplicationEventPublisher eventPublisher,
-            final MenuDao menuDao,
-            final MenuProductDao menuProductDao
-    ) {
+    public MenuService(ApplicationEventPublisher eventPublisher, MenuDao menuDao, MenuProductDao menuProductDao, ProductDao productDao) {
         this.eventPublisher = eventPublisher;
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
+        this.productDao = productDao;
     }
 
     @Transactional
     public MenuDto create(final MenuDto menuDto) {
         Menu menu = menuDto.toDomain();
-        eventPublisher.publishEvent(menu);
+        validateProductSum(menu);
+        eventPublisher.publishEvent(MenuCreatedEvent.from(menu));
         final Menu savedMenu = menuDao.save(menu);
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
@@ -39,6 +41,17 @@ public class MenuService {
         }
 
         return MenuDto.of(savedMenu, savedMenuProducts);
+    }
+
+    private void validateProductSum(Menu menu) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menu.getMenuProducts()) {
+            final Product product = productDao.findById(menuProduct.getProductId())
+                    .orElseThrow(IllegalArgumentException::new);
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        menu.validatePrice(sum);
     }
 
     public List<MenuDto> list() {
