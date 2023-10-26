@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -69,7 +70,7 @@ class TableGroupServiceTest {
     @Test
     void 테이블_하나라도_다른_테이블에_속해있으면_그룹화할_수_없다() {
         // given
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), new OrderTables(Collections.emptyList())));
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, tableGroup, 3, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 3, true));
 

@@ -37,9 +37,7 @@ public class MenuService {
         Menu menu = new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuGroup, new ArrayList<>());
 
         MenuProducts menuProducts = getMenuProducts(menuCreateRequest);
-
         menu.checkProductPriceSumEqualsPrice(menuProducts.calculateSum());
-
         menuProducts.setMenu(menu);
 
         return menuRepository.save(menu);
@@ -60,6 +58,7 @@ public class MenuService {
 
         return new MenuProducts(menuProduct);
     }
+
     private Product getProduct(MenuProductCreateRequest menuProductCreateRequest) {
         return productRepository.findById(menuProductCreateRequest.getProductId())
                 .orElseThrow(IllegalArgumentException::new);

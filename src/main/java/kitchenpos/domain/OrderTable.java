@@ -35,7 +35,19 @@ public class OrderTable {
     }
 
     public void changeEmpty(Boolean empty) {
+        validateUngrouped();
+
         this.empty = empty;
+    }
+
+    private void validateUngrouped() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public boolean isGrouped() {
+        return tableGroup != null;
     }
 
     public void changeNumberOfGuest(Integer numberOfGuests) {
@@ -43,11 +55,13 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
 
+        validateNotEmpty();
+
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void checkTableGroup() {
-        if (tableGroup != null) {
+    private void validateNotEmpty() {
+        if (empty) {
             throw new IllegalArgumentException();
         }
     }
@@ -61,7 +75,6 @@ public class OrderTable {
     }
 
     public void setTableGroup(TableGroup tableGroup) {
-        tableGroup.addOrderTable(this);
         this.tableGroup = tableGroup;
     }
 

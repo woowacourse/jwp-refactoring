@@ -23,6 +23,7 @@ public class MenuProduct {
 
     @OneToOne
     private Product product;
+
     private long quantity;
 
     protected MenuProduct() {
@@ -37,10 +38,6 @@ public class MenuProduct {
 
     public MenuProduct(Product product, long quantity) {
         this(null, null, product, quantity);
-    }
-
-    public Long getSeq() {
-        return seq;
     }
 
     public Menu getMenu() {

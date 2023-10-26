@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,17 +33,11 @@ public class TableGroupService {
     public TableGroup create(final TableGroupCreateRequest tableGroupCreateRequest) {
         tableGroupCreateRequest.validate();
 
-        List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds()
-                .stream().map(TableGroupCreateRequest.OrderTableId::getId)
-                .collect(Collectors.toList());
+        List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
 
         OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
 
-        savedOrderTables.verify();
-
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
-
-        savedOrderTables.setTableGroup(tableGroup);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
 
         return tableGroupRepository.save(tableGroup);
     }

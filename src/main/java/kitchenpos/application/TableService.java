@@ -39,8 +39,6 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, TableEmptyUpdateRequest tableEmptyUpdateRequest) {
         OrderTable savedOrderTable = getOrderTable(orderTableId);
 
-        savedOrderTable.checkTableGroup();
-
         checkIfOrderIsNotCompleted(orderTableId);
 
         savedOrderTable.changeEmpty(tableEmptyUpdateRequest.getEmpty());
@@ -57,10 +55,6 @@ public class TableService {
 
     public OrderTable changeNumberOfGuests(final Long orderTableId, TableGuestUpdateRequest tableGuestUpdateRequest) {
         OrderTable savedOrderTable = getOrderTable(orderTableId);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
 
         savedOrderTable.changeNumberOfGuest(tableGuestUpdateRequest.getNumberOfGuests());
 

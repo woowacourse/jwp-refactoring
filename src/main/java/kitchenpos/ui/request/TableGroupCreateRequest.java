@@ -3,6 +3,7 @@ package kitchenpos.ui.request;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TableGroupCreateRequest {
 
@@ -13,10 +14,6 @@ public class TableGroupCreateRequest {
 
     public TableGroupCreateRequest(List<OrderTableId> orderTableIds) {
         this.orderTableIds = orderTableIds;
-    }
-
-    public List<OrderTableId> getOrderTableIds() {
-        return orderTableIds;
     }
 
     public void validate() {
@@ -31,6 +28,12 @@ public class TableGroupCreateRequest {
         if (count != orderTableIds.size()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public List<Long> getOrderTableIds() {
+        return orderTableIds
+                .stream().map(TableGroupCreateRequest.OrderTableId::getId)
+                .collect(Collectors.toList());
     }
 
     public static class OrderTableId {
