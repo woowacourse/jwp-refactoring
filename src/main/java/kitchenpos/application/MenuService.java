@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
@@ -40,7 +40,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = getMenuProducts(menuRequest, menu);
 
         final Menu savedMenu = menuRepository.save(menu);
-        savedMenu.setMenuProducts(menuProducts);
+        savedMenu.registerMenuProducts(menuProducts);
 
         return MenuResponse.from(savedMenu);
     }

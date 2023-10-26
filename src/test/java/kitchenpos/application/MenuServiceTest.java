@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
@@ -124,7 +124,7 @@ class MenuServiceTest {
     void 메뉴의_목록을_조회할_수_있다() {
         Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal("20000.00"), menuGroup));
         MenuProduct menuProduct = menuProductRepository.save(menuProductFixture(menu1, product, 4));
-        menu1.setMenuProducts(List.of(menuProduct));
+        menu1.registerMenuProducts(List.of(menuProduct));
         Menu menu2 = menuRepository.save(menuFixture("메뉴2", new BigDecimal("30000.00"), menuGroup, List.of(menuProduct)));
 
         List<MenuResponse> menuList = menuService.list();

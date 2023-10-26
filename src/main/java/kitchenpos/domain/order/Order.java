@@ -10,8 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -25,9 +23,11 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    //    @ManyToOne
+//    @JoinColumn(name = "order_table_id")
+//    private OrderTable orderTable;
+    private Long orderTableId;
+
     @Column
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -49,6 +49,18 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
+    public Order(Long id,
+                 OrderTable orderTable,
+                 OrderStatus orderStatus,
+                 LocalDateTime orderedTime,
+                 List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
     public Order(final OrderTable orderTable,
                  final String orderStatus,
                  final LocalDateTime orderedTime) {
@@ -60,6 +72,11 @@ public class Order {
             throw new IllegalStateException("주문 항목이 존재하지 않습니다. 주문을 등록할 수 없습니다.");
         }
         this.orderLineItems.addAll(orderLineItems);
+    }
+
+    public void place(OrderValidator orderValidator) {
+        orderValidator.validate(this);
+        this.orderStatus = OrderStatus.Ordered;
     }
 
     public void updateStatus(final Order order) {

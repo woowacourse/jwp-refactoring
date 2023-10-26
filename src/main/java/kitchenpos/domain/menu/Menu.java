@@ -1,14 +1,10 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.domain.Product;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,9 +25,12 @@ public class Menu {
     private String name;
     @Column
     private BigDecimal price;
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+//    @ManyToOne
+//    @JoinColumn(name = "menu_group_id")
+//    private MenuGroup menuGroup;
+
+    private Long menuGroupId;
+
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
@@ -59,7 +58,7 @@ public class Menu {
         }
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void registerMenuProducts(final List<MenuProduct> menuProducts) {
         validateMenuPrice(menuProducts);
         this.menuProducts.addAll(menuProducts);
     }
@@ -68,6 +67,7 @@ public class Menu {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = menuProduct.getProduct();
+            // TODO: 2023/10/25 menuProducts 일급 컬렉션을 만들어 여가서 검증하기?
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
