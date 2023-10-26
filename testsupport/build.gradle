@@ -1,0 +1,26 @@
+dependencies {
+    implementation project(':generic')
+    implementation project(':menu')
+    implementation project(':order')
+    implementation project(':product')
+    implementation project(':table')
+    implementation project(':tablegroup')
+    implementation project(':app')
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java', 'src/test/java'
+        }
+        resources {
+            srcDirs 'src/main/resources', 'src/test/resources'
+        }
+    }
+}

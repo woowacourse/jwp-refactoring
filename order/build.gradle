@@ -3,6 +3,7 @@ dependencies {
     implementation project(':menu')
     implementation project(':tablegroup')
     implementation project(':table')
-    testImplementation project(':app')
+
+    testImplementation project(':testsupport')
     testImplementation project(':product')
 }
