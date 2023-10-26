@@ -35,6 +35,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @DisplayName("order를 생성한다.")
     class Create {
 
+        //TODO : 시간 오류 확인해보기
         @Test
         @DisplayName("order를 성공적으로 생성한다.")
         void success() {
@@ -168,8 +169,9 @@ class OrderServiceTest extends ServiceIntegrationTest {
             orderService.changeOrderStatus(cookingOrderDto.getId(), parameter);
 
             //when
+            final Long orderId = cookingOrderDto.getId();
             assertThatThrownBy(
-                () -> orderService.changeOrderStatus(cookingOrderDto.getId(), parameter)
+                () -> orderService.changeOrderStatus(orderId, parameter)
             ).isInstanceOf(OrderException.class)
                 .hasMessage(ORDER_IS_ALREADY_COMPLETION.getMessage());
         }

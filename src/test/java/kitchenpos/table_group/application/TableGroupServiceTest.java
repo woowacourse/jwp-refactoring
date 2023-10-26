@@ -5,18 +5,18 @@ import static kitchenpos.order.domain.exception.OrderExceptionType.ORDER_IS_NOT_
 import static kitchenpos.support.fixture.TableFixture.비어있는_전쳬_주문_테이블_DTO;
 import static kitchenpos.support.fixture.TableFixture.비어있는_주문_테이블;
 import static kitchenpos.support.fixture.TableFixture.비어있지_않는_전쳬_주문_테이블_DTO;
-import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY;
 import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_PRESENT_ALL;
-import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_TWO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.order.application.OrderRepository;
@@ -26,11 +26,10 @@ import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.support.ServiceIntegrationTest;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableDto;
-import kitchenpos.table_group.application.dto.TableGroupDto;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table_group.application.dto.TableGroupDto;
 import kitchenpos.table_group.domain.exception.TableGroupException;
-import kitchenpos.table_group.application.TableGroupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -69,16 +68,13 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
             final TableGroupDto savedTableGroup = tableGroupService.create(tableGroupDto);
 
             //then
-            assertAll(
-                () -> assertThat(savedTableGroup)
-                    .usingRecursiveComparison()
-                    .ignoringFields("id", "orderTables.id", "orderTables.empty",
-                        "orderTables.tableGroupId")
-                    .isEqualTo(tableGroupDto),
-                () -> assertThat(savedTableGroup.getOrderTables())
-                    .extracting(OrderTableDto::getEmpty)
-                    .doesNotContain(true)
-            );
+            final Set<Long> tableGroupIds = tableService.list()
+                .stream()
+                .map(OrderTableDto::getTableGroupId)
+                .collect(Collectors.toUnmodifiableSet());
+
+            assertThat(tableGroupIds)
+                .containsExactly(savedTableGroup.getId());
         }
 
         @Test
@@ -89,14 +85,19 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
                 .isInstanceOf(TableGroupException.class)
-                .hasMessage(ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY.getMessage());
+                .hasMessage(ORDER_TABLE_SIZE_IS_LOWER_THAN_TWO.getMessage());
         }
 
         @Test
         @DisplayName("저장되지 않은 tableGroup로 요청하는 경우 Exception을 throw한다.")
         void throwExceptionOrderTablesAreNotFound() {
-            final TableGroupDto tableGroupDto
-                = new TableGroupDto(null, LocalDateTime.now(), 비어있지_않는_전쳬_주문_테이블_DTO());
+            final OrderTableDto unsavedTable1
+                = new OrderTableDto(1L, null, 1, true);
+            final OrderTableDto unsavedTable2
+                = new OrderTableDto(2L, null, 1, true);
+
+            final TableGroupDto tableGroupDto = new TableGroupDto(null, LocalDateTime.now(),
+                List.of(unsavedTable1, unsavedTable2));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
                 .isInstanceOf(TableGroupException.class)
@@ -115,7 +116,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
                 .isInstanceOf(TableGroupException.class)
-                .hasMessage(ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED.getMessage());
+                .hasMessage(ORDER_TABLE_IS_NOT_EMPTY.getMessage());
         }
     }
 
@@ -127,25 +128,18 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("정상적으로 tableGroup을 해제한다.")
         void success() {
             //given
-            final TableGroupDto savedTableGroupDto = saveTableGroupSuccessfully(
+            final TableGroupDto savedTableGruopDto = saveTableGroupSuccessfully(
                 비어있는_전쳬_주문_테이블_DTO());
 
             //when
-            tableGroupService.ungroup(savedTableGroupDto.getId());
+            tableGroupService.ungroup(savedTableGruopDto.getId());
 
             //then
-            final List<Long> savedOrderTableIds = savedTableGroupDto.getOrderTables()
-                .stream()
-                .map(OrderTableDto::getId)
-                .collect(Collectors.toList());
-            final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(
-                savedOrderTableIds);
-
-            assertThat(savedOrderTables)
-                .extracting(OrderTable::getTableGroup, OrderTable::isEmpty)
+            assertThat(tableService.list())
+                .extracting(OrderTableDto::getTableGroupId, OrderTableDto::getEmpty)
                 .containsExactly(
-                    tuple(null, false), tuple(null, false), tuple(null, false), tuple(null, false),
-                    tuple(null, false), tuple(null, false), tuple(null, false), tuple(null, false)
+                    tuple(null, true), tuple(null, true), tuple(null, true), tuple(null, true),
+                    tuple(null, true), tuple(null, true), tuple(null, true), tuple(null, true)
                 );
         }
 
@@ -157,10 +151,10 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
             final TableGroupDto tableGroupDto =
                 new TableGroupDto(null, LocalDateTime.now(), orderTableDtos);
 
-            final TableGroupDto savedTableGroupDto = tableGroupService.create(tableGroupDto);
+            final TableGroupDto savedTableGruopDto = tableGroupService.create(tableGroupDto);
 
             //when
-            final Long tableGroupId = savedTableGroupDto.getId();
+            final Long tableGroupId = savedTableGruopDto.getId();
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(OrderException.class)
                 .hasMessage(ORDER_IS_NOT_COMPLETION.getMessage());
