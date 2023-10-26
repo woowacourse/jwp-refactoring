@@ -56,7 +56,7 @@ class OrderServiceTest {
         Order savedOrder = orderService.create(orderCreateRequest);
 
         // then
-        assertThat(savedOrder).usingRecursiveComparison().ignoringFields("id", "orderedTime", "orderLineItems.order")
+        assertThat(savedOrder).usingRecursiveComparison().ignoringFields("id", "orderedTime", "orderLineItems.order", "orderLineItems.seq")
                 .isEqualTo(order);
     }
 

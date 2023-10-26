@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,7 +14,6 @@ public class OrderLineItem {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "id")
     private Long seq;
 
     @ManyToOne(fetch = LAZY)
