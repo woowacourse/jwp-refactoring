@@ -5,7 +5,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE;
-import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
+import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_MUST_EMPTY;
 import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP;
 
 import java.util.Objects;
@@ -55,7 +55,7 @@ public class OrderTable {
 
     public void group(TableGroup tableGroup) {
         if (!empty) {
-            throw new TableGroupException(ORDER_TABLE_CAN_NOT_EMPTY);
+            throw new TableGroupException(ORDER_TABLE_MUST_EMPTY);
         }
         if (Objects.nonNull(this.tableGroup)) {
             throw new TableGroupException(ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP);

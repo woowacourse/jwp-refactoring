@@ -4,7 +4,7 @@ import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static kitchenpos.exception.table.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
 import static kitchenpos.exception.table.TableGroupExceptionType.CAN_NOT_UNGROUP_COOKING_OR_MEAL;
 import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLES_CAN_NOT_LESS_THAN_TWO;
-import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
+import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_MUST_EMPTY;
 import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -89,7 +89,7 @@ class TableGroupServiceTest extends IntegrationTest {
         ).exceptionType();
 
         // then
-        assertThat(exceptionType).isEqualTo(ORDER_TABLE_CAN_NOT_EMPTY);
+        assertThat(exceptionType).isEqualTo(ORDER_TABLE_MUST_EMPTY);
     }
 
     @Test
