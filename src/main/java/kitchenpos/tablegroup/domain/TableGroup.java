@@ -22,9 +22,6 @@ public class TableGroup {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    @Embedded
-    private OrderTables orderTables = new OrderTables();
-
     public TableGroup() {
     }
 
@@ -41,23 +38,11 @@ public class TableGroup {
         return new TableGroup(LocalDateTime.now());
     }
 
-    public void addOrderTables(final List<OrderTable> orderTables) {
-        orderTables.forEach(orderTable -> {
-            orderTable.changeEmpty(false);
-            orderTable.setTableGroup(this);
-        });
-        this.orderTables.addAll(orderTables);
-    }
-
     public Long id() {
         return id;
     }
 
     public LocalDateTime createdDate() {
         return createdDate;
-    }
-
-    public OrderTables orderTables() {
-        return orderTables;
     }
 }

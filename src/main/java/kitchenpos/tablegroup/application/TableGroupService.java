@@ -41,7 +41,11 @@ public class TableGroupService {
         }
 
         final TableGroup tableGroup = TableGroup.createWithNowCreatedDate();
-        tableGroup.addOrderTables(savedOrderTables);
+        savedOrderTables.forEach(orderTable -> {
+            orderTable.changeEmpty(false);
+            orderTable.setTableGroup(tableGroup);
+        });
+
         return tableGroupRepository.save(tableGroup).id();
     }
 
