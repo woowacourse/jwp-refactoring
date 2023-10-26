@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
-import kitchenpos.menu.domain.MenuEventDto;
+import kitchenpos.menu.application.dto.MenuEventDto;
 import kitchenpos.menu.domain.MenuRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package kitchenpos.product.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.product.domain.ProductEventDto;
+import kitchenpos.product.application.dto.ProductEventDto;
 import kitchenpos.product.application.dto.ProductCreateRequest;
 import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.domain.Price;

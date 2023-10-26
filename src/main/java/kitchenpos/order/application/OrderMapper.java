@@ -1,6 +1,6 @@
 package kitchenpos.order.application;
 
-import kitchenpos.menu.domain.MenuEventDto;
+import kitchenpos.menu.application.dto.MenuEventDto;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineRequest;
 import kitchenpos.order.domain.Order;

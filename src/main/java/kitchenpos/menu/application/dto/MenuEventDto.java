@@ -1,4 +1,4 @@
-package kitchenpos.menu.domain;
+package kitchenpos.menu.application.dto;
 
 public class MenuEventDto {
 
