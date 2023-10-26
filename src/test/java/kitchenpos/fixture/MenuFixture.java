@@ -3,10 +3,10 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 
 public class MenuFixture {
 
@@ -19,6 +19,6 @@ public class MenuFixture {
         final List<MenuProduct> menuProducts = products.stream()
                 .map(product -> new MenuProduct(product, 1))
                 .collect(Collectors.toList());
-        return new Menu(name, price, menuGroup, menuProducts);
+        return new Menu(1L, name, price, menuGroup.getId(), menuProducts);
     }
 }

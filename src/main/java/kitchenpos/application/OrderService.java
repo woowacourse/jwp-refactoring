@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,14 +36,14 @@ public class OrderService {
     }
 
     public Order create(final OrderCreateRequest request) {
-        final OrderTable orderTable = findOrderTable(request.getOrderTableId());
+        final long orderTableId = request.getOrderTableId();
+        final OrderTable orderTable = findOrderTable(orderTableId);
         final List<OrderLineItemCreateRequest> orderLineItemRequests = request.getOrderLineItems();
         validateMenuToOrder(orderLineItemRequests);
 
-        return orderRepository.save(new Order(
-                orderTable,
-                createOrderLineItems(orderLineItemRequests))
-        );
+        final List<OrderLineItem> orderLineItems = createOrderLineItems(orderLineItemRequests);
+        orderTable.validateToPlace();
+        return orderRepository.save(new Order(orderTableId, orderLineItems));
     }
 
     private OrderTable findOrderTable(final long orderTableId) {

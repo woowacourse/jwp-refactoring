@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.vo.Price;
 
 @Entity
@@ -40,11 +41,17 @@ public class MenuProduct {
         return price.multiply(this.quantity);
     }
 
+    public long totalPriceToLong() {
+        final Price price = product.getPrice();
+
+        return price.multiply(this.quantity).value().longValue();
+    }
+
     public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(Menu menu) {
+    public void register(Menu menu) {
         this.menu = menu;
     }
 

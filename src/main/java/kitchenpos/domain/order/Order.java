@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static kitchenpos.domain.vo.OrderStatus.COOKING;
 import static kitchenpos.domain.vo.OrderStatus.MEAL;
@@ -18,7 +18,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.domain.vo.OrderStatus;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,9 +31,8 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_table_id"))
-    private OrderTable orderTable;
+    @JoinColumn(nullable = false, table = "orderTable", name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_to_order_table"))
+    private long orderTableId;
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus;
@@ -47,10 +45,8 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable,
-                 final List<OrderLineItem> orderLineItems) {
-        this.orderTable = orderTable;
-        orderTable.placeOrder(this);
+    public Order(final long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
         this.orderStatus = COOKING;
         orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
         this.orderLineItems = new OrderLineItems(orderLineItems);
@@ -71,8 +67,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public long getOrderTableId() {
+        return orderTableId;
     }
 
     public LocalDateTime getOrderedTime() {

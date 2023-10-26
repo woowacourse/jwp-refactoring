@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
+
+import static javax.persistence.CascadeType.PERSIST;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import kitchenpos.domain.menu.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -18,9 +22,9 @@ public class OrderLineItem {
     @ManyToOne(optional = false)
     @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"))
     private Order order;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_menu"))
-    private Menu menu;
+    @OneToOne(optional = false, cascade = PERSIST)
+    @JoinColumn(name = "order_menu_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_order_menu"))
+    private OrderMenu orderMenu;
     @Column(nullable = false)
     private long quantity;
 
@@ -28,16 +32,17 @@ public class OrderLineItem {
     }
 
     public OrderLineItem(final Menu menu, final long quantity) {
-        this.menu = menu;
+        this.orderMenu = new OrderMenu(
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice(),
+                menu.getQuantityByProduct()
+        );
         this.quantity = quantity;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public void setOrder(Order order) {
@@ -48,7 +53,7 @@ public class OrderLineItem {
         return quantity;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public long getMenuId() {
+        return orderMenu.getMenuId();
     }
 }

@@ -1,8 +1,9 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -10,7 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.vo.MenuName;
 import kitchenpos.domain.vo.Price;
 
@@ -24,25 +25,35 @@ public class Menu {
     private MenuName name;
     @Embedded
     private Price price;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"))
-    private MenuGroup menuGroup;
+    @JoinColumn(table = "menu_group", name = "menu_group_id",
+            foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"),
+            nullable = false)
+    private long menuGroupId;
     @Embedded
     private MenuProducts menuProducts = new MenuProducts();
 
     protected Menu() {
     }
 
-    public Menu(final String name,
+    public Menu(final Long id,
+                final String name,
                 final BigDecimal price,
-                final MenuGroup menuGroup,
+                final long menuGroupId,
                 final List<MenuProduct> menuProducts) {
+        this.id = id;
         this.name = MenuName.from(name);
         this.price = Price.from(price);
-        this.menuGroup = menuGroup;
-        menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
+        this.menuGroupId = menuGroupId;
+        menuProducts.forEach(menuProduct -> menuProduct.register(this));
         this.menuProducts = new MenuProducts(menuProducts);
         validateTotalPrice();
+    }
+
+    public Menu(final String name,
+                final BigDecimal price,
+                final long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
     private void validateTotalPrice() {
@@ -63,11 +74,15 @@ public class Menu {
         return price.value();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return new ArrayList<>(menuProducts.getMenuProducts());
+    }
+
+    public Map<Product, Long> getQuantityByProduct() {
+        return menuProducts.getQuantityByProduct();
     }
 }

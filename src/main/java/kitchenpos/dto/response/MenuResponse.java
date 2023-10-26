@@ -3,8 +3,8 @@ package kitchenpos.dto.response;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuResponse {
 
@@ -31,7 +31,7 @@ public class MenuResponse {
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
-                menu.getMenuGroup().getId(),
+                menu.getMenuGroupId(),
                 MenuProductResponse.of(menu.getMenuProducts())
         );
     }
