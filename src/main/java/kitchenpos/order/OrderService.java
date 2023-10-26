@@ -1,0 +1,92 @@
+package kitchenpos.order;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.menu.JpaMenuRepository;
+import kitchenpos.table.JpaOrderTableRepository;
+import kitchenpos.menu.Menu;
+import kitchenpos.table.OrderTable;
+import kitchenpos.ui.dto.request.OrderLineRequest;
+import kitchenpos.ui.dto.request.OrderRequest;
+import kitchenpos.ui.dto.request.OrderStatusRequest;
+import kitchenpos.ui.dto.response.OrderResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class OrderService {
+    private final JpaMenuRepository jpaMenuRepository;
+    private final JpaOrderRepository jpaOrderRepository;
+    private final JpaOrderLineItemRepository jpaOrderLineItemRepository;
+    private final JpaOrderTableRepository jpaOrderTableRepository;
+
+    public OrderService(
+            final JpaMenuRepository jpaMenuRepository,
+            final JpaOrderRepository jpaOrderRepository,
+            final JpaOrderLineItemRepository jpaOrderLineItemRepository,
+            final JpaOrderTableRepository jpaOrderTableRepository
+    ) {
+        this.jpaMenuRepository = jpaMenuRepository;
+        this.jpaOrderRepository = jpaOrderRepository;
+        this.jpaOrderLineItemRepository = jpaOrderLineItemRepository;
+        this.jpaOrderTableRepository = jpaOrderTableRepository;
+    }
+
+    @Transactional
+    public OrderResponse create(final OrderRequest request) {
+        List<OrderLineRequest> orderLineRequests = request.getOrderLineRequests();
+
+        if (request.getOrderTableId() == null) {
+            throw new IllegalArgumentException();
+        }
+
+        OrderTable orderTable = jpaOrderTableRepository.findById(request.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        Order order = new Order(orderTable, OrderStatus.COOKING);
+
+        final Order savedOrder = jpaOrderRepository.save(order);
+
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (OrderLineRequest orderLineRequest : orderLineRequests) {
+            if (orderLineRequest.getMenuId() == null) {
+                throw new IllegalArgumentException();
+            }
+            Menu menu = jpaMenuRepository.findById(orderLineRequest.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new);
+            orderLineItems.add(new OrderLineItem(savedOrder, menu, orderLineRequest.getQuantity()));
+        }
+
+        savedOrder.setOrderLineItems(orderLineItems);
+
+//        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+//        for (final OrderLineItem orderLineItem : orderLineItems) {
+//            orderLineItem.setOrder(savedOrder);
+//            savedOrderLineItems.add(jpaOrderLineItemRepository.save(orderLineItem));
+//        }
+//        savedOrder.setOrderLineItems(savedOrderLineItems);
+
+        return new OrderResponse(savedOrder);
+    }
+
+    public List<OrderResponse> list() {
+        final List<Order> orders = jpaOrderRepository.findAll();
+
+        return orders.stream()
+                .map(OrderResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
+        final Order savedOrder = jpaOrderRepository.findById(orderId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        savedOrder.changeOrderStatus(request.getOrderStatus());
+        jpaOrderRepository.save(savedOrder);
+        savedOrder.setOrderLineItems(jpaOrderLineItemRepository.findAllByOrderId(orderId));
+
+        return new OrderResponse(savedOrder);
+    }
+}

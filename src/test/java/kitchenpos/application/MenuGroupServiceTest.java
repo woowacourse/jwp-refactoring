@@ -3,8 +3,9 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.MenuGroup;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.menu.MenuGroupService;
 import kitchenpos.ui.dto.request.MenuGroupRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;

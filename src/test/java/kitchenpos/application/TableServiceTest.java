@@ -4,9 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.table.OrderTable;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.table.TableService;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Nested;

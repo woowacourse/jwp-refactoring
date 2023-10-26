@@ -4,6 +4,11 @@ import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuGroup;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.prodcut.Price;
+import kitchenpos.prodcut.Product;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {

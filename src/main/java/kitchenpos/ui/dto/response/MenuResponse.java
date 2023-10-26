@@ -4,8 +4,8 @@ package kitchenpos.ui.dto.response;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuProduct;
 
 public final class MenuResponse {
 

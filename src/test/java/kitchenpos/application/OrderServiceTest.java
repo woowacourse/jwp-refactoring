@@ -4,10 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuGroup;
+import kitchenpos.order.OrderService;
+import kitchenpos.table.OrderTable;
+import kitchenpos.prodcut.Product;
 import kitchenpos.fixtures.Fixtures;
 import kitchenpos.ui.dto.request.OrderLineRequest;
 import kitchenpos.ui.dto.request.OrderRequest;
