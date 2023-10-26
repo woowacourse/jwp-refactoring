@@ -58,7 +58,7 @@ public class Order {
 
     public void addAllOrderLineItems(final OrderLineItems orderLineItems) {
         for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
-            orderLineItem.changeOrder(this);
+            orderLineItem.changeOrder(id);
             this.orderLineItems.add(orderLineItem);
         }
     }

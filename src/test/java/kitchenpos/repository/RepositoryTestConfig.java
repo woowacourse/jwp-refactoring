@@ -74,8 +74,8 @@ public abstract class RepositoryTestConfig {
         return order;
     }
 
-    protected OrderLineItem createOrderLineItem(final Order order, final Menu menu, final long quantity) {
-        final OrderLineItem orderLineItem = orderLineItem(order, menu, quantity);
+    protected OrderLineItem createOrderLineItem(final Long orderId, final Menu menu, final long quantity) {
+        final OrderLineItem orderLineItem = orderLineItem(orderId, menu, quantity);
         em.persist(orderLineItem);
         return orderLineItem;
     }

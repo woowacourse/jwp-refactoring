@@ -103,16 +103,16 @@ class OrderServiceTest {
             menu.addMenuProducts(menuProducts);
 
             final Order order = spy(order(mock(OrderTable.class), COOKING, now(), new ArrayList<>()));
-            final OrderLineItem orderLineItem = orderLineItem(order, menu, 1L);
+            final long savedIOrderId = 1L;
+            given(order.getId()).willReturn(savedIOrderId);
+
+            final OrderLineItem orderLineItem = orderLineItem(savedIOrderId, menu, 1L);
             order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
             given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(orderLineItem));
 
             given(menuRepository.countByIdIn(anyList())).willReturn(1L);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(mock(OrderTable.class)));
             given(orderRepository.save(any(Order.class))).willReturn(order);
-
-            final long savedId = 1L;
-            given(order.getId()).willReturn(savedId);
 
             // when
             final List<OrderLineItemCreateRequest> orderLineItemCreateRequest = List.of(new OrderLineItemCreateRequest(1L, 2L));
@@ -147,7 +147,8 @@ class OrderServiceTest {
             final Order order = order(COMPLETION, now(), List.of(wooDong, frenchFries));
             final Long wooDongId = 1L;
             final Menu menu = menu("우동세트", BigDecimal.valueOf(8_000), menuGroup("일식"), List.of(menuProduct(wooDongId, 3_000L)));
-            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(new OrderLineItem(order, menu, 1)));
+            final Long savedOrderId = 1L;
+            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(new OrderLineItem(savedOrderId, menu, 1)));
 
             // when
             final long incorrectMenuSize = order.getOrderLineItems().getOrderLineItems().size() - 1;
@@ -171,7 +172,8 @@ class OrderServiceTest {
             menu.addMenuProducts(menuProducts);
 
             final Order order = spy(order(mock(OrderTable.class), COOKING, now(), new ArrayList<>()));
-            final OrderLineItem orderLineItem = orderLineItem(order, menu, 1L);
+            final Long savedOrderId = 1L;
+            final OrderLineItem orderLineItem = orderLineItem(savedOrderId, menu, 1L);
             order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
             given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(orderLineItem));
 
