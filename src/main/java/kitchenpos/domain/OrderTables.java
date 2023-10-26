@@ -33,11 +33,7 @@ public class OrderTables {
         }
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void registerTableGroup(final TableGroup tableGroup) {
+    public void group(final TableGroup tableGroup) {
         validateOrderTableStatus(orderTables);
         orderTables.forEach(orderTable -> orderTable.registerTableGroup(tableGroup));
     }
@@ -60,5 +56,9 @@ public class OrderTables {
         }
 
         orderTables.forEach(OrderTable::ungroup);
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
     }
 }

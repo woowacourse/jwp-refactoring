@@ -31,10 +31,12 @@ public class TableGroupService {
         final List<Long> orderTableIds = request.getOrderTables().stream().map(OrderTableIdRequest::getId)
             .collect(Collectors.toList());
         validateEmptyOrderTables(orderTableIds);
+        final TableGroup tableGroup = TableGroup.forSave();
         final List<OrderTable> savedOrderTables = orderTableRepository.getAllById(orderTableIds);
-        final TableGroup tableGroup = TableGroup.forSave(savedOrderTables);
+        final OrderTables orderTables = new OrderTables(savedOrderTables);
+        orderTables.group(tableGroup);
 
-        return TableGroupResponse.from(tableGroup);
+        return TableGroupResponse.from(tableGroup, orderTables);
     }
 
     private void validateEmptyOrderTables(final List<Long> orderTableIds) {
@@ -46,8 +48,8 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        final OrderTables orderTables = new OrderTables(tableGroup.getOrderTables());
-
+        final List<OrderTable> orderTableGroupedByTableGroup = orderTableRepository.findByTableGroup(tableGroup);
+        final OrderTables orderTables = new OrderTables(orderTableGroupedByTableGroup);
         orderTables.ungroup();
     }
 }

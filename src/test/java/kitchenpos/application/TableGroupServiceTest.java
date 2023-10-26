@@ -140,10 +140,12 @@ class TableGroupServiceTest {
             new OrderTable(1L, 2, true, Collections.emptyList()),
             new OrderTable(2L, 2, true, Collections.emptyList())
         );
-        final TableGroup tableGroup = new TableGroup(1L, orderTables);
+        final TableGroup tableGroup = new TableGroup(1L);
 
         given(tableGroupRepository.getById(any()))
             .willReturn(tableGroup);
+        given(orderTableRepository.findByTableGroup(any()))
+            .willReturn(orderTables);
 
         // when
         // then
@@ -160,10 +162,12 @@ class TableGroupServiceTest {
             new OrderTable(2L, 2, true, List.of(new Order(1L, OrderStatus.COOKING, List.of(
                 new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 2L)))
         );
-        final TableGroup tableGroup = new TableGroup(1L, orderTables);
+        final TableGroup tableGroup = new TableGroup(1L);
 
         given(tableGroupRepository.getById(any()))
             .willReturn(tableGroup);
+        given(orderTableRepository.findByTableGroup(any()))
+            .willReturn(orderTables);
 
         // when
         // then
