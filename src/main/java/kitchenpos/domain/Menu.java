@@ -26,34 +26,34 @@ public class Menu {
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
     }
 
     public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validateAdditionalPrice(menuProducts, price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new ArrayList<>(menuProducts);
+        addMenuProducts(menuProducts);
     }
 
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.assignMenu(this);
-            this.menuProducts.add(menuProduct);
-        }
-        validatePrice();
-    }
-
-    private void validatePrice() {
+    private void validateAdditionalPrice(List<MenuProduct> menuProducts, Price requestPrice) {
         Price totalPrice = new Price(BigDecimal.valueOf(0));
         for (MenuProduct menuProduct : menuProducts) {
             totalPrice = totalPrice.plus(menuProduct.price());
         }
-        if (price.compareTo(totalPrice) > 0) {
+        if (requestPrice.compareTo(totalPrice) > 0) {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품들의 총합보다 비쌀 수 없습니다.");
+        }
+    }
+
+    private void addMenuProducts(List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.assignMenu(this);
+            this.menuProducts.add(menuProduct);
         }
     }
 

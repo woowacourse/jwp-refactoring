@@ -138,7 +138,7 @@ class OrderServiceTest {
                 .willReturn(List.of(
                     MenuFixture.builder()
                         .withId(1L)
-                        .withPrice(1000L)
+                        .withPrice(0L)
                         .build()
                 ));
 
@@ -171,7 +171,7 @@ class OrderServiceTest {
                 .willReturn(List.of(
                     MenuFixture.builder()
                         .withId(1L)
-                        .withPrice(1000L)
+                        .withPrice(0L)
                         .build()
                 ));
 

@@ -44,7 +44,7 @@ public final class MenuProductFixture {
     public MenuProduct build() {
         return new MenuProduct(seq,
             new Product(productId, "productName", new Price(BigDecimal.valueOf(1000))),
-            new Menu(menuId, "menuName", new Price(BigDecimal.valueOf(1000)), 1L, new ArrayList<>()),
+            new Menu(menuId, "menuName", new Price(BigDecimal.valueOf(0)), 1L, new ArrayList<>()),
             quantity);
     }
 }

@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -37,8 +36,7 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         MenuGroup menuGroup = findMenuGroup(request.getMenuGroupId());
         Menu menu = new Menu(null, request.getName(), new Price(request.getPrice()), menuGroup.getId(),
-            new ArrayList<>());
-        menu.addMenuProducts(makeMenuProducts(request.getMenuProducts()));
+            makeMenuProducts(request.getMenuProducts()));
 
         return MenuResponse.of(menuRepository.save(menu));
     }

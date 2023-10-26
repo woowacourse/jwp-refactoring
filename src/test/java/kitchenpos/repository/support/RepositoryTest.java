@@ -13,7 +13,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
@@ -58,34 +57,24 @@ public abstract class RepositoryTest {
     protected Menu defaultMenu() {
         MenuGroup menuGroup = prepareMenuGroup("메뉴 그룹");
 
-        Menu menu = prepareMenu(menuGroup.getId(), "menu1", 3000L);
-
         Product product1 = prepareProduct("product1", 1000L);
         Product product2 = prepareProduct("product2", 2000L);
 
-        prepareMenuProduct(menu, product1, 2);
-        prepareMenuProduct(menu, product2, 1);
-
-        return menuRepository.findById(menu.getId()).get();
+        return prepareMenu(menuGroup.getId(), "menu1", 3000L, List.of(
+            new MenuProduct(null, product1, null, 10L),
+            new MenuProduct(null, product2, null, 5L)
+        ));
     }
 
-    private Menu prepareMenu(long menuGroupId, String menuName, long price) {
+    private Menu prepareMenu(long menuGroupId, String menuName, long price, List<MenuProduct> menuProducts) {
         return menuRepository.save(
             MenuFixture.builder()
                 .withId(null)
                 .withName(menuName)
                 .withPrice(price)
                 .withMenuGroupId(menuGroupId)
+                .withMenuProducts(menuProducts)
                 .build());
-    }
-
-    private MenuProduct prepareMenuProduct(Menu menu, Product product, int quantity) {
-        return menuProductRepository.save(MenuProductFixture.builder()
-            .withMenuId(menu.getId())
-            .withProductId(product.getId())
-            .withMenuId(1L)
-            .withQuantity(quantity)
-            .build());
     }
 
     private MenuGroup prepareMenuGroup(String menuGroupName) {
@@ -108,7 +97,8 @@ public abstract class RepositoryTest {
         List<OrderTable> orderTables = prepareOrdertable();
 
         Order order = orderRepository.save(
-            new Order(null, orderTables.get(0).getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+            new Order(null, orderTables.get(0).getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+                new ArrayList<>()));
 
         orderLineItemRepository.save(new OrderLineItem(null, menu.getId(), order, 10));
         orderLineItemRepository.save(new OrderLineItem(null, menu.getId(), order, 20));
@@ -128,7 +118,7 @@ public abstract class RepositoryTest {
         )));
     }
 
-    protected List<OrderTable> makeOrderTable(){
+    protected List<OrderTable> makeOrderTable() {
         return prepareOrdertable();
     }
 }

@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -190,11 +189,10 @@ class MenuServiceTest {
                 menuName,
                 new Price(menuPrice),
                 menuGroupId,
-                new ArrayList<>()
-            );
-            menu.addMenuProducts(List.of(
+                List.of(
                     new MenuProduct(1L, PRODUCT_1000, null, 5),
-                    new MenuProduct(2L, PRODUCT_500, null, 3)));
+                    new MenuProduct(2L, PRODUCT_500, null, 3))
+            );
             given(menuRepository.save(any()))
                 .willReturn(menu);
 
@@ -227,8 +225,7 @@ class MenuServiceTest {
         Menu menu = MenuFixture.builder()
             .withId(menuId)
             .withName("상품")
-            .withMenuProducts(ofFirstMenu)
-            .withPrice(1000L)
+            .withPrice(0L)
             .build();
 
         given(menuRepository.findAll())
