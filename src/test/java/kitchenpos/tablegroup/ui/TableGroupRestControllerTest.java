@@ -12,10 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.table.application.dto.GroupOrderTableRequest;
-import kitchenpos.table.application.dto.TableGroupResult;
-import kitchenpos.table.application.dto.TableGroupingRequest;
 import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.GroupOrderTableRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupResult;
+import kitchenpos.tablegroup.application.dto.TableGroupingRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
