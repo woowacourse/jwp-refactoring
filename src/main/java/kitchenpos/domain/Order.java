@@ -83,7 +83,7 @@ public class Order {
         return orderedTime;
     }
 
-    public OrderLineItems getOrderLineItems() {
-        return orderLineItems;
+    public List<OrderLineItem> getOrderLineItemsValue() {
+        return orderLineItems.getValue();
     }
 }

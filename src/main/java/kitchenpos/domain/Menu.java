@@ -61,7 +61,7 @@ public class Menu {
         return menuGroup;
     }
 
-    public MenuProducts getMenuProducts() {
-        return menuProducts;
+    public List<MenuProduct> getMenuProductsValue() {
+        return menuProducts.getValue();
     }
 }

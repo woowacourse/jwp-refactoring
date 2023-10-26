@@ -31,10 +31,6 @@ public class TableGroup {
         return id;
     }
 
-    public OrderTables getOrderTables() {
-        return orderTables;
-    }
-
     public List<OrderTable> getOrderTablesValue() {
         return orderTables.getValue();
     }

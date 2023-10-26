@@ -3,14 +3,13 @@ package kitchenpos.application.dto.response;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
 
 public class OrderLineItemResponse {
 
-    private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
+    private final Long seq;
+    private final Long orderId;
+    private final Long menuId;
+    private final long quantity;
 
     private OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
         this.seq = seq;
@@ -28,9 +27,8 @@ public class OrderLineItemResponse {
         );
     }
 
-    public static List<OrderLineItemResponse> from(OrderLineItems orderLineItems) {
-        return orderLineItems.getValue()
-                .stream()
+    public static List<OrderLineItemResponse> from(List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
                 .map(OrderLineItemResponse::from)
                 .collect(Collectors.toList());
     }

@@ -94,8 +94,8 @@ public class OrderTable {
         return true;
     }
 
-    public NumberOfGuests getNumberOfGuests() {
-        return numberOfGuests;
+    public int getNumberOfGuestsValue() {
+        return numberOfGuests.getValue();
     }
 
     public List<Order> getOrders() {

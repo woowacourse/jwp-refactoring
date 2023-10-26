@@ -18,7 +18,6 @@ import kitchenpos.application.support.domain.OrderTableTestSupport;
 import kitchenpos.application.support.domain.OrderTestSupport;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
@@ -56,12 +55,12 @@ class OrderServiceTest {
         final OrderTestSupport.Builder builder = OrderTestSupport.builder().orderTable(orderTable);
         final Order order = builder.build();
         final OrderCreateRequest request = builder.buildToOrderCreateRequest();
-        final OrderLineItems orderLineItems = order.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = order.getOrderLineItemsValue();
 
-        given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.getValue().size());
+        given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
         given(orderRepository.save(any(Order.class))).willReturn(order);
-        given(orderLineItemRepository.save(any(OrderLineItem.class))).willReturn(orderLineItems.getValue().get(0));
+        given(orderLineItemRepository.save(any(OrderLineItem.class))).willReturn(orderLineItems.get(0));
 
         //when
         final OrderResponse result = target.create(request);
@@ -107,8 +106,8 @@ class OrderServiceTest {
         final OrderTestSupport.Builder builder = OrderTestSupport.builder();
         final Order order = builder.orderTable(orderTable).build();
         final OrderCreateRequest request = builder.buildToOrderCreateRequest();
-        final OrderLineItems orderLineItems = order.getOrderLineItems();
-        given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.getValue().size());
+
+        given(menuRepository.countByIdIn(anyList())).willReturn((long) order.getOrderLineItemsValue().size());
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
@@ -144,7 +143,7 @@ class OrderServiceTest {
 
         given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
         given(orderRepository.save(any(Order.class))).willReturn(order);
-        given(orderLineItemRepository.findAllByOrderId(anyLong())).willReturn(order.getOrderLineItems().getValue());
+        given(orderLineItemRepository.findAllByOrderId(anyLong())).willReturn(order.getOrderLineItemsValue());
 
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(MEAL.name());
 

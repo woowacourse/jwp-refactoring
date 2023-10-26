@@ -7,15 +7,15 @@ import kitchenpos.domain.Menu;
 
 public class MenuResponse {
 
-    private Long id;
+    private final Long id;
 
-    private String name;
+    private final String name;
 
-    private BigDecimal price;
+    private final BigDecimal price;
 
-    private Long menuGroupId;
+    private final Long menuGroupId;
 
-    private List<MenuProductResponse> menuProducts;
+    private final List<MenuProductResponse> menuProducts;
 
     public MenuResponse(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                         final List<MenuProductResponse> menuProducts) {
@@ -32,7 +32,7 @@ public class MenuResponse {
                 menu.getName(),
                 menu.getPrice().getValue(),
                 menu.getMenuGroup().getId(),
-                MenuProductResponse.from(menu.getMenuProducts())
+                MenuProductResponse.from(menu.getMenuProductsValue())
         );
     }
 

@@ -135,7 +135,7 @@ class TableGroupServiceTest {
     void ungroup() {
         //given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
-        given(orderTableRepository.findAllByTableGroupId(anyLong())).willReturn(tableGroup.getOrderTables().getValue());
+        given(orderTableRepository.findAllByTableGroupId(anyLong())).willReturn(tableGroup.getOrderTablesValue());
         given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
 
         //when
@@ -149,7 +149,7 @@ class TableGroupServiceTest {
     void ungroup_fail_not_COMPLETION() {
         //given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
-        given(orderTableRepository.findAllByTableGroupId(anyLong())).willReturn(tableGroup.getOrderTables().getValue());
+        given(orderTableRepository.findAllByTableGroupId(anyLong())).willReturn(tableGroup.getOrderTablesValue());
         given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
 
         //when

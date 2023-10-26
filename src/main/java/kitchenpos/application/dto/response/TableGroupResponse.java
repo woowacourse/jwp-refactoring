@@ -6,12 +6,12 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupResponse {
 
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTableResponse> orderTables;
+    private final Long id;
+    private final LocalDateTime createdDate;
+    private final List<OrderTableResponse> orderTables;
 
     private TableGroupResponse(final Long id, final LocalDateTime createdDate,
-                              final List<OrderTableResponse> orderTables) {
+                               final List<OrderTableResponse> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -21,7 +21,7 @@ public class TableGroupResponse {
         return new TableGroupResponse(
                 tableGroup.getId(),
                 tableGroup.getCreatedDate(),
-                OrderTableResponse.from(tableGroup.getOrderTables())
+                OrderTableResponse.from(tableGroup.getOrderTablesValue())
         );
     }
 

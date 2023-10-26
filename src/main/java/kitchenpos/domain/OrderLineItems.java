@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -31,6 +32,6 @@ public class OrderLineItems {
     }
 
     public List<OrderLineItem> getValue() {
-        return value;
+        return Collections.unmodifiableList(value);
     }
 }

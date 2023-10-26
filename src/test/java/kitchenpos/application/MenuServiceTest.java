@@ -16,7 +16,7 @@ import kitchenpos.application.support.domain.MenuGroupTestSupport;
 import kitchenpos.application.support.domain.MenuTestSupport;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -51,12 +51,12 @@ class MenuServiceTest {
         final MenuTestSupport.Builder builder = MenuTestSupport.builder();
         final Menu menu = builder.build();
         final MenuCreateRequest request = builder.buildToMenuCreateRequest();
-        final MenuProducts menuProducts = menu.getMenuProducts();
+        final List<MenuProduct> menuProducts = menu.getMenuProductsValue();
         final MenuGroup menuGroup = MenuGroupTestSupport.builder().build();
 
         given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(menuGroup));
         given(productRepository.findById(anyLong())).willReturn(
-                Optional.of(menuProducts.getValue().get(0).getProduct()));
+                Optional.of(menuProducts.get(0).getProduct()));
 
         given(menuRepository.save(any(Menu.class))).willReturn(menu);
         //when
@@ -116,7 +116,7 @@ class MenuServiceTest {
         final List<Menu> menus = List.of(menu1, menu2);
         given(menuRepository.findAll()).willReturn(menus);
         for (Menu menu : menus) {
-            given(menuProductRepository.findAllByMenuId(menu.getId())).willReturn(menu.getMenuProducts().getValue());
+            given(menuProductRepository.findAllByMenuId(menu.getId())).willReturn(menu.getMenuProductsValue());
         }
 
         //when
