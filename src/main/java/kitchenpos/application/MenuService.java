@@ -7,14 +7,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.menu.request.MenuCreateRequest;
 import kitchenpos.dto.menu.request.MenuProductCreateRequest;
 import kitchenpos.dto.menu.response.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.product.Product;
 import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,21 +49,23 @@ public class MenuService {
                 request.price(),
                 menuGroup
         );
-        final Menu savedMenu = menuRepository.save(menu);
-        final List<MenuProduct> menuProducts = createMenuProducts(request.menuProducts(), savedMenu);
+        final List<MenuProduct> menuProducts = createMenuProducts(request.menuProducts());
 
         final BigDecimal totalPrice = calculateTotalPrice(menuProducts);
-        if (savedMenu.price().compareTo(totalPrice) != 0) {
+        if (menu.price().compareTo(totalPrice) != 0) {
             throw new IllegalArgumentException("[ERROR] 가격이 잘못되었습니다.");
         }
+
+        final Menu savedMenu = menuRepository.save(menu);
+        menuProducts.forEach(menuProduct -> {
+            menuProduct.setMenu(savedMenu);
+            menuProductRepository.save(menuProduct);
+        });
 
         return savedMenu.id();
     }
 
-    private List<MenuProduct> createMenuProducts(
-            final List<MenuProductCreateRequest> menuProductCreateRequests,
-            final Menu menu
-    ) {
+    private List<MenuProduct> createMenuProducts(final List<MenuProductCreateRequest> menuProductCreateRequests) {
         final List<Long> productIds = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::productId);
         final List<Product> products = productRepository.findAllById(productIds);
 
@@ -75,10 +77,6 @@ public class MenuService {
 
         return IntStream.range(0, products.size())
                 .mapToObj(index -> new MenuProduct(products.get(index), quantities.get(index)))
-                .map(menuProduct -> {
-                    menuProduct.setMenu(menu);
-                    return menuProductRepository.save(menuProduct);
-                })
                 .collect(Collectors.toUnmodifiableList());
     }
 
