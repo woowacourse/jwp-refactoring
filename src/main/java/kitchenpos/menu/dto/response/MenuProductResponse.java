@@ -16,9 +16,9 @@ public class MenuProductResponse {
         this.seq = seq;
     }
 
-    public static MenuProductResponse of(final MenuProduct menuProduct) {
+    public static MenuProductResponse of(final Long menuId, final MenuProduct menuProduct) {
         return new MenuProductResponse(
-                menuProduct.getMenu().getId(),
+                menuId,
                 menuProduct.getProduct().getId(),
                 menuProduct.getQuantity(),
                 menuProduct.getSeq()

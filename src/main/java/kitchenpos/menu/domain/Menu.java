@@ -45,7 +45,6 @@ public class Menu {
         this.menuGroup = menuGroup;
 
         validatePrice(menuProducts);
-        menuProducts.initMenu(this);
         this.menuProducts = menuProducts;
     }
 
