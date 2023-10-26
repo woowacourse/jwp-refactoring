@@ -20,7 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -57,11 +56,11 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = new OrderTable(3, true);
             final OrderTable orderTable2 = new OrderTable(5, true);
-            final TableGroup expected = tableGroup(now(), List.of(orderTable1, orderTable2));
+            final TableGroup expected = tableGroup(now());
 
             given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
 
-            final TableGroup spyExpected = spy(tableGroup(expected.getCreatedDate(), new ArrayList<>()));
+            final TableGroup spyExpected = spy(tableGroup(expected.getCreatedDate()));
             given(tableGroupRepository.save(any(TableGroup.class))).willReturn(spyExpected);
 
             // when

@@ -1,7 +1,6 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ class OrderTableTest {
 
     @Test
     void 단체_지정_아이디가_null이_아니면_예외를_던진다() {
-        assertThatThrownBy(() -> new OrderTable(new TableGroup(now(), new OrderTables()), 5, false))
+        assertThatThrownBy(() -> new OrderTable(new TableGroup(now()), 5, false))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

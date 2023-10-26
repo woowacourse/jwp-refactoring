@@ -29,6 +29,10 @@ public class OrderTables {
         this.orderTables.addAll(toAddOrderTables);
     }
 
+    public void changeTableGroup(final TableGroup tableGroup) {
+        orderTables.forEach(orderTable -> orderTable.changeGroup(tableGroup));
+    }
+
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }

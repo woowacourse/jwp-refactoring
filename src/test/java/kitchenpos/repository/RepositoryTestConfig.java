@@ -65,7 +65,7 @@ public abstract class RepositoryTestConfig {
     }
 
     protected TableGroup createTableGroup(final LocalDateTime createdDate) {
-        final TableGroup tableGroup = TableGroupFixture.tableGroup(createdDate, new ArrayList<>());
+        final TableGroup tableGroup = TableGroupFixture.tableGroup(createdDate);
         em.persist(tableGroup);
         return tableGroup;
     }
