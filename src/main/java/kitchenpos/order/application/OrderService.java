@@ -9,13 +9,13 @@ import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.MenuInfo;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.presentation.dto.ChangeOrderStatusRequest;
 import kitchenpos.order.presentation.dto.CreateOrderRequest;
 import kitchenpos.order.presentation.dto.OrderLineItemRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

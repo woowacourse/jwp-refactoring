@@ -25,11 +25,11 @@ create table menu_product
 
 create table order_line_item
 (
-    seq      bigint not null auto_increment,
-    menu_name varchar(255),
-    menu_price numeric(19,2),
-    quantity bigint not null,
-    order_id bigint not null,
+    seq        bigint not null auto_increment,
+    menu_name  varchar(255),
+    menu_price numeric(19, 2),
+    quantity   bigint not null,
+    order_id   bigint not null,
     primary key (seq)
 );
 
