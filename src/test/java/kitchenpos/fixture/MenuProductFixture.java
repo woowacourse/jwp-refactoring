@@ -1,6 +1,9 @@
 package kitchenpos.fixture;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductDto;
 
 public enum MenuProductFixture {
 
@@ -19,12 +22,16 @@ public enum MenuProductFixture {
         this.quantity = quantity;
     }
 
-    public MenuProduct toEntity() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public MenuProductDto toDto() {
+        MenuProductDto menuProductDto = new MenuProductDto();
+        menuProductDto.setSeq(seq);
+        menuProductDto.setMenuId(menuId);
+        menuProductDto.setProductId(productId);
+        menuProductDto.setQuantity(quantity);
+        return menuProductDto;
+    }
+
+    public MenuProduct toEntity(Menu menu, Product product) {
+        return new MenuProduct(seq, menu, product, quantity);
     }
 }

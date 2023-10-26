@@ -8,7 +8,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductDto;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,13 +22,13 @@ class ProductIntegrationTest extends IntegrationTest {
         @Test
         void min_price() {
             // given
-            Product expected = ProductFixture.computeDefaultMenu(arg ->
+            ProductDto expected = ProductFixture.computeDefaultProductDto(arg ->
                 arg.setPrice(BigDecimal.valueOf(0L))
             );
 
             // when
             steps.createProduct(expected);
-            Product actual = sharedContext.getResponse().as(Product.class);
+            ProductDto actual = sharedContext.getResponse().as(ProductDto.class);
 
             // then
             assertAll(
@@ -41,11 +41,11 @@ class ProductIntegrationTest extends IntegrationTest {
         @Test
         void duplicate_name() {
             // given
-            Product product = ProductFixture.computeDefaultMenu(ignored -> {});
+            ProductDto productDto = ProductFixture.computeDefaultProductDto(ignored -> {});
 
             // when
-            steps.createProduct(product);
-            steps.createProduct(product);
+            steps.createProduct(productDto);
+            steps.createProduct(productDto);
             ExtractableResponse<Response> response = sharedContext.getResponse();
 
             // then
@@ -59,7 +59,7 @@ class ProductIntegrationTest extends IntegrationTest {
         @Test
         void price_lower_than_0() {
             // given
-            Product expected = ProductFixture.computeDefaultMenu(arg ->
+            ProductDto expected = ProductFixture.computeDefaultProductDto(arg ->
                 arg.setPrice(BigDecimal.valueOf(-1L))
             );
 
@@ -76,11 +76,11 @@ class ProductIntegrationTest extends IntegrationTest {
     @DisplayName("제품 목록을 조회할 수 있다.")
     void listProducts_success() {
         // when
-        List<Product> actual = RestAssured.given().log().all()
-                                          .get("/api/products")
-                                          .then().log().all()
-                                          .extract()
-                                          .jsonPath().getList(".", Product.class);
+        List<ProductDto> actual = RestAssured.given().log().all()
+                                             .get("/api/products")
+                                             .then().log().all()
+                                             .extract()
+                                             .jsonPath().getList(".", ProductDto.class);
 
         // then
         assertThat(actual).isEmpty();

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupDto;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -22,22 +22,23 @@ class TableGroupIntegrationTest extends IntegrationTest {
     @Override
     void setUp() {
         super.setUp();
-        steps.createMenuGroup(MenuGroupFixture.LUNCH.toEntity());
-        steps.createTable(OrderTableFixture.EMPTY_TABLE1.toEntity());
-        steps.createTable(OrderTableFixture.EMPTY_TABLE2.toEntity());
-        steps.createTable(OrderTableFixture.OCCUPIED_TABLE.toEntity());
-        steps.createProduct(ProductFixture.FRIED_CHICKEN.toEntity());
-        steps.createMenu(MenuFixture.LUNCH_SPECIAL.toEntity());
+        steps.createMenuGroup(MenuGroupFixture.LUNCH.toDto());
+        steps.createTable(OrderTableFixture.EMPTY_TABLE1.toDto());
+        steps.createTable(OrderTableFixture.EMPTY_TABLE2.toDto());
+        steps.createTable(OrderTableFixture.OCCUPIED_TABLE.toDto());
+        steps.createTable(OrderTableFixture.OCCUPIED_TABLE_OF_GROUP1.toDto());
+        steps.createProduct(ProductFixture.FRIED_CHICKEN.toDto());
+        steps.createMenu(MenuFixture.LUNCH_SPECIAL.toDto());
     }
 
     @Test
     void create_sucess() {
         // given
-        TableGroup expected = TableGroupFixture.TWO_TABLES.toEntity();
+        TableGroupDto expected = TableGroupFixture.TABLE_GROUP_AVAILABLE.toDto();
 
         // when
         steps.createTableGroup(expected);
-        TableGroup actual = sharedContext.getResponse().as(TableGroup.class);
+        TableGroupDto actual = sharedContext.getResponse().as(TableGroupDto.class);
 
         // then
         assertAll(
@@ -53,12 +54,12 @@ class TableGroupIntegrationTest extends IntegrationTest {
         @Test
         void order_table_size() {
             // given
-            TableGroup tableGroup = TableGroupFixture.computeDefaultTableGroup(arg ->
-                arg.setOrderTables(List.of(OrderTableFixture.EMPTY_TABLE1.toEntity()))
+            TableGroupDto tableGroupDto = TableGroupFixture.computeDefaultTableGroupDto(arg ->
+                arg.setOrderTables(List.of(OrderTableFixture.EMPTY_TABLE1.toDto()))
             );
 
             // when
-            steps.createTableGroup(tableGroup);
+            steps.createTableGroup(tableGroupDto);
             ExtractableResponse<Response> response = sharedContext.getResponse();
 
             // then
@@ -68,12 +69,12 @@ class TableGroupIntegrationTest extends IntegrationTest {
         @Test
         void not_empty_table() {
             // given
-            TableGroup tableGroup = TableGroupFixture.computeDefaultTableGroup(arg ->
-                arg.setOrderTables(List.of(OrderTableFixture.EMPTY_TABLE1.toEntity(), OrderTableFixture.OCCUPIED_TABLE.toEntity()))
+            TableGroupDto tableGroupDto = TableGroupFixture.computeDefaultTableGroupDto(arg ->
+                arg.setOrderTables(List.of(OrderTableFixture.EMPTY_TABLE1.toDto(), OrderTableFixture.OCCUPIED_TABLE.toDto()))
             );
 
             // when
-            steps.createTableGroup(tableGroup);
+            steps.createTableGroup(tableGroupDto);
             ExtractableResponse<Response> response = sharedContext.getResponse();
 
             // then
@@ -84,12 +85,11 @@ class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     void upgroup_success() {
         // given
-        TableGroup tableGroup = TableGroupFixture.TWO_TABLES.toEntity();
-        steps.createTableGroup(tableGroup);
-        TableGroup created = TableGroupFixture.TWO_TABLES.toEntity();
+        TableGroupDto tableGroupDto = TableGroupFixture.TABLE_GROUP_AVAILABLE.toDto();
+        steps.createTableGroup(tableGroupDto);
 
         // when
-        steps.upgroup(created.getId());
+        steps.upgroup(1L);
         ExtractableResponse<Response> response = sharedContext.getResponse();
 
         // then

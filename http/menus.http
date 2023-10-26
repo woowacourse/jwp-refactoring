@@ -6,7 +6,7 @@ Content-Type: application/json
   "name": "후라이드+후라이드",
   "price": 19000,
   "menuGroupId": 1,
-  "menuProducts": [
+  "menuProductDtos": [
     {
       "productId": 1,
       "quantity": 2

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import io.restassured.RestAssured;
 import java.util.List;
-import kitchenpos.domain.Order;
+import kitchenpos.dto.OrderDto;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -21,21 +21,21 @@ class OrderIntegrationTest extends IntegrationTest {
     @Override
     void setUp() {
         super.setUp();
-        steps.createMenuGroup(MenuGroupFixture.LUNCH.toEntity());
-        steps.createTable(OrderTableFixture.OCCUPIED_TABLE.toEntity());
-        steps.createProduct(ProductFixture.FRIED_CHICKEN.toEntity());
-        steps.createMenu(MenuFixture.LUNCH_SPECIAL.toEntity());
+        steps.createMenuGroup(MenuGroupFixture.LUNCH.toDto());
+        steps.createTable(OrderTableFixture.OCCUPIED_TABLE.toDto());
+        steps.createProduct(ProductFixture.FRIED_CHICKEN.toDto());
+        steps.createMenu(MenuFixture.LUNCH_SPECIAL.toDto());
     }
 
     @Test
     @DisplayName("주문을 등록할 수 있다.")
     void create_success() {
         // given
-        Order expected = OrderFixture.ORDER_1.toEntity();
+        OrderDto expected = OrderFixture.ORDER_1.toDto();
 
         // when
         steps.createOrder(expected);
-        Order actual = sharedContext.getResponse().as(Order.class);
+        OrderDto actual = sharedContext.getResponse().as(OrderDto.class);
 
         // then
         assertAll(
@@ -43,7 +43,7 @@ class OrderIntegrationTest extends IntegrationTest {
             () -> assertThat(actual.getOrderTableId()).isEqualTo(expected.getOrderTableId()),
             () -> assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus()),
             () -> assertThat(actual.getOrderedTime()).isNotNull(),
-            () -> assertThat(actual.getOrderLineItems()).isEqualTo(expected.getOrderLineItems())
+            () -> assertThat(actual.getOrderLineItemDtos()).isEqualTo(expected.getOrderLineItemDtos())
         );
     }
 
@@ -51,14 +51,14 @@ class OrderIntegrationTest extends IntegrationTest {
     @DisplayName("주문 목록을 조회할 수 있다.")
     void listOrders_success() {
         // given
-        steps.createOrder(OrderFixture.ORDER_1.toEntity());
+        steps.createOrder(OrderFixture.ORDER_1.toDto());
 
         // when
-        List<Order> actual = RestAssured.given().log().all()
-                                       .get("/api/orders")
-                                       .then().log().all()
-                                       .extract()
-                                       .jsonPath().getList(".", Order.class);
+        List<OrderDto> actual = RestAssured.given().log().all()
+                                           .get("/api/orders")
+                                           .then().log().all()
+                                           .extract()
+                                           .jsonPath().getList(".", OrderDto.class);
 
         // then
         assertThat(actual).isNotEmpty();
@@ -68,13 +68,13 @@ class OrderIntegrationTest extends IntegrationTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     void changeOrderStatus_success() {
         // given
-        Order order = OrderFixture.ORDER_1.toEntity();
-        steps.createOrder(order);
+        OrderDto orderDto = OrderFixture.ORDER_1.toDto();
+        steps.createOrder(orderDto);
 
         // when
-        order.setOrderStatus("COMPLETION");
-        steps.changeOrderStatus(order.getId(), order);
-        Order actual = sharedContext.getResponse().as(Order.class);
+        orderDto.setOrderStatus("COMPLETION");
+        steps.changeOrderStatus(orderDto.getId(), orderDto);
+        OrderDto actual = sharedContext.getResponse().as(OrderDto.class);
 
         // then
         assertThat(actual.getOrderStatus()).isEqualTo("COMPLETION");
@@ -84,13 +84,13 @@ class OrderIntegrationTest extends IntegrationTest {
     @DisplayName("주문 상태가 이미 Completion이면 변경할 수 없다.")
     void changeOrderStatus_failure() {
         // given
-        Order order = OrderFixture.ORDER_1.toEntity();
-        steps.createOrder(order);
-        order.setOrderStatus("COMPLETION");
-        steps.changeOrderStatus(order.getId(), order);
+        OrderDto orderDto = OrderFixture.ORDER_1.toDto();
+        steps.createOrder(orderDto);
+        orderDto.setOrderStatus("COMPLETION");
+        steps.changeOrderStatus(orderDto.getId(), orderDto);
 
         // when
-        steps.changeOrderStatus(order.getId(), order);
+        steps.changeOrderStatus(orderDto.getId(), orderDto);
         var response = sharedContext.getResponse();
 
         // then

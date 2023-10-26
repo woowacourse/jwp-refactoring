@@ -1,59 +1,86 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
+import static javax.persistence.GenerationType.IDENTITY;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderLineItem {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long seq;
-    private Long orderId;
-    private Long menuId;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
     private long quantity;
+
+    protected OrderLineItem() {
+    }
+
+    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
+        this.seq = seq;
+        this.menu = menu;
+        this.quantity = quantity;
+        setOrder(order);
+    }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Order getOrder() {
+        return order;
     }
 
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-        OrderLineItem that = (OrderLineItem) object;
-        return Objects.equals(seq, that.seq);
-    }
+    public static class Builder {
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(seq);
+        private Long seq;
+        private Order order;
+        private Menu menu;
+        private long quantity;
+
+        public Builder seq(Long seq) {
+            this.seq = seq;
+            return this;
+        }
+
+        public Builder order(Order order) {
+            this.order = order;
+            return this;
+        }
+
+        public Builder menu(Menu menu) {
+            this.menu = menu;
+            return this;
+        }
+
+        public Builder quantity(long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public OrderLineItem build() {
+            return new OrderLineItem(seq, order, menu, quantity);
+        }
     }
 }
