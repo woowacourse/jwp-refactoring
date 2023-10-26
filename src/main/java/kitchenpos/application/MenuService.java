@@ -7,7 +7,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;
-import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,7 @@ public class MenuService {
 
     public Long create(final MenuCreateRequest request) {
         final List<Product> products = findAllProducts(request.extractIds());
-        final Map<Product, Integer> productWithQuantity = makeProductWithQuantityMap(request.getMenuProducts(), products);
+        final Map<Product, Integer> productWithQuantity = makeProductWithQuantityMap(request, products);
         final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup, productWithQuantity);
         final Menu saveMenu = menuRepository.save(menu);
@@ -49,12 +48,10 @@ public class MenuService {
     }
 
     private Map<Product, Integer> makeProductWithQuantityMap(
-            final List<MenuProductRequest> menuProductRequests,
+            final MenuCreateRequest menuProductRequests,
             final List<Product> products
     ) {
-        final Map<Long, Integer> productIdToQuantity = menuProductRequests.stream()
-                .collect(Collectors.toMap(MenuProductRequest::getProductId, MenuProductRequest::getQuantity));
-
+        final Map<Long, Integer> productIdToQuantity = menuProductRequests.extractProductIdsAndQuantity();
         return products.stream()
                 .collect(Collectors.toMap(
                         product -> product,
