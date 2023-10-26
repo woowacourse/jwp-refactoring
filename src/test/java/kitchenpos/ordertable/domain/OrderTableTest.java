@@ -1,11 +1,11 @@
-package kitchenpos.order.domain;
+package kitchenpos.ordertable.domain;
 
 import kitchenpos.BaseTest;
-import kitchenpos.order.exception.OrderTableException;
-import kitchenpos.order.domain.GuestNumber;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.ordertable.exception.OrderTableException;
+import kitchenpos.ordertable.domain.GuestNumber;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

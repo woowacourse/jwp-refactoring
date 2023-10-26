@@ -1,4 +1,4 @@
-package kitchenpos.order.ui.request;
+package kitchenpos.ordertable.ui.request;
 
 public class UpdateOrderTableGuestNumberRequest {
 

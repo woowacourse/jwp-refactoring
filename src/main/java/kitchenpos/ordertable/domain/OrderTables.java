@@ -1,6 +1,6 @@
-package kitchenpos.order.domain;
+package kitchenpos.ordertable.domain;
 
-import kitchenpos.order.exception.TableGroupException;
+import kitchenpos.ordertable.exception.TableGroupException;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;

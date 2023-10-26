@@ -1,18 +1,18 @@
-package kitchenpos.order.application;
+package kitchenpos.ordertable.application;
 
 import kitchenpos.MockServiceTest;
 import kitchenpos.order.application.dto.CreateOrderTableDto;
 import kitchenpos.order.application.dto.OrderTableDto;
 import kitchenpos.order.application.dto.UpdateOrderTableEmptyDto;
 import kitchenpos.order.application.dto.UpdateOrderTableGuestNumberDto;
-import kitchenpos.order.domain.GuestNumber;
+import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.TableGroup;
-import kitchenpos.order.exception.OrderTableException;
-import kitchenpos.order.exception.OrderTableGuestNumberException;
-import kitchenpos.order.application.TableService;
-import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.exception.OrderTableException;
+import kitchenpos.ordertable.exception.OrderTableGuestNumberException;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTableRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
-package kitchenpos.order.domain;
+package kitchenpos.ordertable.domain;
 
-import kitchenpos.order.exception.OrderTableGuestNumberException;
+import kitchenpos.ordertable.exception.OrderTableGuestNumberException;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;

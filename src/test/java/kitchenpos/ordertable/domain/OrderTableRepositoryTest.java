@@ -1,6 +1,9 @@
-package kitchenpos.order.domain;
+package kitchenpos.ordertable.domain;
 
 import kitchenpos.RepositoryTest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.ordertable.domain.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
-package kitchenpos.order.domain;
+package kitchenpos.ordertable.domain;
 
 import kitchenpos.BaseTest;
-import kitchenpos.order.exception.OrderTableGuestNumberException;
-import kitchenpos.order.domain.GuestNumber;
+import kitchenpos.ordertable.exception.OrderTableGuestNumberException;
+import kitchenpos.ordertable.domain.GuestNumber;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
