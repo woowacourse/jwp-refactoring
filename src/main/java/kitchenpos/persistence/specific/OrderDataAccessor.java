@@ -1,16 +1,10 @@
-package kitchenpos.dao;
-
-import kitchenpos.domain.Order;
+package kitchenpos.persistence.specific;
 
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.persistence.BasicDataAccessor;
+import kitchenpos.persistence.dto.OrderDataDto;
 
-public interface OrderDao {
-    Order save(Order entity);
-
-    Optional<Order> findById(Long id);
-
-    List<Order> findAll();
+public interface OrderDataAccessor extends BasicDataAccessor<OrderDataDto> {
 
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
 
