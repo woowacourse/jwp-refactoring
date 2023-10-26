@@ -35,7 +35,7 @@ public class FixtureFactory {
 
     public Menu 메뉴_생성(Long menuGroupId, Product product) {
         return menuService.create(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroupId, List.of(
-                new MenuProduct(product, 1)
+                new MenuProduct(1, product.getId())
         )));
     }
 }

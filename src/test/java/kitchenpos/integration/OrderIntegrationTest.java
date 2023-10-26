@@ -46,7 +46,7 @@ class OrderIntegrationTest extends IntegrationTest {
         Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
         Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
-                new MenuProduct(product, 1)
+                new MenuProduct(1, product.getId())
         )));
         List<OrderLineItem> orderLineItems = List.of(
                 new OrderLineItem(menu.getId(), 1)
@@ -79,7 +79,7 @@ class OrderIntegrationTest extends IntegrationTest {
             Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
             MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
             Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
-                    new MenuProduct(product, 1)
+                    new MenuProduct(1, product.getId())
             )));
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(menu.getId(), 1),
@@ -96,10 +96,10 @@ class OrderIntegrationTest extends IntegrationTest {
             Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
             MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
             Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
-                    new MenuProduct(product, 1)
+                    new MenuProduct(1, product.getId())
             )));
             Menu menu2 = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
-                    new MenuProduct(product, 1)
+                    new MenuProduct(1, product.getId())
             )));
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(menu.getId(), 1),
@@ -118,7 +118,7 @@ class OrderIntegrationTest extends IntegrationTest {
             MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
             Menu menu = menuRepository.save(
                     new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(),
-                            List.of(new MenuProduct(product, 1)))
+                            List.of(new MenuProduct(1, product.getId())))
             );
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(menu.getId(), 1)
@@ -135,7 +135,7 @@ class OrderIntegrationTest extends IntegrationTest {
             Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
             MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
             Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
-                    new MenuProduct(product, 1)
+                    new MenuProduct(1, product.getId())
             )));
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(menu.getId(), 1)

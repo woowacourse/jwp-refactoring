@@ -31,7 +31,7 @@ class MenuIntegrationTest extends IntegrationTest {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1L);
+        MenuProduct menuProduct = new MenuProduct(1L, product.getId());
         Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
         Menu saved = menuService.create(menu);
 
@@ -45,7 +45,7 @@ class MenuIntegrationTest extends IntegrationTest {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1L);
+        MenuProduct menuProduct = new MenuProduct(1L, product.getId());
         Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
         Menu saved = menuService.create(menu);
 

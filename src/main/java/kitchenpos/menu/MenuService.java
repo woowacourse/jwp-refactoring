@@ -7,16 +7,26 @@ import java.util.List;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
+    private final MenuCreateValidator menuCreateValidator;
+    private final MenuProductPriceMultiplier menuProductPriceMultiplier;
 
     public MenuService(
-            final MenuRepository menuRepository
+            final MenuRepository menuRepository,
+            MenuCreateValidator menuCreateValidator,
+            MenuProductPriceMultiplier menuProductPriceMultiplier
     ) {
         this.menuRepository = menuRepository;
+        this.menuCreateValidator = menuCreateValidator;
+        this.menuProductPriceMultiplier = menuProductPriceMultiplier;
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
+    public Menu create(Menu menu) {
+        menuCreateValidator.validate(menu);
+        menu.validateMenuProductsPrice(menuProductPriceMultiplier);
+
         return menuRepository.save(menu);
     }
 

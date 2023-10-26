@@ -1,13 +1,11 @@
 package kitchenpos.menu;
 
 import kitchenpos.product.Price;
-import kitchenpos.product.Product;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Table(name = "menu_product")
@@ -18,30 +16,29 @@ public class MenuProduct {
     @Id
     private Long seq;
 
-    @ManyToOne
-    private Product product;
+    private Long productId;
 
     private long quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Product product, long quantity) {
+    public MenuProduct(long quantity, Long productId) {
         this.seq = null;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 
-    public Price calculateTotalPrice() {
-        return product.multiplyWithQuantity(quantity);
+    public Price multiplyPrice(Price price) {
+        return price.multiplyWithQuantity(quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {

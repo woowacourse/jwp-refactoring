@@ -24,9 +24,9 @@ public class MenuProducts {
         this.collection = collection;
     }
 
-    public Price calculateTotalPrice() {
+    public Price calculateTotalPrice(MenuProductPriceMultiplier multiplier) {
         return collection.stream()
-                .map(MenuProduct::calculateTotalPrice)
+                .map(multiplier::multiply)
                 .reduce(Price.zero(), Price::add);
     }
 

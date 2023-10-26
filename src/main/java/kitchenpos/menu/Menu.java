@@ -1,6 +1,5 @@
 package kitchenpos.menu;
 
-import kitchenpos.menu.event.MenuCreatedEvent;
 import kitchenpos.product.Price;
 import kitchenpos.product.PriceConverter;
 import org.springframework.data.domain.AbstractAggregateRoot;
@@ -42,12 +41,10 @@ public class Menu extends AbstractAggregateRoot<Menu> {
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = new MenuProducts(menuProducts);
-        validateMenuProductsPrice(this.menuProducts);
-        registerEvent(new MenuCreatedEvent(menuGroupId));
     }
 
-    private void validateMenuProductsPrice(MenuProducts menuProducts) {
-        Price totalPrice = menuProducts.calculateTotalPrice();
+    public void validateMenuProductsPrice(MenuProductPriceMultiplier multiplier) {
+        Price totalPrice = this.menuProducts.calculateTotalPrice(multiplier);
         if (price.isBigger(totalPrice)) {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 항목의 가격 합보다 작아야한다.");
         }
