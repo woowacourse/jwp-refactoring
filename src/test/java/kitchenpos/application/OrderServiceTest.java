@@ -14,6 +14,7 @@ import java.util.List;
 import kitchenpos.common.annotation.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -54,7 +55,7 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 주문을_성공적으로_저장한다() {
             // given
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(10), false));
             MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("신메뉴"));
             Menu menu = menuRepository.save(new Menu("닭꼬치", new Price(1000), menuGroup));
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.id(), List.of(
@@ -76,7 +77,7 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 주문_항목이_없으면_예외가_발생한다() {
             // given
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, false));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(1), false));
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.id(), List.of());
 
             // when
@@ -128,7 +129,7 @@ class OrderServiceTest extends IntegrationTest {
         void 주문의_상태가_이미_계산완료면_예외가_발생한다() {
             // given
             tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(10), false));
 
             Menu menu = menuRepository.getById(1L);
             List<OrderLineItem> orderLineItems = List.of(

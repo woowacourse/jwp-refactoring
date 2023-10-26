@@ -16,7 +16,7 @@ class TableGroupTest {
     void 새로운_OrderTable을_더한다() {
         // given
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        OrderTable orderTable = new OrderTable(null, 10, true);
+        OrderTable orderTable = new OrderTable(null, new NumberOfGuests(10), true);
 
         // when
         tableGroup.add(orderTable);
@@ -29,7 +29,7 @@ class TableGroupTest {
     void OrderTable을_추가할_때_OrderTable이_Empty_상태가_아니면_예외를_발생한다() {
         // given
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        OrderTable orderTable = new OrderTable(null, 10, false);
+        OrderTable orderTable = new OrderTable(null, new NumberOfGuests(10), false);
 
         // when
         BaseExceptionType exceptionType = assertThrows(TableGroupException.class, () ->
@@ -44,7 +44,7 @@ class TableGroupTest {
     void OrderTable을_추가할_때_OrderTable이_이미_TableGroup을_가지면_예외를_발생한다() {
         // given
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        OrderTable orderTable = new OrderTable(tableGroup, 1, false);
+        OrderTable orderTable = new OrderTable(tableGroup, new NumberOfGuests(1), false);
 
         // when
         BaseExceptionType exceptionType = assertThrows(TableGroupException.class, () ->
@@ -58,8 +58,8 @@ class TableGroupTest {
     @Test
     void 여러_OrderTable을_한꺼번에_저장한다() {
         // given
-        OrderTable orderTable1 = new OrderTable(null, 10, true);
-        OrderTable orderTable2 = new OrderTable(null, 10, true);
+        OrderTable orderTable1 = new OrderTable(null, new NumberOfGuests(10), true);
+        OrderTable orderTable2 = new OrderTable(null, new NumberOfGuests(10), true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
@@ -74,8 +74,8 @@ class TableGroupTest {
     @Test
     void 생성자를_통해_여러_OrderTable을_한번에_저장한다() {
         // given
-        OrderTable orderTable1 = new OrderTable(null, 10, true);
-        OrderTable orderTable2 = new OrderTable(null, 10, true);
+        OrderTable orderTable1 = new OrderTable(null, new NumberOfGuests(10), true);
+        OrderTable orderTable2 = new OrderTable(null, new NumberOfGuests(10), true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
         // when

@@ -32,7 +32,7 @@ class OrderTest {
     @Test
     void 주문_저장시_테이블이_주문_불가능한_상태면_예외_발생() {
         // given
-        OrderTable orderTable = new OrderTable(1L, null, 10, true);
+        OrderTable orderTable = new OrderTable(1L, null, new NumberOfGuests(10), true);
 
         // when
         BaseExceptionType exceptionType = assertThrows(OrderException.class, () ->
@@ -46,7 +46,7 @@ class OrderTest {
     @Test
     void OrderLineItem을_추가한다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 10, false);
+        OrderTable orderTable = new OrderTable(null, new NumberOfGuests(10), false);
         Order order = new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
         OrderLineItem orderLineItem = new OrderLineItem(1L, order, null, new Quantity(10));
 
@@ -60,7 +60,7 @@ class OrderTest {
     @Test
     void 주문_상태를_변경한다() {
         // given
-        OrderTable orderTable = new OrderTable(1L, null, 10, false);
+        OrderTable orderTable = new OrderTable(1L, null, new NumberOfGuests(10), false);
         Order order = new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
 
         // when
@@ -73,7 +73,7 @@ class OrderTest {
     @Test
     void 이미_주문_상태가_계산_완료이면_예외_발생() {
         // given
-        OrderTable orderTable = new OrderTable(1L, null, 10, false);
+        OrderTable orderTable = new OrderTable(1L, null, new NumberOfGuests(10), false);
         Order order = new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems);
 
         // when
@@ -88,7 +88,7 @@ class OrderTest {
     @Test
     void 테이블의_empty를_변경할_때_계산_완료된_상태면_예외_발생() {
         // given
-        OrderTable orderTable = new OrderTable(1L, null, 10, false);
+        OrderTable orderTable = new OrderTable(1L, null, new NumberOfGuests(10), false);
         Order order = new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems);
 
         // when

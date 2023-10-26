@@ -1,5 +1,6 @@
 package kitchenpos.dto.request;
 
+import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableCreateRequest {
@@ -13,7 +14,7 @@ public class OrderTableCreateRequest {
     }
 
     public OrderTable toDomain() {
-        return new OrderTable(null, numberOfGuests, empty);
+        return new OrderTable(null, new NumberOfGuests(numberOfGuests), empty);
     }
 
     public int numberOfGuests() {

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.common.annotation.IntegrationTest;
+import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -74,8 +75,8 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void 요청된_모든_테이블들이_빈_테이블이_아니면_예외를_발생한다() {
             // given
-            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, false));
-            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 1, true));
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(1), false));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(1), true));
             List<OrderTableIdRequest> orderTableIds = List.of(
                     new OrderTableIdRequest(orderTable1.id()),
                     new OrderTableIdRequest(orderTable2.id())
@@ -95,8 +96,8 @@ class TableGroupServiceTest extends IntegrationTest {
         void 요청된_모든_테이블들이_이미_다른_테이블_그룹이_저장되어_있으면_예외를_발생한다() {
             // given
             TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(tableGroup, 1, false));
-            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 1, false));
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(tableGroup, new NumberOfGuests(1), false));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(1), false));
             List<OrderTableIdRequest> orderTableIds = List.of(
                     new OrderTableIdRequest(orderTable1.id()),
                     new OrderTableIdRequest(orderTable2.id())
@@ -137,8 +138,8 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void 요청된_테이블_그룹_ID로_묶인_주문_테이블들의_상태가_하나라도_COOKING이거나_MEAL이면_예외를_발생한다() {
             // given
-            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, false));
-            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, false));
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(1), false));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(2), false));
 
             Order order1 = orderService.create(new OrderCreateRequest(
                     orderTable1.id(), List.of(

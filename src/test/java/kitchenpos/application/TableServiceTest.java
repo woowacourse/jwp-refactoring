@@ -3,10 +3,10 @@ package kitchenpos.application;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.exception.NumberOfGuestsExceptionType.NEGATIVE_VALUE_EXCEPTION;
 import static kitchenpos.exception.OrderExceptionType.ORDER_STATUS_IS_NOT_COMPLETION_EXCEPTION;
 import static kitchenpos.exception.OrderTableExceptionType.ILLEGAL_CHANGE_NUMBER_OF_GUESTS;
 import static kitchenpos.exception.OrderTableExceptionType.NOT_EXIST_ORDER_TABLE;
-import static kitchenpos.exception.OrderTableExceptionType.NUMBER_OF_GUESTS_IS_NULL_OR_NEGATIVE_EXCEPTION;
 import static kitchenpos.exception.OrderTableExceptionType.TABLE_GROUP_IS_NOT_NULL_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.annotation.IntegrationTest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -23,6 +24,7 @@ import kitchenpos.domain.Quantity;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.exception.NumberOfGuestsException;
 import kitchenpos.exception.OrderException;
 import kitchenpos.exception.OrderTableException;
 import kitchenpos.repository.JpaMenuRepository;
@@ -31,9 +33,6 @@ import kitchenpos.repository.JpaOrderTableRepository;
 import kitchenpos.repository.JpaTableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class TableServiceTest extends IntegrationTest {
@@ -61,7 +60,7 @@ class TableServiceTest extends IntegrationTest {
         assertAll(
                 () -> assertThat(orderTable.hasTableGroup()).isFalse(),
                 () -> assertThat(orderTable.isEmpty()).isTrue(),
-                () -> assertThat(orderTable.numberOfGuests()).isEqualTo(10)
+                () -> assertThat(orderTable.numberOfGuests()).isEqualTo(new NumberOfGuests(10))
         );
     }
 
@@ -82,7 +81,7 @@ class TableServiceTest extends IntegrationTest {
         void 현재_속한_TableGroup이_존재하면_예외를_발생한다() {
             // given
             TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 1, false));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, new NumberOfGuests(1), false));
             Menu menu = menuRepository.getById(1L);
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(null, menu, new Quantity(1)),
@@ -102,7 +101,7 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 테이블의_Empty_상태를_변경할_때_테이블의_주문이_이미_계산_완료된_상태이면_예외가_발생한다() {
             // given
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(10), false));
             Menu menu = menuRepository.getById(1L);
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(null, menu, new Quantity(1)),
@@ -122,7 +121,7 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 주문_테이블의_주문_가능_상태를_빈_테이블로_변경한다() {
             // given
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(10), false));
             Menu menu = menuRepository.getById(1L);
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(null, menu, new Quantity(1)),
@@ -141,20 +140,18 @@ class TableServiceTest extends IntegrationTest {
     @Nested
     class 테이블_손님_수_변경 {
 
-        @ParameterizedTest
-        @ValueSource(ints = {-1})
-        @NullSource
-        void 요청된_손님_수가_0_미만이면_예외가_발생한다(Integer numberOfGuests) {
+        @Test
+        void 요청된_손님_수가_0_미만이면_예외가_발생한다() {
             // given
             long orderTableId = 1L;
 
             // then
-            BaseExceptionType exceptionType = assertThrows(OrderTableException.class, () ->
-                    tableService.changeNumberOfGuests(orderTableId, numberOfGuests)
+            BaseExceptionType exceptionType = assertThrows(NumberOfGuestsException.class, () ->
+                    tableService.changeNumberOfGuests(orderTableId, -1)
             ).exceptionType();
 
             // then
-            assertThat(exceptionType).isEqualTo(NUMBER_OF_GUESTS_IS_NULL_OR_NEGATIVE_EXCEPTION);
+            assertThat(exceptionType).isEqualTo(NEGATIVE_VALUE_EXCEPTION);
         }
 
         @Test
@@ -175,7 +172,7 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 변경하려는_주문_테이블이_빈_테이블이면_예외를_발생한다() {
             // given
-            OrderTable saved = orderTableRepository.save(new OrderTable(null, 10, true));
+            OrderTable saved = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(10), true));
             long orderTableId = saved.id();
             int numberOfGuests = 10;
 
@@ -191,15 +188,16 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 테이블의_손님_수를_변경한다() {
             // given
-            OrderTable saved = orderTableRepository.save(new OrderTable(null, 10, false));
+            int asIs = 10;
+            OrderTable saved = orderTableRepository.save(new OrderTable(null, new NumberOfGuests(asIs), false));
             long orderTableId = saved.id();
-            int numberOfGuests = 10;
+            int toBe = 100;
 
             // then
-            tableService.changeNumberOfGuests(orderTableId, numberOfGuests);
+            OrderTable result = tableService.changeNumberOfGuests(orderTableId, toBe);
 
             // then
-            assertThat(saved.numberOfGuests()).isEqualTo(10);
+            assertThat(result.numberOfGuests()).isEqualTo(new NumberOfGuests(toBe));
         }
     }
 }

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
@@ -43,7 +44,7 @@ public class TableService {
     @Transactional
     public OrderTable changeNumberOfGuests(Long orderTableId, Integer numberOfGuests) {
         OrderTable orderTable = orderTableRepository.getById(orderTableId);
-        orderTable.changeNumberOfGuests(numberOfGuests);
+        orderTable.changeNumberOfGuests(new NumberOfGuests(numberOfGuests));
         return orderTable;
     }
 }
