@@ -1,9 +1,9 @@
-package kitchenpos.ui.tablegroup;
+package kitchenpos.ui.table;
 
-import kitchenpos.application.tablegroup.TableGroupService;
-import kitchenpos.application.tablegroup.request.TableGroupCreateRequest;
-import kitchenpos.domain.tablegroup.TableGroup;
-import kitchenpos.ui.tablegroup.response.TableGroupResponse;
+import kitchenpos.application.table.TableGroupService;
+import kitchenpos.application.table.request.TableGroupCreateRequest;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.ui.table.response.TableGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

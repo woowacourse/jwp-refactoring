@@ -1,7 +1,7 @@
-package kitchenpos.ui.tablegroup.response;
+package kitchenpos.ui.table.response;
 
-import kitchenpos.domain.tablegroup.OrderTable;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 
 import java.util.List;
 

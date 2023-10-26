@@ -1,4 +1,4 @@
-package kitchenpos.application.tablegroup.request;
+package kitchenpos.application.table.request;
 
 import java.util.List;
 import java.util.stream.Collectors;

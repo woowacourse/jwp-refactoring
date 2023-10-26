@@ -1,16 +1,16 @@
-package kitchenpos.ui.tablegroup;
+package kitchenpos.ui.table;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.application.order.request.TableCreateRequest;
-import kitchenpos.application.tablegroup.TableGroupService;
-import kitchenpos.application.tablegroup.request.OrderTableIdRequest;
-import kitchenpos.application.tablegroup.request.TableGroupCreateRequest;
+import kitchenpos.application.table.TableGroupService;
+import kitchenpos.application.table.request.OrderTableIdRequest;
+import kitchenpos.application.table.request.TableGroupCreateRequest;
 import kitchenpos.ui.ControllerAcceptanceTestHelper;
 import kitchenpos.ui.order.response.TableResponse;
-import kitchenpos.ui.tablegroup.response.TableGroupResponse;
+import kitchenpos.ui.table.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;

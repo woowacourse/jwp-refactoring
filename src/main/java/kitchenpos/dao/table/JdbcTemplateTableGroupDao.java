@@ -1,7 +1,7 @@
-package kitchenpos.dao.tablegroup;
+package kitchenpos.dao.table;
 
-import kitchenpos.domain.tablegroup.TableGroup;
-import kitchenpos.domain.tablegroup.TableGroupRepository;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.TableGroupRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

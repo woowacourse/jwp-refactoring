@@ -1,4 +1,4 @@
-package kitchenpos.application.tablegroup.request;
+package kitchenpos.application.table.request;
 
 public class OrderTableIdRequest {
 
