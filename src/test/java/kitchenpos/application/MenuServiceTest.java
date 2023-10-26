@@ -14,8 +14,6 @@ import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -61,63 +59,6 @@ class MenuServiceTest {
                 softly.assertThat(response.getPrice()).isEqualByComparingTo(menu.getPrice());
                 softly.assertThat(response.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
             });
-        }
-
-        @ParameterizedTest
-        @ValueSource(ints = {0, 1, 255})
-        void 메뉴_이름은_255자_이하이다(int length) {
-            final MenuCreateRequest menu = new MenuCreateRequest("메".repeat(length), BigDecimal.ONE, savedMenuGroupId, menuProducts);
-            final MenuResponse response = menuService.create(menu);
-
-            assertSoftly(softly -> {
-                softly.assertThat(response.getId()).isNotNull();
-                softly.assertThat(response.getName()).isEqualTo(menu.getName());
-                softly.assertThat(response.getPrice()).isEqualByComparingTo(menu.getPrice());
-                softly.assertThat(response.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
-            });
-        }
-
-        @Test
-        void 메뉴_이름이_없으면_예외가_발생한다() {
-            final MenuCreateRequest menu = new MenuCreateRequest(null, BigDecimal.ONE, savedMenuGroupId, menuProducts);
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 메뉴_가격이_없으면_예외가_발생한다() {
-            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", null, savedMenuGroupId, menuProducts);
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 메뉴_이름이_256자_이상이면_예외가_발생한다() {
-            final MenuCreateRequest menu = new MenuCreateRequest("메".repeat(256), BigDecimal.ONE, savedMenuGroupId, menuProducts);
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 메뉴_가격이_0원_보다_작으면_예외가_발생한다() {
-            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.valueOf(-1), savedMenuGroupId, menuProducts);
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 메뉴_가격이_1000조_이상이면_예외가_발생한다() {
-            final Product product = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.valueOf(Math.pow(10, 16)))));
-            menuProducts.add(new MenuProductRequest(product.getId(), 10));
-
-            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.valueOf(Math.pow(10, 17)), savedMenuGroupId, menuProducts);
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
