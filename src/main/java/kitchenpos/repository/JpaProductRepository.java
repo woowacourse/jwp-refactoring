@@ -1,4 +1,4 @@
-package kitchenpos.dao.jpa;
+package kitchenpos.repository;
 
 import static kitchenpos.exception.ProductExceptionType.NOT_EXIST_PRODUCT_EXCEPTION;
 

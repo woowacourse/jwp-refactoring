@@ -1,4 +1,4 @@
-package kitchenpos.dao.jpa;
+package kitchenpos.repository;
 
 import static kitchenpos.exception.OrderTableExceptionType.NOT_EXIST_ORDER_TABLE;
 

@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.jpa.JpaOrderRepository;
-import kitchenpos.dao.jpa.JpaOrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.repository.JpaOrderRepository;
+import kitchenpos.repository.JpaOrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

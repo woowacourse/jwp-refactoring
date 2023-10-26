@@ -1,4 +1,4 @@
-package kitchenpos.dao.jpa;
+package kitchenpos.repository;
 
 import static kitchenpos.exception.TableGroupExceptionType.TABLE_GROUP_NOT_EXISTS;
 

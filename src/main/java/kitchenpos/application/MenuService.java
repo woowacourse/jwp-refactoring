@@ -1,10 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.jpa.JpaMenuGroupRepository;
-import kitchenpos.dao.jpa.JpaMenuProductRepository;
-import kitchenpos.dao.jpa.JpaMenuRepository;
-import kitchenpos.dao.jpa.JpaProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -13,6 +9,10 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.Quantity;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.repository.JpaMenuGroupRepository;
+import kitchenpos.repository.JpaMenuProductRepository;
+import kitchenpos.repository.JpaMenuRepository;
+import kitchenpos.repository.JpaProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

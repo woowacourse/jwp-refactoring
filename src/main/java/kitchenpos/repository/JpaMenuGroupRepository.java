@@ -1,4 +1,4 @@
-package kitchenpos.dao.jpa;
+package kitchenpos.repository;
 
 import static kitchenpos.exception.MenuGroupExceptionType.NOT_EXIST_MENU_GROUP_EXCEPTION;
 

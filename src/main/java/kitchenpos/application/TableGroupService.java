@@ -5,15 +5,15 @@ import static kitchenpos.exception.OrderTableExceptionType.NOT_EXIST_ORDER_TABLE
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.jpa.JpaOrderRepository;
-import kitchenpos.dao.jpa.JpaOrderTableRepository;
-import kitchenpos.dao.jpa.JpaTableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.exception.OrderTableException;
+import kitchenpos.repository.JpaOrderRepository;
+import kitchenpos.repository.JpaOrderTableRepository;
+import kitchenpos.repository.JpaTableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
