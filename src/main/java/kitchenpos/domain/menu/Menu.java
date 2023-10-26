@@ -46,7 +46,6 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-        validateNotExceeded(price, menuProducts);
     }
 
     public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
@@ -55,17 +54,6 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-        validateNotExceeded(price, menuProducts);
-    }
-
-    private void validateNotExceeded(Price menuPrice, List<MenuProduct> menuProducts) {
-        Price menuProductsTotal = menuProducts.stream()
-                .map(MenuProduct::evaluateTotal)
-                .reduce(Price.ZERO, Price::add);
-
-        if (menuPrice.isGreaterThan(menuProductsTotal)) {
-            throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 합계를 넘을 수 없습니다");
-        }
     }
 
     public Long getId() {

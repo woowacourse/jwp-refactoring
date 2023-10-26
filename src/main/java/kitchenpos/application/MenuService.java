@@ -4,6 +4,7 @@ import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.product.Product;
 import kitchenpos.persistence.MenuGroupRepository;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.ProductRepository;
@@ -35,12 +36,28 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.findById(menu.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
 
+        Price menuPrice = new Price(menu.getPrice());
+        List<MenuProduct> menuProducts = toMenuProducts(menu.getMenuProducts());
+        validateNotExceeded(menuPrice, menuProducts);
         return menuRepository.save(new Menu(
                 menu.getName(),
-                new Price(menu.getPrice()),
+                menuPrice,
                 menu.getMenuGroupId(),
-                toMenuProducts(menu.getMenuProducts())
+                menuProducts
         ));
+    }
+
+    private void validateNotExceeded(Price menuPrice, List<MenuProduct> menuProducts) {
+        Price menuProductsTotal = menuProducts.stream()
+                .map(menuProduct -> {
+                    Product product = productRepository.findById(menuProduct.getProductId()).orElseThrow(IllegalArgumentException::new);
+                    return product.getPrice().multiply(menuProduct.getQuantity());
+                })
+                .reduce(Price.ZERO, Price::add);
+
+        if (menuPrice.isGreaterThan(menuProductsTotal)) {
+            throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 합계를 넘을 수 없습니다");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -50,11 +67,16 @@ public class MenuService {
 
     private List<MenuProduct> toMenuProducts(List<MenuProductRequest> menuProducts) {
         return menuProducts.stream()
-                .map(it -> new MenuProduct(
-                        productRepository.findById(it.getProductId())
-                                .orElseThrow(IllegalArgumentException::new),
-                        it.getQuantity()
-                ))
+                .map(this::toMenuProduct)
                 .collect(Collectors.toList());
+    }
+
+    private MenuProduct toMenuProduct(MenuProductRequest menuProduct) {
+        productRepository.findById(menuProduct.getProductId())
+                .orElseThrow(IllegalArgumentException::new);
+        return new MenuProduct(
+                menuProduct.getProductId(),
+                menuProduct.getQuantity()
+        );
     }
 }
