@@ -1,21 +1,27 @@
 package kitchenpos.tablegroup.application;
 
+import static kitchenpos.order.domain.OrderFixture.주문;
+import static kitchenpos.order.domain.OrderLineItemFixture.주문_항목;
 import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
 import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_채워진_주문_테이블;
+import static kitchenpos.order.domain.OrderTableFixture.단체_지정_주문_테이블;
 import static kitchenpos.tablegroup.application.TableGroupServiceTest.TableGroupRequestFixture.단체_지정_생성_요청;
 import static kitchenpos.tablegroup.domain.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.dto.OrderTableIdRequest;
 import kitchenpos.order.dto.OrderTableResponse;
+import kitchenpos.order.vo.MenuSpecification;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.dto.TableGroupResponse;
@@ -25,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ServiceTest
@@ -76,11 +83,12 @@ class TableGroupServiceTest {
             assertSoftly(softly -> {
                 softly.assertThat(createdTableGroup.getId()).isNotNull();
                 softly.assertThat(createdTableGroup).usingRecursiveComparison()
-                        .ignoringFields("id", "orderTables.id", "orderTables.tableGroupId")
+                        .ignoringFields("id", "orderTables.id")
                         .ignoringFieldsOfTypes(LocalDateTime.class)
                         .isEqualTo(TableGroupResponse.of(
                                 단체_지정(),
-                                List.of(단체_지정_없는_채워진_주문_테이블(), 단체_지정_없는_채워진_주문_테이블())
+                                List.of(단체_지정_주문_테이블(createdTableGroup.getId()),
+                                        단체_지정_주문_테이블(createdTableGroup.getId()))
                         ));
             });
         }
@@ -177,20 +185,24 @@ class TableGroupServiceTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
+        @Sql("/init_for_change_is_empty_test.sql")
         void 주문_테이블_중_조리_혹은_식사_중인_주문_테이블이_있다면_예외를_던진다(String orderStatus) {
-//            // given
-//            TableGroupResponse tableGroup = tableGroupService.create(단체_지정_생성_요청(List.of(
-//                    new OrderTableIdRequest(emptyOrderTable_A.getId()),
-//                    new OrderTableIdRequest(emptyOrderTable_B.getId())
-//            )));
-//
-//            OrderTable orderTable = OrderTableFixture.단체_지정_주문_테이블(tableGroup.getId());
-//            orderTable.add(주문(OrderStatus.valueOf(orderStatus)));
-//            orderTableRepository.save(orderTable);
-//
-//            // expect
-//            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-//                    .isInstanceOf(IllegalArgumentException.class);
+            // given
+            TableGroupResponse tableGroup = tableGroupService.create(단체_지정_생성_요청(List.of(
+                    new OrderTableIdRequest(emptyOrderTable_A.getId()),
+                    new OrderTableIdRequest(emptyOrderTable_B.getId())
+            )));
+
+            Long menuId = 1L;
+            orderRepository.save(주문(
+                    emptyOrderTable_A.getId(),
+                    OrderStatus.valueOf(orderStatus),
+                    List.of(주문_항목(menuId, new MenuSpecification("메뉴", BigDecimal.valueOf(10000))))
+            ));
+
+            // expect
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

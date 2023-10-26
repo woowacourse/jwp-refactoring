@@ -26,4 +26,8 @@ public class OrderTableFixture {
     public static OrderTable 단체_지정_주문_테이블(Long orderTableId, Long tableGroupId) {
         return new OrderTable(orderTableId, tableGroupId, 0, false);
     }
+
+    public static OrderTable 단체_지정_없는_주문_테이블(Long orderTableId) {
+        return new OrderTable(orderTableId, null, 0, false);
+    }
 }

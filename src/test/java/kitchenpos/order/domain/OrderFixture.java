@@ -17,6 +17,10 @@ public class OrderFixture {
         return new Order(null, COMPLETION, LocalDateTime.MAX, List.of());
     }
 
+    public static Order 조리_상태_주문(Long orderTableId) {
+        return new Order(orderTableId, COOKING, LocalDateTime.MAX, List.of());
+    }
+
     public static Order 주문(OrderStatus orderStatus) {
         return new Order(null, orderStatus, LocalDateTime.MAX, List.of());
     }

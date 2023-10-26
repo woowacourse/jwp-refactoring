@@ -4,6 +4,8 @@ import static kitchenpos.order.application.TableServiceTest.OrderTableRequestFix
 import static kitchenpos.order.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_생성_요청;
 import static kitchenpos.order.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_손님_수_변경_요청;
 import static kitchenpos.order.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_채워진_상태로_변경_요청;
+import static kitchenpos.order.domain.OrderFixture.주문;
+import static kitchenpos.order.domain.OrderLineItemFixture.주문_항목;
 import static kitchenpos.order.domain.OrderTableFixture.단체_지정_빈_주문_테이블;
 import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
 import static kitchenpos.order.domain.OrderTableFixture.단체_지정_주문_테이블;
@@ -12,10 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTableFixture;
 import kitchenpos.order.domain.OrderTableRepository;
@@ -23,6 +26,7 @@ import kitchenpos.order.dto.OrderTableCreateRequest;
 import kitchenpos.order.dto.OrderTableIsEmptyUpdateRequest;
 import kitchenpos.order.dto.OrderTableNumberOfGuestsUpdateRequest;
 import kitchenpos.order.dto.OrderTableResponse;
+import kitchenpos.order.vo.MenuSpecification;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
@@ -31,6 +35,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ServiceTest
@@ -47,9 +52,6 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
 
     @Test
     void 주문_테이블을_생성한다() {
@@ -132,18 +134,21 @@ class TableServiceTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
+        @Sql("/init_for_change_is_empty_test.sql")
         void 주문_테이블에_조리_혹은_식사_중인_주문이_있다면_예외를_던진다(String orderStatus) {
-//            // given
-//            Long orderTableId = tableService.create(주문_테이블_생성_요청()).getId();
-//
-//
-//            OrderTable orderTable = 단체_지정_없는_빈_주문_테이블();
-//            orderTable.add(주문(OrderStatus.valueOf(orderStatus)));
-//            orderTableRepository.save(orderTable);
-//
-//            // expect
-//            assertThatThrownBy(() -> tableService.changeIsEmpty(orderTable.getId(), 주문_테이블_채워진_상태로_변경_요청()))
-//                    .isInstanceOf(IllegalArgumentException.class);
+            // given
+            Long orderTableId = tableService.create(주문_테이블_생성_요청()).getId();
+
+            Long menuId = 1L;
+            orderRepository.save(주문(
+                    orderTableId,
+                    OrderStatus.valueOf(orderStatus),
+                    List.of(주문_항목(menuId, new MenuSpecification("메뉴", BigDecimal.valueOf(10000))))
+            ));
+
+            // expect
+            assertThatThrownBy(() -> tableService.changeIsEmpty(orderTableId, 주문_테이블_채워진_상태로_변경_요청()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

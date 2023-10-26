@@ -12,8 +12,8 @@ public class GroupTables {
         this.orderTables = orderTables;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public void ungroup() {
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     public List<Long> getOrderTableIds() {
@@ -22,7 +22,7 @@ public class GroupTables {
                 .collect(Collectors.toList());
     }
 
-    public void ungroup() {
-        orderTables.forEach(OrderTable::ungroup);
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
     }
 }

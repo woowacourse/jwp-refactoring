@@ -34,21 +34,19 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        TableGroup tableGroup = request.toTableGroup();
-        List<Long> orderTableIds = request.getOrderTableIds();
+        final TableGroup tableGroup = tableGroupRepository.save(request.toTableGroup());
 
+        List<Long> orderTableIds = request.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         tableGroup.group(orderTables, new GroupTableIds(orderTableIds));
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        return TableGroupResponse.of(savedTableGroup, orderTables);
+        return TableGroupResponse.of(tableGroup, orderTables);
     }
 
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 단체 지정입니다."));
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-
+        List<OrderTable> orderTables = orderTableRepository.findByTableGroupId(tableGroup.getId());
         GroupTables groupTables = new GroupTables(orderTables);
         List<Order> orders = orderRepository.findAllByOrderTableIdIn(groupTables.getOrderTableIds());
 
