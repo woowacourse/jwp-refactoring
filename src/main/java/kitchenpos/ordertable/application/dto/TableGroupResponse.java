@@ -1,7 +1,8 @@
-package kitchenpos.tablegroup.application.dto;
+package kitchenpos.ordertable.application.dto;
 
 import java.time.LocalDateTime;
-import kitchenpos.tablegroup.domain.TableGroup;
+import java.util.Objects;
+import kitchenpos.ordertable.domain.TableGroup;
 
 public class TableGroupResponse {
 
@@ -14,6 +15,9 @@ public class TableGroupResponse {
     }
 
     public static TableGroupResponse from(final TableGroup tableGroup) {
+        if (Objects.isNull(tableGroup)) {
+            return new TableGroupResponse(null, null);
+        }
         return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate());
     }
 

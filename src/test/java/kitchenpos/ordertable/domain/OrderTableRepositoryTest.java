@@ -4,8 +4,6 @@ import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +28,8 @@ class OrderTableRepositoryTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         final OrderTable orderTable1 = ORDER_TABLE1();
         final OrderTable orderTable2 = ORDER_TABLE1();
-        orderTable1.updateTableGroupId(savedTableGroup.getId());
-        orderTable2.updateTableGroupId(savedTableGroup.getId());
+        orderTable1.updateTableGroup(savedTableGroup);
+        orderTable2.updateTableGroup(savedTableGroup);
 
         final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
         final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
@@ -54,7 +52,7 @@ class OrderTableRepositoryTest {
         final TableGroup tableGroup = TableGroup.create();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         OrderTable orderTable = ORDER_TABLE1();
-        orderTable.updateTableGroupId(savedTableGroup.getId());
+        orderTable.updateTableGroup(savedTableGroup);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final List<OrderTable> expectedOrderTables = List.of(savedOrderTable);

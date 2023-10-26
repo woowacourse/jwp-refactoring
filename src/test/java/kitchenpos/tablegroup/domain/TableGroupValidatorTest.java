@@ -6,8 +6,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.exception.TableGroupException;
-import kitchenpos.tablegroup.exception.TableGroupException.CannotCreateTableGroupStateException;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.TableGroupRepository;
+import kitchenpos.ordertable.domain.TableGroupValidator;
+import kitchenpos.ordertable.exception.TableGroupException;
+import kitchenpos.ordertable.exception.TableGroupException.CannotCreateTableGroupStateException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,9 @@ class TableGroupValidatorTest {
 
     @Autowired
     private TableGroupValidator tableGroupValidator;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Nested
     @DisplayName("테이블 그룹 생성 검증 시")
@@ -56,7 +62,8 @@ class TableGroupValidatorTest {
         void throws_AlreadyExistTableGroup() {
             // given
             final OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
-            orderTable.updateTableGroupId(1L);
+            final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
+            orderTable.updateTableGroup(savedTableGroup);
             final List<OrderTable> orderTables = List.of(orderTable);
             final int orderTableSize = 1;
 

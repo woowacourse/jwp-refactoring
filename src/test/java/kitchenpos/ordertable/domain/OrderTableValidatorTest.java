@@ -28,6 +28,9 @@ class OrderTableValidatorTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
     private OrderTableValidator orderTableValidator;
 
     @Test
@@ -35,7 +38,8 @@ class OrderTableValidatorTest {
     void throws_ExistTableGroup() {
         // given
         final OrderTable orderTable = OrderTableFixtures.ORDER_TABLE1();
-        orderTable.updateTableGroupId(1L);
+        TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
+        orderTable.updateTableGroup(savedTableGroup);
 
         // when & then
         assertThatThrownBy(() -> orderTableValidator.validateChangeEmpty(orderTable.getId(), orderTable))

@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.application;
+package kitchenpos.ordertable.application;
 
 import static kitchenpos.common.fixtures.MenuFixtures.MENU1_NAME;
 import static kitchenpos.common.fixtures.MenuFixtures.MENU1_PRICE;
@@ -14,13 +14,13 @@ import kitchenpos.order.OrderStatus;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.ordertable.application.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.application.dto.TableGroupResponse;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
-import kitchenpos.tablegroup.application.dto.TableGroupResponse;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.tablegroup.exception.TableGroupException;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.TableGroupRepository;
+import kitchenpos.ordertable.exception.TableGroupException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -80,8 +80,8 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroup tableGroup = TableGroup.create();
             TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-            orderTable1.updateTableGroupId(savedTableGroup.getId());
-            orderTable2.updateTableGroupId(savedTableGroup.getId());
+            orderTable1.updateTableGroup(savedTableGroup);
+            orderTable2.updateTableGroup(savedTableGroup);
 
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
@@ -92,9 +92,9 @@ class TableGroupServiceTest extends ServiceTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(orderTable.getTableGroupId()).isNull();
+                softly.assertThat(orderTable.getTableGroup()).isNull();
                 softly.assertThat(orderTable.isEmpty()).isFalse();
-                softly.assertThat(orderTable.getTableGroupId()).isNull();
+                softly.assertThat(orderTable.getTableGroup()).isNull();
                 softly.assertThat(orderTable.isEmpty()).isFalse();
             });
         }
@@ -110,8 +110,8 @@ class TableGroupServiceTest extends ServiceTest {
             final TableGroup tableGroup = TableGroup.create();
             final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-            orderTable1.updateTableGroupId(savedTableGroup.getId());
-            orderTable2.updateTableGroupId(savedTableGroup.getId());
+            orderTable1.updateTableGroup(savedTableGroup);
+            orderTable2.updateTableGroup(savedTableGroup);
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 

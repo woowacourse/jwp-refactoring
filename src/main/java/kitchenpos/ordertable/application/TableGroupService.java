@@ -1,16 +1,16 @@
-package kitchenpos.tablegroup.application;
+package kitchenpos.ordertable.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import kitchenpos.ordertable.application.dto.OrderTableFindRequest;
+import kitchenpos.ordertable.application.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.application.dto.TableGroupResponse;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
-import kitchenpos.tablegroup.application.dto.TableGroupResponse;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.tablegroup.domain.TableGroupValidator;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.TableGroupRepository;
+import kitchenpos.ordertable.domain.TableGroupValidator;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,7 +44,7 @@ public class TableGroupService {
 
     private void associateOrderTable(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
+            savedOrderTable.updateTableGroup(savedTableGroup);
             orderTableRepository.save(savedOrderTable);
         }
     }

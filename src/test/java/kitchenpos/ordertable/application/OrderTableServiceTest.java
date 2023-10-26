@@ -17,8 +17,8 @@ import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.TableGroupRepository;
 import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,8 @@ class OrderTableServiceTest extends ServiceTest {
             softly.assertThat(response.getId()).isNotNull();
             softly.assertThat(response.getNumberOfGuests()).isEqualTo(numberOfGuests);
             softly.assertThat(response.isEmpty()).isEqualTo(empty);
-            softly.assertThat(response.getTableGroupId()).isNull();
+            softly.assertThat(response.getTableGroup().getId()).isNull();
+            softly.assertThat(response.getTableGroup().getCreatedDate()).isNull();
         });
     }
 

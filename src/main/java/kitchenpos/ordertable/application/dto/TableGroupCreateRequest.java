@@ -1,9 +1,8 @@
-package kitchenpos.tablegroup.application.dto;
+package kitchenpos.ordertable.application.dto;
 
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import kitchenpos.ordertable.application.dto.OrderTableFindRequest;
 
 public class TableGroupCreateRequest {
 

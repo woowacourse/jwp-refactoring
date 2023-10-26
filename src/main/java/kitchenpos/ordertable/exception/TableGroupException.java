@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.exception;
+package kitchenpos.ordertable.exception;
 
 import kitchenpos.global.exception.CustomException;
 

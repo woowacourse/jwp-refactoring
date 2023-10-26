@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,14 +16,14 @@ class OrderTableTest {
         // given
         TableGroup tableGroup = TableGroup.create();
         OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, true);
-        orderTable.updateTableGroupId(tableGroup.getId());
+        orderTable.updateTableGroup(tableGroup);
 
         // when
         orderTable.unGroup();
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(orderTable.getTableGroupId()).isNull();
+            softly.assertThat(orderTable.getTableGroup()).isNull();
             softly.assertThat(orderTable.isEmpty()).isFalse();
         });
     }

@@ -1,13 +1,13 @@
-package kitchenpos.tablegroup.domain;
+package kitchenpos.ordertable.domain;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.exception.TableGroupException;
-import kitchenpos.tablegroup.exception.TableGroupException.CannotCreateTableGroupStateException;
+import kitchenpos.ordertable.exception.TableGroupException.CannotCreateTableGroupStateException;
+import kitchenpos.ordertable.exception.TableGroupException.CannotUngroupStateByOrderStatusException;
+import kitchenpos.ordertable.exception.TableGroupException.NotFoundOrderTableExistException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,7 +27,7 @@ public class TableGroupValidator {
 
     private void validateOrderTableSize(final int orderTableSize, final int foundOrderTableSize) {
         if (orderTableSize != foundOrderTableSize) {
-            throw new TableGroupException.NotFoundOrderTableExistException();
+            throw new NotFoundOrderTableExistException();
         }
     }
 
@@ -48,7 +48,7 @@ public class TableGroupValidator {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new TableGroupException.CannotUngroupStateByOrderStatusException();
+            throw new CannotUngroupStateByOrderStatusException();
         }
     }
 }

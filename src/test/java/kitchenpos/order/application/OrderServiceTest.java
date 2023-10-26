@@ -33,10 +33,10 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.exception.OrderException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.TableGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -116,7 +116,7 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
-            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
+            savedOrderTable.updateTableGroup(savedTableGroup);
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
 
@@ -159,7 +159,7 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
-            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
+            savedOrderTable.updateTableGroup(savedTableGroup);
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
 
@@ -190,7 +190,7 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
-            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
+            savedOrderTable.updateTableGroup(savedTableGroup);
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
 
@@ -219,7 +219,7 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
-            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
+            savedOrderTable.updateTableGroup(savedTableGroup);
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
 
