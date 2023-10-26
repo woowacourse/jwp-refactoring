@@ -3,7 +3,6 @@ package kitchenpos.ordertable.domain;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.OrderTables;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;

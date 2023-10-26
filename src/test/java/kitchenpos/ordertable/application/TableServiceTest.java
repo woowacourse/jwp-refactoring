@@ -1,17 +1,16 @@
 package kitchenpos.ordertable.application;
 
 import java.util.List;
-import kitchenpos.ordertable.application.dto.OrderTableChangeGuestRequest;
-import kitchenpos.ordertable.application.dto.OrderTableChangeStatusRequest;
-import kitchenpos.ordertable.application.dto.OrderTableRequest;
-import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.application.dto.OrderTableChangeGuestRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeStatusRequest;
+import kitchenpos.ordertable.application.dto.OrderTableRequest;
+import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.support.DataCleaner;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
