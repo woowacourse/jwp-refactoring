@@ -53,7 +53,7 @@ public class MenuService {
         final Menu menu = new Menu(
                 request.getName(),
                 new Price(request.getPrice()),
-                menuGroup.getId(),
+                menuGroup,
                 menuProducts
         );
 
