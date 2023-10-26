@@ -13,6 +13,9 @@ import kitchenpos.exception.InvalidOrderException;
 @Entity(name = "orders")
 public class Order {
 
+    public static final List<String> INVALID_STATUS_FOR_CHANGE_ORDER_TABLE_EMPTY = List.of(OrderStatus.COOKING.name(),
+            OrderStatus.MEAL.name());
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -72,6 +75,12 @@ public class Order {
             throw new InvalidOrderException("주문 상태가 \"계산 완료\"이면 주문 상태를 변경할 수 없습니다.");
         }
         this.orderStatus = orderStatus.name();
+    }
+
+    public void validatePossibleToChangeEmptyOfOrderTable() {
+        if (INVALID_STATUS_FOR_CHANGE_ORDER_TABLE_EMPTY.contains(this.orderStatus)) {
+            throw new IllegalArgumentException("조리중 or 식사중인 주문이 포함되어 있습니다.");
+        }
     }
 
     public Long getId() {
