@@ -1,12 +1,14 @@
 package kitchenpos.menu.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.common.domain.Price;
 
 @Entity
 public class MenuProduct {
@@ -16,12 +18,15 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Menu menu;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @Column(nullable = false)
+    private String name;
+
+    @Embedded
+    @Column(nullable = false)
+    private Price price;
 
     @Column(nullable = false)
     private long quantity;
@@ -29,19 +34,16 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
-        this(null, menu, product, quantity);
+    public MenuProduct(Menu menu, String name, Price price, long quantity) {
+        this(null, menu, name, price, quantity);
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+    public MenuProduct(Long seq, Menu menu, String name, Price price, long quantity) {
         this.seq = seq;
         this.menu = menu;
-        this.product = product;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
-    }
-
-    public void assignMenu(Menu menu) {
-        this.menu = menu;
     }
 
     public Long getSeq() {
@@ -52,8 +54,12 @@ public class MenuProduct {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public String getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
     }
 
     public long getQuantity() {

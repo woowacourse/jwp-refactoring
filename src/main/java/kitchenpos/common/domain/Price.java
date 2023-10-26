@@ -9,7 +9,6 @@ import kitchenpos.common.exception.PriceException;
 @Embeddable
 public class Price {
 
-
     @Column(name = "price", nullable = false)
     private BigDecimal value;
 

@@ -3,13 +3,15 @@ package kitchenpos.order.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderTableLog;
 import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.order.domain.Order;
 
 public class OrderResponse {
 
     private Long id;
-    private OrderTableResponse orderTableResponse;
+    private OrderTableLogResponse orderTableLogResponse;
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
@@ -19,26 +21,25 @@ public class OrderResponse {
 
     private OrderResponse(
             Long id,
-            OrderTableResponse orderTableResponse,
+            OrderTableLogResponse orderTableLogResponse,
             String orderStatus,
             LocalDateTime orderedTime,
             List<OrderLineItemResponse> orderLineItems
     ) {
         this.id = id;
-        this.orderTableResponse = orderTableResponse;
+        this.orderTableLogResponse = orderTableLogResponse;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse from(Order order) {
+    public static OrderResponse of(Order order, OrderTableLog orderTableLog, List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 order.getId(),
-                OrderTableResponse.from(order.getOrderTable()),
+                OrderTableLogResponse.from(orderTableLog),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
-                order.getOrderLineItems()
-                        .stream()
+                orderLineItems.stream()
                         .map(OrderLineItemResponse::from)
                         .collect(Collectors.toList())
         );
@@ -48,8 +49,8 @@ public class OrderResponse {
         return id;
     }
 
-    public OrderTableResponse getOrderTableResponse() {
-        return orderTableResponse;
+    public OrderTableLogResponse getOrderTableLogResponse() {
+        return orderTableLogResponse;
     }
 
     public String getOrderStatus() {

@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -18,12 +17,12 @@ public class OrderLineItem {
     private Long seq;
 
     @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Order order;
 
     @OneToOne
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
+    @JoinColumn(nullable = false)
+    private OrderedMenu orderedMenu;
 
     @Column(nullable = false)
     private long quantity;
@@ -31,13 +30,15 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Menu menu, long quantity) {
-        this.menu = menu;
-        this.quantity = quantity;
+    public OrderLineItem(Order order, OrderedMenu orderedMenu, long quantity) {
+        this(null, order, orderedMenu, quantity);
     }
 
-    public void assignOrder(Order order) {
+    public OrderLineItem(Long seq, Order order, OrderedMenu orderedMenu, long quantity) {
+        this.seq = seq;
         this.order = order;
+        this.orderedMenu = orderedMenu;
+        this.quantity = quantity;
     }
 
     public Long getSeq() {
@@ -48,8 +49,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public OrderedMenu getOrderedMenu() {
+        return orderedMenu;
     }
 
     public long getQuantity() {

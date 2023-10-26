@@ -2,7 +2,6 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
@@ -10,6 +9,7 @@ import kitchenpos.table.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.dto.request.OrderTableUpdateEmptyRequest;
 import kitchenpos.table.dto.request.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +18,16 @@ public class TableService {
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+    public TableService(
+            OrderRepository orderRepository,
+            OrderTableRepository orderTableRepository,
+            ApplicationEventPublisher publisher
+    ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -42,18 +48,9 @@ public class TableService {
     public OrderTableResponse updateIsEmpty(Long orderTableId, OrderTableUpdateEmptyRequest request) {
         OrderTable orderTable = orderTableRepository.getById(orderTableId);
 
-        validateStatusWhenUpdateEmptyToTrue(request, orderTable);
-
         orderTable.changeEmpty(request.isEmpty());
-
+        orderTableRepository.save(orderTable.publish());
         return OrderTableResponse.from(orderTable);
-    }
-
-    private void validateStatusWhenUpdateEmptyToTrue(OrderTableUpdateEmptyRequest request, OrderTable orderTable) {
-        if (request.isEmpty()) {
-            orderRepository.findByOrderTable(orderTable)
-                    .ifPresent(Order::validateOrderStatusIsCompletion);
-        }
     }
 
     @Transactional

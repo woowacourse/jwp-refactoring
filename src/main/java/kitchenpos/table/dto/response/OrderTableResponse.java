@@ -23,7 +23,7 @@ public class OrderTableResponse {
         if (orderTable.hasTableGroup()) {
             return new OrderTableResponse(
                     orderTable.getId(),
-                    orderTable.getTableGroup().getId(),
+                    orderTable.getTableGroupId(),
                     orderTable.getNumberOfGuests(),
                     orderTable.isEmpty()
             );

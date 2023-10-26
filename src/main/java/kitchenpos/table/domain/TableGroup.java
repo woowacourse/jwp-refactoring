@@ -18,25 +18,13 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
-
-    protected TableGroup() {
+    public TableGroup() {
+        this(null, LocalDateTime.now());
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
-        this(null, LocalDateTime.now(), orderTables);
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
-        for (OrderTable orderTable : orderTables) {
-            orderTable.assignTableGroup(this);
-        }
-
+    public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
     private void validateOrderTables(List<OrderTable> orderTables) {
@@ -45,7 +33,7 @@ public class TableGroup {
         }
 
         orderTables.forEach(orderTable -> {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
                 throw new TableGroupException("주문 테이블의 상태가 유효하지 않습니다.");
             }
         });
@@ -57,9 +45,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 }

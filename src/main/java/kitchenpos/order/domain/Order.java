@@ -1,7 +1,8 @@
 package kitchenpos.order.domain;
 
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,12 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.order.exception.OrderException;
-import kitchenpos.table.domain.OrderTable;
 
 @Table(name = "orders")
 @Entity
@@ -24,10 +21,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id", nullable = false)
-    private OrderTable orderTable;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus;
@@ -35,40 +28,14 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
-
-    protected Order() {
+    public Order() {
+        this(null, COOKING, LocalDateTime.now());
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-    }
-
-    public Order(
-            Long id,
-            OrderTable orderTable,
-            OrderStatus orderStatus,
-            LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems
-    ) {
-        if (orderTable.isEmpty()) {
-            throw new OrderException("빈 테이블을 등록할 수 없습니다.");
-        }
-
-        if (orderLineItems.isEmpty()) {
-            throw new OrderException("주문 항목이 없습니다.");
-        }
-
+    public Order(Long id, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
-        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
-
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.assignOrder(this);
-        }
     }
 
     public void changeOrderStatus(String orderStatus) {
@@ -91,19 +58,11 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }

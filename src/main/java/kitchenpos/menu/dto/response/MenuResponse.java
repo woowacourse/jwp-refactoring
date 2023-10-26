@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuResponse {
 
@@ -30,9 +32,9 @@ public class MenuResponse {
         this.menuProductResponses = menuProductResponses;
     }
 
-    public static MenuResponse from(Menu menu) {
-        MenuGroupResponse menuGroupResponse = MenuGroupResponse.from(menu.getMenuGroup());
-        List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
+    public static MenuResponse of(Menu menu, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        MenuGroupResponse menuGroupResponse = MenuGroupResponse.from(menuGroup);
+        List<MenuProductResponse> menuProductResponses = menuProducts
                 .stream()
                 .map(MenuProductResponse::from)
                 .collect(Collectors.toList());
