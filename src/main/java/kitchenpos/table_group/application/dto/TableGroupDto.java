@@ -1,8 +1,9 @@
 package kitchenpos.table_group.application.dto;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table_group.domain.TableGroup;
 
@@ -10,30 +11,25 @@ public class TableGroupDto {
 
     private final Long id;
 
-    private final LocalDateTime localDateTime;
+    private final LocalDateTime createdDate;
 
     private final List<OrderTableDto> orderTables;
 
     public TableGroupDto(
         final Long id,
-        final LocalDateTime localDateTime,
+        final LocalDateTime createdDate,
         final List<OrderTableDto> orderTables
     ) {
         this.id = id;
-        this.localDateTime = localDateTime;
+        this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    public static final TableGroupDto from(final TableGroup tableGroup) {
-        final List<OrderTableDto> orderTableDtos = tableGroup.getOrderTables()
-            .stream()
-            .map(OrderTableDto::from)
-            .collect(Collectors.toList());
-
+    public static TableGroupDto createResponse(final TableGroup tableGroup) {
         return new TableGroupDto(
             tableGroup.getId(),
             tableGroup.getCreatedDate(),
-            orderTableDtos
+            null
         );
     }
 
@@ -42,10 +38,20 @@ public class TableGroupDto {
     }
 
     public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+        return createdDate;
     }
 
     public List<OrderTableDto> getOrderTables() {
         return orderTables;
+    }
+
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+            .map(OrderTableDto::getId)
+            .collect(toUnmodifiableList());
+    }
+
+    public TableGroup toTableGroup() {
+        return new TableGroup(createdDate);
     }
 }

@@ -1,6 +1,5 @@
 package kitchenpos.table.domain;
 
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.table.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
 import static kitchenpos.table.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
@@ -9,10 +8,7 @@ import static kitchenpos.table.domain.exception.OrderTableExceptionType.TABLE_CA
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import kitchenpos.table.domain.exception.OrderTableException;
-import kitchenpos.table_group.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -21,21 +17,14 @@ public class OrderTable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     private int numberOfGuests;
 
     private boolean empty;
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, numberOfGuests, empty);
-    }
-
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         validateNumberOfGuest(numberOfGuests);
-        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -54,8 +43,9 @@ public class OrderTable {
         return id;
     }
 
-    public void changeTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    //TODO :private으로 바꾸기
+    public void changeTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -74,14 +64,25 @@ public class OrderTable {
         return empty;
     }
 
+    //TODO :private으로 바꾸기
     public void changeEmpty(final boolean empty) {
-        if (tableGroup != null) {
+        if (tableGroupId != null) {
             throw new OrderTableException(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP);
         }
         this.empty = empty;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public void group(final Long tableGroupId) {
+        changeEmpty(false);
+        changeTableGroupId(tableGroupId);
+    }
+
+    public void ungroup() {
+        changeTableGroupId(null);
+        changeEmpty(true);
     }
 }
