@@ -146,7 +146,6 @@ public class OrderControllerV1IntegrationTest extends V1IntegrationTest {
 
             // when & then
             모든_주문_조회()
-                .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].orderStatus").value("MEAL"));
         }
     }

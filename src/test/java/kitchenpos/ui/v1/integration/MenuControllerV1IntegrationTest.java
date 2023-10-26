@@ -33,6 +33,7 @@ class MenuControllerV1IntegrationTest extends V1IntegrationTest {
 
             // when & then
             메뉴_생성(request)
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("메뉴의 가격은 메뉴 상품의 총합 가격보다 작아야 합니다."));
         }
 
@@ -48,6 +49,7 @@ class MenuControllerV1IntegrationTest extends V1IntegrationTest {
 
             // when & then
             메뉴_생성(request)
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("메뉴의 가격은 0보다 작을 수 없습니다."));
         }
 
