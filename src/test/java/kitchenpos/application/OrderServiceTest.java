@@ -58,10 +58,10 @@ class OrderServiceTest {
         final OrderCreateRequest request = builder.buildToOrderCreateRequest();
         final OrderLineItems orderLineItems = order.getOrderLineItems();
 
-        given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.getOrderLineItems().size());
+        given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.getValue().size());
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
         given(orderRepository.save(any(Order.class))).willReturn(order);
-        given(orderLineItemRepository.save(any(OrderLineItem.class))).willReturn(orderLineItems.getOrderLineItems().get(0));
+        given(orderLineItemRepository.save(any(OrderLineItem.class))).willReturn(orderLineItems.getValue().get(0));
 
         //when
         final OrderResponse result = target.create(request);
@@ -108,7 +108,7 @@ class OrderServiceTest {
         final Order order = builder.orderTable(orderTable).build();
         final OrderCreateRequest request = builder.buildToOrderCreateRequest();
         final OrderLineItems orderLineItems = order.getOrderLineItems();
-        given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.getOrderLineItems().size());
+        given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.getValue().size());
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
@@ -144,7 +144,7 @@ class OrderServiceTest {
 
         given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
         given(orderRepository.save(any(Order.class))).willReturn(order);
-        given(orderLineItemRepository.findAllByOrderId(anyLong())).willReturn(order.getOrderLineItems().getOrderLineItems());
+        given(orderLineItemRepository.findAllByOrderId(anyLong())).willReturn(order.getOrderLineItems().getValue());
 
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(MEAL.name());
 

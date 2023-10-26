@@ -32,7 +32,7 @@ public class MenuProductResponse {
     }
 
     public static List<MenuProductResponse> from(MenuProducts menuProducts) {
-        return menuProducts.getMenuProducts()
+        return menuProducts.getValue()
                 .stream()
                 .map(MenuProductResponse::from)
                 .collect(Collectors.toList());

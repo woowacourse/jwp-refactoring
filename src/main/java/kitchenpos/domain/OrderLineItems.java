@@ -10,13 +10,13 @@ import org.springframework.util.CollectionUtils;
 public class OrderLineItems {
 
     @OneToMany(mappedBy = "order")
-    List<OrderLineItem> orderLineItems = new ArrayList<>();
+    List<OrderLineItem> value = new ArrayList<>();
 
     protected OrderLineItems() {
     }
 
-    private OrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    private OrderLineItems(final List<OrderLineItem> value) {
+        this.value = value;
     }
 
     public static OrderLineItems from(List<OrderLineItem> orderLineItems) {
@@ -30,7 +30,7 @@ public class OrderLineItems {
         }
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public List<OrderLineItem> getValue() {
+        return value;
     }
 }

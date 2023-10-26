@@ -56,7 +56,7 @@ class MenuServiceTest {
 
         given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(menuGroup));
         given(productRepository.findById(anyLong())).willReturn(
-                Optional.of(menuProducts.getMenuProducts().get(0).getProduct()));
+                Optional.of(menuProducts.getValue().get(0).getProduct()));
 
         given(menuRepository.save(any(Menu.class))).willReturn(menu);
         //when
@@ -116,7 +116,7 @@ class MenuServiceTest {
         final List<Menu> menus = List.of(menu1, menu2);
         given(menuRepository.findAll()).willReturn(menus);
         for (Menu menu : menus) {
-            given(menuProductRepository.findAllByMenuId(menu.getId())).willReturn(menu.getMenuProducts().getMenuProducts());
+            given(menuProductRepository.findAllByMenuId(menu.getId())).willReturn(menu.getMenuProducts().getValue());
         }
 
         //when

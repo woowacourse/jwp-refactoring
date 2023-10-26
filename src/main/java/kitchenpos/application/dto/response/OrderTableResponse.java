@@ -33,7 +33,7 @@ public class OrderTableResponse {
     }
 
     public static List<OrderTableResponse> from(OrderTables orderTables) {
-        return from(orderTables.getOrderTables());
+        return from(orderTables.getValue());
     }
 
     public static List<OrderTableResponse> from(List<OrderTable> orderTables) {

@@ -29,7 +29,7 @@ public class OrderLineItemResponse {
     }
 
     public static List<OrderLineItemResponse> from(OrderLineItems orderLineItems) {
-        return orderLineItems.getOrderLineItems()
+        return orderLineItems.getValue()
                 .stream()
                 .map(OrderLineItemResponse::from)
                 .collect(Collectors.toList());

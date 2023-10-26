@@ -35,6 +35,10 @@ public class TableGroup {
         return orderTables;
     }
 
+    public List<OrderTable> getOrderTablesValue() {
+        return orderTables.getValue();
+    }
+
     public void updateOrderTables(List<OrderTable> orderTables) {
         this.orderTables = OrderTables.from(orderTables);
         this.orderTables.group(this);

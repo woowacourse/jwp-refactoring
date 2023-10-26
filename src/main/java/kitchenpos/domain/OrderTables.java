@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embeddable;
@@ -11,13 +12,13 @@ import org.springframework.util.CollectionUtils;
 public class OrderTables {
 
     @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
+    private List<OrderTable> value = new ArrayList<>();
 
     protected OrderTables() {
     }
 
-    private OrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    private OrderTables(final List<OrderTable> value) {
+        this.value = value;
     }
 
     public static OrderTables from(final List<OrderTable> orderTables) {
@@ -41,14 +42,14 @@ public class OrderTables {
     }
 
     public void group(TableGroup tableGroup) {
-        for (final OrderTable orderTable : orderTables) {
+        for (final OrderTable orderTable : value) {
             orderTable.updateEmpty(false);
             orderTable.updateTableGroup(tableGroup);
         }
     }
 
     public void ungroup() {
-        for (OrderTable orderTable : orderTables) {
+        for (OrderTable orderTable : value) {
             if (orderTable.isCompleted()) {
                 orderTable.updateTableGroup(null);
                 orderTable.updateEmpty(false);
@@ -58,7 +59,7 @@ public class OrderTables {
         }
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<OrderTable> getValue() {
+        return Collections.unmodifiableList(value);
     }
 }

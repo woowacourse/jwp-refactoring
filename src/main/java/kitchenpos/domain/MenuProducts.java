@@ -11,13 +11,13 @@ import javax.persistence.OneToMany;
 public class MenuProducts {
 
     @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private List<MenuProduct> value = new ArrayList<>();
 
     protected MenuProducts() {
     }
 
-    private MenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    private MenuProducts(List<MenuProduct> value) {
+        this.value = value;
     }
 
     public static MenuProducts of(List<MenuProduct> menuProducts, Price price) {
@@ -43,7 +43,7 @@ public class MenuProducts {
         return sum;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return Collections.unmodifiableList(menuProducts);
+    public List<MenuProduct> getValue() {
+        return Collections.unmodifiableList(value);
     }
 }
