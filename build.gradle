@@ -4,24 +4,27 @@ plugins {
     id 'java'
 }
 
-group = 'camp.nextstep.edu'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+group = 'camp.nextstep.edu'
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.flywaydb:flyway-core'
-    runtimeOnly 'com.h2database:h2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'io.rest-assured:rest-assured:4.5.1'
+allprojects {
+    version '0.0.1'
+    repositories {
+        mavenCentral()
+    }
 }
 
 test {
     useJUnitPlatform()
+}
+
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
 }
