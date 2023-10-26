@@ -1,5 +1,10 @@
 package kitchenpos.integration;
 
+import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.dto.OrderStatusDto;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.MenuProductDto;
+import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -22,14 +27,9 @@ class OrderIntegrationTest extends IntegrationTest {
         final Menu menu = createMenu("오마카세", 1000);
         final OrderTable orderTable = createTable();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(1);
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        final HttpEntity<Order> request = new HttpEntity<>(order);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                List.of(new OrderLineItemDto(menu.getId(), 1L)));
+        final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
         // when
         final ResponseEntity<Order> response = testRestTemplate
@@ -40,8 +40,7 @@ class OrderIntegrationTest extends IntegrationTest {
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                 () -> assertThat(response.getHeaders().get("Location"))
-                        .contains("/api/orders/" + createdOrder.getId()),
-                () -> assertThat(createdOrder.getOrderLineItems()).hasSize(1)
+                        .contains("/api/orders/" + createdOrder.getId())
         );
     }
 
@@ -51,14 +50,9 @@ class OrderIntegrationTest extends IntegrationTest {
         final Menu menu = createMenu("오마카세", 1000);
         final OrderTable orderTable = createTable();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(1);
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        final HttpEntity<Order> request = new HttpEntity<>(order);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                List.of(new OrderLineItemDto(menu.getId(), 1L)));
+        final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
         testRestTemplate.postForEntity("/api/orders", request, Order.class);
 
@@ -81,14 +75,9 @@ class OrderIntegrationTest extends IntegrationTest {
         final Menu menu = createMenu("오마카세", 1000);
         final OrderTable orderTable = createTable();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(1);
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        final HttpEntity<Order> request = new HttpEntity<>(order);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                List.of(new OrderLineItemDto(menu.getId(), 1L)));
+        final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
         final Long orderId = testRestTemplate
                 .postForEntity("/api/orders", request, Order.class)
@@ -96,19 +85,18 @@ class OrderIntegrationTest extends IntegrationTest {
                 .getId();
 
         // 수정 주문 요청
-        final Order toUpdateOrder = new Order();
-        toUpdateOrder.setOrderStatus(OrderStatus.COOKING.name());
-        final HttpEntity<Order> updateRequset = new HttpEntity<>(toUpdateOrder);
+        final OrderStatusDto statusRequest = new OrderStatusDto("COOKING");
+        final HttpEntity<OrderStatusDto> updateRequest = new HttpEntity<>(statusRequest);
 
         // when
         final ResponseEntity<Order> response = testRestTemplate
-                .exchange("/api/orders/" + orderId + "/order-status", HttpMethod.PUT, updateRequset, Order.class);
+                .exchange("/api/orders/" + orderId + "/order-status", HttpMethod.PUT, updateRequest, Order.class);
         final Order updatedOrder = response.getBody();
 
         // then
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
-                () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
+                () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
         );
     }
 
@@ -117,20 +105,9 @@ class OrderIntegrationTest extends IntegrationTest {
         final Product pizza = createProduct("pizza", 500);
         final MenuGroup menuGroup = createMenuGroup("외식");
 
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(chicken.getId());
-        menuProduct1.setQuantity(1);
-
-        final MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(pizza.getId());
-        menuProduct2.setQuantity(1);
-
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
-        final HttpEntity<Menu> request = new HttpEntity<>(menu);
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(name, BigDecimal.valueOf(price), menuGroup.getId(),
+                List.of(new MenuProductDto(chicken.getId(), 1L), new MenuProductDto(pizza.getId(), 1L)));
+        final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menuCreateRequest);
 
         return testRestTemplate
                 .postForEntity("/api/menus", request, Menu.class)
@@ -138,9 +115,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     private Product createProduct(final String name, final int price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
+        final Product product = new Product(name, BigDecimal.valueOf(price));
         final HttpEntity<Product> request = new HttpEntity<>(product);
 
         return testRestTemplate
@@ -149,8 +124,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     private MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        final MenuGroup menuGroup = new MenuGroup(name);
         final HttpEntity<MenuGroup> request = new HttpEntity<>(menuGroup);
 
         return testRestTemplate
@@ -159,9 +133,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     private OrderTable createTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(3);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = new OrderTable(3, false);
         final HttpEntity<OrderTable> request = new HttpEntity<>(orderTable);
 
         return testRestTemplate

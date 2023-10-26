@@ -1,5 +1,6 @@
 package kitchenpos.integration;
 
+import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -18,10 +19,8 @@ class ProductIntegrationTest extends IntegrationTest {
     @Test
     void 상품_생성을_요청한다() {
         // given
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(BigDecimal.valueOf(1000));
-        final HttpEntity<Product> request = new HttpEntity<>(product);
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
+        final HttpEntity<ProductCreateRequest> request = new HttpEntity<>(productCreateRequest);
 
         // when
         final ResponseEntity<Product> response = createProduct(request);
@@ -40,10 +39,8 @@ class ProductIntegrationTest extends IntegrationTest {
     @Test
     void 모든_상품_목록을_조회한다() {
         // given
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(BigDecimal.valueOf(1000));
-        final HttpEntity<Product> request = new HttpEntity<>(product);
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
+        final HttpEntity<ProductCreateRequest> request = new HttpEntity<>(productCreateRequest);
 
         createProduct(request);
         createProduct(request);
@@ -60,7 +57,7 @@ class ProductIntegrationTest extends IntegrationTest {
         );
     }
 
-    private ResponseEntity<Product> createProduct(HttpEntity<Product> request) {
+    private ResponseEntity<Product> createProduct(HttpEntity<ProductCreateRequest> request) {
         return testRestTemplate
                 .postForEntity("/api/products", request, Product.class);
     }

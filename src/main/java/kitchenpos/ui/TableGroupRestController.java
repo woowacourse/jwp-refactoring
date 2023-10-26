@@ -1,11 +1,13 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableGroupService;
+import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.domain.TableGroup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 public class TableGroupRestController {
@@ -16,8 +18,8 @@ public class TableGroupRestController {
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<TableGroup> create(@RequestBody final TableGroup tableGroup) {
-        final TableGroup created = tableGroupService.create(tableGroup);
+    public ResponseEntity<TableGroup> create(@RequestBody final List<OrderTableDto> request) {
+        final TableGroup created = tableGroupService.create(request);
         final URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);

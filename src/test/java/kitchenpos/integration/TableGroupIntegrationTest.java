@@ -1,5 +1,8 @@
 package kitchenpos.integration;
 
+import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -18,17 +21,14 @@ class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     void 테이블_그룹_생성을_요청한다() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(0, true);
         final HttpEntity<OrderTable> createTableRequest = new HttpEntity<>(orderTable);
 
         final OrderTable table1 = createTable(createTableRequest).getBody();
         final OrderTable table2 = createTable(createTableRequest).getBody();
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(table1, table2));
-        final HttpEntity<TableGroup> request = new HttpEntity<>(tableGroup);
+        final List<OrderTableDto> orderTableIds = List.of(new OrderTableDto(table1.getId()), new OrderTableDto(table2.getId()));
+        final HttpEntity<List<OrderTableDto>> request = new HttpEntity<>(orderTableIds);
 
         // when
         final ResponseEntity<TableGroup> response = testRestTemplate
@@ -39,25 +39,21 @@ class TableGroupIntegrationTest extends IntegrationTest {
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                 () -> assertThat(response.getHeaders().get("Location"))
-                        .contains("/api/table-groups/" + createdTableGroup.getId()),
-                () -> assertThat(createdTableGroup.getOrderTables()).hasSize(2)
+                        .contains("/api/table-groups/" + createdTableGroup.getId())
         );
     }
 
     @Test
     void 테이블_그룹을_삭제요청한다() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(0, true);
         final HttpEntity<OrderTable> createTableRequest = new HttpEntity<>(orderTable);
 
         final OrderTable table1 = createTable(createTableRequest).getBody();
         final OrderTable table2 = createTable(createTableRequest).getBody();
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(table1, table2));
-        final HttpEntity<TableGroup> request = new HttpEntity<>(tableGroup);
+        final List<OrderTableDto> orderTableIds = List.of(new OrderTableDto(table1.getId()), new OrderTableDto(table2.getId()));
+        final HttpEntity<List<OrderTableDto>> request = new HttpEntity<>(orderTableIds);
 
         final Long tableGroupId = testRestTemplate
                 .postForEntity("/api/table-groups", request, TableGroup.class)
@@ -65,7 +61,7 @@ class TableGroupIntegrationTest extends IntegrationTest {
 
         // when
         final ResponseEntity<Void> response = testRestTemplate
-                .exchange("/api/table-groups/" + tableGroupId, HttpMethod.POST.DELETE, null, Void.class);
+                .exchange("/api/table-groups/" + tableGroupId, HttpMethod.DELETE, null, Void.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -74,5 +70,10 @@ class TableGroupIntegrationTest extends IntegrationTest {
     private ResponseEntity<OrderTable> createTable(HttpEntity<OrderTable> request) {
         return testRestTemplate
                 .postForEntity("/api/tables", request, OrderTable.class);
+    }
+
+    private void changeOrderStatus(final Long orderId) {
+        final HttpEntity<OrderStatus> updateRequest = new HttpEntity<>(OrderStatus.COOKING);
+        testRestTemplate.exchange("/api/orders/" + orderId + "/order-status", HttpMethod.PUT, updateRequest, Order.class);
     }
 }
