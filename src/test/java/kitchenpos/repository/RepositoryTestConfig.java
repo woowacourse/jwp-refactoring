@@ -68,8 +68,8 @@ public abstract class RepositoryTestConfig {
         return orderTable;
     }
 
-    protected Order createOrder(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        final Order order = order(orderTable, orderStatus, orderedTime, new ArrayList<>());
+    protected Order createOrder(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
+        final Order order = order(orderTableId, orderStatus, orderedTime, new ArrayList<>());
         em.persist(order);
         return order;
     }

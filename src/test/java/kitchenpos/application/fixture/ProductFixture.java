@@ -14,12 +14,4 @@ public abstract class ProductFixture {
         final Price menuPrice = new Price(price);
         return new Product(name, menuPrice);
     }
-
-    public static Product noodle() {
-        return product("noodle", BigDecimal.valueOf(6000));
-    }
-
-    public static Product potato() {
-        return product("potato", BigDecimal.valueOf(3000));
-    }
 }

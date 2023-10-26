@@ -112,7 +112,8 @@ class TableGroupServiceTest {
             given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(ordertables);
             given(spyOrderTable.getId()).willReturn(1L);
 
-            final Order order = new Order(spyOrderTable, orderStatus, now(), new OrderLineItems());
+            final Long orderTableId = 1L;
+            final Order order = new Order(orderTableId, orderStatus, now(), new OrderLineItems());
             given(orderRepository.findAllByOrderTableIds(anyList())).willReturn(List.of(order));
 
             // when, then

@@ -6,7 +6,6 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
-import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,18 +24,18 @@ class OrderLineItemRepositoryTest extends RepositoryTestConfig {
     @Test
     void findAllByOrderId() {
         // given
-        final OrderTable orderTable1 = createOrderTable(null, 10, true);
-        final OrderTable orderTable2 = createOrderTable(null, 5, true);
+        final Long orderTableId1 = 1L;
+        final Long orderTableId2 = 2L;
 
         final MenuGroup japanese = createMenuGroup("일식");
         final Menu wooDong = createMenu("우동", BigDecimal.valueOf(5000), japanese);
-        final Order firstOrder = createOrder(orderTable1, COOKING, LocalDateTime.now());
+        final Order firstOrder = createOrder(orderTableId1, COOKING, LocalDateTime.now());
         final Long savedFirstOrderId = 1L;
         final OrderLineItem expected = createOrderLineItem(savedFirstOrderId, wooDong, 1);
         firstOrder.addAllOrderLineItems(OrderLineItems.from(List.of(expected)));
 
         final Menu sushi = createMenu("초밥", BigDecimal.valueOf(15000), japanese);
-        final Order secondOrder = createOrder(orderTable2, COOKING, LocalDateTime.now());
+        final Order secondOrder = createOrder(orderTableId2, COOKING, LocalDateTime.now());
         final Long savedSecondOrderId = 2L;
         final OrderLineItem otherOrderLineItem = createOrderLineItem(savedSecondOrderId, sushi, 1);
         secondOrder.addAllOrderLineItems(OrderLineItems.from(List.of(otherOrderLineItem)));

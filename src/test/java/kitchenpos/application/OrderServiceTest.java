@@ -102,7 +102,8 @@ class OrderServiceTest {
             menuProducts.addAll(List.of(menuProduct));
             menu.addMenuProducts(menuProducts);
 
-            final Order order = spy(order(mock(OrderTable.class), COOKING, now(), new ArrayList<>()));
+            final long orderTableId = 1L;
+            final Order order = spy(order(orderTableId, COOKING, now(), new ArrayList<>()));
             final long savedIOrderId = 1L;
             given(order.getId()).willReturn(savedIOrderId);
 
@@ -124,7 +125,7 @@ class OrderServiceTest {
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus().name()),
                     () -> assertThat(actual.getOrderedTime()).isEqualTo(order.getOrderedTime()),
-                    () -> assertThat(actual.getOrderTable()).isNotNull(),
+                    () -> assertThat(actual.getOrderTableId()).isNotNull(),
                     () -> assertThat(actual.getOrderLineItems()).hasSize(2)
             );
         }
@@ -171,7 +172,8 @@ class OrderServiceTest {
             menuProducts.addAll(List.of(menuProduct));
             menu.addMenuProducts(menuProducts);
 
-            final Order order = spy(order(mock(OrderTable.class), COOKING, now(), new ArrayList<>()));
+            final long orderTableId = 1L;
+            final Order order = spy(order(orderTableId, COOKING, now(), new ArrayList<>()));
             final Long savedOrderId = 1L;
             final OrderLineItem orderLineItem = orderLineItem(savedOrderId, menu, 1L);
             order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
@@ -181,7 +183,6 @@ class OrderServiceTest {
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // then
-            final long orderTableId = 1L;
             final OrderCreateRequest request = new OrderCreateRequest(orderTableId, List.of(new OrderLineItemCreateRequest(1L, 2L)));
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);

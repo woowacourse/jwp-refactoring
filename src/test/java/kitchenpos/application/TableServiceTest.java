@@ -94,7 +94,7 @@ class TableServiceTest {
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
 
             final long orderTableId = 1L;
-            final Order order = new Order(spyOrderTable, COMPLETION, LocalDateTime.now(), new OrderLineItems());
+            final Order order = new Order(orderTableId, COMPLETION, LocalDateTime.now(), new OrderLineItems());
             given(orderRepository.findByOrderTableId(orderTableId)).willReturn(Optional.ofNullable(order));
 
             // when, then
@@ -110,7 +110,7 @@ class TableServiceTest {
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
 
             final long orderTableId = 1L;
-            final Order order = new Order(spyOrderTable, orderStatus, LocalDateTime.now(), new OrderLineItems());
+            final Order order = new Order(orderTableId, orderStatus, LocalDateTime.now(), new OrderLineItems());
             given(orderRepository.findByOrderTableId(orderTableId)).willReturn(Optional.ofNullable(order));
 
             // when, then

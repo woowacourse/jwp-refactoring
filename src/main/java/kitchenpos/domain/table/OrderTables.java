@@ -29,10 +29,6 @@ public class OrderTables {
         this.orderTables.addAll(toAddOrderTables);
     }
 
-    public int size() {
-        return orderTables.size();
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }

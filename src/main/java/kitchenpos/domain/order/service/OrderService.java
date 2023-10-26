@@ -50,7 +50,7 @@ public class OrderService {
 
         final OrderTable savedOrderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException(String.format("OrderTableId로 OrderTable을 찾을 수 없습니다. 입력값 = %s", request.getOrderTableId())));
-        final Order savedOrder = orderRepository.save(new Order(savedOrderTable, COOKING, now(), new OrderLineItems()));
+        final Order savedOrder = orderRepository.save(new Order(savedOrderTable.getId(), COOKING, now(), new OrderLineItems()));
         savedOrder.addAllOrderLineItems(orderLineItems);
 
         return OrderResponse.toDto(savedOrder);
