@@ -79,6 +79,18 @@ public class Order {
         return orderStatus;
     }
 
+    public void changeOrderStatus(final OrderStatus newStatus) {
+        if (newStatus == OrderStatus.COOKING) {
+            startCooking();
+        }
+        if (newStatus == OrderStatus.MEAL) {
+            startMeal();
+        }
+        if (newStatus == OrderStatus.COMPLETION) {
+            completeOrder();
+        }
+    }
+
     public void startCooking() {
         if (this.orderStatus != NOT_STARTED) {
             throw new IllegalArgumentException("이미 진행 중인 주문입니다.");

@@ -64,20 +64,8 @@ public class OrderService {
         final Order order = orderRepository.getById(orderId);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(command.getOrderStatus());
-        changeOrderStatus(order, orderStatus);
+        order.changeOrderStatus(orderStatus);
         return OrderDto.from(order);
-    }
-
-    public void changeOrderStatus(final Order order, final OrderStatus newStatus) {
-        if (newStatus == OrderStatus.COOKING) {
-            order.startCooking();
-        }
-        if (newStatus == OrderStatus.MEAL) {
-            order.startMeal();
-        }
-        if (newStatus == OrderStatus.COMPLETION) {
-            order.completeOrder();
-        }
     }
 
 }
