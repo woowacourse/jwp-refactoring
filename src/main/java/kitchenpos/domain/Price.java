@@ -9,9 +9,10 @@ import javax.persistence.Embeddable;
 public class Price implements Comparable<Price> {
 
     @Column(name = "price")
-    private BigDecimal value;
+    private final BigDecimal value;
 
     protected Price() {
+        this.value = BigDecimal.valueOf(0);
     }
 
     public Price(BigDecimal value) {

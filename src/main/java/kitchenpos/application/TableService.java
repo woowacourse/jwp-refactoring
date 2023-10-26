@@ -37,11 +37,11 @@ public class TableService {
 
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyChangeRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("orderTable 을 찾을 수 없습니다."));
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리 중이거나 식사 중인 주문이 있다면 빈 테이블로 만들 수 없습니다.");
         }
 
         orderTable.changeEmpty(request.isEmpty());

@@ -45,7 +45,7 @@ public class MenuService {
 
     private MenuGroup findMenuGroup(Long menuGroupId) {
         if (menuGroupId == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("menuGroupId 가 존재하지 않습니다.");
         }
         return menuGroupRepository.findById(menuGroupId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
