@@ -45,7 +45,10 @@ class TableGroupServiceTest {
             // given
             final OrderTable savedOrderTable1 = new OrderTable(1L, null, 0, true);
             final OrderTable savedOrderTable2 = new OrderTable(2L, null, 0, true);
-            final OrderTables orderTables = new OrderTables(List.of(savedOrderTable1, savedOrderTable2));
+
+            final OrderTable toUpdateOrderTable1 = new OrderTable(1L, null, 0, true);
+            final OrderTable toUpdateOrderTable2 = new OrderTable(2L, null, 0, true);
+            final OrderTables orderTables = new OrderTables(List.of(toUpdateOrderTable1, toUpdateOrderTable2));
             final TableGroup savedTabledGroup = new TableGroup(1L, orderTables);
 
             when(orderTableRepository.findAllByIdIn(any()))

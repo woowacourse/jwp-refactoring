@@ -18,6 +18,7 @@ public class OrderTables {
     public OrderTables(final List<OrderTable> orderTables) {
         validate(orderTables);
         this.orderTables = orderTables;
+        joinGroup();
     }
 
     private void validate(final List<OrderTable> orderTables) {
@@ -32,6 +33,12 @@ public class OrderTables {
         return orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+    }
+
+    public void joinGroup() {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.changeEmpty(false);
+        }
     }
 
     public void leaveGroup() {
