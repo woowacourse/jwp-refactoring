@@ -8,9 +8,9 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.exception.NotExistMenuGroupException;
 import kitchenpos.product.exception.NotExistProductException;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

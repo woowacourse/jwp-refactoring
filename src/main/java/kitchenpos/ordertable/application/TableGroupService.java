@@ -1,14 +1,13 @@
-package kitchenpos.tablegroup.application;
+package kitchenpos.ordertable.application;
 
-import kitchenpos.tablegroup.controller.dto.TableGroupCreateRequest;
-import kitchenpos.order.domain.Order;
+import kitchenpos.ordertable.controller.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.domain.OrderCompletionValidator;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.domain.NotExistOrderTable;
-import kitchenpos.tablegroup.exception.NotExistTableGroupException;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.tablegroup.repository.TableGroupRepository;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.exception.NotExistOrderTable;
+import kitchenpos.ordertable.exception.NotExistTableGroupException;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,15 +16,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
-    
-    private final OrderRepository orderRepository;
+    private final OrderCompletionValidator orderCompletionValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
     
-    public TableGroupService(final OrderRepository orderRepository,
+    public TableGroupService(final OrderCompletionValidator orderCompletionValidator,
                              final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.orderCompletionValidator = orderCompletionValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -51,13 +49,10 @@ public class TableGroupService {
     
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                                                    .orElseThrow(() -> new NotExistTableGroupException("존재하지 않는 단체 테이블입니다"));
+        tableGroupRepository.findById(tableGroupId)
+                            .orElseThrow(() -> new NotExistTableGroupException("존재하지 않는 단체 테이블입니다"));
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        final List<List<Order>> ordersInEachTable = orderTables.stream()
-                                                            .map(orderTable -> orderRepository.findAllByOrderTableId(orderTable.getId()))
-                                                            .collect(Collectors.toList());
-        tableGroup.validateIfUngroupAvailable(ordersInEachTable);
+        orderCompletionValidator.validateIfOrderOfOrderTableIsCompleted(orderTables, tableGroupId);
         for (final OrderTable orderTable : orderTables) {
             orderTable.detachFromTableGroup();
         }

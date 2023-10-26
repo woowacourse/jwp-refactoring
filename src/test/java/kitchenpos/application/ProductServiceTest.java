@@ -4,7 +4,7 @@ import kitchenpos.product.controller.dto.ProductCreateRequest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.exception.InvalidProductPriceException;
 import kitchenpos.product.application.ProductService;
-import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

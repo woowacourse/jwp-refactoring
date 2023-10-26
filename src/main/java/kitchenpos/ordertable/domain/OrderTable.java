@@ -1,16 +1,11 @@
 package kitchenpos.ordertable.domain;
 
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.exception.InvalidOrderTableChangeEmptyException;
 import kitchenpos.ordertable.exception.InvalidOrderTableChangeNumberOfGuestsException;
 import kitchenpos.ordertable.exception.InvalidOrderTableException;
-import kitchenpos.order.domain.Order;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
-
-import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 
 @Entity
 public class OrderTable {
@@ -55,15 +50,12 @@ public class OrderTable {
         }
     }
     
-    public void changeEmpty(final List<Order> orders, final boolean empty) {
+    public void changeEmpty(final OrderStatusValidator orderStatusValidator, final boolean empty) {
+        orderStatusValidator.validateOrderStatusNotCompleted(this.id);
         if (Objects.nonNull(this.tableGroup)) {
             throw new InvalidOrderTableChangeEmptyException("단체 테이블이면 테이블의 상태를 변경할 수 없습니다");
         }
-        boolean isOrderInProgress = orders.stream()
-                          .anyMatch(order -> order.getOrderStatus() != COMPLETION);
-        if(isOrderInProgress) {
-            throw new InvalidOrderTableChangeEmptyException("테이블에 속하는 주문의 상태가 COOKING 또는 MEAL이라면 테이블의 상태를 변경할 수 없습니다");
-        }
+        
         this.empty = empty;
     }
     

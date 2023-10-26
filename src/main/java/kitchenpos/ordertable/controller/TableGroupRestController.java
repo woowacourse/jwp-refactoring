@@ -1,8 +1,8 @@
-package kitchenpos.tablegroup.controller;
+package kitchenpos.ordertable.controller;
 
-import kitchenpos.tablegroup.application.TableGroupService;
-import kitchenpos.tablegroup.controller.dto.TableGroupCreateRequest;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.ordertable.application.TableGroupService;
+import kitchenpos.ordertable.controller.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.domain.TableGroup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

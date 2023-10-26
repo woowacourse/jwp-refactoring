@@ -1,8 +1,6 @@
-package kitchenpos.tablegroup.domain;
+package kitchenpos.ordertable.domain;
 
-import kitchenpos.tablegroup.exception.InvalidTableGroupException;
-import kitchenpos.tablegroup.exception.InvalidTableGroupUngroupException;
-import kitchenpos.order.domain.Order;
+import kitchenpos.ordertable.exception.InvalidTableGroupException;
 import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,8 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -82,20 +78,6 @@ public class TableGroup {
                                                   .anyMatch(orderTable -> !orderTable.isEmpty());
         if (isOrderTableNotEmpty) {
             throw new InvalidTableGroupException("비어있지 않은 테이블은 단체 테이블으로 만들 수 없습니다");
-        }
-    }
-    
-    public void validateIfUngroupAvailable(List<List<Order>> ordersInTables) {
-        for (List<Order> orders : ordersInTables) {
-            validateIfOrdersOfTableCompleted(orders);
-        }
-    }
-    
-    private void validateIfOrdersOfTableCompleted(final List<Order> orders) {
-        boolean isOrderOfTableInProgress = orders.stream()
-                                                 .anyMatch(order -> order.getOrderStatus() != COMPLETION);
-        if (isOrderOfTableInProgress) {
-            throw new InvalidTableGroupUngroupException("단체 테이블에 속하는 테이블의 주문 상태가 COOKING 혹은 MEAL이면 단체 테이블을 해제할 수 없습니다");
         }
     }
     

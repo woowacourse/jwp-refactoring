@@ -1,6 +1,6 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.order.exception.NotExistOrderStatus;
+import kitchenpos.order.exception.NotExistOrderStatusException;
 
 import java.util.Arrays;
 
@@ -11,6 +11,6 @@ public enum OrderStatus {
         return Arrays.stream(values())
                      .filter(status -> status.name().equals(orderStatus))
                      .findFirst()
-                     .orElseThrow(() -> new NotExistOrderStatus("존재하지 않는 주문상태 입니다"));
+                     .orElseThrow(() -> new NotExistOrderStatusException("존재하지 않는 주문상태 입니다"));
     }
 }

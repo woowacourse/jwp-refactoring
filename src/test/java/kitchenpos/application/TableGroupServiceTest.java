@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.tablegroup.controller.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.controller.dto.TableGroupCreateRequest;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.exception.InvalidTableGroupException;
-import kitchenpos.order.domain.NotExistOrderTable;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.exception.InvalidTableGroupException;
+import kitchenpos.ordertable.exception.NotExistOrderTable;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.application.TableGroupService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

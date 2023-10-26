@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.controller.dto;
+package kitchenpos.ordertable.controller.dto;
 
 import java.util.List;
 

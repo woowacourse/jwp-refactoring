@@ -3,13 +3,12 @@ package kitchenpos.ordertable.application;
 import kitchenpos.ordertable.controller.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.controller.dto.OrderTableChangeNumberOfGuests;
 import kitchenpos.ordertable.controller.dto.OrderTableCreateRequest;
-import kitchenpos.order.domain.Order;
+import kitchenpos.ordertable.domain.OrderStatusValidator;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.domain.NotExistOrderTable;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.tablegroup.repository.TableGroupRepository;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.exception.NotExistOrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +21,14 @@ public class OrderTableService {
     
     private final OrderTableRepository orderTableRepository;
     
-    private final OrderRepository orderRepository;
+    private final OrderStatusValidator orderStatusValidator;
     
     public OrderTableService(final TableGroupRepository tableGroupRepository,
                              final OrderTableRepository orderTableRepository,
-                             final OrderRepository orderRepository) {
+                             final OrderStatusValidator orderStatusValidator) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.orderStatusValidator = orderStatusValidator;
     }
     
     @Transactional
@@ -51,8 +50,7 @@ public class OrderTableService {
                                   final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                                                                .orElseThrow(() -> new NotExistOrderTable("존재하지 않는 테이블 입니다"));
-        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        savedOrderTable.changeEmpty(orders, request.isEmpty());
+        savedOrderTable.changeEmpty(orderStatusValidator, request.isEmpty());
         return savedOrderTable;
     }
     

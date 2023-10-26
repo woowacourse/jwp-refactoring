@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.exception;
+package kitchenpos.ordertable.exception;
 
 public class InvalidTableGroupUngroupException extends RuntimeException {
     public InvalidTableGroupUngroupException(final String message) {
