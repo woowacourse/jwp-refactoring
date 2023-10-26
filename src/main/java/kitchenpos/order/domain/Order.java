@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "orders")
@@ -28,9 +27,7 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @CreatedDate
     private LocalDateTime orderedTime;
-
 
     protected Order() {
     }
