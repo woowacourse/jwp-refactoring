@@ -14,7 +14,7 @@ class OrderLineItemsTest {
         // given
         // when
         // then
-        assertThatThrownBy(() -> new OrderLineItems(List.of(), new Order()))
+        assertThatThrownBy(() -> new OrderLineItems(List.of()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

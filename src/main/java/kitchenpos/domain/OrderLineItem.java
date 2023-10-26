@@ -24,10 +24,6 @@ public class OrderLineItem {
     private long quantity;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-
-    @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
@@ -46,10 +42,6 @@ public class OrderLineItem {
     public static OrderLineItem forSave(final long quantity, final String name, final Price price,
                                         final Menu menu) {
         return new OrderLineItem(null, quantity, name, price, menu);
-    }
-
-    public void joinOrder(final Order order) {
-        this.order = order;
     }
 
     public Long getSeq() {

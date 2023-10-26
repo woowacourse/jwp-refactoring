@@ -43,7 +43,7 @@ public class Order {
                  final Long orderTableId) {
         this.id = id;
         this.orderStatus = orderStatus;
-        this.orderLineItems = new OrderLineItems(orderLineItems, this);
+        this.orderLineItems = new OrderLineItems(orderLineItems);
         this.orderTableId = orderTableId;
     }
 
