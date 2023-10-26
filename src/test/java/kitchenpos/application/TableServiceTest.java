@@ -3,12 +3,14 @@ package kitchenpos.application;
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.application.validator.OrderStatusValidatorImpl;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.request.OrderTableChangeGuestNumberRequest;
 import kitchenpos.ordertable.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.dto.response.OrderTableResponse;
+import kitchenpos.ordertable.application.validator.OrderStatusValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +28,8 @@ class TableServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderRepository, orderTableRepository);
+        final OrderStatusValidator orderStatusValidator = new OrderStatusValidatorImpl(orderRepository);
+        tableService = new TableService(orderTableRepository, orderStatusValidator);
     }
 
     @DisplayName("주문 테이블 생성")

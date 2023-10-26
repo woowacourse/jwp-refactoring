@@ -53,16 +53,16 @@ public class OrderTablesTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("매개변수로 주어진 사이즈와 일급 컬렉션의 크기가 일치하다면 그룹 해제에 성공한다.")
+    @DisplayName("그룹 해제에 성공한다.")
     @Test
-    void validateSizeAndUngroup_success() {
+    void ungroup_success() {
         // given
         final OrderTable orderTable1 = new OrderTable(new NumberOfGuests(1), true);
         final OrderTable orderTable2 = new OrderTable(new NumberOfGuests(1), true);
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
 
         // when
-        orderTables.validateSizeAndUngroup(2);
+        orderTables.ungroup();
 
         // then
         final boolean actual = orderTables.getOrderTables().stream()
@@ -71,9 +71,9 @@ public class OrderTablesTest {
         assertThat(actual).isTrue();
     }
 
-    @DisplayName("매개변수로 주어진 사이즈와 일급 컬렉션의 크기가 다르면 그룹 해제에 실패한다.")
+    @DisplayName("일급 컬렉션의 크기 검증에 성공한다. (실패 케이스)")
     @Test
-    void validateSizeAndUngroup_fail_when_size_is_different() {
+    void validateSize_success_when_size_is_different() {
         // given
         final OrderTable orderTable1 = new OrderTable(new NumberOfGuests(1), true);
         final OrderTable orderTable2 = new OrderTable(new NumberOfGuests(1), true);
@@ -82,7 +82,22 @@ public class OrderTablesTest {
         final int invalidSize = 3;
 
         // then
-        assertThatThrownBy(() -> orderTables.validateSizeAndUngroup(invalidSize))
+        assertThatThrownBy(() -> orderTables.validateSize(invalidSize))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("일급 컬렉션의 크기 검증에 성공한다. (성공 케이스)")
+    @Test
+    void validateSize_success_when_size_is_same() {
+        // given
+        final OrderTable orderTable1 = new OrderTable(new NumberOfGuests(1), true);
+        final OrderTable orderTable2 = new OrderTable(new NumberOfGuests(1), true);
+        final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+
+        final int size = 2;
+
+        // then
+        assertThatCode(() -> orderTables.validateSize(size))
+                .doesNotThrowAnyException();
     }
 }

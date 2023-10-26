@@ -1,11 +1,11 @@
 package kitchenpos.ordertable.application.event;
 
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.OrderTables;
+import kitchenpos.ordertable.application.validator.OrderStatusValidator;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.tablegroup.TableGroup;
-import kitchenpos.tablegroup.application.event.TableGroupCreateRequestEvent;
-import kitchenpos.tablegroup.application.event.TableGroupDeleteRequestEvent;
+import kitchenpos.tablegroup.application.event.dto.TableGroupCreateRequestEvent;
+import kitchenpos.tablegroup.application.event.dto.TableGroupDeleteRequestEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +17,11 @@ import java.util.List;
 public class TableGroupEventListener {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final OrderStatusValidator orderStatusValidator;
 
-    public TableGroupEventListener(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
+    public TableGroupEventListener(final OrderTableRepository orderTableRepository, final OrderStatusValidator orderStatusValidator) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     @EventListener
@@ -43,8 +43,8 @@ public class TableGroupEventListener {
     public void handleTableGroupDeletionRequested(final TableGroupDeleteRequestEvent event) {
         final TableGroup tableGroup = event.getTableGroup();
         final OrderTables orderTables = new OrderTables(orderTableRepository.findByTableGroup(tableGroup));
-        final Long completionOrderCount = orderRepository.countCompletionOrderByOrderTableIds(orderTables.getIds());
-        orderTables.validateSizeAndUngroup(completionOrderCount.intValue());
+        orderStatusValidator.validateAllCompletion(orderTables);
+        orderTables.ungroup();
         orderTableRepository.saveAll(orderTables.getOrderTables());
     }
 }

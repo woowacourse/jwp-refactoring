@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.application.event;
+package kitchenpos.tablegroup.application.event.dto;
 
 import kitchenpos.tablegroup.TableGroup;
 

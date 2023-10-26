@@ -31,12 +31,11 @@ public class OrderTables {
         orderTables.forEach(orderTable -> orderTable.makeGroup(tableGroup));
     }
 
-    public void validateSizeAndUngroup(final int size) {
-        validateSize(size);
+    public void ungroup() {
         orderTables.forEach(OrderTable::ungroup);
     }
 
-    private void validateSize(final int size) {
+    public void validateSize(final int size) {
         if (orderTables.size() != size) {
             throw new IllegalArgumentException();
         }

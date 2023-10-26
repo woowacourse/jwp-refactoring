@@ -3,11 +3,13 @@ package kitchenpos.application;
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.application.validator.OrderStatusValidatorImpl;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.event.TableGroupEventListener;
+import kitchenpos.ordertable.application.validator.OrderStatusValidator;
 import kitchenpos.tablegroup.TableGroup;
-import kitchenpos.tablegroup.application.event.TableGroupCreateRequestEvent;
-import kitchenpos.tablegroup.application.event.TableGroupDeleteRequestEvent;
+import kitchenpos.tablegroup.application.event.dto.TableGroupCreateRequestEvent;
+import kitchenpos.tablegroup.application.event.dto.TableGroupDeleteRequestEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +27,8 @@ public class TableGroupEventListenerTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableGroupEventListener = new TableGroupEventListener(orderTableRepository, orderRepository);
+        final OrderStatusValidator orderStatusValidator = new OrderStatusValidatorImpl(orderRepository);
+        tableGroupEventListener = new TableGroupEventListener(orderTableRepository, orderStatusValidator);
     }
 
     @DisplayName("주문 테이블 그룹화")

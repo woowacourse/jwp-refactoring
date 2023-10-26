@@ -1,11 +1,11 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.request.OrderTableChangeGuestNumberRequest;
 import kitchenpos.ordertable.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.dto.response.OrderTableResponse;
+import kitchenpos.ordertable.application.validator.OrderStatusValidator;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.vo.NumberOfGuests;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderStatusValidator orderStatusValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final OrderStatusValidator orderStatusValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     @Transactional
@@ -45,16 +45,10 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest emptyInput) {
         final OrderTable orderTable = orderTableRepository.findMandatoryById(orderTableId);
         if (!orderTable.isEmpty()) {
-            validateOrderStatusCompletion(orderTable);
+            orderStatusValidator.validateCompletion(orderTable);
         }
         orderTable.changeEmpty(emptyInput.getEmpty());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
-    }
-
-    private void validateOrderStatusCompletion(final OrderTable orderTable) {
-        if (!orderRepository.existsByOrderTableIdAndCompletion(orderTable.getId())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     @Transactional
