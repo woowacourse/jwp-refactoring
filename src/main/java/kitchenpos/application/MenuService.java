@@ -13,7 +13,6 @@ import kitchenpos.ui.request.MenuProductCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,11 +33,9 @@ public class MenuService {
     public Menu create(final MenuCreateRequest menuCreateRequest) {
         MenuGroup menuGroup = getMenugroup(menuCreateRequest);
 
-        Menu menu = new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuGroup, new ArrayList<>());
-
         MenuProducts menuProducts = getMenuProducts(menuCreateRequest);
-        menu.checkProductPriceSumEqualsPrice(menuProducts.calculateSum());
-        menuProducts.setMenu(menu);
+
+        Menu menu = new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuGroup, menuProducts);
 
         return menuRepository.save(menu);
     }

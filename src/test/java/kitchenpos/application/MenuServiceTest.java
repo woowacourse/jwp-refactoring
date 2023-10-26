@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
@@ -60,7 +61,7 @@ class MenuServiceTest {
 
         MenuProduct menuProduct = new MenuProduct(product, 3);
         Menu menu = new Menu("치킨메뉴", new BigDecimal("48000.00"), menuGroup,
-                List.of(menuProduct));
+                new MenuProducts(List.of(menuProduct)));
 
         // when
         Menu createdMenu = menuService.create(menuCreateRequest);
