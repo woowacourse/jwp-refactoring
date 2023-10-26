@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 
@@ -9,8 +8,7 @@ public class MenuProductFixture {
 
     public static MenuProduct createMenuProduct(Long seq, long quantity) {
         return MenuProduct.builder()
-                .menu(Menu.builder().build())
-                .product(Product.builder().build())
+                .productId(Product.builder().build().getId())
                 .quantity(quantity)
                 .build();
     }

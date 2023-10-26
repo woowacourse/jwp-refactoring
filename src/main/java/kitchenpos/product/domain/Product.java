@@ -32,6 +32,12 @@ public class Product {
         this.price = price;
     }
 
+    public long calculatePrice(long quantity) {
+        return price.getValue()
+                .multiply(BigDecimal.valueOf(quantity))
+                .longValue();
+    }
+
     public static ProductBuilder builder() {
         return new ProductBuilder();
     }

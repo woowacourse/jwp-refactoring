@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.dto.vo.MenuName;
@@ -32,32 +34,22 @@ public class Menu {
     @Column(name = "menu_group_id")
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> menuProducts;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "menu_id", updatable = false, nullable = false)
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
 
-    private Menu(String name, Price price, Long menuGroupId) {
-        this.name = new MenuName(name);
+    private Menu(MenuName name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-    }
-
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        validateMenuProducts(menuProducts);
         this.menuProducts = menuProducts;
     }
 
-    private void validateMenuProducts(List<MenuProduct> menuProducts) {
-        long menuProductPriceSum = menuProducts.stream()
-                .map(MenuProduct::calculatePrice)
-                .mapToLong(price -> price.getValue().longValue())
-                .sum();
-
-        if (this.price.isBiggerThan(menuProductPriceSum)) {
-            throw new IllegalArgumentException("메뉴 금액이 상품 금액 합계보다 클 수 없습니다.");
-        }
+    public boolean hasBiggerPriceThan(long price) {
+        return this.price.isBiggerThan(price);
     }
 
     public Long getId() {
@@ -86,13 +78,13 @@ public class Menu {
 
     public static class MenuBuilder {
 
-        private String name;
+        private MenuName name;
         private Price price;
         private Long menuGroupId;
         private List<MenuProduct> menuProducts;
 
         public MenuBuilder name(String name) {
-            this.name = name;
+            this.name = new MenuName(name);
             return this;
         }
 
@@ -106,8 +98,13 @@ public class Menu {
             return this;
         }
 
+        public MenuBuilder menuProducts(List<MenuProduct> menuProducts) {
+            this.menuProducts = menuProducts;
+            return this;
+        }
+
         public Menu build() {
-            return new Menu(name, price, menuGroupId);
+            return new Menu(name, price, menuGroupId, menuProducts);
         }
     }
 }

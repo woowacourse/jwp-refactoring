@@ -16,7 +16,7 @@ public class ProductQuantityDto {
     }
 
     public static ProductQuantityDto from(MenuProduct menuProduct) {
-        return new ProductQuantityDto(menuProduct.getProduct().getId(), menuProduct.getQuantity());
+        return new ProductQuantityDto(menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
     public Long getProductId() {
