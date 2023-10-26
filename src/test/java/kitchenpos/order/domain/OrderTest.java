@@ -41,18 +41,4 @@ class OrderTest {
         assertThatNoException()
                 .isThrownBy(order::ungroupOrderTable);
     }
-
-    @ParameterizedTest
-    @CsvSource(value = {"COMPLETION,false", "MEAL,true"})
-    @DisplayName("주문 상태가 요리 혹은 식사 중인지 확인한다.")
-    void isStatusCookingOrMeal(final OrderStatus orderStatus, final boolean expect) {
-        // given
-        final Order order = new Order(orderStatus, LocalDateTime.now());
-
-        // when
-        final boolean isStatusCookingOrMeal = order.isStatusCookingOrMeal();
-
-        // then
-        assertThat(isStatusCookingOrMeal).isEqualTo(expect);
-    }
 }

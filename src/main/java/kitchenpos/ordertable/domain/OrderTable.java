@@ -2,7 +2,6 @@ package kitchenpos.ordertable.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -11,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.order.domain.Order;
-import kitchenpos.ordertable.domain.vo.Orders;
 import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
@@ -31,9 +28,6 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    @Embedded
-    private Orders orders = new Orders();
-
     public OrderTable() {
     }
 
@@ -51,10 +45,6 @@ public class OrderTable {
     public void changeEmpty(final boolean empty) {
         if (Objects.nonNull(this.tableGroup)) {
             throw new IllegalArgumentException("[ERROR] 테이블 그룹이 null이 아닙니다.");
-        }
-
-        if (orders.hasCookingOrMealOrders()) {
-            throw new IllegalArgumentException("[ERROR] 요리중이거나 식사중인 주문이 존재합니다.");
         }
 
         this.empty = empty;
@@ -88,10 +78,6 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void addOrder(final Order order) {
-        this.orders.add(order);
-    }
-
     public Long id() {
         return id;
     }
@@ -106,13 +92,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public Orders orders() {
-        return orders;
-    }
-
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
     }
 }

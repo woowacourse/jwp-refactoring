@@ -47,7 +47,7 @@ public class OrderService {
         );
         final List<OrderLineItem> orderLineItems = createOrderLineItems(request);
         order.addOrderLineItems(orderLineItems);
-        order.addOrderTable(orderTable);
+        order.setOrderTable(orderTable);
 
         return orderRepository.save(order).id();
     }

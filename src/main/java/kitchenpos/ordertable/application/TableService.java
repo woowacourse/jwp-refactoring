@@ -3,6 +3,7 @@ package kitchenpos.ordertable.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.dto.request.OrderTableChangeEmptyRequest;
@@ -15,9 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
     private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    public TableService(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -38,9 +41,9 @@ public class TableService {
     public void changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] OrderTable이 존재하지 않습니다. id : " + orderTableId));
-        if (orders.hasCookingOrMealOrders()) {
-            throw new IllegalArgumentException("[ERROR] 요리중이거나 식사중인 주문이 존재합니다.");
-        }
+
+        List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
+        orders.forEach(Order::validateStatus);
 
         savedOrderTable.changeEmpty(request.isEmpty());
     }

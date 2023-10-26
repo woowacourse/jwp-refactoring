@@ -72,13 +72,8 @@ public class Order {
         this.orderTable.ungroup();
     }
 
-    public boolean isStatusCookingOrMeal() {
-        return this.orderStatus == OrderStatus.COOKING || this.orderStatus == OrderStatus.MEAL;
-    }
-
-    public void addOrderTable(final OrderTable orderTable) {
+    public void setOrderTable(final OrderTable orderTable) {
         validateOrderTable(orderTable);
-        orderTable.addOrder(this);
         this.orderTable = orderTable;
     }
 
@@ -86,6 +81,16 @@ public class Order {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("[ERROR] order table이 비어있습니다.");
         }
+    }
+
+    public void validateStatus() {
+        if (isStatusCookingOrMeal()) {
+            throw new IllegalArgumentException("[ERROR] 요리중이거나 식사중인 주문이 존재합니다.");
+        }
+    }
+
+    private boolean isStatusCookingOrMeal() {
+        return this.orderStatus == OrderStatus.COOKING || this.orderStatus == OrderStatus.MEAL;
     }
 
     public Long id() {
