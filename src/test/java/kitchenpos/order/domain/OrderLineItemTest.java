@@ -17,7 +17,7 @@ class OrderLineItemTest {
 
     @Test
     void 주문_상품_생성() {
-        final MenuProduct menuProduct = new MenuProduct(null, Product.of("치킨", BigDecimal.valueOf(10_000L)), 1L);
+        final MenuProduct menuProduct = new MenuProduct(Product.of("치킨", BigDecimal.valueOf(10_000L)), 1L);
         final Menu menu = Menu.of("치킨", BigDecimal.valueOf(10_000L), null, List.of(menuProduct));
 
         assertDoesNotThrow(

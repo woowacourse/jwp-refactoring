@@ -12,11 +12,9 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class MenProductFixture {
 
-    public static final MenuProduct 메뉴_상품_1000원_2개 = new MenuProduct(null, 상품_1000, 2L);
+    public static final MenuProduct 메뉴_상품_1000원_2개 = new MenuProduct(상품_1000, 2L);
 
     public static MenuProduct of(final Long productPrice, final Long quantity) {
-        return new MenuProduct(null,
-                Product.of("상품명", BigDecimal.valueOf(productPrice)),
-                quantity);
+        return new MenuProduct(Product.of("상품명", BigDecimal.valueOf(productPrice)), quantity);
     }
 }

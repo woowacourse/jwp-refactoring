@@ -39,7 +39,7 @@ class TableServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         final Product product = productRepository.save(Product.of("후라이드", BigDecimal.valueOf(15_000L)));
-        final MenuProduct menuProduct = new MenuProduct(null, product, 1L);
+        final MenuProduct menuProduct = new MenuProduct(product, 1L);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
         final Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup.getId(), List.of(menuProduct));
         menu = menuRepository.save(newMenu);

@@ -5,12 +5,14 @@ import static kitchenpos.vo.Price.ZERO_PRICE;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.vo.Price;
 
@@ -30,8 +32,9 @@ public class Menu {
     @Column(nullable = false)
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false)
+    private List<MenuProduct> menuProducts;
 
     protected Menu() {
     }
@@ -41,7 +44,6 @@ public class Menu {
                  final Price price,
                  final Long menuGroupId,
                  final List<MenuProduct> menuProducts) {
-        updateMenuProducts(menuProducts);
         validateMenuPrice(price, calculateSumByMenuProducts(menuProducts));
 
         this.id = id;
@@ -62,11 +64,6 @@ public class Menu {
                           final BigDecimal price,
                           final Long menuGroupId) {
         return new Menu(null, name, new Price(price), menuGroupId, new ArrayList<>());
-    }
-
-    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-        menuProducts.forEach(menuProduct -> menuProduct.updateMenu(this));
     }
 
     private Price calculateSumByMenuProducts(

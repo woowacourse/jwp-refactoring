@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -21,7 +19,7 @@ class MenuTest {
 
     @Test
     void 메뉴_생성() {
-        final MenuProduct menuProduct = new MenuProduct(null, Product.of("치킨", BigDecimal.valueOf(10_000L)), 1L);
+        final MenuProduct menuProduct = new MenuProduct(Product.of("치킨", BigDecimal.valueOf(10_000L)), 1L);
 
         assertDoesNotThrow(
                 () -> Menu.of("치킨", BigDecimal.valueOf(10_000L), null, List.of(menuProduct))
@@ -48,7 +46,7 @@ class MenuTest {
 
     @Test
     void 메뉴의_가격이_더_크면_예외_발생() {
-        final MenuProduct menuProduct = new MenuProduct(null, Product.of("치킨", BigDecimal.valueOf(9_000L)), 1L);
+        final MenuProduct menuProduct = new MenuProduct(Product.of("치킨", BigDecimal.valueOf(9_000L)), 1L);
 
         assertThatThrownBy(
                 () -> Menu.of("치킨", BigDecimal.valueOf(10_000L), null, List.of(menuProduct))
