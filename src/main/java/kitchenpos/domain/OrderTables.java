@@ -4,7 +4,7 @@ import java.util.List;
 
 public class OrderTables {
 
-    private final List<OrderTable> orderTables;
+    private List<OrderTable> orderTables;
 
     public OrderTables(List<OrderTable> orderTables) {
         this.orderTables = orderTables;

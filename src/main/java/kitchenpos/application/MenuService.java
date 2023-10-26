@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 @Service
 public class MenuService {
 
-    private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
-    private final ProductRepository productRepository;
+    private MenuRepository menuRepository;
+    private MenuGroupRepository menuGroupRepository;
+    private MenuProductRepository menuProductRepository;
+    private ProductRepository productRepository;
 
     public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository, MenuProductRepository menuProductRepository, ProductRepository productRepository) {
         this.menuRepository = menuRepository;

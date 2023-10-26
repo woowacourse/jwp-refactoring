@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 public class OrderCreateRequest {
 
-    private final Long orderTableId;
-    private final List<OrderLineItemCreateRequest> orderLineItemCreateRequests;
+    private Long orderTableId;
+    private List<OrderLineItemCreateRequest> orderLineItemCreateRequests;
 
     public OrderCreateRequest(Long orderTableId, List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
         this.orderTableId = orderTableId;

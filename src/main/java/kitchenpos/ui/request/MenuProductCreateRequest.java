@@ -2,8 +2,8 @@ package kitchenpos.ui.request;
 
 public class MenuProductCreateRequest {
 
-    private final Long productId;
-    private final Integer quantity;
+    private Long productId;
+    private Integer quantity;
 
     public MenuProductCreateRequest(Long productId, Integer quantity) {
         this.productId = productId;

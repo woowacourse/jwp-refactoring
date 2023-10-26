@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class MenuGroupService {
 
-    private final MenuGroupRepository menuGroupRepository;
+    private MenuGroupRepository menuGroupRepository;
 
     public MenuGroupService(MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;

@@ -14,16 +14,16 @@ import java.util.List;
 
 @RestController
 public class MenuGroupRestController {
-    private final MenuGroupService menuGroupService;
+    private MenuGroupService menuGroupService;
 
     public MenuGroupRestController(final MenuGroupService menuGroupService) {
         this.menuGroupService = menuGroupService;
     }
 
     @PostMapping("/api/menu-groups")
-    public ResponseEntity<MenuGroup> create(@RequestBody final MenuGroupCreateRequest menuGroup) {
-        final MenuGroup created = menuGroupService.create(menuGroup);
-        final URI uri = URI.create("/api/menu-groups/" + created.getId());
+    public ResponseEntity<MenuGroup> create(@RequestBody MenuGroupCreateRequest menuGroup) {
+        MenuGroup created = menuGroupService.create(menuGroup);
+        URI uri = URI.create("/api/menu-groups/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);
     }

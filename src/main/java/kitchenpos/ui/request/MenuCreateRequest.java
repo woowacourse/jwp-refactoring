@@ -5,10 +5,10 @@ import java.util.List;
 
 public class MenuCreateRequest {
 
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProductCreateRequest> menuProductCreateRequests;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProductCreateRequest> menuProductCreateRequests;
 
     public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductCreateRequest> menuProductCreateRequests) {
         this.name = name;

@@ -17,8 +17,8 @@ import java.util.List;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private OrderRepository orderRepository;
+    private OrderTableRepository orderTableRepository;
 
     public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
@@ -36,8 +36,8 @@ public class TableService {
         return orderTableRepository.findAll();
     }
 
-    public OrderTable changeEmpty(final Long orderTableId, final TableEmptyUpdateRequest tableEmptyUpdateRequest) {
-        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+    public OrderTable changeEmpty(final Long orderTableId, TableEmptyUpdateRequest tableEmptyUpdateRequest) {
+        OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         savedOrderTable.checkTableGroup();
 
@@ -55,8 +55,8 @@ public class TableService {
         }
     }
 
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final TableGuestUpdateRequest tableGuestUpdateRequest) {
-        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+    public OrderTable changeNumberOfGuests(final Long orderTableId, TableGuestUpdateRequest tableGuestUpdateRequest) {
+        OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();

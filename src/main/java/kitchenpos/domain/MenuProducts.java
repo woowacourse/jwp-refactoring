@@ -5,7 +5,7 @@ import java.util.List;
 
 public class MenuProducts {
 
-    private final List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts;
 
     public MenuProducts(List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;

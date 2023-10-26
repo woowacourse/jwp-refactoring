@@ -20,10 +20,10 @@ import java.util.List;
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
-    private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private MenuRepository menuRepository;
+    private OrderRepository orderRepository;
+    private OrderLineItemRepository orderLineItemRepository;
+    private OrderTableRepository orderTableRepository;
 
     public OrderService(MenuRepository menuRepository, OrderRepository orderRepository, OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
@@ -35,7 +35,7 @@ public class OrderService {
     public Order create(final OrderCreateRequest orderCreateRequest) {
         orderCreateRequest.validate();
 
-        final OrderTable orderTable = getOrderTable(orderCreateRequest);
+        OrderTable orderTable = getOrderTable(orderCreateRequest);
 
         List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItemCreateRequests();
 
@@ -56,7 +56,7 @@ public class OrderService {
     }
 
     private OrderTable getOrderTable(OrderCreateRequest orderCreateRequest) {
-        final OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+        OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
@@ -70,8 +70,8 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderRepository.findById(orderId)
+    public Order changeOrderStatus(final Long orderId, Order order) {
+        Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeStatus(order);

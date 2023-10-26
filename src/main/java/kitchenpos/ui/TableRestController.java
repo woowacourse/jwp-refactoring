@@ -18,16 +18,16 @@ import java.util.List;
 
 @RestController
 public class TableRestController {
-    private final TableService tableService;
+    private TableService tableService;
 
     public TableRestController(final TableService tableService) {
         this.tableService = tableService;
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final TableCreateRequest orderTable) {
-        final OrderTable created = tableService.create(orderTable);
-        final URI uri = URI.create("/api/tables/" + created.getId());
+    public ResponseEntity<OrderTable> create(@RequestBody TableCreateRequest orderTable) {
+        OrderTable created = tableService.create(orderTable);
+        URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
@@ -41,8 +41,8 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTable> changeEmpty(
-            @PathVariable final Long orderTableId,
-            @RequestBody final TableEmptyUpdateRequest tableEmptyUpdateRequest
+            @PathVariable Long orderTableId,
+            @RequestBody TableEmptyUpdateRequest tableEmptyUpdateRequest
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, tableEmptyUpdateRequest))
@@ -51,8 +51,8 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
-            @PathVariable final Long orderTableId,
-            @RequestBody final TableGuestUpdateRequest tableGuestUpdateRequest
+            @PathVariable Long orderTableId,
+            @RequestBody TableGuestUpdateRequest tableGuestUpdateRequest
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, tableGuestUpdateRequest));

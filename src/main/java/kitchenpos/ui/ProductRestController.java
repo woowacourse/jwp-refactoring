@@ -14,16 +14,16 @@ import java.util.List;
 
 @RestController
 public class ProductRestController {
-    private final ProductService productService;
+    private ProductService productService;
 
     public ProductRestController(final ProductService productService) {
         this.productService = productService;
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(@RequestBody final ProductCreateRequest product) {
-        final Product created = productService.create(product);
-        final URI uri = URI.create("/api/products/" + created.getId());
+    public ResponseEntity<Product> create(@RequestBody ProductCreateRequest product) {
+        Product created = productService.create(product);
+        URI uri = URI.create("/api/products/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);
     }

@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
-    private final TableGroupRepository tableGroupRepository;
+    private OrderRepository orderRepository;
+    private OrderTableRepository orderTableRepository;
+    private TableGroupRepository tableGroupRepository;
 
     public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
@@ -38,7 +38,7 @@ public class TableGroupService {
                 .stream().map(TableGroupCreateRequest.OrderTableId::getId)
                 .collect(Collectors.toList());
 
-        final OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
+        OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
 
         savedOrderTables.verify();
 
@@ -50,9 +50,9 @@ public class TableGroupService {
     }
 
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
-        final List<Long> orderTableIds = orderTables.stream()
+        List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
