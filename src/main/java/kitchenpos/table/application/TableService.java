@@ -31,7 +31,7 @@ public class TableService {
     }
 
     public OrderTableResponse create() {
-        OrderTable orderTable = new OrderTable(0, true);
+        OrderTable orderTable = new OrderTable(0, false);
         orderTableRepository.save(orderTable);
         return OrderTableResponse.from(orderTable);
     }

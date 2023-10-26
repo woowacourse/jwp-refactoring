@@ -85,7 +85,7 @@ class TableServiceTest extends ServiceTest {
             softly.assertThat(orderTable.getId()).isNotNull();
             softly.assertThat(orderTable.getTableGroupId()).isNull();
             softly.assertThat(orderTable.getNumberOfGuests()).isZero();
-            softly.assertThat(orderTable.isEmpty()).isTrue();
+            softly.assertThat(orderTable.isEmpty()).isFalse();
         });
     }
 

@@ -45,14 +45,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public boolean isGrouped() {
-        return tableGroupId != null;
-    }
-
     public void changeNumberOfGuest(int numberOfGuests) {
         if (isEmpty()) {
             throw new IllegalArgumentException("비어있는 테이블 인원 수는 수정할 수 없습니다.");
@@ -68,14 +60,20 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void groupedBy(Long tableGroupId, TableValidator tableValidator) {
-        tableValidator.validateGroup(tableGroupId);
-        this.tableGroupId = tableGroupId;
+    public void group() {
         this.empty = false;
     }
 
     public void unGroup() {
         this.tableGroupId = null;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public boolean isGrouped() {
+        return tableGroupId != null;
     }
 
     public Long getId() {

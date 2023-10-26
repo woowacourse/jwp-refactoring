@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.table.application.TableMapper;
 import kitchenpos.table.application.TableValidator;
 
 @Entity
@@ -33,16 +34,26 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(
+            LocalDateTime createdDate,
+            List<Long> tableIds,
+            TableMapper tableMapper,
+            TableValidator tableValidator
+    ) {
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        List<OrderTable> orderTables = tableMapper.toOrderTables(tableIds);
+        tableValidator.validateTablesForGroup(orderTables);
+        this.orderTables.addAll(orderTables);
+        group(this.orderTables);
     }
 
-    public void changeOrderTables(List<OrderTable> orderTables, TableValidator tableValidator) {
-        orderTables.forEach(orderTable -> {
-            orderTable.groupedBy(id, tableValidator);
-            this.orderTables.add(orderTable);
-        });
+    private void group(List<OrderTable> orderTables) {
+        orderTables.forEach(OrderTable::group);
+    }
+
+    public void ungroup(TableValidator tableValidator) {
+        tableValidator.validateUpGroup(orderTables);
+        orderTables.forEach(OrderTable::unGroup);
     }
 
     public Long getId() {
