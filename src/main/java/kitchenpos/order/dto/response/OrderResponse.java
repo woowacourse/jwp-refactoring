@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.vo.OrderLineItems;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.vo.OrderStatus;
 import kitchenpos.ordertable.dto.response.OrderTableResponse;
 
@@ -29,8 +29,7 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse from(final Order order) {
-        final OrderLineItems orderLineItems = order.orderLineItems();
+    public static OrderResponse of(final Order order, final List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 order.id(),
                 OrderTableResponse.from(order.orderTable()),
@@ -40,9 +39,8 @@ public class OrderResponse {
         );
     }
 
-    private static List<OrderLineItemResponse> parseOrderLineItemResponses(final OrderLineItems orderLineItems) {
-        return orderLineItems.orderLineItems()
-                .stream()
+    private static List<OrderLineItemResponse> parseOrderLineItemResponses(final List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
                 .map(OrderLineItemResponse::from)
                 .collect(Collectors.toUnmodifiableList());
     }

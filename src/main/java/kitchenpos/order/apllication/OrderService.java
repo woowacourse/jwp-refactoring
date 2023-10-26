@@ -12,6 +12,7 @@ import kitchenpos.order.domain.vo.OrderStatus;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -23,15 +24,18 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderTableRepository orderTableRepository,
+            final OrderLineItemRepository orderLineItemRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
     }
 
     @Transactional
@@ -45,11 +49,16 @@ public class OrderService {
                 OrderStatus.COOKING,
                 LocalDateTime.now()
         );
-        final List<OrderLineItem> orderLineItems = createOrderLineItems(request);
-        order.addOrderLineItems(orderLineItems);
         order.setOrderTable(orderTable);
+        final Order savedOrder = orderRepository.save(order);
 
-        return orderRepository.save(order).id();
+        final List<OrderLineItem> orderLineItems = createOrderLineItems(request);
+        orderLineItems.forEach(orderLineItem -> {
+            orderLineItem.setOrder(savedOrder);
+            orderLineItemRepository.save(orderLineItem);
+        });
+
+        return savedOrder.id();
     }
 
     private List<OrderLineItem> createOrderLineItems(final OrderCreateRequest request) {
@@ -59,6 +68,10 @@ public class OrderService {
                 .map(OrderLineItemCreateRequest::menuId)
                 .collect(Collectors.toUnmodifiableList());
         final List<Menu> menus = menuRepository.findAllById(menuIds);
+
+        if (orderLineItemCreateRequests.isEmpty()) {
+            throw new IllegalArgumentException("[ERROR] OrderLineItem이 비어있습니다.");
+        }
 
         if (menuIds.size() != menus.size()) {
             throw new IllegalArgumentException("[ERROR] 없는 메뉴가 존재합니다.");
@@ -77,7 +90,7 @@ public class OrderService {
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
         return orders.stream()
-                .map(OrderResponse::from)
+                .map(this::getOrderResponse)
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -86,6 +99,12 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] Order가 존재하지 않습니다. id : " + orderId));
         savedOrder.changeOrderStatus(requestOrderStatus);
-        return OrderResponse.from(savedOrder);
+
+        return getOrderResponse(savedOrder);
+    }
+
+    private OrderResponse getOrderResponse(final Order order) {
+        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findByOrderId(order.id());
+        return OrderResponse.of(order, orderLineItems);
     }
 }

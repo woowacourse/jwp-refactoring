@@ -1,9 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.order.domain.vo.OrderLineItems;
 import kitchenpos.order.domain.vo.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 
@@ -37,9 +34,6 @@ public class Order {
     @Column(nullable = false, updatable = false)
     private LocalDateTime orderedTime;
 
-    @Embedded
-    private OrderLineItems orderLineItems = new OrderLineItems();
-
     public Order() {
     }
 
@@ -49,11 +43,6 @@ public class Order {
     ) {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-    }
-
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
-        this.orderLineItems.addAll(orderLineItems);
     }
 
     public void changeOrderStatus(final OrderStatus requestOrderStatus) {
@@ -107,9 +96,5 @@ public class Order {
 
     public LocalDateTime orderedTime() {
         return orderedTime;
-    }
-
-    public OrderLineItems orderLineItems() {
-        return orderLineItems;
     }
 }

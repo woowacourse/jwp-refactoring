@@ -67,6 +67,7 @@
 
 - [x] TableGroup <-> OrderTable 양방향 직접 참조에서 TableGroup <- OrderTable 단방향 직접 참조로 변경
 - [x] OrderTable <-> Order 양방향 직접 참조에서 OrderTable <- Order 단방향 직접 참조로 변경
+- [x] Order <-> OrderLineItem 양방향 직접 참조에서 Order <- OrderLineItem 단방향 직접 참조로 변경
 
 ## 용어 사전
 
