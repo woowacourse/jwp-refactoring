@@ -1,10 +1,10 @@
 package kitchenpos.common.fixtures;
 
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.order.OrderChangeStatusRequest;
-import kitchenpos.dto.order.OrderCreateRequest;
-import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.application.dto.OrderChangeStatusRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemRequest;
 
 public class OrderFixtures {
 

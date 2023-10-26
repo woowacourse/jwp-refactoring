@@ -1,9 +1,8 @@
 package kitchenpos.common.fixtures;
 
 import java.util.List;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.table.OrderTableFindRequest;
-import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
+import kitchenpos.ordertable.application.dto.OrderTableFindRequest;
+import kitchenpos.ordertable.application.dto.TableGroupCreateRequest;
 
 public class TableGroupFixtures {
 
@@ -23,12 +22,5 @@ public class TableGroupFixtures {
     public static TableGroupCreateRequest TABLE_GROUP1_CREATE_REQUEST() {
         List<OrderTableFindRequest> orderTables = TABLE_GROUP1_ORDER_TABLE_REQUESTS();
         return new TableGroupCreateRequest(orderTables);
-    }
-
-    /**
-     * ENTITY
-     */
-    public static TableGroup TABLE_GROUP1() {
-        return TableGroup.create();
     }
 }
