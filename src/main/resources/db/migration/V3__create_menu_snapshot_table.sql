@@ -1,20 +1,19 @@
 create table menu_snapshot
 (
-    id                 bigint         not null auto_increment,
-    name               varchar(255)   not null,
-    price              decimal(19, 2) not null,
-    order_line_item_id bigint         not null,
+    id    bigint         not null auto_increment,
+    name  varchar(255)   not null,
+    price decimal(19, 2) not null,
     primary key (id)
 );
+
+alter table order_line_item
+    add column menu_snapshot_id bigint not null;
 
 alter table order_line_item
     drop foreign key fk_order_line_item_to_menu;
 
 alter table order_line_item
     drop menu_id;
-
-alter table order_line_item
-    add column menu_snapshot_id bigint not null;
 
 alter table order_line_item
     add constraint fk_order_line_item_to_menu_snapshot
