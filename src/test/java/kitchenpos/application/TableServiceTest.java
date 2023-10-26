@@ -4,12 +4,6 @@ import kitchenpos.application.dto.TableChangeEmptyStatusRequest;
 import kitchenpos.application.dto.TableChangeNumberOfGuestRequest;
 import kitchenpos.application.dto.TableCreateRequest;
 import kitchenpos.application.dto.TableResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -17,6 +11,12 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,22 +45,22 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private OrderTable emptyTable;
     private OrderTable notEmptyTable;
@@ -68,15 +68,15 @@ class TableServiceTest {
 
     @BeforeEach
     void setup() {
-        notEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
-        emptyTable = orderTableDao.save(EMPTY_TABLE());
+        notEmptyTable = orderTableRepository.save(NOT_EMPTY_TABLE());
+        emptyTable = orderTableRepository.save(EMPTY_TABLE());
 
-        final MenuGroup menuGroup = menuGroupDao.save(TEST_GROUP());
-        final Product product = productDao.save(PIZZA());
+        final MenuGroup menuGroup = menuGroupRepository.save(TEST_GROUP());
+        final Product product = productRepository.save(PIZZA());
         final Menu menu = new Menu.MenuFactory("test menu", product.getPrice(), menuGroup)
                 .addProduct(product, 1L)
                 .create();
-        testMenu = menuDao.save(menu);
+        testMenu = menuRepository.save(menu);
     }
 
     @Test
@@ -148,9 +148,9 @@ class TableServiceTest {
         @DisplayName("테이블 그룹에 속해있으면 상태를 변경할 수 없다.")
         void throwExceptionWithGroupedTable() {
             // given
-            final OrderTable otherTable = orderTableDao.save(EMPTY_TABLE());
+            final OrderTable otherTable = orderTableRepository.save(EMPTY_TABLE());
             final TableGroup tableGroup = new TableGroup(List.of(emptyTable, otherTable));
-            tableGroupDao.save(tableGroup);
+            tableGroupRepository.save(tableGroup);
 
             final TableChangeEmptyStatusRequest request = new TableChangeEmptyStatusRequest(true);
 
@@ -170,7 +170,7 @@ class TableServiceTest {
                     .addMenu(testMenu, 1L)
                     .create();
             order.changeOrderStatus(OrderStatus.valueOf(status));
-            orderDao.save(order);
+            orderRepository.save(order);
 
             final TableChangeEmptyStatusRequest request = new TableChangeEmptyStatusRequest(true);
 

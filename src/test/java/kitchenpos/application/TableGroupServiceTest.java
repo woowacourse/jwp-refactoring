@@ -4,12 +4,6 @@ import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableId;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.application.dto.TableResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -17,6 +11,12 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,22 +45,22 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     private OrderTable emptyTable1;
     private OrderTable emptyTable2;
@@ -69,16 +69,16 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setup() {
-        emptyTable1 = orderTableDao.save(EMPTY_TABLE());
-        emptyTable2 = orderTableDao.save(EMPTY_TABLE());
-        notEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
+        emptyTable1 = orderTableRepository.save(EMPTY_TABLE());
+        emptyTable2 = orderTableRepository.save(EMPTY_TABLE());
+        notEmptyTable = orderTableRepository.save(NOT_EMPTY_TABLE());
 
-        final MenuGroup menuGroup = menuGroupDao.save(TEST_GROUP());
-        final Product product = productDao.save(PIZZA());
+        final MenuGroup menuGroup = menuGroupRepository.save(TEST_GROUP());
+        final Product product = productRepository.save(PIZZA());
         final Menu menu = new Menu.MenuFactory("test menu", product.getPrice(), menuGroup)
                 .addProduct(product, 1L)
                 .create();
-        testMenu = menuDao.save(menu);
+        testMenu = menuRepository.save(menu);
     }
 
     @Nested
@@ -144,9 +144,9 @@ class TableGroupServiceTest {
         @DisplayName("이미 그룹지정된 태이블로는 생성시 예외가 발생한다.")
         void throwExceptionWithAlreadyGroupedTable() {
             // given
-            tableGroupDao.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
+            tableGroupRepository.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
 
-            final OrderTable savedTable = orderTableDao.save(new OrderTable(0, true));
+            final OrderTable savedTable = orderTableRepository.save(new OrderTable(0, true));
 
             final TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(
@@ -169,7 +169,7 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setup() {
-            testTableGroup = tableGroupDao.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
+            testTableGroup = tableGroupRepository.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
         }
 
         @Test
@@ -181,8 +181,8 @@ class TableGroupServiceTest {
             tableGroupService.ungroup(testTableGroup.getId());
 
             // then
-            final OrderTable actualTable1 = orderTableDao.findById(emptyTable1.getId()).get();
-            final OrderTable actualTable2 = orderTableDao.findById(emptyTable2.getId()).get();
+            final OrderTable actualTable1 = orderTableRepository.findById(emptyTable1.getId()).get();
+            final OrderTable actualTable2 = orderTableRepository.findById(emptyTable2.getId()).get();
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(actualTable1.getTableGroupId()).isNull();
                 softly.assertThat(actualTable2.getTableGroupId()).isNull();
@@ -198,7 +198,7 @@ class TableGroupServiceTest {
                     .addMenu(testMenu, 1L)
                     .create();
             order.changeOrderStatus(OrderStatus.valueOf(statusValue));
-            orderDao.save(order);
+            orderRepository.save(order);
 
             // when
             // then
