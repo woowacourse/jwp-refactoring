@@ -23,7 +23,8 @@ public class MenuService {
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository) {
+            final ProductRepository productRepository
+    ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
@@ -47,7 +48,6 @@ public class MenuService {
                 )
         );
 
-        savedMenu.updateMenuProducts(menuProducts);
         return MenuResponse.from(savedMenu);
     }
 
