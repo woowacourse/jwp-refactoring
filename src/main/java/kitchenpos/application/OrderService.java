@@ -70,7 +70,6 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
         final Order order = findOrderById(orderId);
-        order.validateChangeOrderStatus();
         order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return convertToResponse(order);
     }

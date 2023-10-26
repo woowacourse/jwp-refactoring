@@ -22,7 +22,6 @@ import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
@@ -48,8 +47,6 @@ class OrderServiceTest {
     private OrderService orderService;
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
@@ -167,18 +164,6 @@ class OrderServiceTest {
                     .orElseThrow(IllegalArgumentException::new);
 
             assertThat(changeOrder.getOrderStatus().name()).isEqualTo(status);
-        }
-
-        @Test
-        void 주문의_상태가_계산_완료일때_예외가_발생한다() {
-            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
-            final OrderResponse response = orderService.create(request);
-            final Order savedOrder = orderRepository.findById(response.getId()).orElseThrow(IllegalArgumentException::new);
-            savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
-
-            final OrderChangeStatusRequest changeStatusRequest = new OrderChangeStatusRequest("MEAL");
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeStatusRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test

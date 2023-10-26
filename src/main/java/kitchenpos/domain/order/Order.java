@@ -39,10 +39,11 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
+        validateChangeOrderStatus();
         this.orderStatus = orderStatus;
     }
 
-    public void validateChangeOrderStatus() {
+    private void validateChangeOrderStatus() {
         if (OrderStatus.COMPLETION == this.orderStatus) {
             throw new IllegalArgumentException();
         }
