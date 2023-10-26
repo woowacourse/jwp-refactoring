@@ -35,7 +35,7 @@ public class TableGroupService {
                 .orElseThrow(IllegalArgumentException::new);
 
         tableGroup.ungroup();
-        eventPublisher.publishEvent(new TableGroupUngroupEvent(tableGroup.getId()));
+        eventPublisher.publishEvent(TableGroupUngroupEvent.from(tableGroup));
         tableGroupDao.save(tableGroup);
     }
 }
