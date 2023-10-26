@@ -2,9 +2,9 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.presentation.dto.ChangeEmptyRequest;
 import kitchenpos.table.presentation.dto.ChangeNumberOfGuestsRequest;
 import kitchenpos.table.presentation.dto.CreateOrderTableRequest;
