@@ -4,6 +4,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.dto.MenuCreateRequest;
+import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.product.application.ProductService;
@@ -45,25 +46,18 @@ public class MenuService {
 
     private List<MenuProduct> getMenuProducts(final MenuCreateRequest request) {
         return request.getMenuProducts().stream()
-                .map(menuProductRequest -> {
-                    final Product product = productService.findByIdOrThrow(menuProductRequest.getProductId());
-                    return new MenuProduct(product, menuProductRequest.getQuantity());
-                })
+                .map(this::createMenuProduct)
                 .collect(Collectors.toList());
+    }
+
+    private MenuProduct createMenuProduct(final MenuProductRequest menuProductRequest) {
+        final Product product = productService.findByIdOrThrow(menuProductRequest.getProductId());
+        return new MenuProduct(product, menuProductRequest.getQuantity());
     }
 
     public List<MenuResponse> list() {
         return menuRepository.findAll().stream()
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());
-    }
-
-    public List<Menu> findAllByIds(final List<Long> menuIds) {
-        final List<Menu> menus = menuRepository.findAllById(menuIds);
-        if (menuIds.size() != menus.size()) {
-            throw new IllegalArgumentException("존재하지 않는 주문 항목입니다.");
-        }
-
-        return menus;
     }
 }
