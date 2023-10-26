@@ -33,7 +33,7 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public Long create(final OrderCreateRequest request) {
+    public Long order(final OrderCreateRequest request) {
         final List<Menu> menus = menuRepository.findByIdIn(request.extractMenuIds());
         final Map<Menu, Long> menuWithQuantityMap = makeMenuWithQuantityMap(menus, request.extractMenuIdWithQuantityMap());
         final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());

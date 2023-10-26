@@ -46,7 +46,7 @@ class OrderServiceTest {
         given(orderRepository.save(any(Order.class))).willReturn(new Order());
 
         // when
-        Long result = orderService.create(request);
+        Long result = orderService.order(request);
 
         // then
         verify(menuRepository).countByIdIn(anyList());

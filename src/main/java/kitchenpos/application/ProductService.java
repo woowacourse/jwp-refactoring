@@ -20,7 +20,7 @@ public class ProductService {
     }
 
     public Long create(final ProductCreateRequest request) {
-        final Product product= Product.of(request.getName(),request.getPrice());
+        final Product product = Product.of(request.getName(), request.getPrice());
         return productRepository.save(product).getId();
     }
 

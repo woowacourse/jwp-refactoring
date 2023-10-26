@@ -27,8 +27,8 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public static TableGroup of(final LocalDateTime now, final List<OrderTable> savedOrderTables) {
-        return new TableGroup(null, now, new OrderTables(savedOrderTables));
+    public static TableGroup of(final LocalDateTime now, final List<OrderTable> orderTables) {
+        return new TableGroup(null, now, new OrderTables(orderTables));
     }
 
     public Long getId() {
