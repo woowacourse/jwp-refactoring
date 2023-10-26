@@ -1,7 +1,5 @@
 package kitchenpos.order;
 
-import kitchenpos.order.request.OrderLineItemCreateRequest;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +20,8 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public static Order of(Long orderTableId, OrderValidator validator, List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
-        validator.validate(orderTableId, orderLineItemCreateRequests);
+    public static Order of(Long orderTableId, List<OrderLineItem> orderLineItems, OrderValidator validator) {
+        validator.validate(orderTableId, orderLineItems);
         return new Order(null, orderTableId, COOKING.name(), LocalDateTime.now());
     }
 

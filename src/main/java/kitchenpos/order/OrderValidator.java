@@ -1,6 +1,5 @@
 package kitchenpos.order;
 
-import kitchenpos.order.request.OrderLineItemCreateRequest;
 import kitchenpos.menu.MenuRepository;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.OrderTableRepository;
@@ -22,9 +21,9 @@ public class OrderValidator {
     private final MenuRepository menuRepository;
 
 
-    public void validate(Long orderTableId, List<OrderLineItemCreateRequest> orderLineItemRequests){
+    public void validate(Long orderTableId, List<OrderLineItem> orderLineItems){
         validateOrderTable(orderTableId);
-        validateOrderLineItem(orderLineItemRequests);
+        validateOrderLineItem(orderLineItems);
     }
 
     private void validateOrderTable(Long orderTableId) {
@@ -35,20 +34,20 @@ public class OrderValidator {
         }
     }
 
-    private void validateOrderLineItem(List<OrderLineItemCreateRequest> orderLineItemRequests) {
-        validateEmpty(orderLineItemRequests);
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemCreateRequest::getMenuId)
+    private void validateOrderLineItem(List<OrderLineItem> orderLineItems) {
+        validateEmpty(orderLineItems);
+        final List<Long> menuIds = orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
         long menuCount = menuRepository.countByIdIn(menuIds);
 
-        if (orderLineItemRequests.size() != menuCount) {
+        if (orderLineItems.size() != menuCount) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateEmpty(List<OrderLineItemCreateRequest> orderLineItemRequests) {
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
+    private void validateEmpty(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
     }
