@@ -33,6 +33,7 @@ import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusUpdateRequest;
+import kitchenpos.order.vo.MenuSpecification;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +77,7 @@ class OrderServiceTest {
 
         orderTable = orderTableRepository.save(단체_지정_없는_채워진_주문_테이블());
         emptyOrderTableId = orderTableRepository.save(단체_지정_없는_빈_주문_테이블()).getId();
-        orderLineItem = 주문_항목(menu.getId());
+        orderLineItem = 주문_항목(menu.getId(), new MenuSpecification(menu.getName(), menu.getPriceValue()));
     }
 
     @Nested

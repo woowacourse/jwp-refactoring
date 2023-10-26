@@ -6,7 +6,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Transient;
 import kitchenpos.menu.vo.Price;
 import kitchenpos.menu.vo.ProductSpecification;
 import kitchenpos.menu.vo.Quantity;
@@ -23,7 +22,7 @@ public class MenuProduct {
     @Embedded
     private Quantity quantity;
 
-    @Transient
+    @Embedded
     private ProductSpecification productSpecification;
 
     public MenuProduct(Long seq, Long productId, Quantity quantity, ProductSpecification productSpecification) {

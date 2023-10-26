@@ -1,41 +1,32 @@
-package kitchenpos.menu.vo;
+package kitchenpos.order.vo;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
 
 @Embeddable
-public class ProductSpecification {
+public class MenuSpecification {
 
     @Column(nullable = false)
     private String name;
 
-    @Embedded
-    private Price price;
+    @Column(nullable = false)
+    private BigDecimal price;
 
-    private ProductSpecification(String name, Price price) {
+    public MenuSpecification(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
-    protected ProductSpecification() {
-    }
-
-    public static ProductSpecification from(String name, BigDecimal price) {
-        return new ProductSpecification(name, Price.valueOf(price));
-    }
-
-    public Price calculateTotalPrice(Quantity quantity) {
-        return price.multiply(quantity.getValue());
+    protected MenuSpecification() {
     }
 
     public String getName() {
         return name;
     }
 
-    public Price getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
@@ -47,7 +38,7 @@ public class ProductSpecification {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ProductSpecification that = (ProductSpecification) o;
+        MenuSpecification that = (MenuSpecification) o;
         return Objects.equals(name, that.name) && Objects.equals(price, that.price);
     }
 

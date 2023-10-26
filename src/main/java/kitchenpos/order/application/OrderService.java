@@ -10,6 +10,7 @@ import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusUpdateRequest;
+import kitchenpos.order.vo.Menus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +37,9 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
         orderTable.validateTableCanTakeOrder();
 
-        long menuCount = menuRepository.countByIdIn(request.getMenuIds());
-        Order order = request.toOrder(menuCount);
+        Menus menus = new Menus(menuRepository.findAllByIdIn(request.getMenuIds()));
+
+        Order order = request.toOrder(menus);
         final Order savedOrder = orderRepository.save(order);
         return OrderResponse.from(savedOrder);
     }

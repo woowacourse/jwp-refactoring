@@ -8,8 +8,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.order.vo.MenuSpecification;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +28,8 @@ class OrderTest {
         void 정상적으로_생성한다() {
             // given
             Long orderTableId = 1L;
-            List<OrderLineItem> orderLineItems = List.of(주문_항목(1L));
+            MenuSpecification menuSpecification = new MenuSpecification("menuName", BigDecimal.ONE);
+            List<OrderLineItem> orderLineItems = List.of(주문_항목(1L, menuSpecification));
             long menuCount = 1L;
 
             // expect
@@ -50,7 +53,8 @@ class OrderTest {
         void 주문_항목_목록_크기와_메뉴_수가_다르면_예외를_던진다() {
             // given
             Long orderTableId = 1L;
-            List<OrderLineItem> orderLineItems = List.of(주문_항목(1L));
+            MenuSpecification menuSpecification = new MenuSpecification("menuName", BigDecimal.ONE);
+            List<OrderLineItem> orderLineItems = List.of(주문_항목(1L, menuSpecification));
             long invalidMenuCount = orderLineItems.size() + 1;
 
             // expect
@@ -66,7 +70,8 @@ class OrderTest {
         @Test
         void 계산_완료된_주문이라면_예외를_던진다() {
             // given
-            Order order = new Order(1L, COMPLETION, LocalDateTime.now(), List.of(주문_항목(1L)));
+            Order order = new Order(1L, COMPLETION, LocalDateTime.now(),
+                    List.of(주문_항목(1L, new MenuSpecification("menuName", BigDecimal.ONE))));
 
             // expect
             assertThatThrownBy(() -> order.changeOrderStatus(COOKING.name()))
@@ -77,7 +82,8 @@ class OrderTest {
         @Test
         void 정상적으로_변경한다() {
             // given
-            Order order = new Order(1L, COOKING, LocalDateTime.now(), List.of(주문_항목(1L)));
+            Order order = new Order(1L, COOKING, LocalDateTime.now(),
+                    List.of(주문_항목(1L, new MenuSpecification("menuName", BigDecimal.ONE))));
 
             // when
             order.changeOrderStatus(MEAL.name());

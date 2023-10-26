@@ -1,6 +1,7 @@
 package kitchenpos.order.dto;
 
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.vo.MenuSpecification;
 
 public class OrderLineItemCreateRequest {
 
@@ -15,8 +16,8 @@ public class OrderLineItemCreateRequest {
         this.quantity = quantity;
     }
 
-    public OrderLineItem toOrderLineItem() {
-        return OrderLineItem.of(menuId, quantity);
+    public OrderLineItem toOrderLineItem(MenuSpecification menuSpecification) {
+        return OrderLineItem.of(menuId, quantity, menuSpecification);
     }
 
     public Long getMenuId() {
