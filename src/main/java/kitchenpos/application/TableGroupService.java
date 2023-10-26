@@ -38,7 +38,8 @@ public class TableGroupService {
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(request.extractIds());
         validateAllTableGroupFound(request, orderTables);
         final TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), orderTables);
-        return tableGroupRepository.save(tableGroup).getId();
+        final TableGroup saveTableGroup = tableGroupRepository.save(tableGroup);
+        return saveTableGroup.getId();
     }
 
     public void ungroup(final Long tableGroupId) {

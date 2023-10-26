@@ -21,7 +21,8 @@ public class ProductService {
 
     public Long create(final ProductCreateRequest request) {
         final Product product = Product.of(request.getName(), request.getPrice());
-        return productRepository.save(product).getId();
+        final Product saveProduct = productRepository.save(product);
+        return saveProduct.getId();
     }
 
     @Transactional(readOnly = true)

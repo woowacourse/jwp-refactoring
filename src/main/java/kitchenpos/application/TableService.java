@@ -27,7 +27,8 @@ public class TableService {
 
     public Long create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = OrderTable.of(request.getNumberOfGuests(), request.getEmpty());
-        return orderTableRepository.save(orderTable).getId();
+        final OrderTable saveOrderTable = orderTableRepository.save(orderTable);
+        return saveOrderTable.getId();
     }
 
     @Transactional(readOnly = true)

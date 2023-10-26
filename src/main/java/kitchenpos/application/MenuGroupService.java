@@ -22,7 +22,8 @@ public class MenuGroupService {
     public Long create(final MenuGroupCreateRequest menuGroupCreateRequest) {
         final String name = menuGroupCreateRequest.getName();
         final MenuGroup menuGroup = MenuGroup.from(name);
-        return menuGroupRepository.save(menuGroup).getId();
+        final MenuGroup saveMenuGroup = menuGroupRepository.save(menuGroup);
+        return saveMenuGroup.getId();
     }
 
     @Transactional(readOnly = true)
