@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,9 +42,8 @@ public class OrderService {
         validateMenuToOrder(orderLineItemRequests);
 
         final List<OrderLineItem> orderLineItems = createOrderLineItems(orderLineItemRequests);
-        final Order order = new Order(orderTableId, orderLineItems);
-        orderTable.placeOrder(order);
-        return order;
+        orderTable.validateToPlace();
+        return orderRepository.save(new Order(orderTableId, orderLineItems));
     }
 
     private OrderTable findOrderTable(final long orderTableId) {

@@ -1,4 +1,4 @@
-package kitchenpos.domain.table;
+package kitchenpos.domain.order;
 
 import static javax.persistence.CascadeType.ALL;
 
@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.order.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
@@ -61,8 +60,8 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void unGroup() {
-        orderTables.forEach(OrderTable::unGroup);
+    public void unGroup(final OrderValidator orderValidator) {
+        orderTables.forEach(orderTable -> orderTable.unGroup(orderValidator));
         orderTables.clear();
     }
 }

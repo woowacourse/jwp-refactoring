@@ -3,7 +3,8 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.order.OrderValidator;
+import kitchenpos.domain.order.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -16,11 +17,14 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderValidator orderValidator;
 
     public TableGroupService(final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
+                             final TableGroupRepository tableGroupRepository,
+                             final OrderValidator orderValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderValidator = orderValidator;
     }
 
     public TableGroup create(final TableGroupCreateRequest request) {
@@ -41,6 +45,6 @@ public class TableGroupService {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블 단체를 삭제할 수 없습니다."));
 
-        tableGroup.unGroup();
+        tableGroup.unGroup(orderValidator);
     }
 }

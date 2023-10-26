@@ -1,9 +1,5 @@
 package kitchenpos.domain.order;
 
-import static javax.persistence.CascadeType.ALL;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,15 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
 
     private static final int NUMBER_OF_GUESTS_MIN = 0;
 
-    @OneToMany(mappedBy = "orderTableId", cascade = ALL)
-    private final List<Order> orders = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,12 +42,7 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void placeOrder(final Order order) {
-        validateAbleToOrder();
-        orders.add(order);
-    }
-
-    private void validateAbleToOrder() {
+    public void validateToPlace() {
         if (isEmpty()) {
             throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
         }
@@ -62,7 +50,7 @@ public class OrderTable {
 
     public void group(final long tableGroupId) {
         validateAbleToGroup();
-        changeEmpty(false);
+        this.empty = false;
         this.tableGroupId = tableGroupId;
     }
 
@@ -75,24 +63,16 @@ public class OrderTable {
         }
     }
 
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < NUMBER_OF_GUESTS_MIN) {
-            throw new IllegalArgumentException("테이블 당 인원 수는 최소 " + NUMBER_OF_GUESTS_MIN + "명입니다.");
-        }
-    }
-
-    public void unGroup() {
+    public void unGroup(final OrderValidator orderValidator) {
         validateAbleToUnGroup();
+        orderValidator.validateHasAnyOrderInProgress(id);
         this.tableGroupId = null;
-        changeEmpty(false);
+        this.empty = false;
     }
 
     private void validateAbleToUnGroup() {
         if (Objects.isNull(tableGroupId)) {
             throw new IllegalArgumentException("이미 개별 테이블이라 단체에서 분할할 수 없습니다.");
-        }
-        if (hasAnyOrderInProgress()) {
-            throw new IllegalArgumentException("이미 조리 또는 식사 중인 주문이 존재해 단체 테이블을 분할할 수 없습니다.");
         }
     }
 
@@ -104,8 +84,15 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void changeEmpty(final boolean empty) {
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < NUMBER_OF_GUESTS_MIN) {
+            throw new IllegalArgumentException("테이블 당 인원 수는 최소 " + NUMBER_OF_GUESTS_MIN + "명입니다.");
+        }
+    }
+
+    public void changeEmpty(final OrderValidator orderValidator, final boolean empty) {
         validateAbleToChangeEmpty();
+        orderValidator.validateHasAnyOrderInProgress(id);
         this.empty = empty;
     }
 
@@ -113,14 +100,6 @@ public class OrderTable {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("단체로 지정된 테이블을 비울 수 없습니다.");
         }
-        if (hasAnyOrderInProgress()) {
-            throw new IllegalArgumentException("조리 또는 식사 중인 테이블을 비울 수 없습니다.");
-        }
-    }
-
-    private boolean hasAnyOrderInProgress() {
-        return orders.stream()
-                .anyMatch(Order::isInProgress);
     }
 
     public int getNumberOfGuests() {
