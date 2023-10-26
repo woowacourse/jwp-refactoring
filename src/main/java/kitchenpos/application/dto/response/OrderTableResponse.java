@@ -3,6 +3,7 @@ package kitchenpos.application.dto.response;
 import java.util.Objects;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table_group.TableGroup;
+import kitchenpos.support.AggregateReference;
 
 public class OrderTableResponse {
 
@@ -32,9 +33,9 @@ public class OrderTableResponse {
         );
     }
 
-    private static Long getTableGroupId(final TableGroup tableGroup) {
-        if (Objects.nonNull(tableGroup)) {
-            return tableGroup.getId();
+    private static Long getTableGroupId(final AggregateReference<TableGroup> tableGroupId) {
+        if (Objects.nonNull(tableGroupId)) {
+            return tableGroupId.getId();
         }
         return null;
     }
