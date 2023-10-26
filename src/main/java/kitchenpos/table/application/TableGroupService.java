@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableUngroupedEvent;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.repository.TableGroupRepository;
 import kitchenpos.table.dto.request.TableGroupCreateRequest;
 import kitchenpos.table.dto.response.TableGroupResponse;
+import kitchenpos.table.event.CheckOrderProceedingEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +57,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        publisher.publishEvent(new TableUngroupedEvent(orderTableIds));
+        publisher.publishEvent(new CheckOrderProceedingEvent(orderTableIds));
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.unjoinTableGroup();

@@ -4,21 +4,21 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.domain.TableUngroupedEvent;
+import kitchenpos.table.event.CheckOrderProceedingEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TableUngroupedListener {
+public class CheckOrderProceedingListener {
 
     private final OrderRepository orderRepository;
 
-    public TableUngroupedListener(final OrderRepository orderRepository) {
+    public CheckOrderProceedingListener(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     @EventListener
-    public void ungroupTable(final TableUngroupedEvent event) {
+    public void checkOrderProceeding(final CheckOrderProceedingEvent event) {
         final List<Long> orderTableIds = event.getOrderTableIds();
 
         final boolean isProceeding = orderRepository.existsByOrderTableIdInAndOrderStatusIn(

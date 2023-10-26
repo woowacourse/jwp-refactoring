@@ -1,28 +1,27 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.table.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
+import kitchenpos.table.event.CheckOrderProceedingEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -43,18 +42,10 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (isOrderProceeding(orderTableId)) {
-            throw new IllegalArgumentException();
-        }
+        publisher.publishEvent(new CheckOrderProceedingEvent(List.of(orderTableId)));
 
         orderTable.changeEmpty(request.isEmpty());
         return OrderTableResponse.of(orderTable);
-    }
-
-    private boolean isOrderProceeding(final Long orderTableId) {
-        return orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId,
-                Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL));
     }
 
     @Transactional

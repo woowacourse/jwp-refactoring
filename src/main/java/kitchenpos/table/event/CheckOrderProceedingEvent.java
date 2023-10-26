@@ -1,12 +1,12 @@
-package kitchenpos.table.domain;
+package kitchenpos.table.event;
 
 import java.util.List;
 
-public class TableUngroupedEvent {
+public class CheckOrderProceedingEvent {
 
     private final List<Long> orderTableIds;
 
-    public TableUngroupedEvent(final List<Long> orderTableIds) {
+    public CheckOrderProceedingEvent(final List<Long> orderTableIds) {
         this.orderTableIds = orderTableIds;
     }
 
