@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import java.util.List;
 import kitchenpos.menu.application.dto.MenuEventDto;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineRequest;
@@ -46,5 +47,9 @@ public class OrderMapper {
         }
 
         return order;
+    }
+
+    public List<OrderTable> toDomain(List<Long> ids){
+        return orderTableRepository.findAllByIdIn(ids);
     }
 }

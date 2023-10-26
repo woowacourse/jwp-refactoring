@@ -4,20 +4,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineRequest;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest.OrderTableRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.domain.OrderLineItemRepository;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.order.domain.OrderTable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -88,9 +83,9 @@ public class TableGroupServiceTest {
 
         assertSoftly(softly -> {
             softly.assertThat(orderTable1.isEmpty()).isFalse();
-            softly.assertThat(orderTable1.getTableGroup()).isNotNull();
+            softly.assertThat(orderTable1.getTableGroupId()).isNotNull();
             softly.assertThat(orderTable2.isEmpty()).isFalse();
-            softly.assertThat(orderTable2.getTableGroup()).isNotNull();
+            softly.assertThat(orderTable2.getTableGroupId()).isNotNull();
         });
     }
 
@@ -128,9 +123,9 @@ public class TableGroupServiceTest {
 
         assertSoftly(softly -> {
             softly.assertThat(orderTable1.isEmpty()).isFalse();
-            softly.assertThat(orderTable1.getTableGroup()).isNull();
+            softly.assertThat(orderTable1.getTableGroupId()).isNull();
             softly.assertThat(orderTable2.isEmpty()).isFalse();
-            softly.assertThat(orderTable2.getTableGroup()).isNull();
+            softly.assertThat(orderTable2.getTableGroupId()).isNull();
         });
     }
 }

@@ -5,9 +5,13 @@ import java.util.stream.Collectors;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
-import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.application.dto.OrderTableGroupEventDto;
+import kitchenpos.order.application.dto.OrderTableUnGroupEventDto;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,5 +46,21 @@ public class OrderService {
         savedOrder.setOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
         return OrderResponse.of(savedOrder);
+    }
+
+    @EventListener
+    public void group(OrderTableGroupEventDto event) {
+        List<OrderTable> orderTables = orderMapper.toDomain(event.getOrderTableIds());
+        for (OrderTable orderTable : orderTables) {
+            orderTable.attachTableGroup(event.getTableGroupId());
+        }
+    }
+
+    @EventListener
+    public void ungroup(OrderTableUnGroupEventDto event) {
+        List<OrderTable> orderTables = orderMapper.toDomain(event.getOrderTableIds());
+        for (OrderTable orderTable : orderTables) {
+            orderTable.detachTableGroup();
+        }
     }
 }

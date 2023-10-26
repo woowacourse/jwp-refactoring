@@ -1,14 +1,14 @@
 package kitchenpos.tablegroup.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import kitchenpos.order.application.dto.OrderTableGroupEventDto;
+import kitchenpos.order.application.dto.OrderTableUnGroupEventDto;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest.OrderTableRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
-import kitchenpos.order.domain.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.order.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -17,15 +17,17 @@ import org.springframework.util.CollectionUtils;
 @Transactional
 public class TableGroupService {
 
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher publisher;
+    private final TableMapper mapper;
 
     public TableGroupService(
-            final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final TableGroupRepository tableGroupRepository,
+            final ApplicationEventPublisher publisher, final TableMapper mapper
     ) {
-        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.publisher = publisher;
+        this.mapper = mapper;
     }
 
     public TableGroupResponse create(final TableGroupCreateRequest request) {
@@ -33,9 +35,10 @@ public class TableGroupService {
 
         validateOrderTablesSize(requests);
 
-        final List<OrderTable> orderTables = getOrderTables(requests);
+        final List<Long> orderTableIds = mapper.toDomain(requests);
+        TableGroup group = group(orderTableIds);
 
-        return TableGroupResponse.of(saveTableGroup(orderTables));
+        return TableGroupResponse.of(group, orderTableIds);
     }
 
     private void validateOrderTablesSize(final List<OrderTableRequest> orderTables) {
@@ -44,43 +47,26 @@ public class TableGroupService {
         }
     }
 
-    private List<OrderTable> getOrderTables(final List<OrderTableRequest> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTableRequest::getId)
-                .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        validateMatchingSizes(orderTables, savedOrderTables);
-
-        return savedOrderTables;
-    }
-
-    private void validateMatchingSizes(
-            final List<OrderTableRequest> orderTables,
-            final List<OrderTable> savedOrderTables
-    ) {
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("주문 테이블이 존재하지 않습니다.");
-        }
-    }
-
-
-    private TableGroup saveTableGroup(final List<OrderTable> savedOrderTables) {
+    private TableGroup group(final List<Long> orderTableIds) {
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.attachTableGroup(savedTableGroup);
-        }
+        OrderTableGroupEventDto orderTableGroupEventDto = new OrderTableGroupEventDto();
+        orderTableGroupEventDto.setOrderTableIds(orderTableIds);
+        orderTableGroupEventDto.setTableGroupId(savedTableGroup.getId());
+
+        publisher.publishEvent(orderTableGroupEventDto);
 
         return savedTableGroup;
     }
 
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        List<Long> orderTableIds = mapper.toDomain(tableGroupId);
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.detachTableGroup();
-        }
+        OrderTableUnGroupEventDto orderTableUnGroupEventDto = new OrderTableUnGroupEventDto();
+        orderTableUnGroupEventDto.setOrderTableIds(orderTableIds);
+        orderTableUnGroupEventDto.setTableGroupId(tableGroupId);
+
+        publisher.publishEvent(orderTableUnGroupEventDto);
     }
 }

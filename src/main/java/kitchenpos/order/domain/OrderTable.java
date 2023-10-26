@@ -5,19 +5,13 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import suppoert.domain.BaseEntity;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     @Column(nullable = false)
     private int numberOfGuests;
     @Column(nullable = false)
@@ -30,8 +24,8 @@ public class OrderTable extends BaseEntity {
         this.empty = empty;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -50,21 +44,20 @@ public class OrderTable extends BaseEntity {
     }
 
     private void validateTableGroupIsNull() {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("테이블 그룹이 존재하는 경우 테이블 상태를 수정할 수 없습니다.");
         }
     }
 
-    public void attachTableGroup(final TableGroup tableGroup) {
+    public void attachTableGroup(final Long tableGroupId) {
+        validateTableGroupIsNotNull(tableGroupId);
         validateTableGroupIsNull();
-        validateTableGroupIsNotNull(tableGroup);
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.empty = false;
-        tableGroup.getOrderTables().add(this);
     }
 
-    private void validateTableGroupIsNotNull(final TableGroup tableGroup) {
-        if (Objects.isNull(tableGroup)) {
+    private void validateTableGroupIsNotNull(final Long tableGroupId) {
+        if (Objects.isNull(tableGroupId)) {
             throw new IllegalArgumentException("테이블 그룹이 존재하지 않는 경우 예외가 발생한다.");
         }
     }
@@ -76,7 +69,7 @@ public class OrderTable extends BaseEntity {
     public void detachTableGroup() {
         validateOrderCompletion();
 
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
     private void validateOrderCompletion() {

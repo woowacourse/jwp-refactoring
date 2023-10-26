@@ -14,14 +14,8 @@ public class TableGroup extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 }

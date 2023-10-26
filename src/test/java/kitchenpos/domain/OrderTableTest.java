@@ -54,19 +54,17 @@ class OrderTableTest {
     @Test
     void 주문_테이블을_합칠_수_있다() {
         OrderTable orderTable = new OrderTable(0, true);
-        TableGroup tableGroup = new TableGroup();
-        orderTable.attachTableGroup(tableGroup);
+        orderTable.attachTableGroup(1L);
         orderTable.isEmpty();
     }
 
     @Test
     void 테이블_분리_가능하다() {
         OrderTable orderTable = new OrderTable(0, true);
-        TableGroup tableGroup = new TableGroup();
-        orderTable.attachTableGroup(tableGroup);
+        orderTable.attachTableGroup(1L);
 
         orderTable.detachTableGroup();
-        Assertions.assertThat(orderTable.getTableGroup()).isNull();
+        Assertions.assertThat(orderTable.getTableGroupId()).isNull();
     }
 
     @Test
