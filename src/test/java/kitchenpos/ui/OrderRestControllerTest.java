@@ -52,6 +52,7 @@ class OrderRestControllerTest {
                 soft -> {
                     soft.assertThat(response.getBody().getId()).isNotNull();
                     soft.assertThat(response.getBody().getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+                    soft.assertThat(response.getBody().getOrderLineItems().get(0).getSeq()).isNotNull();
                 }
         );
     }

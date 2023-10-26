@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
@@ -10,7 +11,7 @@ import org.springframework.util.CollectionUtils;
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     List<OrderLineItem> value = new ArrayList<>();
 
     protected OrderLineItems() {

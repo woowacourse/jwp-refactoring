@@ -31,7 +31,9 @@ class MenuRestControllerTest {
         //then
         SoftAssertions.assertSoftly(
                 soft -> {
+                    soft.assertThat(response.getBody().getId()).isNotNull();
                     soft.assertThat(response.getBody().getName()).isEqualTo(request.getName());
+                    soft.assertThat(response.getBody().getMenuProducts().get(0).getSeq()).isNotNull();
                 }
         );
     }
