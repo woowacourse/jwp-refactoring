@@ -35,7 +35,7 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableUpdateRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
-        checkOrderStatusInTableGroup(orderTableId);
+        checkOrderStatusInTableGroup(orderTable);
         orderTable.changeEmpty(request.getEmpty());
         return orderTableRepository.save(orderTable);
     }
@@ -45,9 +45,9 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void checkOrderStatusInTableGroup(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(orderTableId), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+    private void checkOrderStatusInTableGroup(final OrderTable orderTable) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
+                List.of(orderTable), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }

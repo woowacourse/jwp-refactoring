@@ -149,7 +149,7 @@ class TableGroupServiceTest {
 
             when(tableGroupRepository.findByIdWithOrderTables(anyLong()))
                     .thenReturn(Optional.of(savedTableGroup));
-            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
+            when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any()))
                     .thenReturn(false);
 
             // when
@@ -181,7 +181,7 @@ class TableGroupServiceTest {
 
             when(tableGroupRepository.findByIdWithOrderTables(anyLong()))
                     .thenReturn(Optional.of(savedTableGroup));
-            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
+            when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any()))
                     .thenReturn(true);
 
             // when, then

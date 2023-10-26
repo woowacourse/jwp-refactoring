@@ -62,7 +62,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = findTableGroupById(tableGroupId);
-        validateOrderStatusInTableGroup(tableGroup.getTableIdsInGroup());
+        validateOrderStatusInTableGroup(tableGroup.getOrderTables());
         tableGroup.ungroup();
         tableGroupRepository.save(tableGroup);
     }
@@ -72,9 +72,9 @@ public class TableGroupService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateOrderStatusInTableGroup(final List<Long> orderTableIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+    private void validateOrderStatusInTableGroup(final OrderTables orderTables) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
+                orderTables.getOrderTables(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }
