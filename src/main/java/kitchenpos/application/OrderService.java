@@ -31,14 +31,26 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest order) {
-        List<OrderLineItem> orderLineItems = toOrderLineItems(order.getOrderLineItems());
+    public Order create(final OrderRequest orderRequest) {
+        List<OrderLineItem> orderLineItems = toOrderLineItems(orderRequest.getOrderLineItems());
 
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        return orderRepository.save(new Order(orderTable, orderLineItems));
+        //
+        validateFull(orderTable);
+        //
+        Order order = new Order(orderRequest.getOrderTableId(), orderLineItems);
+        return orderRepository.save(order);
     }
+
+    //
+    private void validateFull(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("비어있는 테이블에서 주문할 수 없습니다");
+        }
+    }
+    //
 
     private List<OrderLineItem> toOrderLineItems(List<OrderLineItemRequest> orderLineItemsRequests) {
         if (Objects.nonNull(orderLineItemsRequests)) {

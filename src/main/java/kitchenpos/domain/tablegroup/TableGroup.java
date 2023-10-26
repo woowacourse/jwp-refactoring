@@ -1,5 +1,6 @@
 package kitchenpos.domain.tablegroup;
 
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.util.CollectionUtils;
 
@@ -35,12 +36,6 @@ public class TableGroup {
     private void validateSizeOf(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_GROUP_SIZE) {
             throw new IllegalArgumentException(MINIMUM_GROUP_SIZE + "개 이상의 테이블이 필요합니다");
-        }
-    }
-
-    public void ungroup() {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
         }
     }
 

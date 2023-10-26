@@ -90,7 +90,7 @@ class OrderServiceTest {
         var item = new OrderLineItemRequest(후라이드치킨().getId(), 1);
         var order = new OrderRequest(fullTable.getId(), List.of(item));
 
-        assertThat(orderService.create(order).getOrderTable().getId()).isEqualTo(fullTable.getId());
+        assertThat(orderService.create(order).getOrderTableId()).isEqualTo(fullTable.getId());
     }
 
     @Test

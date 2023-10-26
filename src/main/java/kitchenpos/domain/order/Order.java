@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -24,11 +23,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_orders_to_order_table"), nullable = false)
-    private OrderTable orderTable;
-
+    private Long orderTableId;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.COOKING;
 
@@ -45,17 +40,10 @@ public class Order {
     public Order() {
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        validateFull(orderTable);
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
         validateHas(orderLineItems);
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
-    }
-
-    private void validateFull(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("비어있는 테이블에서 주문할 수 없습니다");
-        }
     }
 
     private void validateHas(List<OrderLineItem> orderLineItems) {
@@ -93,8 +81,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
