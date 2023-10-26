@@ -46,7 +46,6 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-//        validateOrderTableId(orderTableId);
         validateOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
@@ -55,11 +54,12 @@ public class Order {
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
-//    private void validateOrderTableId(final Long orderTableId) {
-//        if (orderTableId == null) {
-//            throw new InvalidOrderException("주문 테이블의 Id는 null일 수 없습니다.");
-//        }
-//    }
+    public static Order of(final Long orderTableId, final List<OrderLineItem> orderLineItems,
+                           final OrderValidator orderValidator) {
+        final Order order = new Order(orderTableId, orderLineItems);
+        orderValidator.validate(order);
+        return order;
+    }
 
     private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (orderLineItems.isEmpty()) {

@@ -27,8 +27,7 @@ public class OrderService {
     @Transactional
     public Order create(final OrderRequest orderRequest) {
         final List<OrderLineItem> orderLineItems = createOrderLineItemsByOrderRequest(orderRequest);
-        final Order order = new Order(orderRequest.getOrderTableId(), orderLineItems);
-        orderValidator.validate(order);
+        final Order order = Order.of(orderRequest.getOrderTableId(), orderLineItems, orderValidator);
         return orderRepository.save(order);
     }
 

@@ -42,6 +42,13 @@ public class Menu {
         this.menuProducts = new MenuProducts(menuProducts);
     }
 
+    public static Menu of(final String name, final BigDecimal price, final Long menuGroupId,
+                          final List<MenuProduct> menuProducts, final MenuValidator menuValidator) {
+        final Menu menu = new Menu(null, name, price, menuGroupId, menuProducts);
+        menuValidator.validate(menu);
+        return menu;
+    }
+
     private void validateMenuGroupId(final Long menuGroupId) {
         if (menuGroupId == null) {
             throw new InvalidMenuException("메뉴 그룹은 null일 수 없습니다.");

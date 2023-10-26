@@ -25,9 +25,8 @@ public class MenuService {
     @Transactional
     public Menu create(final MenuRequest request) {
         final List<MenuProduct> menuProducts = createMenuProductsByMenuRequest(request);
-        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
-                menuProducts);
-        menuValidator.validate(menu);
+        final Menu menu = Menu.of(request.getName(), request.getPrice(), request.getMenuGroupId(),
+                menuProducts, menuValidator);
         return menuRepository.save(menu);
     }
 
