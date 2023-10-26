@@ -1,27 +1,27 @@
 package kitchenpos.order.domain;
 
-import java.util.NoSuchElementException;
+import kitchenpos.common.event.OrderCreationEvent;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.table.domain.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderValidator {
 
     private final MenuRepository menuRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public OrderValidator(
             MenuRepository menuRepository,
-            OrderTableRepository orderTableRepository
+            ApplicationEventPublisher eventPublisher
     ) {
         this.menuRepository = menuRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public void validate(OrderLineItems orderLineItems, Long orderTableId) {
         validateOrderLineItems(orderLineItems);
-        validateOrderTable(orderTableId);
+        eventPublisher.publishEvent(new OrderCreationEvent(orderTableId));
     }
 
     private void validateOrderLineItems(OrderLineItems orderLineItems) {
@@ -32,15 +32,6 @@ public class OrderValidator {
 
         if (hasNotExistingMenu) {
             throw new IllegalArgumentException("주문 상품에 존재하지 않는 메뉴가 존재합니다.");
-        }
-    }
-
-    private void validateOrderTable(Long orderTableId) {
-        if (!orderTableRepository.existsById(orderTableId)) {
-            throw new NoSuchElementException("ID에 해당하는 주문 테이블을 찾을 수 없습니다.");
-        }
-        if (orderTableRepository.existsByIdAndEmptyIsTrue(orderTableId)) {
-            throw new IllegalArgumentException("주문할 수 없는 상태의 테이블이 존재합니다.");
         }
     }
 
