@@ -28,7 +28,7 @@ public class ProductService {
     public List<ProductResponse> list() {
         final List<Product> products = productRepository.findAll();
         return products.stream()
-                .map(ProductResponse::from)
+                .map(ProductResponse::of)
                 .collect(Collectors.toUnmodifiableList());
     }
 }

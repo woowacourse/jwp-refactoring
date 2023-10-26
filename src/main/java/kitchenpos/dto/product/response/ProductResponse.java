@@ -14,11 +14,19 @@ public class ProductResponse {
         this.price = price;
     }
 
-    public static ProductResponse from(final Product product) {
+    public static ProductResponse of(final Product product) {
         return new ProductResponse(
                 product.id(),
                 product.name(),
                 product.price().price()
+        );
+    }
+
+    public static ProductResponse of(final String name, final BigDecimal price) {
+        return new ProductResponse(
+                null,
+                name,
+                price
         );
     }
 

@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderedMenu;
+import kitchenpos.domain.order.OrderedMenuProduct;
 import kitchenpos.domain.order.vo.OrderStatus;
 import kitchenpos.dto.ordertable.response.OrderTableResponse;
 
@@ -35,28 +35,28 @@ public class OrderResponse {
     public static OrderResponse of(
             final Order order,
             final List<OrderLineItem> orderLineItems,
-            final List<Menu> menus,
-            final List<List<MenuProduct>> menuProducts
+            final List<OrderedMenu> orderedMenus,
+            final List<List<OrderedMenuProduct>> orderedMenuProducts
     ) {
         return new OrderResponse(
                 order.id(),
                 OrderTableResponse.from(order.orderTable()),
                 order.orderStatus(),
                 order.orderedTime(),
-                parseOrderLineItemResponses(orderLineItems, menus, menuProducts)
+                parseOrderLineItemResponses(orderLineItems, orderedMenus, orderedMenuProducts)
         );
     }
 
     private static List<OrderLineItemResponse> parseOrderLineItemResponses(
             final List<OrderLineItem> orderLineItems,
-            final List<Menu> menus,
-            final List<List<MenuProduct>> menuProducts
+            final List<OrderedMenu> orderedMenus,
+            final List<List<OrderedMenuProduct>> orderedMenuProducts
     ) {
         return IntStream.range(0, orderLineItems.size())
                 .mapToObj(index -> OrderLineItemResponse.of(
                         orderLineItems.get(index),
-                        menus.get(index),
-                        menuProducts.get(index)
+                        orderedMenus.get(index),
+                        orderedMenuProducts.get(index)
                 ))
                 .collect(Collectors.toUnmodifiableList());
     }

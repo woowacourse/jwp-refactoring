@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 public class OrderLineItem {
@@ -20,7 +21,9 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    private Long menuId;
+    @OneToOne
+    @JoinColumn(nullable = false)
+    private OrderedMenu orderedMenu;
 
     @Column(nullable = false)
     private long quantity;
@@ -28,18 +31,18 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this(null, menuId, quantity);
+    public OrderLineItem(final OrderedMenu orderedMenu, final long quantity) {
+        this(null, orderedMenu, quantity);
     }
 
-    private OrderLineItem(final Order order, final Long menuId, final long quantity) {
-        this(null, order, menuId, quantity);
+    private OrderLineItem(final Order order, final OrderedMenu orderedMenu, final long quantity) {
+        this(null, order, orderedMenu, quantity);
     }
 
-    private OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
+    private OrderLineItem(final Long seq, final Order order, final OrderedMenu orderedMenu, final long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
+        this.orderedMenu = orderedMenu;
         this.quantity = quantity;
     }
 
@@ -51,8 +54,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Long menuId() {
-        return menuId;
+    public OrderedMenu orderedMenu() {
+        return orderedMenu;
     }
 
     public long quantity() {
