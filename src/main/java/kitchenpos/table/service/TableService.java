@@ -81,7 +81,7 @@ public class TableService {
 
     private void unGroupOrderTables(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(null);
+            orderTable.ungroup();
         }
     }
 
@@ -89,17 +89,9 @@ public class TableService {
     public void groupOrderTables(Long tableGroupId, List<Long> orderTableIds) {
         List<OrderTable> orderTables = findOrderTables(orderTableIds);
         for (OrderTable orderTable : orderTables) {
-            changeOrderTableGroup(tableGroupId, orderTable);
+            orderTable.changeTableGroup(tableGroupId);
         }
         validateOrderTableCount(orderTables);
-    }
-
-    private void changeOrderTableGroup(Long tableGroupId, OrderTable orderTable) {
-        orderTable.validateIsEmpty();
-        orderTable.validateTableGroupNotExists();
-
-        orderTable.changeEmpty(false);
-        orderTable.changeTableGroup(tableGroupId);
     }
 
     private List<OrderTable> findOrderTables(List<Long> orderTableIds) {

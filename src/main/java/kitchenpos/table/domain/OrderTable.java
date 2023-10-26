@@ -38,7 +38,14 @@ public class OrderTable {
     }
 
     public void changeTableGroup(Long tableGroupId) {
+        validateIsEmpty();
+        validateTableGroupNotExists();
+        changeEmpty(false);
         this.tableGroupId = tableGroupId;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
     }
 
     public void changeEmpty(boolean empty) {
