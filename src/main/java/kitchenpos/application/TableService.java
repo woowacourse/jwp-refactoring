@@ -43,7 +43,7 @@ public class TableService {
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] OrderTable이 존재하지 않습니다. id : " + orderTableId));
 
         List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        orders.forEach(Order::validateStatus);
+        orders.forEach(Order::validateHasCookingOrMealStatus);
 
         savedOrderTable.changeEmpty(request.isEmpty());
     }
