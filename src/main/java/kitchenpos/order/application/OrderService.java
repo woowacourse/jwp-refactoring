@@ -73,7 +73,8 @@ public class OrderService {
     }
 
     private OrderLineItem generateOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
-        return new OrderLineItem(getMenuBy(orderLineItemRequest), orderLineItemRequest.getQuantity());
+        final Menu menu = getMenuBy(orderLineItemRequest);
+        return new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), orderLineItemRequest.getQuantity());
     }
 
     private Menu getMenuBy(final OrderLineItemRequest orderLineItemRequest) {

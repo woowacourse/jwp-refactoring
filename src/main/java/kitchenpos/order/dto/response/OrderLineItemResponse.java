@@ -20,7 +20,7 @@ public class OrderLineItemResponse {
         return new OrderLineItemResponse(
                 orderLineitem.getSeq(),
                 orderId,
-                orderLineitem.getMenu().getId(),
+                orderLineitem.getMenuId(),
                 orderLineitem.getQuantity()
         );
     }

@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.vo.Name;
+import kitchenpos.vo.Price;
 
 @Entity
 public class Menu {

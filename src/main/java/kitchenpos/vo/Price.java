@@ -1,30 +1,35 @@
-package kitchenpos.menu.domain;
+package kitchenpos.vo;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Name {
+public class Price {
 
-    @Column(name = "name")
-    private String value;
+    @Column(name = "price")
+    private BigDecimal value;
 
-    public Name() {
+    public Price() {
     }
 
-    public Name(final String value) {
+    public Price(final BigDecimal value) {
         validate(value);
         this.value = value;
     }
 
-    private void validate(final String value) {
-        if (value == null || value.trim().isEmpty()) {
+    private void validate(final BigDecimal value) {
+        if (value == null || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public String getValue() {
+    public int compareTo(final BigDecimal other) {
+        return value.compareTo(other);
+    }
+
+    public BigDecimal getValue() {
         return value;
     }
 
@@ -36,8 +41,8 @@ public class Name {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Name name1 = (Name) o;
-        return Objects.equals(value, name1.value);
+        final Price price = (Price) o;
+        return Objects.equals(value, price.value);
     }
 
     @Override
