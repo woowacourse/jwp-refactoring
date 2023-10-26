@@ -30,11 +30,12 @@ public class TableGroupService {
 
     @Transactional
     public CreateTableGroupResponse create(final CreateTableGroupRequest request) {
+        tableGroupValidator.validateCreate(request);
+
         final TableGroup tableGroup = tableGroupRepository.save(TableGroup.builder()
                 .createdDate(LocalDateTime.now())
                 .build());
-
-        tableGroupValidator.validateCreate(request);
+        
         publisher.publishEvent(new TableGroupCreatedEvent(tableGroup.getId(), request.getOrderTables().stream()
                 .map(CreateOrderTable::getId)
                 .collect(Collectors.toList())));
