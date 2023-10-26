@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.vo.OrderStatus;
@@ -31,22 +32,32 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse of(final Order order, final List<OrderLineItem> orderLineItems, final List<Menu> menus) {
+    public static OrderResponse of(
+            final Order order,
+            final List<OrderLineItem> orderLineItems,
+            final List<Menu> menus,
+            final List<List<MenuProduct>> menuProducts
+    ) {
         return new OrderResponse(
                 order.id(),
                 OrderTableResponse.from(order.orderTable()),
                 order.orderStatus(),
                 order.orderedTime(),
-                parseOrderLineItemResponses(orderLineItems, menus)
+                parseOrderLineItemResponses(orderLineItems, menus, menuProducts)
         );
     }
 
     private static List<OrderLineItemResponse> parseOrderLineItemResponses(
             final List<OrderLineItem> orderLineItems,
-            final List<Menu> menus
+            final List<Menu> menus,
+            final List<List<MenuProduct>> menuProducts
     ) {
         return IntStream.range(0, orderLineItems.size())
-                .mapToObj(index -> OrderLineItemResponse.of(orderLineItems.get(index), menus.get(index)))
+                .mapToObj(index -> OrderLineItemResponse.of(
+                        orderLineItems.get(index),
+                        menus.get(index),
+                        menuProducts.get(index)
+                ))
                 .collect(Collectors.toUnmodifiableList());
     }
 

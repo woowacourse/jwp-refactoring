@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.vo.MenuProducts;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menugroup.dto.response.MenuGroupResponse;
 
 public class MenuResponse {
@@ -28,15 +28,13 @@ public class MenuResponse {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuResponse from(final Menu menu) {
-        final MenuProducts menuProducts = menu.menuProducts();
+    public static MenuResponse of(final Menu menu, final List<MenuProduct> menuProducts) {
         return new MenuResponse(
                 menu.id(),
                 menu.name(),
                 menu.price().price(),
                 MenuGroupResponse.from(menu.menuGroup()),
-                menuProducts.menuProducts()
-                        .stream()
+                menuProducts.stream()
                         .map(MenuProductResponse::from)
                         .collect(Collectors.toUnmodifiableList())
         );

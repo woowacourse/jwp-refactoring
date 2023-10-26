@@ -1,5 +1,6 @@
 package kitchenpos.menu.appllication;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menugroup.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
@@ -21,15 +23,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
+            final MenuProductRepository menuProductRepository,
             final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
@@ -44,11 +49,21 @@ public class MenuService {
                 request.price(),
                 menuGroup
         );
-        menu.addMenuProducts(createMenuProducts(request.menuProducts()));
-        return menuRepository.save(menu).id();
+        final Menu savedMenu = menuRepository.save(menu);
+        final List<MenuProduct> menuProducts = createMenuProducts(request.menuProducts(), savedMenu);
+
+        final BigDecimal totalPrice = calculateTotalPrice(menuProducts);
+        if (savedMenu.price().compareTo(totalPrice) != 0) {
+            throw new IllegalArgumentException("[ERROR] 가격이 잘못되었습니다.");
+        }
+
+        return savedMenu.id();
     }
 
-    private List<MenuProduct> createMenuProducts(final List<MenuProductCreateRequest> menuProductCreateRequests) {
+    private List<MenuProduct> createMenuProducts(
+            final List<MenuProductCreateRequest> menuProductCreateRequests,
+            final Menu menu
+    ) {
         final List<Long> productIds = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::productId);
         final List<Product> products = productRepository.findAllById(productIds);
 
@@ -59,12 +74,18 @@ public class MenuService {
         final List<Long> quantities = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::quantity);
 
         return IntStream.range(0, products.size())
-                .mapToObj(index -> new MenuProduct(
-                                products.get(index),
-                                quantities.get(index)
-                        )
-                )
+                .mapToObj(index -> new MenuProduct(products.get(index), quantities.get(index)))
+                .map(menuProduct -> {
+                    menuProduct.setMenu(menu);
+                    return menuProductRepository.save(menuProduct);
+                })
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    private BigDecimal calculateTotalPrice(final List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+                .map(MenuProduct::totalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private <R, T> List<T> parseProcess(
@@ -80,7 +101,10 @@ public class MenuService {
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
         return menus.stream()
-                .map(MenuResponse::from)
+                .map(menu -> {
+                    final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.id());
+                    return MenuResponse.of(menu, menuProducts);
+                })
                 .collect(Collectors.toUnmodifiableList());
     }
 }

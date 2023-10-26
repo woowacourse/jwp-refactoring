@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menugroup.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -22,17 +24,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
+    private final MenuProductRepository menuProductRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final OrderLineItemRepository orderLineItemRepository;
 
+
     public OrderService(
             final MenuRepository menuRepository,
+            final MenuProductRepository menuProductRepository,
             final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
             final OrderLineItemRepository orderLineItemRepository
     ) {
         this.menuRepository = menuRepository;
+        this.menuProductRepository = menuProductRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderLineItemRepository = orderLineItemRepository;
@@ -109,6 +115,14 @@ public class OrderService {
                 .map(menuRepository::findById)
                 .map(menu -> menu.orElseThrow(() -> new IllegalArgumentException("[ERROR] 메뉴가 존재하지 않습니다.")))
                 .collect(Collectors.toUnmodifiableList());
-        return OrderResponse.of(order, orderLineItems, menus);
+
+        return OrderResponse.of(order, orderLineItems, menus, parseMenuProducts(menus));
+    }
+
+    private List<List<MenuProduct>> parseMenuProducts(final List<Menu> menus) {
+        return menus.stream()
+                .map(Menu::id)
+                .map(menuProductRepository::findAllByMenuId)
+                .collect(Collectors.toUnmodifiableList());
     }
 }

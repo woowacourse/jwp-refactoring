@@ -1,7 +1,6 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.menu.domain.vo.Price;
-import kitchenpos.menu.domain.vo.MenuProducts;
 import kitchenpos.menugroup.domain.MenuGroup;
 
 @Entity
@@ -31,9 +29,6 @@ public class Menu {
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
-
-    @Embedded
-    private MenuProducts menuProducts = new MenuProducts();
 
     public Menu() {
     }
@@ -66,18 +61,6 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
-        this.menuProducts.addAll(menuProducts);
-        validateMenuPrice();
-    }
-
-    public void validateMenuPrice() {
-        if (this.price.compareTo(this.menuProducts.totalPrice()) != 0) {
-            throw new IllegalArgumentException("[ERROR] 가격이 잘못되었습니다.");
-        }
-    }
-
     public Long id() {
         return id;
     }
@@ -92,9 +75,5 @@ public class Menu {
 
     public MenuGroup menuGroup() {
         return menuGroup;
-    }
-
-    public MenuProducts menuProducts() {
-        return menuProducts;
     }
 }
