@@ -2,14 +2,16 @@ package kitchenpos.domain.menu;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import kitchenpos.domain.menu.menu_product.MenuProducts;
 import kitchenpos.domain.menu_group.MenuGroup;
+import kitchenpos.support.AggregateReference;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.exception.MenuException;
 
@@ -25,37 +27,39 @@ public class Menu {
     private final Price menuPrice;
     @Embedded
     private final MenuProducts menuProducts;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private final MenuGroup menuGroup;
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "menu_group_id"))
+    private final AggregateReference<MenuGroup> menuGroupId;
 
     protected Menu() {
         this.id = null;
         this.menuName = null;
         this.menuPrice = null;
         this.menuProducts = null;
-        this.menuGroup = null;
+        this.menuGroupId = null;
     }
 
     public Menu(
             final MenuName menuName,
             final Price menuPrice,
             final MenuProducts menuProducts,
-            final MenuGroup menuGroup
+            final AggregateReference<MenuGroup> menuGroupId,
+            final MenuValidator menuValidator
     ) {
-        validateCreate(menuName, menuPrice, menuProducts, menuGroup);
-        validateMenuPrice(menuPrice, menuProducts);
         this.id = null;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
         this.menuProducts = menuProducts;
-        this.menuGroup = menuGroup;
+        this.menuGroupId= menuGroupId;
+        validateCreate(menuName, menuPrice, menuProducts, menuGroupId);
+        menuValidator.validate(this);
     }
 
     private void validateCreate(
             final MenuName menuName,
             final Price menuPrice,
             final MenuProducts menuProducts,
-            final MenuGroup menuGroup
+            final AggregateReference<MenuGroup> menuGroup
     ) {
         validateNotNull(menuName, MenuException.NoMenuNameException::new);
         validateNotNull(menuGroup, MenuException.NoMenuGroupException::new);
@@ -66,13 +70,6 @@ public class Menu {
     private <T> void validateNotNull(T obj, Supplier<MenuException> exceptionSupplier) {
         if (Objects.isNull(obj)) {
             throw exceptionSupplier.get();
-        }
-    }
-
-    private void validateMenuPrice(final Price menuPrice, final MenuProducts menuProducts) {
-        final Price totalPrice = menuProducts.getTotalPrice();
-        if (menuPrice.isMoreThan(totalPrice)) {
-            throw new MenuException.OverPriceException(totalPrice);
         }
     }
 
@@ -92,7 +89,7 @@ public class Menu {
         return menuProducts;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public AggregateReference<MenuGroup> getMenuGroup() {
+        return menuGroupId;
     }
 }

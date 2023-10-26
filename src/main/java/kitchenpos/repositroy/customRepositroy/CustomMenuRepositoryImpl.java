@@ -1,7 +1,7 @@
 package kitchenpos.repositroy.customRepositroy;
 
 import static kitchenpos.domain.menu.QMenu.menu;
-import static kitchenpos.domain.menu.QMenuProduct.menuProduct;
+import static kitchenpos.domain.menu.menu_product.QMenuProduct.menuProduct;
 import static kitchenpos.domain.menu_group.QMenuGroup.menuGroup;
 import static kitchenpos.domain.product.QProduct.product;
 
@@ -20,11 +20,7 @@ public class CustomMenuRepositoryImpl implements CustomMenuRepository {
     public List<Menu> findAllByFetch() {
         return jpaQueryFactory
                 .selectFrom(menu)
-                .distinct()
-                .join(menu.menuGroup, menuGroup)
                 .leftJoin(menu.menuProducts.menuProducts, menuProduct)
-                .fetchJoin()
-                .leftJoin(menuProduct.product, product)
                 .fetchJoin()
                 .fetch();
     }

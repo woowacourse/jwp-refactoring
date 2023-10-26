@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.menu_product.MenuProduct;
 
 public class MenuResponse {
 
@@ -75,7 +75,7 @@ public class MenuResponse {
         public static MenuProductResponse from(final MenuProduct menuProduct) {
             return new MenuProductResponse(
                     menuProduct.getSeq(),
-                    menuProduct.getProduct().getId(),
+                    menuProduct.getProductId().getId(),
                     menuProduct.getQuantity()
             );
         }
