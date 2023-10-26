@@ -3,18 +3,11 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.application.dto.OrderCreateRequest;
-import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
-import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,35 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderMapper orderMapper;
 
-    public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
-        this.menuRepository = menuRepository;
+    public OrderService(final OrderRepository orderRepository, final OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderMapper = orderMapper;
     }
 
     public OrderResponse create(final OrderCreateRequest request) {
-        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
-
-        final Order order = orderRepository.save(new Order(orderTable));
-
-        for (OrderLineRequest orderLineItem : request.getOrderLineItems()) {
-            final Menu menu = menuRepository.getById(orderLineItem.getMenuId());
-
-            orderLineItemRepository.save(new OrderLineItem(order, menu, orderLineItem.getQuantity()));
-        }
-
-        return OrderResponse.of(order);
+        return OrderResponse.of(orderMapper.toDomain(request));
     }
 
     @Transactional(readOnly = true)

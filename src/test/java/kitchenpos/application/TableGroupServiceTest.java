@@ -27,26 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableGroupServiceTest {
 
+    @Autowired
     private TableGroupService tableGroupService;
+    @Autowired
     private OrderService orderService;
     @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
     private OrderTableRepository orderTableRepository;
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
-    @Autowired
-    private MenuRepository menuRepository;
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @BeforeEach
-    void setUp() {
-        orderService = new OrderService(
-                menuRepository, orderRepository, orderLineItemRepository, orderTableRepository
-        );
-        tableGroupService = new TableGroupService(orderTableRepository, tableGroupRepository);
-    }
 
     @Test
     void 주문_테이블_리스트는_빈값일_수_없습니다() {

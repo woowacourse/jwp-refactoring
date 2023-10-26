@@ -6,7 +6,6 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import suppoert.domain.BaseEntity;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 public class OrderLineItem extends BaseEntity {
@@ -14,21 +13,19 @@ public class OrderLineItem extends BaseEntity {
     @ManyToOne(optional = false)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"))
     private Order order;
-    @ManyToOne(optional = false)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_line_item_to_menu"))
-    private Menu menu;
+    private Long menuId;
     @Column(nullable = false)
     private long quantity;
 
-    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
+    public OrderLineItem(final Order order, final Long menuId, final long quantity) {
         this.order = order;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = quantity;
         order.getOrderLineItems().add(this);
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public long getQuantity() {

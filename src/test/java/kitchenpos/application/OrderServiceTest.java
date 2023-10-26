@@ -3,44 +3,26 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.domain.OrderStatus;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@DataJpaTest
+@SpringBootTest
 class OrderServiceTest {
 
+    @Autowired
     private OrderService orderService;
     @Autowired
-    private MenuRepository menuRepository;
-    @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-    @Autowired
-    private OrderTableRepository orderTableRepository;
 
-    @BeforeEach
-    void setUp() {
-        orderService = new OrderService(
-                menuRepository,
-                orderRepository,
-                orderLineItemRepository,
-                orderTableRepository
-        );
-    }
 
     @Test
     void 주문_테이블이_존재하지_않는_경우_예외가_발생한다() {
@@ -94,7 +76,9 @@ class OrderServiceTest {
 
     @Test
     void 주문_상태를_변경할_수_있다() {
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(9L, List.of(new OrderLineRequest(1L, 1)));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                9L, List.of(new OrderLineRequest(1L, 1))
+        );
         orderService.create(orderCreateRequest);
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("COMPLETION");
         OrderResponse orderResponse = orderService.changeOrderStatus(1L, orderStatusChangeRequest);

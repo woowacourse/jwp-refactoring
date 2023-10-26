@@ -32,7 +32,7 @@ class OrderTableTest {
         Order order = new Order(orderTable);
         OrderLineItem orderLineItem = new OrderLineItem(
                 order,
-                new Menu("로제떡볶이", Price.of(10000), new MenuGroup("분식")),
+                new Menu("로제떡볶이", Price.of(10000), new MenuGroup("분식")).getId(),
                 2
         );
         order.setOrderStatus(OrderStatus.COMPLETION);
