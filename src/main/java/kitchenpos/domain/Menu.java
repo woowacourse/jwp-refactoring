@@ -22,7 +22,6 @@ public class Menu {
     private String name;
     private BigDecimal price;
 
-    //TODO: LAZY LOADING 시 ServiceTest 실패로 우선 조건 없애둠
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
