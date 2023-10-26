@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.product.domain.Price;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
