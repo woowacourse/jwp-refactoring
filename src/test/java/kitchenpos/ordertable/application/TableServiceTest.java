@@ -1,10 +1,10 @@
 package kitchenpos.ordertable.application;
 
 import kitchenpos.MockServiceTest;
-import kitchenpos.order.application.dto.CreateOrderTableDto;
-import kitchenpos.order.application.dto.OrderTableDto;
-import kitchenpos.order.application.dto.UpdateOrderTableEmptyDto;
-import kitchenpos.order.application.dto.UpdateOrderTableGuestNumberDto;
+import kitchenpos.ordertable.application.dto.CreateOrderTableDto;
+import kitchenpos.ordertable.application.dto.OrderTableDto;
+import kitchenpos.ordertable.application.dto.UpdateOrderTableEmptyDto;
+import kitchenpos.ordertable.application.dto.UpdateOrderTableGuestNumberDto;
 import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;

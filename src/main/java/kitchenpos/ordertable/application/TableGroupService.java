@@ -1,8 +1,8 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.order.application.dto.CreateOrderTableIdDto;
-import kitchenpos.order.application.dto.CreateTableGroupDto;
-import kitchenpos.order.application.dto.TableGroupDto;
+import kitchenpos.ordertable.application.dto.CreateOrderTableIdDto;
+import kitchenpos.ordertable.application.dto.CreateTableGroupDto;
+import kitchenpos.ordertable.application.dto.TableGroupDto;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.domain.OrderValidator;
