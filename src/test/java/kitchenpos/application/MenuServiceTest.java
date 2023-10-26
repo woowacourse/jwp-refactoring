@@ -29,7 +29,7 @@ class MenuServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(saved.getName()).isEqualTo(menuRequest.getName()),
                 () -> assertThat(saved.getPrice()).isEqualTo(menuRequest.getPrice()),
-                () -> assertThat(saved.getMenuGroupId()).isEqualTo(menuRequest.getMenuGroupId())
+                () -> assertThat(saved.getMenuGroup().getId()).isEqualTo(menuRequest.getMenuGroupId())
         );
     }
 

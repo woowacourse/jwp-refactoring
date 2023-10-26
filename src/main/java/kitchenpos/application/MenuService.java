@@ -41,7 +41,10 @@ public class MenuService {
         MenuProducts menuProducts = new MenuProducts(getMenuProducts(menuRequest));
         menuProductsValidator.validateMenuProductsPrice(menuRequest.getPrice(), menuProducts);
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(), menuProducts);
-        return MenuResponse.toResponse(menu);
+        return MenuResponse.toResponse(
+                menu,
+                menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                        .orElseThrow(IllegalArgumentException::new));
     }
 
     private List<MenuProduct> getMenuProducts(MenuRequest menuRequest) {
@@ -60,7 +63,10 @@ public class MenuService {
         return menuRepository
                 .findAll()
                 .stream()
-                .map(MenuResponse::toResponse)
+                .map(menu -> MenuResponse.toResponse(
+                        menu,
+                        menuGroupRepository.findById(menu.getMenuGroupId())
+                                .orElseThrow(IllegalArgumentException::new)))
                 .collect(Collectors.toList());
     }
 }
