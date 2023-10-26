@@ -86,8 +86,8 @@ class TableServiceTest {
     void change_orderTable_empty() {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
-        final Order order = new Order(savedOrderTable.getId(), new OrderLineItems(List.of()));
+        final Order order = new Order(savedOrderTable.getId());
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(order, 1L, 2));
         order.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
         final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
@@ -138,7 +138,7 @@ class TableServiceTest {
     void change_orderTable_empty_fail_with_invalid_orderStatus() {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
-        orderRepository.save(new Order(savedOrderTable.getId(), new OrderLineItems(List.of())));
+        orderRepository.save(new Order(savedOrderTable.getId()));
         final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when

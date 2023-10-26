@@ -13,7 +13,6 @@ import kitchenpos.order.application.dto.OrderRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -171,8 +170,8 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(2, false));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, false));
-        orderRepository.save(new Order(orderTable1.getId(), new OrderLineItems(List.of())));
-        orderRepository.save(new Order(orderTable2.getId(), new OrderLineItems(List.of())));
+        orderRepository.save(new Order(orderTable1.getId()));
+        orderRepository.save(new Order(orderTable2.getId()));
 
         // when
         final List<OrderResponse> result = orderService.list();
@@ -186,7 +185,7 @@ class OrderServiceTest {
     void change_order_status() {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-        final Order order = new Order(orderTable.getId(), new OrderLineItems(List.of()));
+        final Order order = new Order(orderTable.getId());
         orderRepository.save(order);
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
 
@@ -219,7 +218,7 @@ class OrderServiceTest {
     void change_order_fail_with_completion_order() {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-        final Order order = new Order(orderTable.getId(), new OrderLineItems(List.of()));
+        final Order order = new Order(orderTable.getId());
         order.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 

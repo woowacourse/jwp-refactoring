@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 
 public class OrderResponse {
 
@@ -31,9 +32,8 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse from(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-        final List<OrderLineItemResponse> orderLineItemResponses = orderLineItems.stream()
+    public static OrderResponse from(final Order order, final OrderLineItems orderLineItems) {
+        final List<OrderLineItemResponse> orderLineItemResponses = orderLineItems.getOrderLineItems().stream()
             .map(OrderLineItemResponse::from)
             .collect(Collectors.toUnmodifiableList());
 

@@ -30,24 +30,19 @@ public class Order {
     @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime = LocalDateTime.now();
 
-    @Embedded
-    private OrderLineItems orderLineItems;
-
     protected Order() {
     }
 
     public Order(final Long id,
                  final Long orderTableId,
-                 final OrderStatus orderStatus,
-                 final OrderLineItems orderLineItems) {
+                 final OrderStatus orderStatus) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems.join(this);
     }
 
-    public Order(final Long orderTableId, final OrderLineItems orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING, orderLineItems);
+    public Order(final Long orderTableId) {
+        this(null, orderTableId, OrderStatus.COOKING);
     }
 
     public void changeStatus(final String changingStatus) {
@@ -73,7 +68,4 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems.getOrderLineItems();
-    }
 }

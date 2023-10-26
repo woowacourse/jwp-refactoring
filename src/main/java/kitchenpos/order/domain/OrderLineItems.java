@@ -18,11 +18,6 @@ public class OrderLineItems {
         this.orderLineItems = orderLineItems;
     }
 
-    public OrderLineItems join(final Order order) {
-        orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(order));
-        return new OrderLineItems(orderLineItems);
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }

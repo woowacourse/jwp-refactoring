@@ -168,8 +168,8 @@ class TableGroupServiceTest {
         tableGroup.addOrderTable(orderTable1);
         tableGroup.addOrderTable(orderTable2);
 
-        final Order order1 = new Order(orderTable1.getId(), new OrderLineItems(List.of()));
-        final Order order2 = new Order(orderTable2.getId(), new OrderLineItems(List.of()));
+        final Order order1 = new Order(orderTable1.getId());
+        final Order order2 = new Order(orderTable2.getId());
         order1.changeStatus(OrderStatus.COMPLETION.name());
         order2.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order1);
@@ -200,8 +200,8 @@ class TableGroupServiceTest {
         tableGroup.addOrderTable(orderTable2);
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
-        orderRepository.save(new Order(orderTable1.getId(), new OrderLineItems(List.of())));
-        orderRepository.save(new Order(orderTable2.getId(), new OrderLineItems(List.of())));
+        orderRepository.save(new Order(orderTable1.getId()));
+        orderRepository.save(new Order(orderTable2.getId()));
 
         // when
         // then

@@ -11,9 +11,9 @@ import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
+import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,10 +42,10 @@ public class OrderService {
         validateOrderLineItem(orderRequest);
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
-        final OrderLineItems orderLineItems = getOrderLineItems(orderRequest.getOrderLineItems());
-        final Order order = new Order(orderTable.getId(), orderLineItems);
+        final Order order = new Order(orderTable.getId());
+        final OrderLineItems orderLineItems = getOrderLineItems(orderRequest.getOrderLineItems(), order);
         orderRepository.save(order);
-        return OrderResponse.from(order);
+        return OrderResponse.from(order, orderLineItems);
     }
 
     private void validateOrderLineItem(final OrderRequest orderRequest) {
@@ -59,9 +59,10 @@ public class OrderService {
         }
     }
 
-    private OrderLineItems getOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
+    private OrderLineItems getOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
+                                             final Order order) {
         final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-            .map(orderLineItemRequest -> new OrderLineItem(orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()))
+            .map(orderLineItemRequest -> new OrderLineItem(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()))
             .collect(Collectors.toUnmodifiableList());
         return new OrderLineItems(orderLineItems);
     }
@@ -70,7 +71,10 @@ public class OrderService {
         final List<Order> orders = orderRepository.findAll();
 
         return orders.stream()
-            .map(OrderResponse::from)
+            .map(order -> {
+                final List<OrderLineItem> orderLineItems = orderLineItemRepository.findByOrder(order);
+                return OrderResponse.from(order, new OrderLineItems(orderLineItems));
+            })
             .collect(Collectors.toUnmodifiableList());
     }
 
@@ -79,7 +83,7 @@ public class OrderService {
         final Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
         order.changeStatus(request.getStatus());
-
-        return OrderResponse.from(order);
+        final OrderLineItems orderLineItems = new OrderLineItems(orderLineItemRepository.findByOrder(order));
+        return OrderResponse.from(order, orderLineItems);
     }
 }
