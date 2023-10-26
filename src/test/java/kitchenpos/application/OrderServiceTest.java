@@ -53,6 +53,7 @@ class OrderServiceTest {
 
     @Test
     void 주문시_주문_항목의_메뉴는_기존_메뉴여야_한다() {
+        tableService.changeEmpty(테이블1().getId(), false);
         var item = new OrderLineItemRequest(-1L, 1);
         var order = new OrderRequest(테이블1().getId(), List.of(item));
 

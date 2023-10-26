@@ -43,13 +43,18 @@ public class OrderService {
     private List<OrderLineItem> toOrderLineItems(List<OrderLineItemRequest> orderLineItemsRequests) {
         if (Objects.nonNull(orderLineItemsRequests)) {
             return orderLineItemsRequests.stream()
-                    .map(it -> new OrderLineItem(
-                            menuRepository.findById(it.getMenuId()).orElseThrow(IllegalArgumentException::new),
-                            it.getQuantity()
-                    ))
+                    .map(this::toOrderLineItem)
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
+    }
+
+    private OrderLineItem toOrderLineItem(OrderLineItemRequest request) {
+        menuRepository.findById(request.getMenuId()).orElseThrow(IllegalArgumentException::new);
+        return new OrderLineItem(
+                request.getMenuId(),
+                request.getQuantity()
+        );
     }
 
     @Transactional(readOnly = true)
