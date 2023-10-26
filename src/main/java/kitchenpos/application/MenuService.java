@@ -36,10 +36,10 @@ public class MenuService {
     @Transactional
     public Menu create(final MenuCreateRequest request) {
         final MenuGroup menuGroup = findMenuGroupById(request.getMenuGroupId());
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+        final Menu menu = new Menu(request.getName(), new Price(request.getPrice()), menuGroup);
         final Menu savedMenu = menuRepository.save(menu);
 
-        final List<MenuProduct> menuProducts = makeMenuProducts(request, menu);
+        final List<MenuProduct> menuProducts = makeMenuProducts(request, savedMenu);
         menuProductRepository.saveAll(menuProducts);
 
         return savedMenu;
@@ -62,14 +62,14 @@ public class MenuService {
         return menuProducts;
     }
 
-    private void checkMenuProductsPrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
-        BigDecimal sum = BigDecimal.ZERO;
+    private void checkMenuProductsPrice(final List<MenuProduct> menuProducts, final Price price) {
+        Price sum = new Price(BigDecimal.ZERO);
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = menuProduct.getProduct();
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.getPrice().multiply(menuProduct.getQuantity()));
         }
 
-        if (price.compareTo(sum) > 0) {
+        if (price.isMoreThan(sum)) {
             throw new IllegalArgumentException();
         }
     }

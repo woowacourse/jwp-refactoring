@@ -2,11 +2,12 @@ package kitchenpos.integration;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductDto;
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ class MenuIntegrationTest extends IntegrationTest {
         final MenuGroup menuGroup = createMenuGroup("외식류");
 
         // 메뉴 생성 요청
-        final MenuCreateRequest menu = new MenuCreateRequest("치킨 + 피자", BigDecimal.valueOf(1000), menuGroup.getId(),
+        final MenuCreateRequest menu = new MenuCreateRequest("치킨 + 피자", BigDecimal.valueOf(900), menuGroup.getId(),
                 List.of(new MenuProductDto(chicken.getId(), 1L), new MenuProductDto(pizza.getId(), 1L)));
         final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menu);
 
@@ -47,7 +48,7 @@ class MenuIntegrationTest extends IntegrationTest {
                 () -> assertThat(response.getHeaders().get("Location"))
                         .contains("/api/menus/" + createdMenu.getId()),
                 () -> assertThat(createdMenu.getName()).isEqualTo("치킨 + 피자"),
-                () -> assertThat(createdMenu.getPrice().intValue()).isEqualTo(1000)
+                () -> assertThat(createdMenu.getPrice().getValue().intValue()).isEqualTo(900)
         );
     }
 
@@ -76,9 +77,9 @@ class MenuIntegrationTest extends IntegrationTest {
         );
     }
 
-    private Product createProduct(final String name, final int price) {
-        final Product product = new Product(name, BigDecimal.valueOf(price));
-        final HttpEntity<Product> request = new HttpEntity<>(product);
+    private Product createProduct(final String name, final int value) {
+        final ProductCreateRequest product = new ProductCreateRequest(name, BigDecimal.valueOf(value));
+        final HttpEntity<ProductCreateRequest> request = new HttpEntity<>(product);
 
         return testRestTemplate
                 .postForEntity("/api/products", request, Product.class)
@@ -86,8 +87,8 @@ class MenuIntegrationTest extends IntegrationTest {
     }
 
     private MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup(name);
-        final HttpEntity<MenuGroup> request = new HttpEntity<>(menuGroup);
+        final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest(name);
+        final HttpEntity<MenuGroupCreateRequest> request = new HttpEntity<>(menuGroup);
 
         return testRestTemplate
                 .postForEntity("/api/menu-groups", request, MenuGroup.class)

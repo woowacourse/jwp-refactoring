@@ -2,10 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductDto;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.*;
 import kitchenpos.persistence.MenuGroupRepository;
 import kitchenpos.persistence.MenuProductRepository;
 import kitchenpos.persistence.MenuRepository;
@@ -52,8 +49,8 @@ class MenuServiceTest {
         void 메뉴를_생성한다() {
             // given
             final MenuGroup savedMenuGroup = new MenuGroup(1L, "한식");
-            final Menu savedMenu = new Menu(1L, "신메뉴", BigDecimal.valueOf(1000), new MenuGroup(1L, "한식"));
-            final Product savedProduct = new Product(1L, "상품", BigDecimal.valueOf(1000));
+            final Menu savedMenu = new Menu(1L, "신메뉴", new Price(BigDecimal.valueOf(1000)), new MenuGroup(1L, "한식"));
+            final Product savedProduct = new Product(1L, "상품", new Price(BigDecimal.valueOf(1000)));
             final MenuProduct savedMenuProduct = new MenuProduct(1L, savedMenu, savedProduct, 1);
 
             when(menuGroupRepository.findById(anyLong()))
@@ -70,7 +67,7 @@ class MenuServiceTest {
                     List.of(new MenuProductDto(1L, 1L)));
 
             final Menu result = menuService.create(request);
-            final Menu expect = new Menu(1L, "신메뉴", BigDecimal.valueOf(1000), new MenuGroup(1L, "한식"));
+            final Menu expect = new Menu(1L, "신메뉴", new Price(BigDecimal.valueOf(1000)), new MenuGroup(1L, "한식"));
 
             // then
             assertThat(result)
@@ -117,9 +114,12 @@ class MenuServiceTest {
         void 메뉴를_생성할_때_존재하지_않는_상품_아이디를_전달하면_실패한다() {
             // given
             final MenuGroup savedMenuGroup = new MenuGroup(1L, "한식");
+            final Menu savedMenu = new Menu(1L, "돌솥밥", new Price(BigDecimal.valueOf(500)), savedMenuGroup);
 
             when(menuGroupRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedMenuGroup));
+            when(menuRepository.save(any(Menu.class)))
+                    .thenReturn(savedMenu);
             when(productRepository.findById(anyLong()))
                     .thenReturn(Optional.empty());
 
@@ -133,13 +133,16 @@ class MenuServiceTest {
         }
 
         @Test
-        void 메뉴를_생성할_때_전달한_가격과_메뉴_상품들의_가격의_합이_일치하지_않으면_실패한다() {
+        void 메뉴를_생성할_때_전달한_가격과보다_메뉴_상품들의_가격의_작지_않으면_실패한다() {
             // given
             final MenuGroup savedMenuGroup = new MenuGroup(1L, "한식");
-            final Product savedProduct = new Product("상품", BigDecimal.valueOf(500));
+            final Menu savedMenu = new Menu(1L, "돌솥밥", new Price(BigDecimal.valueOf(1000)), savedMenuGroup);
+            final Product savedProduct = new Product("상품", new Price(BigDecimal.valueOf(500)));
 
             when(menuGroupRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedMenuGroup));
+            when(menuRepository.save(any(Menu.class)))
+                    .thenReturn(savedMenu);
             when(productRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedProduct));
 

@@ -15,20 +15,20 @@ class MenuTest {
         final MenuGroup menuGroup = new MenuGroup();
 
         // when
-        final Menu menu = new Menu("상품", BigDecimal.valueOf(1000), menuGroup);
+        final Menu menu = new Menu("상품", new Price(BigDecimal.valueOf(1000)), menuGroup);
 
         // then
-        assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(1000));
+        assertThat(menu.getPrice().getValue()).isEqualTo(BigDecimal.valueOf(1000));
     }
 
     @Test
     void Menu_생성_시_입력된_가격이_null이면_예외가_발생한다() {
         // given
         final MenuGroup menuGroup = new MenuGroup();
-        final BigDecimal price = null;
+        final BigDecimal value = null;
 
         // when, then
-        assertThatThrownBy(() -> new Menu("상품", price, menuGroup))
+        assertThatThrownBy(() -> new Menu("상품", new Price(value), menuGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -36,10 +36,10 @@ class MenuTest {
     void Product_생성_시_입력된_가격이_0보다_작으면_예외가_발생한다() {
         // given
         final MenuGroup menuGroup = new MenuGroup();
-        final BigDecimal price = BigDecimal.valueOf(-1000);
+        final BigDecimal value = BigDecimal.valueOf(-1000);
 
         // when, then
-        assertThatThrownBy(() -> new Menu("상품", price, menuGroup))
+        assertThatThrownBy(() -> new Menu("상품", new Price(value), menuGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

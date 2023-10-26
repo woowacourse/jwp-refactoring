@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.persistence.ProductRepository;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +34,7 @@ class ProductServiceTest {
         @Test
         void 상품을_생성한다() {
             // given
-            final Product savedProduct = new Product(1L, "상품", BigDecimal.valueOf(1000));
+            final Product savedProduct = new Product(1L, "상품", new Price(BigDecimal.valueOf(1000)));
             when(productRepository.save(any(Product.class)))
                     .thenReturn(savedProduct);
 
