@@ -7,7 +7,6 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.dto.OrderLineItemResponse;
 import kitchenpos.order.dto.OrderResponse;
-import kitchenpos.table.domain.OrderTable;
 
 public class OrderMapper {
 
@@ -15,11 +14,11 @@ public class OrderMapper {
     }
 
     public static Order toOrder(
-            final OrderTable orderTable,
+            final Long orderTableId,
             final LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems) {
+            final List<OrderLineItem> orderLineItems) {
         return new Order(
-                orderTable,
+                orderTableId,
                 orderedTime,
                 orderLineItems
         );
@@ -30,7 +29,7 @@ public class OrderMapper {
 
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTableId().orElse(null),
+                order.getOrderTableId(),
                 order.getOrderStatus(),
                 order.getOrderedTime(),
                 orderLineItemResponse

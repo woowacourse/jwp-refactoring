@@ -3,7 +3,6 @@ package kitchenpos.order.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,11 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -27,9 +23,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id", nullable = false)
-    private OrderTable orderTable;
+    @Column(nullable = false)
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -47,43 +42,24 @@ public class Order {
 
     private Order(
             final Long id,
-            final OrderTable orderTable,
+            final Long orderTableId,
             final OrderStatus orderStatus,
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        validateEmptyByOrderTable(orderTable);
-        validateEmptyByOrderLineItems(orderLineItems);
-
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
     public Order(
-            final OrderTable orderTable,
+            final Long orderTableId,
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        this(null, orderTable, OrderStatus.COOKING, orderedTime, orderLineItems);
-    }
-
-    private void validateEmptyByOrderTable(
-            final OrderTable orderTable
-    ) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("order table은 비어있을 수 없습니다.");
-        }
-    }
-
-    private void validateEmptyByOrderLineItems(
-            final List<OrderLineItem> orderLineItems
-    ) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("order line item 은 1개 이상이어야 합니다.");
-        }
+        this(null, orderTableId, OrderStatus.COOKING, orderedTime, orderLineItems);
     }
 
     public void updateOrderStatus(final String orderStatus) {
@@ -100,10 +76,6 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
@@ -116,10 +88,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public Optional<Long> getOrderTableId() {
-        if (orderTable == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(orderTable.getId());
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 }

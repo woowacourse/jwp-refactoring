@@ -225,6 +225,6 @@ class TableServiceTest extends ServiceTest {
     private Order createOrder(final OrderTable orderTable) {
         final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L),
                 new OrderLineItem(menu.getId(), 1L));
-        return new Order(orderTable, LocalDateTime.now(), orderLineItems);
+        return new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems);
     }
 }

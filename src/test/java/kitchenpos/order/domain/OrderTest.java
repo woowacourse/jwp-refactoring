@@ -27,14 +27,14 @@ class OrderTest {
     void 주문_생성() {
         final OrderTable orderTable = new OrderTable(null, 10, false);
         assertDoesNotThrow(
-                () -> new Order(orderTable, LocalDateTime.now(), orderLineItems)
+                () -> new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems)
         );
     }
 
     @Test
     void 주문_상태_변경() {
         final OrderTable orderTable = new OrderTable(null, 10, false);
-        final Order order = new Order(orderTable, LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems);
 
         order.updateOrderStatus("COMPLETION");
 
@@ -44,7 +44,7 @@ class OrderTest {
     @Test
     void COMPLETION인_주문_상태_변경_예외_발생() {
         final OrderTable orderTable = new OrderTable(null, 10, false);
-        final Order order = new Order(orderTable, LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems);
         order.updateOrderStatus("COMPLETION");
 
         assertThatThrownBy(

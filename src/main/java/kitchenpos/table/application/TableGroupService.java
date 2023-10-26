@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.application.mapper.TableGroupMapper;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.SingleOrderTableCreateRequest;
 import kitchenpos.table.dto.TableGroupCreateRequest;
 import kitchenpos.table.dto.TableGroupResponse;
-import kitchenpos.table.application.mapper.TableGroupMapper;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
@@ -66,12 +66,17 @@ public class TableGroupService {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 table group 입니다."));
         validateOrderStatus(tableGroup);
+
         tableGroup.ungroup();
     }
 
     private void validateOrderStatus(final TableGroup tableGroup) {
         final List<OrderStatus> statuses = Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(tableGroup.getOrderTables(), statuses)) {
+        final List<Long> orderTableIds = tableGroup.getOrderTables().stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, statuses)) {
             throw new IllegalArgumentException("주문 상태가 MEAL, COOKING 이면 그룹을 해제할 수 없습니다.");
         }
     }

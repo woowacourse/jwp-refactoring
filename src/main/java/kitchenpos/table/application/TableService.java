@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.application.mapper.OrderTableMapper;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.OrderTableResponse;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableUpdateEmptyRequest;
 import kitchenpos.table.dto.TableUpdateNumberOfGuestsRequest;
-import kitchenpos.table.application.mapper.OrderTableMapper;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +30,7 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public OrderTableResponse create(
-            final TableCreateRequest request
-    ) {
+    public OrderTableResponse create(final TableCreateRequest request) {
         final OrderTable orderTable = OrderTableMapper.toOrderTable(request);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
@@ -57,11 +55,11 @@ public class TableService {
         return OrderTableMapper.toOrderTableResponse(orderTable);
     }
 
-    private void validateOrderStatus(
-            final OrderTable savedOrderTable
-    ) {
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(
-                savedOrderTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+    private void validateOrderStatus(final OrderTable orderTable) {
+        final List<Long> orderTableIds = List.of(orderTable.getId());
+        final List<OrderStatus> statuses = Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
+
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, statuses)) {
             throw new IllegalArgumentException("상태가 COOKING, MEAL인 주문이 존재합니다.");
         }
     }

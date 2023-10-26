@@ -188,6 +188,6 @@ class TableGroupServiceTest extends ServiceTest {
         OrderLineItem orderItem1 = new OrderLineItem(menu.getId(), 1L);
         OrderLineItem orderItem2 = new OrderLineItem(menu.getId(), 1L);
         final List<OrderLineItem> orderLineItems = List.of(orderItem1, orderItem2);
-        return new Order(orderTable, LocalDateTime.now(), orderLineItems);
+        return new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems);
     }
 }
