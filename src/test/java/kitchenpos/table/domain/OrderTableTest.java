@@ -49,10 +49,9 @@ class OrderTableTest {
     void filled_after_grouped_by_table_group() {
         // given
         final OrderTable orderTable = new OrderTable(null, 1, true);
-        final TableGroup tableGroup = new TableGroup();
 
         // when
-        orderTable.groupByTableGroup(tableGroup.getId());
+        orderTable.groupByTableGroup(1L);
 
         // then
         assertThat(orderTable.isEmpty()).isFalse();

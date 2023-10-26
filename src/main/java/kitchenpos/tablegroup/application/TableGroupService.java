@@ -1,14 +1,15 @@
-package kitchenpos.table.application;
+package kitchenpos.tablegroup.application;
 
 import java.time.LocalDateTime;
+import kitchenpos.table.application.OrderTablesMapper;
 import kitchenpos.table.application.dto.TableGroupResult;
 import kitchenpos.table.application.dto.TableGroupingRequest;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.OrderTablesGroupingValidator;
 import kitchenpos.table.domain.OrderTablesValidator;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

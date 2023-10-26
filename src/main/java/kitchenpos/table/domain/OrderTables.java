@@ -2,6 +2,7 @@ package kitchenpos.table.domain;
 
 
 import java.util.List;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.util.CollectionUtils;
 
 public class OrderTables {

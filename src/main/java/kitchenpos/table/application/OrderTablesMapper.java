@@ -7,8 +7,8 @@ import kitchenpos.table.application.dto.TableGroupingRequest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTables;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

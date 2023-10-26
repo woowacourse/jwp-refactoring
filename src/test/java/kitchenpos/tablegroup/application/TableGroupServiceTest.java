@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.tablegroup.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,7 +10,7 @@ import kitchenpos.table.application.dto.GroupOrderTableRequest;
 import kitchenpos.table.application.dto.TableGroupResult;
 import kitchenpos.table.application.dto.TableGroupingRequest;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
