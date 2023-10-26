@@ -7,14 +7,14 @@ import javax.persistence.Embeddable;
 public class MenuName {
 
     @Column(nullable = false)
-    private String value;
+    private String name;
 
     protected MenuName() {
     }
 
-    private MenuName(final String value) {
-        validate(value);
-        this.value = value;
+    private MenuName(final String name) {
+        validate(name);
+        this.name = name;
     }
 
     public static MenuName from(final String value) {
@@ -27,7 +27,7 @@ public class MenuName {
         }
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 }

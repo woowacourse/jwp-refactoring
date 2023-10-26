@@ -30,7 +30,7 @@ public class OrderedMenu {
     }
 
     public static OrderedMenu from(final Menu menu){
-        return new OrderedMenu(menu.getId(),menu.getName().getValue(),menu.getPrice().value());
+        return new OrderedMenu(menu.getId(),menu.getName().getName(),menu.getPrice().value());
     }
 
     public Long getId() {

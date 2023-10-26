@@ -28,6 +28,9 @@ create table order_line_item
     seq      bigint not null auto_increment,
     quantity bigint not null,
     menu_id  bigint not null,
+    ordered_menu_id bigint not null,
+    ordered_menu_name varchar(255) not null,
+    ordered_price decimal(19, 2) not null,
     order_id bigint not null,
     primary key (seq)
 );
