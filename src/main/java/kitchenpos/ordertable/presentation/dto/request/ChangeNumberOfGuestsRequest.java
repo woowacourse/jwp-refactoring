@@ -1,4 +1,4 @@
-package kitchenpos.table.presentation.dto.request;
+package kitchenpos.ordertable.presentation.dto.request;
 
 public class ChangeNumberOfGuestsRequest {
 

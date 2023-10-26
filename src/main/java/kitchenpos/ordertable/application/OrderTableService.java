@@ -1,12 +1,12 @@
-package kitchenpos.table.application;
+package kitchenpos.ordertable.application;
 
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableOrderStatusValidator;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.table.presentation.dto.request.ChangeEmptyRequest;
-import kitchenpos.table.presentation.dto.request.ChangeNumberOfGuestsRequest;
-import kitchenpos.table.presentation.dto.request.CreateOrderTableRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableOrderStatusValidator;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.presentation.dto.request.ChangeEmptyRequest;
+import kitchenpos.ordertable.presentation.dto.request.ChangeNumberOfGuestsRequest;
+import kitchenpos.ordertable.presentation.dto.request.CreateOrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

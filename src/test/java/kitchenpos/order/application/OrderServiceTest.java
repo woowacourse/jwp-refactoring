@@ -7,7 +7,7 @@ import java.util.List;
 import kitchenpos.common.annotation.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.order.presentation.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.order.presentation.dto.request.CreateOrderRequest;
 import kitchenpos.order.presentation.dto.request.OrderLineItemRequest;

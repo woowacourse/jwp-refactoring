@@ -5,12 +5,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.common.annotation.ServiceTest;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.presentation.dto.request.ChangeEmptyRequest;
-import kitchenpos.table.presentation.dto.request.ChangeNumberOfGuestsRequest;
-import kitchenpos.table.presentation.dto.request.CreateOrderTableRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.presentation.dto.request.ChangeEmptyRequest;
+import kitchenpos.ordertable.presentation.dto.request.ChangeNumberOfGuestsRequest;
+import kitchenpos.ordertable.presentation.dto.request.CreateOrderTableRequest;
 import kitchenpos.support.TestSupporter;
-import kitchenpos.table.application.OrderTableService;
+import kitchenpos.ordertable.application.OrderTableService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

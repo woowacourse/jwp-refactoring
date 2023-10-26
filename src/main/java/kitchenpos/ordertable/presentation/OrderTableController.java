@@ -1,13 +1,13 @@
-package kitchenpos.table.presentation;
+package kitchenpos.ordertable.presentation;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.table.application.OrderTableService;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.presentation.dto.request.ChangeEmptyRequest;
-import kitchenpos.table.presentation.dto.request.ChangeNumberOfGuestsRequest;
-import kitchenpos.table.presentation.dto.request.CreateOrderTableRequest;
-import kitchenpos.table.presentation.dto.response.OrderTableResponse;
+import kitchenpos.ordertable.application.OrderTableService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.presentation.dto.request.ChangeEmptyRequest;
+import kitchenpos.ordertable.presentation.dto.request.ChangeNumberOfGuestsRequest;
+import kitchenpos.ordertable.presentation.dto.request.CreateOrderTableRequest;
+import kitchenpos.ordertable.presentation.dto.response.OrderTableResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
