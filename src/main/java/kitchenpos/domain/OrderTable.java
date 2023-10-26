@@ -52,6 +52,10 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
+        if (tableGroupId != null) {
+            throw new IllegalArgumentException("테이블 그룹 아이디가 null이 아닙니다.");
+        }
+
         this.empty = empty;
     }
 

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
@@ -42,10 +41,6 @@ public class TableService {
     }
 
     private void validateOrderTableForChangeEmpty(final OrderTable orderTable) {
-        if (Objects.nonNull(orderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("테이블 그룹 아이디가 null이 아닙니다.");
-        }
-
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("조리중 or 식사중인 주문이 포함되어 있습니다.");
