@@ -13,13 +13,15 @@ import kitchenpos.table_group.application.validator.UngroupTableValidator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TableGroupValidator implements UngroupTableValidator {
+public class TableGroupOrderValidator implements UngroupTableValidator {
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableGroupValidator(final OrderRepository orderRepository,
-        final OrderTableRepository orderTableRepository) {
+    public TableGroupOrderValidator(
+        final OrderRepository orderRepository,
+        final OrderTableRepository orderTableRepository
+    ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
