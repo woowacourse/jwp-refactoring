@@ -13,7 +13,6 @@ import kitchenpos.menu.dao.InMemoryMenuDao;
 import kitchenpos.menu.repository.MenuDao;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.dao.InMemoryOrderDao;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderDao;
@@ -99,15 +98,14 @@ class TableServiceTest {
 
         @ParameterizedTest
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
-        void 주문_상태가_조리중_또는_식사중인_테이블은_비어있는지_여부를_수정할_수_없다(final OrderStatus orderStatus) {
+        void 주문_상태가_조리중_또는_식사중인_테이블은_비어있는지_여부를_수정할_수_없다() {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = fakeMenuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
             final var orderLineItem = new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice());
             final var table = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = fakeOrderDao.save(new Order(1L, table, orderStatus, List.of(orderLineItem), null));
-            table.addOrder(order);
+            final var order = fakeOrderDao.save(table.order(List.of(orderLineItem), null));
 
             final var tableService = new TableService(fakeOrderTableDao);
 

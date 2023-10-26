@@ -14,10 +14,10 @@ import kitchenpos.menu.MenuFactory;
 import kitchenpos.menu.dao.InMemoryMenuDao;
 import kitchenpos.menu.repository.MenuDao;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.dao.InMemoryOrderDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.dao.InMemoryOrderDao;
 import kitchenpos.order.repository.OrderDao;
 import kitchenpos.order.ui.request.OrderCreateRequest;
 import kitchenpos.order.ui.request.OrderLineItemCreateRequest;
@@ -148,7 +148,7 @@ class OrderServiceTest {
             final var orderLineItem = new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice());
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = orderDao.save(new Order(1L, table, OrderStatus.COMPLETION, List.of(orderLineItem), null));
+            final var order = orderDao.save(new Order(1L, OrderStatus.COMPLETION, List.of(orderLineItem), null, table.getId()));
             final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
             final var nextOrder = new OrderStatusChangeRequest("MEAL");
@@ -168,7 +168,7 @@ class OrderServiceTest {
             final var orderLineItem = new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice());
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = orderDao.save(new Order(1L, table, OrderStatus.MEAL, List.of(orderLineItem), null));
+            final var order = orderDao.save(new Order(1L, OrderStatus.MEAL, List.of(orderLineItem), null, table.getId()));
             final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
             final var nextOrder = new OrderStatusChangeRequest("COOKING");
@@ -189,7 +189,7 @@ class OrderServiceTest {
             final var orderLineItem = new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice());
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = orderDao.save(new Order(1L, table, previous, List.of(orderLineItem), null));
+            final var order = orderDao.save(new Order(1L, previous, List.of(orderLineItem), null, table.getId()));
             final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
             final var nextOrder = new OrderStatusChangeRequest(next.name());

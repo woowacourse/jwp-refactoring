@@ -41,7 +41,7 @@ class OrderTest {
             final var orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice()));
 
             // when
-            final ThrowingCallable action = () -> new Order(orderTable, orderLineItems, LocalDateTime.now());
+            final ThrowingCallable action = () -> orderTable.order(orderLineItems, LocalDateTime.now());
 
             // then
             assertThatThrownBy(action).isInstanceOf(InvalidOrderException.class);
@@ -54,7 +54,7 @@ class OrderTest {
             final List<OrderLineItem> orderLineItems = Collections.emptyList();
 
             // when
-            final ThrowingCallable action = () -> new Order(orderTable, orderLineItems, LocalDateTime.now());
+            final ThrowingCallable action = () -> new Order(orderLineItems, LocalDateTime.now(), orderTable.getId());
 
             // then
             assertThatThrownBy(action).isInstanceOf(InvalidOrderException.class);
@@ -70,7 +70,7 @@ class OrderTest {
             final var orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice()));
 
             // when
-            final var order = new Order(orderTable, orderLineItems, LocalDateTime.now());
+            final var order = new Order(orderLineItems, LocalDateTime.now(), orderTable.getId());
 
             // then
             assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
@@ -89,7 +89,7 @@ class OrderTest {
             final var menuGroup = new MenuGroup("메뉴 그룹");
             final var menu = new Menu("메뉴", BigDecimal.valueOf(1000), List.of(new MenuProduct(product, 1L)), menuGroup);
             final var orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice()));
-            final var order = new Order(null, orderTable, before, orderLineItems, LocalDateTime.now());
+            final var order = new Order(null, before, orderLineItems, LocalDateTime.now(), orderTable.getId());
 
             // when
             final Executable action = () -> order.changeStatusTo(after);
@@ -107,7 +107,7 @@ class OrderTest {
             final var menuGroup = new MenuGroup("메뉴 그룹");
             final var menu = new Menu("메뉴", BigDecimal.valueOf(1000), List.of(new MenuProduct(product, 1L)), menuGroup);
             final var orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice()));
-            final var order = new Order(null, orderTable, before, orderLineItems, LocalDateTime.now());
+            final var order = new Order(null, before, orderLineItems, LocalDateTime.now(), orderTable.getId());
 
             // when
             final ThrowingCallable action = () -> order.changeStatusTo(after);

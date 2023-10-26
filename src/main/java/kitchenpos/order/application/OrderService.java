@@ -45,7 +45,7 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
                                                    .orElseThrow(EntityNotFoundException::new);
 
-        final var order = new Order(orderTable, orderLineItems, LocalDateTime.now());
+        final var order = orderTable.order(orderLineItems, LocalDateTime.now());
         return OrderResponse.from(orderDao.save(order));
     }
 

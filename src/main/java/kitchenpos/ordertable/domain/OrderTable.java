@@ -1,18 +1,23 @@
 package kitchenpos.ordertable.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.common.exception.CannotChangeEmptyException;
 import kitchenpos.common.exception.InvalidGuestNumberException;
+import kitchenpos.common.exception.InvalidOrderException;
 import kitchenpos.common.exception.InvalidUnGroupException;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 
 @Entity
 public class OrderTable {
@@ -30,8 +35,9 @@ public class OrderTable {
     @Column(name = "table_group_id")
     private Long tableGroupId;
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> order;
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JoinColumn(name = "order_table_id", nullable = false, updatable = false)
+    private List<Order> orders;
 
     protected OrderTable() {
     }
@@ -46,7 +52,16 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
-        this.order = new ArrayList<>();
+        this.orders = new ArrayList<>();
+    }
+
+    public Order order(final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime) {
+        if (empty) {
+            throw new InvalidOrderException("주문 테이블이 비어있습니다.");
+        }
+        final Order order = new Order(orderLineItems, orderedTime, id);
+        this.orders.add(order);
+        return order;
     }
 
     private void validateCanBeEmpty(final Integer numberOfGuests, final Boolean empty) {
@@ -70,16 +85,12 @@ public class OrderTable {
         if (hasTableGroup()) {
             throw new CannotChangeEmptyException("그룹 지정된 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
-        if (!order.isEmpty() && order.stream()
-                                     .anyMatch(Order::isCookingOrMeal)) {
+        if (!orders.isEmpty() && orders.stream()
+                                       .anyMatch(Order::isCookingOrMeal)) {
             throw new CannotChangeEmptyException("조리 또는 식사중인 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
         validateCanBeEmpty(numberOfGuests.getValue(), empty);
         this.empty = empty;
-    }
-
-    public void addOrder(final Order order) {
-        this.order.add(order);
     }
 
     public boolean hasTableGroup() {
@@ -99,8 +110,8 @@ public class OrderTable {
         if (tableGroupId == null) {
             throw new InvalidUnGroupException("그룹 지정되지 않은 테이블은 그룹을 해제할 수 없습니다.");
         }
-        if (order.stream()
-                 .anyMatch(Order::isCookingOrMeal)) {
+        if (orders.stream()
+                  .anyMatch(Order::isCookingOrMeal)) {
             throw new InvalidUnGroupException("조리 또는 식사중인 테이블은 그룹을 해제할 수 없습니다.");
         }
     }

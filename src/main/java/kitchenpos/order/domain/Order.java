@@ -8,16 +8,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.common.exception.InvalidOrderException;
 import kitchenpos.common.exception.InvalidOrderStatusException;
-import kitchenpos.ordertable.domain.OrderTable;
 
 @Table(name = "orders")
 @Entity
@@ -27,52 +26,43 @@ public class Order {
     @Id
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id", nullable = false)
-    private OrderTable orderTable;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
-    @OneToMany(cascade = PERSIST, orphanRemoval = true)
+    @OneToMany(cascade = PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
     @Column(name = "ordered_time", nullable = false, updatable = false)
     private LocalDateTime orderedTime;
 
+    @Column(name = "order_table_id", insertable = false, updatable = false)
+    private Long orderTableId;
+
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime) {
-        this(null, orderTable, OrderStatus.COOKING, orderLineItems, orderedTime);
+    public Order(final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime, final Long orderTableId) {
+        this(null, OrderStatus.COOKING, orderLineItems, orderedTime, orderTableId);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime) {
-        validate(orderTable, orderLineItems);
+    public Order(final Long id, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime, final Long orderTableId) {
+        validate(orderLineItems);
         this.id = id;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
         this.orderedTime = orderedTime;
-        this.orderTable = orderTable;
-        orderTable.addOrder(this);
+        this.orderTableId = orderTableId;
     }
 
-    private void validate(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        validateTableNotEmpty(orderTable);
+    private void validate(final List<OrderLineItem> orderLineItems) {
         validateOrderLineItemNotEmpty(orderLineItems);
     }
 
     private void validateOrderLineItemNotEmpty(final List<OrderLineItem> orderLineItems) {
         if (orderLineItems.isEmpty()) {
             throw new InvalidOrderException("주문 상품이 비어있습니다.");
-        }
-    }
-
-    private void validateTableNotEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new InvalidOrderException("주문 테이블이 비어있습니다.");
         }
     }
 
@@ -97,10 +87,6 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
@@ -111,5 +97,9 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 }
