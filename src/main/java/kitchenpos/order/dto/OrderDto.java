@@ -8,11 +8,11 @@ import java.util.List;
 
 public class OrderDto {
 
-    private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private final Long id;
+    private final Long orderTableId;
+    private final String orderStatus;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItem> orderLineItems;
 
     public static OrderDto from(Order order) {
         return new OrderDto(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), order.getOrderLineItems());

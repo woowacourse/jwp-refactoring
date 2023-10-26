@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TableGroupDto {
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<Long> orderTableIds;
+    private final Long id;
+    private final LocalDateTime createdDate;
+    private final List<Long> orderTableIds;
 
     public static TableGroupDto from(TableGroup tableGroup) {
         return new TableGroupDto(tableGroup.getId(), tableGroup.getCreatedDate(), tableGroup.getOrderTableIds());

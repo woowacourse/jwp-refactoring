@@ -4,10 +4,10 @@ import kitchenpos.ordertable.domain.OrderTable;
 
 public class OrderTableDto {
 
-    private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
+    private final Long id;
+    private final Long tableGroupId;
+    private final int numberOfGuests;
+    private final boolean empty;
 
     public static OrderTableDto from(OrderTable orderTable) {
         return new OrderTableDto(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),

@@ -3,8 +3,8 @@ package kitchenpos.menu.dto;
 import kitchenpos.menu.domain.Menu;
 
 public class MenuCreatedEvent {
-    private Long id;
-    private Long menuGroupId;
+    private final Long id;
+    private final Long menuGroupId;
 
     public MenuCreatedEvent(Long id, Long menuGroupId) {
         this.id = id;

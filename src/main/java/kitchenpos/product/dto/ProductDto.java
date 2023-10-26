@@ -6,10 +6,9 @@ import java.math.BigDecimal;
 
 public class ProductDto {
 
-    private Long id;
-    private String name;
-
-    private BigDecimal price;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
 
     public static ProductDto from(Product product) {
         return new ProductDto(product.getId(), product.getName(), product.getPrice());

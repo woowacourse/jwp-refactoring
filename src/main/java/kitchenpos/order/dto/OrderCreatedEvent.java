@@ -3,8 +3,8 @@ package kitchenpos.order.dto;
 import kitchenpos.order.domain.Order;
 
 public class OrderCreatedEvent {
-    private Long id;
-    private Long orderTableId;
+    private final Long id;
+    private final Long orderTableId;
 
     public OrderCreatedEvent(Long id, Long orderTableId) {
         this.id = id;

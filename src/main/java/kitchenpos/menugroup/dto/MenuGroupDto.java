@@ -3,8 +3,8 @@ package kitchenpos.menugroup.dto;
 import kitchenpos.menugroup.domain.MenuGroup;
 
 public class MenuGroupDto {
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     public static MenuGroupDto from(MenuGroup menuGroup) {
         return new MenuGroupDto(menuGroup.getId(), menuGroup.getName());
