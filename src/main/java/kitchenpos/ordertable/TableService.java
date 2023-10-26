@@ -1,7 +1,5 @@
 package kitchenpos.ordertable;
 
-import kitchenpos.order.Order;
-import kitchenpos.order.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,12 +9,11 @@ import java.util.List;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final NoOngoingOrderValidator noOngoingOrderValidator;
 
-    public TableService(OrderTableRepository orderTableRepository,
-                        OrderRepository orderRepository) {
+    public TableService(OrderTableRepository orderTableRepository, NoOngoingOrderValidator noOngoingOrderValidator) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.noOngoingOrderValidator = noOngoingOrderValidator;
     }
 
     @Transactional
@@ -31,13 +28,8 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final boolean empty) {
-        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        //
-        List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        validateNoOngoing(orders);
-        //
+        OrderTable orderTable = orderTableRepository.getBy(orderTableId);
+        noOngoingOrderValidator.validate(orderTable);
 
         if (empty) {
             orderTable.empty();
@@ -48,29 +40,12 @@ public class TableService {
         return orderTable;
     }
 
-    //
-    private void validateNoOngoing(List<Order> orders) {
-        if (hasAnyOngoing(orders)) {
-            throw new IllegalArgumentException("이미 진행중인 주문이 있습니다");
-        }
-    }
-
-    private boolean hasAnyOngoing(List<Order> orders) {
-        return orders.stream()
-                .anyMatch(Order::isOngoing);
-    }
-    //
-
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        //
-        List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        validateNoOngoing(orders);
-        //
-        orderTable.fill(numberOfGuests);
+        final OrderTable orderTable = orderTableRepository.getBy(orderTableId);
+        noOngoingOrderValidator.validate(orderTable);
 
+        orderTable.fill(numberOfGuests);
         return orderTable;
     }
 }

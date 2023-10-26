@@ -62,7 +62,8 @@ class TableServiceTest {
         var unsavedTable = 테이블9();
 
         assertThatThrownBy(() -> tableService.changeEmpty(unsavedTable.getId(), false))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("그런 테이블은 없습니다");
     }
 
     @Test
@@ -124,7 +125,8 @@ class TableServiceTest {
         var unsaved = 테이블9();
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(unsaved.getId(), 1))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("그런 테이블은 없습니다");
     }
 
     @Test

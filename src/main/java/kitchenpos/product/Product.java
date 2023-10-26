@@ -46,6 +46,10 @@ public class Product {
         return name;
     }
 
+    public Price priceFor(long quantity) {
+        return price.multiply(quantity);
+    }
+
     public Price getPrice() {
         return price;
     }

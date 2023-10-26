@@ -57,7 +57,8 @@ class OrderServiceTest {
         var order = new OrderRequest(테이블1().getId(), List.of(item));
 
         assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("그런 메뉴는 없습니다");
     }
 
     @Test
@@ -68,7 +69,8 @@ class OrderServiceTest {
         var order = new OrderRequest(unsavedTable.getId(), List.of(item));
 
         assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("그런 테이블은 없습니다");
     }
 
     @Test
@@ -124,7 +126,8 @@ class OrderServiceTest {
         var notLikelyOrderId = Long.MAX_VALUE;
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(notLikelyOrderId, OrderStatus.COOKING))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("그런 주문은 없습니다");
     }
 
     @Test

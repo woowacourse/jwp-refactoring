@@ -33,7 +33,6 @@ public class Menu {
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(
             name = "menu_id",
-            foreignKey = @ForeignKey(name = "fk_menu_product_to_menu"),
             nullable = false, updatable = false
     )
     private List<MenuProduct> menuProducts = new ArrayList<>();

@@ -81,7 +81,8 @@ class MenuServiceTest {
         menu.setMenuGroupId(-1L);
 
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("그런 메뉴 그룹은 없습니다");
     }
 
     @Test

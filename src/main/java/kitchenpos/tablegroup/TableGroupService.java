@@ -1,7 +1,6 @@
 package kitchenpos.tablegroup;
 
-import kitchenpos.order.Order;
-import kitchenpos.order.OrderRepository;
+import kitchenpos.ordertable.NoOngoingOrderValidator;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.OrderTableRepository;
 import kitchenpos.ui.dto.OrderTableRequest;
@@ -19,13 +18,12 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final OrderRepository orderRepository;
+    private final NoOngoingOrderValidator noOngoingOrderValidator;
 
-    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository,
-                             OrderRepository orderRepository) {
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository, NoOngoingOrderValidator noOngoingOrderValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.orderRepository = orderRepository;
+        this.noOngoingOrderValidator = noOngoingOrderValidator;
     }
 
     @Transactional
@@ -48,30 +46,14 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new IllegalArgumentException("그런 테이블 그룹은 없습니다"));
-        //
+        tableGroupRepository.validateContains(tableGroupId);
+
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (OrderTable orderTable : orderTables) {
-            List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
-            validateNoOngoing(orders);
+            noOngoingOrderValidator.validate(orderTable);
             orderTable.ungroup();
         }
-        //
     }
-
-    //
-    private void validateNoOngoing(List<Order> orders) {
-        if (hasAnyOngoing(orders)) {
-            throw new IllegalArgumentException("이미 진행중인 주문이 있습니다");
-        }
-    }
-
-    private boolean hasAnyOngoing(List<Order> orders) {
-        return orders.stream()
-                .anyMatch(Order::isOngoing);
-    }
-    //
 
     private List<OrderTable> toOrderTables(List<OrderTableRequest> orderTableRequests) {
         final List<Long> orderTableIds = orderTableRequests.stream()

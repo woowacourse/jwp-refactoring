@@ -24,11 +24,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.COOKING;
     private LocalDateTime orderedTime = LocalDateTime.now();
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(
-            name = "order_id",
-            nullable = false, updatable = false
-    )
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
@@ -45,6 +42,10 @@ public class Order {
         if (orderLineItems.isEmpty()) {
             throw new IllegalArgumentException("주문 항목이 없습니다");
         }
+    }
+
+    public boolean isOngoing() {
+        return orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL;
     }
 
     public void cook() {
@@ -66,10 +67,6 @@ public class Order {
         if (orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException("이미 완료된 주문입니다");
         }
-    }
-
-    public boolean isOngoing() {
-        return orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL;
     }
 
     public Long getId() {

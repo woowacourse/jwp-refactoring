@@ -1,7 +1,6 @@
 package kitchenpos.menu;
 
 import kitchenpos.common.Price;
-import kitchenpos.menugroup.MenuGroup;
 import kitchenpos.menugroup.MenuGroupRepository;
 import kitchenpos.product.Product;
 import kitchenpos.product.ProductRepository;
@@ -29,17 +28,18 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest menu) {
-        MenuGroup menuGroup = menuGroupRepository.findById(menu.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+    public Menu create(final MenuRequest menuProductRequests) {
+        menuGroupRepository.validateContains(menuProductRequests.getMenuGroupId());
 
-        Price menuPrice = new Price(menu.getPrice());
-        List<MenuProduct> menuProducts = toMenuProducts(menu.getMenuProducts());
+        List<MenuProduct> menuProducts = toMenuProducts(menuProductRequests.getMenuProducts());
+        Price menuPrice = new Price(menuProductRequests.getPrice());
+
         validateNotExceeded(menuPrice, menuProducts);
+
         return menuRepository.save(new Menu(
-                menu.getName(),
+                menuProductRequests.getName(),
                 menuPrice,
-                menu.getMenuGroupId(),
+                menuProductRequests.getMenuGroupId(),
                 menuProducts
         ));
     }
@@ -47,8 +47,8 @@ public class MenuService {
     private void validateNotExceeded(Price menuPrice, List<MenuProduct> menuProducts) {
         Price menuProductsTotal = menuProducts.stream()
                 .map(menuProduct -> {
-                    Product product = productRepository.findById(menuProduct.getProductId()).orElseThrow(IllegalArgumentException::new);
-                    return product.getPrice().multiply(menuProduct.getQuantity());
+                    Product product = productRepository.getBy(menuProduct.getProductId());
+                    return product.priceFor(menuProduct.getQuantity());
                 })
                 .reduce(Price.ZERO, Price::add);
 
@@ -62,18 +62,17 @@ public class MenuService {
         return menuRepository.findAll();
     }
 
-    private List<MenuProduct> toMenuProducts(List<MenuProductRequest> menuProducts) {
-        return menuProducts.stream()
+    private List<MenuProduct> toMenuProducts(List<MenuProductRequest> menuProductRequests) {
+        return menuProductRequests.stream()
                 .map(this::toMenuProduct)
                 .collect(Collectors.toList());
     }
 
-    private MenuProduct toMenuProduct(MenuProductRequest menuProduct) {
-        productRepository.findById(menuProduct.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
+    private MenuProduct toMenuProduct(MenuProductRequest menuProductRequest) {
+        productRepository.validateContains(menuProductRequest.getProductId());
         return new MenuProduct(
-                menuProduct.getProductId(),
-                menuProduct.getQuantity()
+                menuProductRequest.getProductId(),
+                menuProductRequest.getQuantity()
         );
     }
 }
