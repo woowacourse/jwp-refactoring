@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
@@ -23,7 +24,6 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
         List<OrderTable> orderTables = findOrderTables(request.getOrderTables());
@@ -50,7 +50,6 @@ public class TableGroupService {
         }
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findByIdOrThrow(tableGroupId);
         tableGroup.ungroup();

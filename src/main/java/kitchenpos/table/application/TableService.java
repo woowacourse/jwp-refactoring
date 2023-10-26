@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
@@ -20,7 +21,6 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderTableResponse create(OrderTableCreateRequest request) {
         OrderTable orderTable = orderTableRepository.save(
             new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
@@ -34,14 +34,12 @@ public class TableService {
             .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableChangeEmptyRequest request) {
         OrderTable orderTable = orderTableRepository.findByIdOrThrow(orderTableId);
         orderTable.changeEmpty();
         return OrderTableResponse.from(orderTable);
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableChangeGuestRequest request) {
         OrderTable orderTable = orderTableRepository.findByIdOrThrow(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
