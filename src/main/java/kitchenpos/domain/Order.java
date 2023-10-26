@@ -4,7 +4,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +26,7 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
