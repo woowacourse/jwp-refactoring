@@ -24,7 +24,7 @@ public class OrderResponse {
 
     public static OrderResponse toResponse(final Order order) {
         final var orderLineItemResponses = order.getOrderLineItems().stream()
-                .map(OrderLineItemResponse::toResponse)
+                .map(it -> OrderLineItemResponse.toResponse(it, order.getId()))
                 .collect(Collectors.toList());
         return new OrderResponse(
                 order.getId(),

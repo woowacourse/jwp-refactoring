@@ -34,7 +34,8 @@ public class Order {
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = PERSIST)
+    @OneToMany(cascade = PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
@@ -74,9 +75,6 @@ public class Order {
 
     private void addOrderLineItems(final OrderLineItem orderLineItem) {
         this.orderLineItems.add(orderLineItem);
-        if (orderLineItem.getOrder() != this) {
-            orderLineItem.setOrder(this);
-        }
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

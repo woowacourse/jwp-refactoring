@@ -129,7 +129,7 @@
   graph LR
     OrderLineItem -.-> Menu
   ```
-- [ ] Order <-> OrderLineItem
+- [X] Order <-> OrderLineItem
   - AS-IS : 양방향 직접 참조
   ```mermaid
   graph LR
