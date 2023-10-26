@@ -1,16 +1,15 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.OrderTableRepository;
-import kitchenpos.order.dto.OrderTableCreateRequest;
-import kitchenpos.order.dto.OrderTableIsEmptyUpdateRequest;
-import kitchenpos.order.dto.OrderTableNumberOfGuestsUpdateRequest;
-import kitchenpos.order.dto.OrderTableResponse;
-import kitchenpos.order.vo.TableOrders;
+import kitchenpos.table.domain.OrderStatusValidateEvent;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.dto.OrderTableCreateRequest;
+import kitchenpos.table.dto.OrderTableIsEmptyUpdateRequest;
+import kitchenpos.table.dto.OrderTableNumberOfGuestsUpdateRequest;
+import kitchenpos.table.dto.OrderTableResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public TableService(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
+    public TableService(
+            final OrderTableRepository orderTableRepository,
+            final ApplicationEventPublisher publisher
+    ) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.publisher = publisher;
     }
 
     public OrderTableResponse create(final OrderTableCreateRequest request) {
@@ -43,9 +45,9 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
+        publisher.publishEvent(new OrderStatusValidateEvent(orderTable.getId()));
 
-        orderTable.changeIsEmpty(request.isEmpty(), new TableOrders(orders));
+        orderTable.changeIsEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTable);
     }
 

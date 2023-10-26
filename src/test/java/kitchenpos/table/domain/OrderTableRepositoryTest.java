@@ -1,7 +1,7 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_빈_주문_테이블;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_빈_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
 import static kitchenpos.tablegroup.domain.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;

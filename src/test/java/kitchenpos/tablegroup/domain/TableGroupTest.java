@@ -2,15 +2,15 @@ package kitchenpos.tablegroup.domain;
 
 import static kitchenpos.order.domain.OrderFixture.계산_완료_상태_주문;
 import static kitchenpos.order.domain.OrderFixture.조리_상태_주문;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_채워진_주문_테이블;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_없는_채워진_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_주문_테이블;
 import static kitchenpos.tablegroup.domain.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.tablegroup.vo.GroupTableIds;
 import kitchenpos.tablegroup.vo.GroupTables;
 import kitchenpos.tablegroup.vo.TableOrders;

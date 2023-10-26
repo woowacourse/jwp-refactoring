@@ -1,14 +1,14 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
-import static kitchenpos.order.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_빈_상태로_변경_요청;
-import static kitchenpos.order.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_생성_요청;
-import static kitchenpos.order.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_손님_수_변경_요청;
-import static kitchenpos.order.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_채워진_상태로_변경_요청;
 import static kitchenpos.order.domain.OrderFixture.주문;
 import static kitchenpos.order.domain.OrderLineItemFixture.주문_항목;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_빈_주문_테이블;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_주문_테이블;
+import static kitchenpos.table.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_빈_상태로_변경_요청;
+import static kitchenpos.table.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_생성_요청;
+import static kitchenpos.table.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_손님_수_변경_요청;
+import static kitchenpos.table.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_채워진_상태로_변경_요청;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_빈_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_주문_테이블;
 import static kitchenpos.tablegroup.domain.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,17 +16,19 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.OrderTableFixture;
-import kitchenpos.order.domain.OrderTableRepository;
-import kitchenpos.order.dto.OrderTableCreateRequest;
-import kitchenpos.order.dto.OrderTableIsEmptyUpdateRequest;
-import kitchenpos.order.dto.OrderTableNumberOfGuestsUpdateRequest;
-import kitchenpos.order.dto.OrderTableResponse;
 import kitchenpos.order.vo.MenuSpecification;
+import kitchenpos.table.domain.OrderStatusValidateEvent;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableFixture;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.dto.OrderTableCreateRequest;
+import kitchenpos.table.dto.OrderTableIsEmptyUpdateRequest;
+import kitchenpos.table.dto.OrderTableNumberOfGuestsUpdateRequest;
+import kitchenpos.table.dto.OrderTableResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
@@ -35,9 +37,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.context.jdbc.Sql;
 
 @SuppressWarnings("NonAsciiCharacters")
+@RecordApplicationEvents
 @ServiceTest
 class TableServiceTest {
 
@@ -52,6 +57,9 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ApplicationEvents applicationEvents;
 
     @Test
     void 주문_테이블을_생성한다() {
@@ -108,6 +116,23 @@ class TableServiceTest {
 
             // then
             assertThat(orderTable.isEmpty()).isTrue();
+        }
+
+        @Test
+        void 이벤트가_하나_발행된다() {
+            // given
+            Long filledOrderTableId = tableService.create(주문_테이블_생성_요청()).getId();
+
+            // when
+            tableService.changeIsEmpty(filledOrderTableId, 주문_테이블_빈_상태로_변경_요청());
+
+            // then
+            long publishedEventCounts = applicationEvents.stream(OrderStatusValidateEvent.class)
+                    .filter(event -> Objects.equals(event.getOrderTableId(), filledOrderTableId))
+                    .count();
+
+            assertThat(publishedEventCounts).isOne();
+            applicationEvents.clear();
         }
 
         @Test

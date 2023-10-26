@@ -1,11 +1,11 @@
 package kitchenpos.tablegroup.vo;
 
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_주문_테이블;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_없는_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class GroupTablesTest {
 
         // when
         groupTables.ungroup();
-        
+
         // then
         assertThat(orderTable.isGrouped()).isFalse();
     }

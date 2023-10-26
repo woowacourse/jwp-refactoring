@@ -56,6 +56,10 @@ public class OrderLineItem {
         return quantity;
     }
 
+    public MenuSpecification getMenuSpecification() {
+        return menuSpecification;
+    }
+
     public long getQuantityValue() {
         return quantity.getValue();
     }

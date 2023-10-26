@@ -1,10 +1,11 @@
 package kitchenpos.order.domain;
 
 import static kitchenpos.order.domain.OrderFixture.조리_상태_주문;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

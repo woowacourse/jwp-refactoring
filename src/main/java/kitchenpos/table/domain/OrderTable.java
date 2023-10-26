@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.order.vo.TableOrders;
 
 @Entity
 public class OrderTable {
@@ -44,21 +43,14 @@ public class OrderTable {
         return new OrderTable(null, numberOfGuests, isEmpty);
     }
 
-    public void changeIsEmpty(boolean isEmpty, TableOrders tableOrders) {
+    public void changeIsEmpty(boolean isEmpty) {
         validateOrderTableIsGrouped();
-        validateOrderTableHasCookingOrMealOrder(tableOrders);
         this.isEmpty = isEmpty;
     }
 
     private void validateOrderTableIsGrouped() {
         if (isGrouped()) {
             throw new IllegalArgumentException("단체 지정된 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
-        }
-    }
-
-    private void validateOrderTableHasCookingOrMealOrder(TableOrders tableOrders) {
-        if (tableOrders.hasCookingOrMealOrder()) {
-            throw new IllegalArgumentException("조리 혹은 식사 중인 주문이 존재하는 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
     }
 

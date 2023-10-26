@@ -1,7 +1,7 @@
 package kitchenpos.tablegroup.vo;
 
 import java.util.List;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public class GroupTableIds {
 

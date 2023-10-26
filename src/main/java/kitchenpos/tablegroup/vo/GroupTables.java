@@ -2,7 +2,7 @@ package kitchenpos.tablegroup.vo;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public class GroupTables {
 

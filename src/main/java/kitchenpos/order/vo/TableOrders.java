@@ -15,7 +15,13 @@ public class TableOrders {
         return orders;
     }
 
-    public boolean hasCookingOrMealOrder() {
+    public void validateHasCookingOrMealOrder() {
+        if (hasCookingOrMealOrder()) {
+            throw new IllegalArgumentException("조리 혹은 식사 중인 주문이 존재하는 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
+        }
+    }
+
+    private boolean hasCookingOrMealOrder() {
         return orders.stream().anyMatch(Order::isCookingOrMealStatus);
     }
 }

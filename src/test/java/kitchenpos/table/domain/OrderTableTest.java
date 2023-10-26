@@ -1,16 +1,11 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
-import static kitchenpos.order.domain.OrderFixture.계산_완료_상태_주문;
-import static kitchenpos.order.domain.OrderFixture.조리_상태_주문;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_빈_주문_테이블;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
-import static kitchenpos.order.domain.OrderTableFixture.단체_지정_없는_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_빈_주문_테이블;
+import static kitchenpos.table.domain.OrderTableFixture.단체_지정_없는_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
-import kitchenpos.order.vo.TableOrders;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -32,26 +27,11 @@ class OrderTableTest {
             OrderTable groupedOrderTable = 단체_지정_빈_주문_테이블(tableGroupId);
 
             boolean isEmpty = true;
-            TableOrders tableOrders = new TableOrders(List.of(계산_완료_상태_주문()));
 
             // expect
-            assertThatThrownBy(() -> groupedOrderTable.changeIsEmpty(isEmpty, tableOrders))
+            assertThatThrownBy(() -> groupedOrderTable.changeIsEmpty(isEmpty))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정된 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
-        }
-
-        @Test
-        void 조리_혹은_식사_중인_주문이_존재하는_주문_테이블이라면_예외를_던진다() {
-            // given
-            OrderTable orderTable = 단체_지정_없는_빈_주문_테이블();
-
-            boolean isEmpty = true;
-            TableOrders tableOrders = new TableOrders(List.of(조리_상태_주문()));
-
-            // expect
-            assertThatThrownBy(() -> orderTable.changeIsEmpty(isEmpty, tableOrders))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("조리 혹은 식사 중인 주문이 존재하는 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
 
         @ParameterizedTest
@@ -60,10 +40,8 @@ class OrderTableTest {
             // given
             OrderTable orderTable = 단체_지정_없는_주문_테이블(originalIsEmpty);
 
-            TableOrders tableOrders = new TableOrders(List.of(계산_완료_상태_주문()));
-
             // when
-            orderTable.changeIsEmpty(isEmpty, tableOrders);
+            orderTable.changeIsEmpty(isEmpty);
 
             // then
             assertThat(orderTable.isEmpty()).isEqualTo(expected);

@@ -1,7 +1,7 @@
-package kitchenpos.order.dto;
+package kitchenpos.table.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public class OrderTableCreateRequest {
 
