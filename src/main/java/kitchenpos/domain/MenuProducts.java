@@ -20,6 +20,7 @@ public class MenuProducts {
     }
 
     public void validateTotalPrice(final BigDecimal price) {
+        System.out.println(calculatedTotalPrice());
         if (!Objects.equals(calculatedTotalPrice(), price)) {
             throw new IllegalArgumentException();
         }

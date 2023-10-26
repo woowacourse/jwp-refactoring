@@ -18,7 +18,7 @@ class MenuTest {
     void createMenu() {
         //given
         final String menuName = "Sample Menu";
-        final BigDecimal menuPrice = BigDecimal.valueOf(15000);
+        final BigDecimal menuPrice = BigDecimal.valueOf(17000);
         final MenuGroup menuGroup = MenuGroup.from("Sample Menu Group");
         final Product product1 = Product.of("Product 1", BigDecimal.valueOf(5000));
         final Product product2 = Product.of("Product 2", BigDecimal.valueOf(7000));
