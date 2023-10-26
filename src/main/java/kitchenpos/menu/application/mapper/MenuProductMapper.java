@@ -13,7 +13,7 @@ public class MenuProductMapper {
     public static MenuProductResponse toMenuProductResponse(final MenuProduct menuProduct) {
         return new MenuProductResponse(
                 menuProduct.getSeq(),
-                menuProduct.getProductId().orElse(null),
+                menuProduct.getProductId(),
                 menuProduct.getQuantity().getValue()
         );
     }

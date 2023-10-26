@@ -8,12 +8,9 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuCreateRequest;
-import kitchenpos.menu.dto.MenuProductCreateRequest;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +20,15 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
+    private final MenuValidator menuValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
-    ) {
+            MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
     }
 
     public MenuResponse create(final MenuCreateRequest request) {
@@ -45,21 +41,15 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu group 입니다."));
         final Menu menu = MenuMapper.toMenu(request, menuGroup, convertToMenuProducts(request));
+        menuValidator.validate(menu);
 
         return menuRepository.save(menu);
     }
 
     private List<MenuProduct> convertToMenuProducts(final MenuCreateRequest menuRequest) {
         return menuRequest.getMenuProducts().stream()
-                .map(this::convertToMenuProduct)
+                .map(request -> new MenuProduct(request.getProductId(), request.getQuantity()))
                 .collect(Collectors.toList());
-    }
-
-    private MenuProduct convertToMenuProduct(final MenuProductCreateRequest request) {
-        final Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 product 입니다."));
-
-        return new MenuProduct(product, request.getQuantity());
     }
 
     @Transactional(readOnly = true)

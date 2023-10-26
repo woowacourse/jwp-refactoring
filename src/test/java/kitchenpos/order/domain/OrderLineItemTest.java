@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ class OrderLineItemTest {
 
     @Test
     void 주문_상품_생성() {
-        final MenuProduct menuProduct = new MenuProduct(Product.of("치킨", BigDecimal.valueOf(10_000L)), 1L);
+        final MenuProduct menuProduct = new MenuProduct(null, 1L);
         final Menu menu = Menu.of("치킨", BigDecimal.valueOf(10_000L), null, List.of(menuProduct));
 
         assertDoesNotThrow(

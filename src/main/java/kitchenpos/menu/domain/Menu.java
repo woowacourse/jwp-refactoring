@@ -1,9 +1,6 @@
 package kitchenpos.menu.domain;
 
-import static kitchenpos.vo.Price.ZERO_PRICE;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,8 +41,6 @@ public class Menu {
                  final Price price,
                  final Long menuGroupId,
                  final List<MenuProduct> menuProducts) {
-        validateMenuPrice(price, calculateSumByMenuProducts(menuProducts));
-
         this.id = id;
         this.name = name;
         this.price = price;
@@ -58,29 +53,6 @@ public class Menu {
                           final Long menuGroupId,
                           final List<MenuProduct> menuProducts) {
         return new Menu(null, name, new Price(price), menuGroupId, menuProducts);
-    }
-
-    public static Menu of(final String name,
-                          final BigDecimal price,
-                          final Long menuGroupId) {
-        return new Menu(null, name, new Price(price), menuGroupId, new ArrayList<>());
-    }
-
-    private Price calculateSumByMenuProducts(
-            final List<MenuProduct> menuProducts
-    ) {
-        return menuProducts.stream()
-                .map(MenuProduct::caculateTotalPrice)
-                .reduce(ZERO_PRICE, Price::add);
-    }
-
-    private void validateMenuPrice(
-            final Price price,
-            final Price calculatedPrice
-    ) {
-        if (price.isGreaterThan(calculatedPrice)) {
-            throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다.");
-        }
     }
 
     public Long getId() {
