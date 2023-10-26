@@ -1,7 +1,6 @@
 package kitchenpos.menu;
 
 import kitchenpos.menugroup.MenuGroupRepository;
-import kitchenpos.product.Price;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,9 +20,5 @@ public class MenuCreateValidator {
         }
 
         menu.validateMenuProductsPrice(menuProductPriceMultiplier);
-
-        menu.getMenuProducts().stream()
-                .map(menuProductPriceMultiplier::multiply)
-                .reduce(Price.zero(), Price::add);
     }
 }
