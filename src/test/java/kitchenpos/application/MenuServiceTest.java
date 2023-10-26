@@ -3,12 +3,14 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.ui.dto.menu.CreateMenuRequest;
+import kitchenpos.ui.dto.menu.MenuProductDto;
+import kitchenpos.domain.vo.Money;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -17,10 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static kitchenpos.fixture.FixtureFactory.메뉴_그룹_생성;
-import static kitchenpos.fixture.FixtureFactory.메뉴_상품_생성;
-import static kitchenpos.fixture.FixtureFactory.메뉴_생성;
-import static kitchenpos.fixture.FixtureFactory.상품_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -32,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class MenuServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuService menuService;
@@ -43,22 +41,20 @@ class MenuServiceTest {
     @Test
     void 메뉴를_저장할_수_있다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("피자"));
-        final Product product = productDao.save(상품_생성("치즈피자", new BigDecimal(3_000)));
-        final MenuProduct menuProduct = 메뉴_상품_생성(menuGroup.getId(), product.getId(), 3);
-
-        final Menu expected = 메뉴_생성("치즈피자", new BigDecimal(5_000), menuGroup.getId(), List.of(menuProduct));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
+        final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
+        final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
+        final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 5_000, menuGroup.getId(), List.of(menuProductDto));
 
         // when
-        final Menu actual = menuService.create(expected);
+        final Menu actual = menuService.create(createMenuRequest);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getName()).isEqualTo("치즈피자"),
-                () -> assertThat(actual.getPrice()).isEqualByComparingTo(new BigDecimal(5_000)),
-                () -> assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId()),
-                () -> assertThat(actual.getMenuProducts()).hasSize(1)
+                () -> assertThat(actual.getPrice()).isEqualTo(Money.valueOf(5_000)),
+                () -> assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId())
         );
     }
 
@@ -66,71 +62,53 @@ class MenuServiceTest {
     class 메뉴_생성_실패 {
 
         @Test
-        void 금액이_지정되지_않았다면_예외가_발생한다() {
-            // given
-            final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("피자"));
-            final Product product = productDao.save(상품_생성("치즈피자", new BigDecimal(3_000)));
-            final MenuProduct menuProduct = 메뉴_상품_생성(menuGroup.getId(), product.getId(), 3);
-
-            final Menu expected = 메뉴_생성("치즈피자", null, menuGroup.getId(), List.of(menuProduct));
-
-            // expected
-            assertThatThrownBy(() -> menuService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 금액이_0보다_작다면_예외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("피자"));
-            final Product product = productDao.save(상품_생성("치즈피자", new BigDecimal(3_000)));
-            final MenuProduct menuProduct = 메뉴_상품_생성(menuGroup.getId(), product.getId(), 3);
-
-            final Menu expected = 메뉴_생성("치즈피자", new BigDecimal(-1), menuGroup.getId(), List.of(menuProduct));
+            final Integer price = -999999;
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
+            final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
+            final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
+            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", price, menuGroup.getId(), List.of(menuProductDto));
 
             // expected
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(createMenuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        void 메뉴_그룹이_지정되지_않았다면_예외가_발생한다() {
+        void 메뉴_그룹이_존재하지_않는다면_예외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("피자"));
-            final Product product = productDao.save(상품_생성("치즈피자", new BigDecimal(3_000)));
-            final MenuProduct menuProduct = 메뉴_상품_생성(menuGroup.getId(), product.getId(), 3);
-
-            final Menu expected = 메뉴_생성("치즈피자", new BigDecimal(-1), null, List.of(menuProduct));
+            final Long menuGroupId = 999999L;
+            final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
+            final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
+            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 5_000, menuGroupId, List.of(menuProductDto));
 
             // expect
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(createMenuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        void 메뉴_상품에_상품이_지정되지_않았다면_예외가_발생한다() {
+        void 메뉴에_상품이_지정되지_않았다면_예외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("피자"));
-            final MenuProduct menuProduct = 메뉴_상품_생성(menuGroup.getId(), null, 3);
-
-            final Menu expected = 메뉴_생성("치즈피자", new BigDecimal(-1), null, List.of(menuProduct));
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
+            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("피자", 5_000, menuGroup.getId(), List.of());
 
             // expect
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(createMenuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        void 메뉴_가격의_종합이_상품_가격보다_크다면_예외가_발생한다() {
+        void 메뉴_가격의_총합이_상품_가격보다_크다면_예외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("피자"));
-            final Product product = productDao.save(상품_생성("치즈피자", new BigDecimal(3_000)));
-            final MenuProduct menuProduct = 메뉴_상품_생성(menuGroup.getId(), product.getId(), 1);
-
-            final Menu expected = 메뉴_생성("치즈피자", new BigDecimal(5_000), menuGroup.getId(), List.of(menuProduct));
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
+            final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
+            final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
+            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 500_000, menuGroup.getId(), List.of(menuProductDto));
 
             // expect
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(createMenuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

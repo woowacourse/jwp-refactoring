@@ -3,13 +3,14 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ui.dto.tablegroup.OrderTableIdRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -18,9 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static kitchenpos.fixture.FixtureFactory.단체_지정_생성;
-import static kitchenpos.fixture.FixtureFactory.주문_생성;
-import static kitchenpos.fixture.FixtureFactory.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -33,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class TableGroupServiceTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -50,93 +48,63 @@ class TableGroupServiceTest {
         @Test
         void 단쳬_지정을_저장할_수_있다() {
             // given
-            final OrderTable firstOrderTable = 주문_테이블_생성(null, 0, true);
-            final OrderTable secondOrderTable = 주문_테이블_생성(null, 0, true);
+            final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 0, true));
+            final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 0, true));
 
-            final OrderTable firstSavedOrderTable = orderTableDao.save(firstOrderTable);
-            final OrderTable secondSavedOrderTable = orderTableDao.save(secondOrderTable);
-
-            final TableGroup expected = 단체_지정_생성(null, List.of(
-                    firstSavedOrderTable, secondSavedOrderTable
-            ));
+            final List<OrderTableIdRequest> orderTableIdRequests = List.of(
+                    new OrderTableIdRequest(firstOrderTable.getId()),
+                    new OrderTableIdRequest(secondOrderTable.getId())
+            );
 
             // when
-            final TableGroup actual = tableGroupService.create(expected);
+            final TableGroup actual = tableGroupService.create(orderTableIdRequests);
 
             // then
             assertAll(
-                    () -> assertThat(actual.getOrderTables()).hasSize(2),
-                    () -> assertThat(actual.getId()).isNotNull()
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getOrderTables()).hasSize(2)
             );
         }
 
         @Test
         void 주문_테이블이_없다면_예외가_발생한다() {
             // given
-            final TableGroup expected = new TableGroup();
+            final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(null), new OrderTableIdRequest(null));
 
             // expect
-            assertThatThrownBy(() -> tableGroupService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("단체 지정시 주문 테이블은 둘 이상이여야 합니다");
         }
 
         @Test
         void 주문_테이블이_2개_미만이면_예외가_발생한다() {
             // given
-            final TableGroup expected = 단체_지정_생성(null, List.of(
-                    주문_테이블_생성(null, 1, true)
-            ));
+            final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, true));
+            final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(orderTable.getId()));
 
             // expect
-            assertThatThrownBy(() -> tableGroupService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("단체 지정시 주문 테이블은 둘 이상이여야 합니다");
         }
 
-        @Test
-        void 주문_테이블이_저장되지_않은_경우_예외가_발생한다() {
-            // given
-            final OrderTable firstOrderTable = 주문_테이블_생성(null, 3, true);
-            final OrderTable secondOrderTable = 주문_테이블_생성(null, 3, true);
-
-            final TableGroup expected = 단체_지정_생성(LocalDateTime.now(), List.of(
-                    firstOrderTable, secondOrderTable
-            ));
-
-            // expect
-            assertThatThrownBy(() -> tableGroupService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 저장된_단체_지정_크기가_실제_사이즈와_다르면_예외가_발생한다() {
-            // given
-            final OrderTable firstOrderTable = 주문_테이블_생성(null, 3, true);
-            final OrderTable secondOrderTable = 주문_테이블_생성(null, 3, true);
-
-            orderTableDao.save(firstOrderTable);
-
-            final TableGroup expected = 단체_지정_생성(LocalDateTime.now(), List.of(
-                    firstOrderTable, secondOrderTable
-            ));
-
-            // expect
-            assertThatThrownBy(() -> tableGroupService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
 
         @Test
         void 주문_테이블이_빈_상태가_아니라면_예외가_발생한다() {
             // given
-            final OrderTable firstOrderTable = orderTableDao.save(주문_테이블_생성(null, 3, false));
-            final OrderTable secondOrderTable = orderTableDao.save(주문_테이블_생성(null, 3, false));
+            final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+            final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
 
-            final TableGroup expected = 단체_지정_생성(LocalDateTime.now(), List.of(
-                    firstOrderTable, secondOrderTable
-            ));
+            final List<OrderTableIdRequest> orderTableIdRequests = List.of(
+                    new OrderTableIdRequest(firstOrderTable.getId()),
+                    new OrderTableIdRequest(secondOrderTable.getId())
+            );
 
             // expect
-            assertThatThrownBy(() -> tableGroupService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("단체 지정시 주문 테이블은 비어있을 수 없습니다.");
         }
 
     }
@@ -144,13 +112,11 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_해제할_수_있다() {
         // given
-        final OrderTable firstOrderTable = orderTableDao.save(주문_테이블_생성(null, 3, false));
-        final OrderTable secondOrderTable = orderTableDao.save(주문_테이블_생성(null, 3, false));
+        final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+        final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
 
-        final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), List.of(
-                firstOrderTable, secondOrderTable
-        ));
-        final TableGroup expected = tableGroupDao.save(tableGroup);
+        final TableGroup tableGroup = new TableGroup(List.of(firstOrderTable, secondOrderTable));
+        final TableGroup expected = tableGroupRepository.save(tableGroup);
 
         // expect
         assertDoesNotThrow(() -> tableGroupService.ungroup(expected.getId()));
@@ -159,18 +125,22 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정_해제시_식사_중인_주문이_있을_경우_예외가_발생한다() {
         // given
-        final OrderTable firstOrderTable = orderTableDao.save(주문_테이블_생성(null, 1, true));
-        final OrderTable secondOrderTable = orderTableDao.save(주문_테이블_생성(null, 2, true));
-        final Order order = 주문_생성(firstOrderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null);
-        orderDao.save(order);
+        final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 1, true));
+        final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 2, true));
+        final Order order = new Order(firstOrderTable, OrderStatus.MEAL, LocalDateTime.now());
+        orderRepository.save(order);
 
-        final TableGroup expected = tableGroupService.create(단체_지정_생성(LocalDateTime.now(), List.of(
-                firstOrderTable, secondOrderTable
-        )));
+        final List<OrderTableIdRequest> orderTableIdRequests = List.of(
+                new OrderTableIdRequest(firstOrderTable.getId()),
+                new OrderTableIdRequest(secondOrderTable.getId())
+        );
+
+        final TableGroup expected = tableGroupService.create(orderTableIdRequests);
 
         // expect
         assertThatThrownBy(() -> tableGroupService.ungroup(expected.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료되지 않은 주문입니다");
     }
 
 }

@@ -4,16 +4,18 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.ui.dto.order.CreateOrderRequest;
+import kitchenpos.ui.dto.order.OrderLineItemDto;
+import kitchenpos.ui.dto.order.UpdateOrderRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -22,11 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static kitchenpos.fixture.FixtureFactory.메뉴_그룹_생성;
-import static kitchenpos.fixture.FixtureFactory.메뉴_생성;
-import static kitchenpos.fixture.FixtureFactory.주문_생성;
-import static kitchenpos.fixture.FixtureFactory.주문_테이블_생성;
-import static kitchenpos.fixture.FixtureFactory.주문_항목_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -38,16 +35,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class OrderServiceTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderService orderService;
@@ -55,21 +52,19 @@ class OrderServiceTest {
     @Test
     void 주문을_저장할_수_있다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴 그룹"));
-        final Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
-        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 5, false));
-        final OrderLineItem orderLineItem = 주문_항목_생성(null, menu.getId(), 10);
-
-        final Order expected = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 5);
+        final CreateOrderRequest createOrderRequest = new CreateOrderRequest(orderTable.getId(), List.of(orderLineItemDto));
 
         // when
-        final Order actual = orderService.create(expected);
+        final Order actual = orderService.create(createOrderRequest);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getOrderStatus()).isNotNull(),
-                () -> assertThat(orderLineItem.getOrderId()).isEqualTo(actual.getId())
+                () -> assertThat(actual.getOrderStatus()).isEqualTo("COOKING")
         );
     }
 
@@ -79,41 +74,44 @@ class OrderServiceTest {
         @Test
         void 주문_항목이_비어있다면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
-            final Order expected = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of());
+            final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, true));
+            final CreateOrderRequest createOrderRequest = new CreateOrderRequest(orderTable.getId(), List.of());
 
-            assertThatThrownBy(() -> orderService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(createOrderRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("주문 생성시 주문 테이블은 비어있을 수 없습니다");
         }
 
         @Test
         void 주문_항목의_개수와_메뉴_개수가_일치하지_않으면_에외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴 그룹"));
-            final Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
-            final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
-            final OrderLineItem firstOrderLineItem = 주문_항목_생성(null, menu.getId(), 2);
-            final OrderLineItem secondOrderLineItem = 주문_항목_생성(null, menu.getId(), 2);
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+            final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
+            final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, false));
 
-            final Order expected = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of(firstOrderLineItem, secondOrderLineItem));
+            final OrderLineItemDto firstOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
+            final OrderLineItemDto secondOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
+
+            final CreateOrderRequest createOrderRequest = new CreateOrderRequest(orderTable.getId(), List.of(firstOrderLineItemDto, secondOrderLineItemDto));
 
             // expected
-            assertThatThrownBy(() -> orderService.create(expected))
+            assertThatThrownBy(() -> orderService.create(createOrderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블이_비어있을_경우_예외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴 그룹"));
-            final Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
-            final OrderLineItem firstOrderLineItem = 주문_항목_생성(null, menu.getId(), 2);
-            final OrderLineItem secondOrderLineItem = 주문_항목_생성(null, menu.getId(), 2);
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+            final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
 
-            final Order expected = 주문_생성(null, null, LocalDateTime.now(), List.of(firstOrderLineItem, secondOrderLineItem));
+            final OrderLineItemDto firstOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
+            final OrderLineItemDto secondOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
+
+            final CreateOrderRequest createOrderRequest = new CreateOrderRequest(null, List.of(firstOrderLineItemDto, secondOrderLineItemDto));
 
             // expected
-            assertThatThrownBy(() -> orderService.create(expected))
+            assertThatThrownBy(() -> orderService.create(createOrderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -122,44 +120,36 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_변경할_수_있다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴 그룹"));
-        final Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
-        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 5, false));
-        final OrderLineItem orderLineItem = 주문_항목_생성(null, menu.getId(), 10);
-
-        final Order expected = orderDao.save(주문_생성(orderTable.getId(), String.valueOf(OrderStatus.COOKING), LocalDateTime.now(), List.of(orderLineItem)));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        final Order expected = orderRepository.save(Order.createBy(orderTable));
+        final UpdateOrderRequest updateOrderRequest = new UpdateOrderRequest(OrderStatus.COMPLETION.name());
 
         // when
-        final Order actual = orderService.changeOrderStatus(expected.getId(), expected);
+        final Order actual = orderService.changeOrderStatus(expected.getId(), updateOrderRequest);
 
         // then
-        assertThat(actual.getOrderStatus()).isEqualTo("COOKING");
+        assertThat(actual.getOrderStatus()).isEqualTo("COMPLETION");
     }
 
     @Test
     void 주문_상태가_완료라면_상태_변경시_예외가_발생한다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴 그룹"));
-        final Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
-        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 5, false));
-        final OrderLineItem orderLineItem = 주문_항목_생성(null, menu.getId(), 10);
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        final Order expected = orderRepository.save(new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now()));
 
-        final Order expected = orderDao.save(주문_생성(orderTable.getId(), String.valueOf(OrderStatus.COMPLETION), LocalDateTime.now(), List.of(orderLineItem)));
+        final UpdateOrderRequest updateOrderRequest = new UpdateOrderRequest(OrderStatus.COMPLETION.name());
 
         // when
-        assertThatThrownBy(() -> orderService.changeOrderStatus(expected.getId(), expected))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(expected.getId(), updateOrderRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 완료된 주문입니다.");
     }
 
     @Test
     void 주문_목록을_가져올_수_있다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴 그룹"));
-        final Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
-        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 5, false));
-        final OrderLineItem orderLineItem = 주문_항목_생성(null, menu.getId(), 10);
-
-        orderDao.save(주문_생성(orderTable.getId(), String.valueOf(OrderStatus.COMPLETION), LocalDateTime.now(), List.of(orderLineItem)));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        orderRepository.save(Order.createBy(orderTable));
 
         // when
         final List<Order> expected = orderService.list();
