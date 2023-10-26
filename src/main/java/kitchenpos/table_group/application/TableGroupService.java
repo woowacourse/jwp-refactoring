@@ -42,6 +42,7 @@ public class TableGroupService {
         );
     }
 
+    @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
         frontTableGroupValidator.validateUngroup(tableGroup.getId());
