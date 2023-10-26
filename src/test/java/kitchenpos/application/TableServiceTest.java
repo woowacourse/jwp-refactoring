@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
@@ -14,6 +13,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,7 +79,7 @@ class TableServiceTest {
         // given
         OrderTable orderTable = tableService.create(new TableCreateRequest(3, true));
 
-        orderRepository.save(new Order(null, orderTable, status, LocalDateTime.now(), List.of(new OrderLineItem())));
+        orderRepository.save(new Order(null, orderTable, status, LocalDateTime.now(), Collections.emptyList()));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new TableEmptyUpdateRequest(false)))

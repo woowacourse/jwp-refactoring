@@ -20,7 +20,7 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
@@ -60,17 +60,17 @@ public class OrderTable {
         return tableGroup;
     }
 
+    public void setTableGroup(TableGroup tableGroup) {
+        tableGroup.addOrderTable(this);
+        this.tableGroup = tableGroup;
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setTableGroup(TableGroup tableGroup) {
-        tableGroup.addOrderTable(this);
-        this.tableGroup = tableGroup;
     }
 
     public void unGroup() {
