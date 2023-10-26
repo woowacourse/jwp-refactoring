@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':tablegroup')
+
+    testImplementation project(':app')
+    testImplementation project(':order')
+}

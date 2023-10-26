@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(':generic')
+    testImplementation project(':app')
+}
