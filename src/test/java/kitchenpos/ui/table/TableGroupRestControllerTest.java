@@ -14,6 +14,7 @@ import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.ui.ControllerTest;
 import kitchenpos.ui.table.dto.CreateTableGroupRequest;
+import kitchenpos.ui.table.dto.OrderTableIdRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -22,7 +23,9 @@ class TableGroupRestControllerTest extends ControllerTest {
     @Test
     void 테이블_그룹_생성() throws Exception {
         // given
-        CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest(List.of(1L, 2L));
+        CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest(List.of(
+                new OrderTableIdRequest(1L), new OrderTableIdRequest(2L)
+        ));
         String request = objectMapper.writeValueAsString(createTableGroupRequest);
 
         TableGroup tableGroup = 테이블_그룹(1L);
