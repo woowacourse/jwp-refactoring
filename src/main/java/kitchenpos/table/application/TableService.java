@@ -19,23 +19,23 @@ import java.util.stream.Collectors;
 public class TableService {
 
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public TableService(final OrderRepository orderRepository,
-                        final OrderTableRepository orderTableDao) {
+                        final OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTableQueryResponse create(final OrderTableCreateRequest request) {
         final OrderTable savedOrderTable = request.toOrderTable();
 
-        return OrderTableQueryResponse.from(orderTableDao.save(savedOrderTable));
+        return OrderTableQueryResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
     public List<OrderTableQueryResponse> list() {
-        return orderTableDao.findAll()
+        return orderTableRepository.findAll()
                 .stream()
                 .map(OrderTableQueryResponse::from)
                 .collect(Collectors.toList());
@@ -44,20 +44,13 @@ public class TableService {
     @Transactional
     public OrderTableQueryResponse changeEmpty(final Long orderTableId,
                                                final OrderTableEmptyModifyRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        validateHasNotTableGroup(savedOrderTable);
         validateAllOrdersCompletion(orderTableId);
 
         savedOrderTable.updateEmpty(request.isEmpty());
 
-        return OrderTableQueryResponse.from(orderTableDao.save(savedOrderTable));
-    }
-
-    private void validateHasNotTableGroup(final OrderTable savedOrderTable) {
-        if (savedOrderTable.hasTableGroup()) {
-            throw new IllegalArgumentException();
-        }
+        return OrderTableQueryResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
     private void validateAllOrdersCompletion(final Long orderTableId) {
@@ -71,18 +64,11 @@ public class TableService {
     public OrderTableQueryResponse changeNumberOfGuests(final Long orderTableId,
                                                         final OrderTableNumberOfGuestModifyRequest request) {
         final NumberOfGuests numberOfGuests = NumberOfGuests.from(request.getNumberOfGuests());
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        validateNotEmpty(savedOrderTable);
 
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
-        return OrderTableQueryResponse.from(orderTableDao.save(savedOrderTable));
-    }
-
-    private static void validateNotEmpty(final OrderTable savedOrderTable) {
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        return OrderTableQueryResponse.from(orderTableRepository.save(savedOrderTable));
     }
 }
