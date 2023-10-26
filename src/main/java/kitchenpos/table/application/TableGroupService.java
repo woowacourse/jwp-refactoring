@@ -23,15 +23,18 @@ public class TableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableValidator tableValidator;
 
     public TableGroupService(
             OrderRepository orderRepository,
             OrderTableRepository orderTableRepository,
-            TableGroupRepository tableGroupRepository
+            TableGroupRepository tableGroupRepository,
+            TableValidator tableValidator
     ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableValidator = tableValidator;
     }
 
     public TableGroupResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
@@ -58,7 +61,7 @@ public class TableGroupService {
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroupRepository.save(tableGroup);
-        tableGroup.changeOrderTables(orderTables);
+        tableGroup.changeOrderTables(orderTables, tableValidator);
 
         return TableGroupResponse.from(tableGroup);
     }

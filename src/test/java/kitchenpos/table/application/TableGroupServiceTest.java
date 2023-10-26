@@ -141,8 +141,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(orderTableRepository.findById(orderTableA.getId()).get().getTableGroup()).isNull();
-                softly.assertThat(orderTableRepository.findById(orderTableB.getId()).get().getTableGroup()).isNull();
+                softly.assertThat(orderTableRepository.findById(orderTableA.getId()).get().getTableGroupId()).isNull();
+                softly.assertThat(orderTableRepository.findById(orderTableB.getId()).get().getTableGroupId()).isNull();
             });
         }
 

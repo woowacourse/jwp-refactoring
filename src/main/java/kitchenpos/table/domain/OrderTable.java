@@ -3,13 +3,11 @@ package kitchenpos.table.domain;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import kitchenpos.order.domain.vo.NumberOfGuests;
+import kitchenpos.table.application.TableValidator;
 
 @Entity
 public class OrderTable {
@@ -18,9 +16,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Embedded
     private NumberOfGuests numberOfGuests;
@@ -36,22 +33,16 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(
+            Long tableGroupId,
+            int numberOfGuests,
+            boolean empty,
+            TableValidator tableValidator
+    ) {
+        tableValidator.validateGroup(tableGroupId);
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests.getNumberOfGuests();
     }
 
     public boolean isEmpty() {
@@ -59,7 +50,7 @@ public class OrderTable {
     }
 
     public boolean isGrouped() {
-        return tableGroup != null;
+        return tableGroupId != null;
     }
 
     public void changeNumberOfGuest(int numberOfGuests) {
@@ -69,16 +60,33 @@ public class OrderTable {
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
-    public void changeEmpty(boolean empty) {
+    public void changeEmpty(boolean empty, TableValidator tableValidator) {
+        if (isGrouped()) {
+            throw new IllegalArgumentException("그룹이 존재하는 테이블은 수정할 수 없습니다.");
+        }
+        tableValidator.validateEmpty(id);
         this.empty = empty;
     }
 
-    public void groupedBy(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void groupedBy(Long tableGroupId, TableValidator tableValidator) {
+        tableValidator.validateGroup(tableGroupId);
+        this.tableGroupId = tableGroupId;
         this.empty = false;
     }
 
     public void unGroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests.getNumberOfGuests();
     }
 }

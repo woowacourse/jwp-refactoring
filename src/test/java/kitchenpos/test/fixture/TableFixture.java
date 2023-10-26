@@ -1,7 +1,7 @@
 package kitchenpos.test.fixture;
 
+import kitchenpos.table.application.TableValidator;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 
 public class TableFixture {
 
@@ -9,7 +9,17 @@ public class TableFixture {
         return new OrderTable(numberOfGuess, empty);
     }
 
-    public static OrderTable 테이블(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        return new OrderTable(tableGroup, numberOfGuests, empty);
+    public static OrderTable 테이블(
+            Long tableGroupId,
+            int numberOfGuests,
+            boolean empty,
+            TableValidator tableValidator
+    ) {
+        return new OrderTable(
+                tableGroupId,
+                numberOfGuests,
+                empty,
+                tableValidator
+        );
     }
 }

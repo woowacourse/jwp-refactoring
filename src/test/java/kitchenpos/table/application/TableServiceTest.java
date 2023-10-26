@@ -34,6 +34,9 @@ class TableServiceTest extends ServiceTest {
     private TableService tableService;
 
     @Autowired
+    private TableValidator tableValidator;
+
+    @Autowired
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
@@ -80,7 +83,7 @@ class TableServiceTest extends ServiceTest {
         //then
         assertSoftly(softly -> {
             softly.assertThat(orderTable.getId()).isNotNull();
-            softly.assertThat(orderTable.getTableGroupResponse()).isNull();
+            softly.assertThat(orderTable.getTableGroupId()).isNull();
             softly.assertThat(orderTable.getNumberOfGuests()).isZero();
             softly.assertThat(orderTable.isEmpty()).isTrue();
         });
@@ -101,7 +104,7 @@ class TableServiceTest extends ServiceTest {
             //then
             assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isEqualTo(orderTable.getId());
-                softly.assertThat(response.getTableGroupResponse()).isNull();
+                softly.assertThat(response.getTableGroupId()).isNull();
                 softly.assertThat(orderTable.getNumberOfGuests()).isZero();
                 softly.assertThat(response.isEmpty()).isTrue();
             });
@@ -121,7 +124,8 @@ class TableServiceTest extends ServiceTest {
         void 수정_대상_테이블에_테이블_그룹이_존재하면_예외를_던진다() {
             //given
             TableGroup tableGroup = tableGroupRepository.save(테이블_그룹(LocalDateTime.now()));
-            OrderTable orderTable = orderTableRepository.save(테이블(tableGroup, 5, false));
+            OrderTable orderTableFixture = 테이블(tableGroup.getId(), 5, false, tableValidator);
+            OrderTable orderTable = orderTableRepository.save(orderTableFixture);
             OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
             //when, then
@@ -158,7 +162,7 @@ class TableServiceTest extends ServiceTest {
             //then
             assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isEqualTo(orderTable.getId());
-                softly.assertThat(response.getTableGroupResponse()).isNull();
+                softly.assertThat(response.getTableGroupId()).isNull();
                 softly.assertThat(response.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
                 softly.assertThat(response.isEmpty()).isFalse();
             });
