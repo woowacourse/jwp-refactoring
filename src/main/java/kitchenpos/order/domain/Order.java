@@ -55,9 +55,6 @@ public class Order {
 
     public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
         this.orderLineItems.add(orderLineItems);
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.changeOrder(this);
-        }
     }
 
     public Long getId() {
