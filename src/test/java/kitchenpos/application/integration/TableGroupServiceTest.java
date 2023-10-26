@@ -1,14 +1,14 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.application.table.TableGroupService;
+import kitchenpos.application.tablegroup.TableGroupService;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
-import kitchenpos.dto.table.CreateTableGroupRequest;
 import kitchenpos.dto.table.OrderTableRequest;
 import kitchenpos.dto.table.OrderTableResponse;
-import kitchenpos.dto.table.TableGroupResponse;
-import kitchenpos.dto.table.UnGroupRequest;
+import kitchenpos.dto.tablegroup.CreateTableGroupRequest;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
+import kitchenpos.dto.tablegroup.UnGroupRequest;
 import kitchenpos.exception.order.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;

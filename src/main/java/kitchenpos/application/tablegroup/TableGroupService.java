@@ -1,19 +1,19 @@
-package kitchenpos.application.table;
+package kitchenpos.application.tablegroup;
 
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.domain.table.TableGroup;
-import kitchenpos.domain.table.TableGroupRepository;
-import kitchenpos.dto.table.CreateTableGroupRequest;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.dto.table.OrderTableRequest;
-import kitchenpos.dto.table.TableGroupResponse;
-import kitchenpos.dto.table.UnGroupRequest;
+import kitchenpos.dto.tablegroup.CreateTableGroupRequest;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
+import kitchenpos.dto.tablegroup.UnGroupRequest;
 import kitchenpos.exception.order.OrderNotFoundException;
 import kitchenpos.exception.order.OrderTableNotFoundException;
 import kitchenpos.exception.table.OrderIsNotCompletedBadRequestException;
-import kitchenpos.exception.table.TableGroupNotFoundException;
+import kitchenpos.exception.tablegroup.TableGroupNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

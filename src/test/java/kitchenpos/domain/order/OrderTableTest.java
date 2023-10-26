@@ -2,7 +2,7 @@ package kitchenpos.domain.order;
 
 import kitchenpos.domain.DomainTest;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

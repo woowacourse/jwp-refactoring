@@ -12,7 +12,7 @@ import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.exception.order.OrderNotFoundException;
 import kitchenpos.exception.order.OrderTableNotFoundException;
 import kitchenpos.exception.table.OrderIsNotCompletedBadRequestException;
-import kitchenpos.exception.table.OrderTableIsInTableGroupBadRequest;
+import kitchenpos.exception.table.OrderTableIsInOtherTableGroupBadRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +41,7 @@ public class TableService {
         final OrderTable savedOrderTable = findOrderTable(orderTableId);
         validateIfOrderTableHasOrder(orderTableId, savedOrderTable);
         validateIfOrderTableIsGrouped(savedOrderTable);
-        savedOrderTable.setUnOrderable();
+        savedOrderTable.setOrderable(request.isOrderable());
         return OrderTableResponse.of(savedOrderTable);
     }
 
@@ -54,7 +54,7 @@ public class TableService {
 
     private static void validateIfOrderTableIsGrouped(final OrderTable savedOrderTable) {
         if (savedOrderTable.isGrouped()) {
-            throw new OrderTableIsInTableGroupBadRequest(savedOrderTable.getId());
+            throw new OrderTableIsInOtherTableGroupBadRequest(savedOrderTable.getId());
         }
     }
 

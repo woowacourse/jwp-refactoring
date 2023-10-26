@@ -1,7 +1,7 @@
 package kitchenpos.dto.table;
 
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 
 public class OrderTableResponse {
     private final Long id;

@@ -1,5 +1,7 @@
 package kitchenpos.domain.table;
 
+import kitchenpos.domain.tablegroup.TableGroup;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

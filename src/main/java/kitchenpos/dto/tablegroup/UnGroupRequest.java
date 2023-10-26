@@ -1,4 +1,4 @@
-package kitchenpos.dto.table;
+package kitchenpos.dto.tablegroup;
 
 public class UnGroupRequest {
     private Long tableGroupId;
