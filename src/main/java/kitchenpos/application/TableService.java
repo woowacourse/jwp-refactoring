@@ -51,7 +51,7 @@ public class TableService {
     public OrderTable changeNumberOfGuests(final Long orderTableId, final TableNumberOfGuestsUpdateRequest request) {
         final OrderTable orderTable = getOrderTable(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        return orderTableRepository.save(orderTable);
+        return orderTable;
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {
