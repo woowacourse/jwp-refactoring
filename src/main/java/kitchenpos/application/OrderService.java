@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,12 +76,14 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void saveOrderLineItems(final List<OrderLineItemDto> orderLineItems, final Order order) {
-        for (final OrderLineItemDto orderLineItem : orderLineItems) {
-            final Menu savedMenu = menuRepository.findById(orderLineItem.getMenuId())
+    private void saveOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos, final Order order) {
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (final OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
+            final Menu savedMenu = menuRepository.findById(orderLineItemDto.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
-            orderLineItemRepository.save(new OrderLineItem(order, savedMenu, orderLineItem.getQuantity()));
+            orderLineItems.add(new OrderLineItem(order, savedMenu, orderLineItemDto.getQuantity()));
         }
+        orderLineItemRepository.saveAll(orderLineItems);
     }
 
     public List<Order> list() {

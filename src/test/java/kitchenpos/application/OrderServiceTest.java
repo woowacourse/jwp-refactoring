@@ -61,8 +61,8 @@ class OrderServiceTest {
                     .thenReturn(savedOrder);
             when(menuRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedMenu));
-            when(orderLineItemRepository.save(any(OrderLineItem.class)))
-                    .thenReturn(savedOrderLineItem);
+            when(orderLineItemRepository.saveAll(any()))
+                    .thenReturn(List.of(savedOrderLineItem));
 
             // when
             final OrderCreateRequest request = new OrderCreateRequest(1L,
