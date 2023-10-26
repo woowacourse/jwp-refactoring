@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupOrderStatusValidator;
 
 @Entity
 public class OrderTable {
@@ -69,7 +70,8 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void ungroup() {
+    public void ungroup(final TableGroupOrderStatusValidator tableGroupOrderStatusValidator) {
+        tableGroupOrderStatusValidator.validateOrderStatus(this.id);
         this.tableGroup = null;
         this.empty = false;
     }

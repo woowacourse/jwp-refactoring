@@ -2,14 +2,12 @@ package kitchenpos.tablegroup.application;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupOrderStatusValidator;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.tablegroup.presentation.dto.request.CreateTableGroupRequest;
 import org.springframework.stereotype.Service;
@@ -23,14 +21,14 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
 
-    private final OrderRepository orderRepository;
+    private final TableGroupOrderStatusValidator tableGroupOrderStatusValidator;
 
     public TableGroupService(final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository,
-                             final OrderRepository orderRepository) {
+                             final TableGroupOrderStatusValidator tableGroupOrderStatusValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.orderRepository = orderRepository;
+        this.tableGroupOrderStatusValidator = tableGroupOrderStatusValidator;
     }
 
     public TableGroup create(final CreateTableGroupRequest request) {
@@ -53,15 +51,6 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                                                    .map(OrderTable::getId)
-                                                    .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
-                                                                   Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("현재 진행중인 주문이 존재하여, 테이블 그룹을 해제할 수 없습니다.");
-        }
-
-        orderTables.forEach(OrderTable::ungroup);
+        orderTables.forEach(orderTable -> orderTable.ungroup(tableGroupOrderStatusValidator));
     }
 }
