@@ -109,10 +109,10 @@ public abstract class IntegrationTest {
     protected OrderTable generateOrderTable(
             final int numberOfGuests,
             final boolean empty,
-            final TableGroup tableGroup
+            final Long tableGroupId
     ) {
         final OrderTable orderTable = new OrderTable(
-                tableGroup,
+                tableGroupId,
                 numberOfGuests,
                 empty
         );

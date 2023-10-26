@@ -52,7 +52,7 @@ public class OrderTablesMapper {
     public OrderTables fromTable(final Long tableId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableId)
                 .orElseThrow(() -> new IllegalArgumentException("Table group does not exist."));
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
         return new OrderTables(orderTables);
     }
 }

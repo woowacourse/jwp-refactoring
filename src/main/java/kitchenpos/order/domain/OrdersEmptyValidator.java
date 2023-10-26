@@ -22,7 +22,7 @@ public class OrdersEmptyValidator implements OrderTableValidator {
     }
 
     private void validateGroupedTable(final OrderTable orderTable) {
-        if (Objects.isNull(orderTable.getTableGroup())) {
+        if (Objects.isNull(orderTable.getTableGroupId())) {
             return;
         }
         throw new IllegalArgumentException("Cannot change empty status of table in group");

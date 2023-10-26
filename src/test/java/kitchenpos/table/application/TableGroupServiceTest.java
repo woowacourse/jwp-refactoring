@@ -106,8 +106,8 @@ class TableGroupServiceTest extends IntegrationTest {
             final TableGroup tableGroup = generateTableGroup();
             final OrderTable orderTableA = generateOrderTable(1, true);
             final OrderTable orderTableB = generateOrderTable(3, true);
-            orderTableA.groupByTableGroup(tableGroup);
-            orderTableB.groupByTableGroup(tableGroup);
+            orderTableA.groupByTableGroup(tableGroup.getId());
+            orderTableB.groupByTableGroup(tableGroup.getId());
             final TableGroupingRequest request = new TableGroupingRequest(List.of(
                     new GroupOrderTableRequest(orderTableA.getId()),
                     new GroupOrderTableRequest(orderTableB.getId())
@@ -126,8 +126,8 @@ class TableGroupServiceTest extends IntegrationTest {
         final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, true);
         final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, true);
         final TableGroup tableGroup = generateTableGroup();
-        orderTableA.groupByTableGroup(tableGroup);
-        orderTableB.groupByTableGroup(tableGroup);
+        orderTableA.groupByTableGroup(tableGroup.getId());
+        orderTableB.groupByTableGroup(tableGroup.getId());
         generateOrder(OrderStatus.COMPLETION, orderTableA, List.of());
         generateOrder(OrderStatus.COMPLETION, orderTableB, List.of());
 
@@ -137,7 +137,7 @@ class TableGroupServiceTest extends IntegrationTest {
         // then
         final List<OrderTable> ungroupedOrderTables = orderTableRepository.findAll();
         assertThat(ungroupedOrderTables)
-                .extracting(OrderTable::getTableGroup)
+                .extracting(OrderTable::getTableGroupId)
                 .containsOnlyNulls();
     }
 
@@ -152,8 +152,8 @@ class TableGroupServiceTest extends IntegrationTest {
             generateOrder(OrderStatus.COOKING, orderTableA, List.of());
             generateOrder(OrderStatus.COMPLETION, orderTableB, List.of());
             final TableGroup tableGroup = generateTableGroup();
-            orderTableA.groupByTableGroup(tableGroup);
-            orderTableB.groupByTableGroup(tableGroup);
+            orderTableA.groupByTableGroup(tableGroup.getId());
+            orderTableB.groupByTableGroup(tableGroup.getId());
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

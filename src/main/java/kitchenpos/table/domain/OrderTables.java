@@ -17,7 +17,7 @@ public class OrderTables {
             final OrderTablesGroupingValidator tablesGroupingValidator
     ) {
         tablesGroupingValidator.validate(this);
-        orderTables.forEach(orderTable -> orderTable.groupByTableGroup(tableGroup));
+        orderTables.forEach(orderTable -> orderTable.groupByTableGroup(tableGroup.getId()));
     }
 
     public void ungroup(final OrderTablesValidator orderTablesValidator) {

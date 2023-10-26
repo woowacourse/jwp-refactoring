@@ -24,7 +24,7 @@ class OrderTableTest {
     @Test
     void group_already_grouped_order_table_is_not_possible() {
         // given
-        final OrderTable orderTable = new OrderTable(new TableGroup(), 1, true);
+        final OrderTable orderTable = new OrderTable(1L, 1, true);
 
         // when
         final boolean ableToGroup = orderTable.isAbleToGroup();
@@ -52,7 +52,7 @@ class OrderTableTest {
         final TableGroup tableGroup = new TableGroup();
 
         // when
-        orderTable.groupByTableGroup(tableGroup);
+        orderTable.groupByTableGroup(tableGroup.getId());
 
         // then
         assertThat(orderTable.isEmpty()).isFalse();

@@ -81,8 +81,8 @@ class TableServiceTest extends IntegrationTest {
             final OrderTable orderTableA = generateOrderTable(1, true);
             final OrderTable orderTableB = generateOrderTable(1, true);
             final TableGroup savedTableGroup = generateTableGroup();
-            orderTableA.groupByTableGroup(savedTableGroup);
-            orderTableB.groupByTableGroup(savedTableGroup);
+            orderTableA.groupByTableGroup(savedTableGroup.getId());
+            orderTableB.groupByTableGroup(savedTableGroup.getId());
             final OrderTableEmptyStatusChangeRequest request = new OrderTableEmptyStatusChangeRequest(false);
 
             // when & then
