@@ -42,7 +42,6 @@ class TableGroupServiceTest {
     @BeforeEach
     void setUp() {
         dummyTables = List.of(orderTableRepository.save(new OrderTable()), orderTableRepository.save(new OrderTable()));
-        //dummyTables = List.of(new OrderTable(), new OrderTable());
         dummyTableIds = dummyTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -54,6 +53,8 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_그룹을_생성한다() {
             // given
+            dummyTables.forEach(table -> table.changeEmpty(true));
+            orderTableRepository.saveAll(dummyTables);
             final TableGroupRequest request = new TableGroupRequest(dummyTableIds);
 
             // when
@@ -131,12 +132,8 @@ class TableGroupServiceTest {
         @Test
         void 이미_다른_그룹에_속한_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
-            final OrderTable invalidTable = orderTableRepository.save(new OrderTable());
-            final TableGroup otherTableGroup = new TableGroup(LocalDateTime.now(), List.of(invalidTable));
-
-            relationTablesWithTableGroup(otherTableGroup, List.of(invalidTable));
-            final TableGroupRequest request = new TableGroupRequest(
-                    List.of(dummyTableIds.get(0), invalidTable.getId()));
+            tableGroupRepository.save(new TableGroup(LocalDateTime.now(), dummyTables));
+            final TableGroupRequest request = new TableGroupRequest(dummyTableIds);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -150,8 +147,7 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_그룹을_해제한다() {
             // given
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), dummyTables);
-            relationTablesWithTableGroup(tableGroup, dummyTables);
+            final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), dummyTables));
 
             // when
             tableGroupService.ungroup(1L);
@@ -176,10 +172,9 @@ class TableGroupServiceTest {
         @Test
         void 주문_상태가_식사중인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
-            final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, false));
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(invalidTable));
-            relationTablesWithTableGroup(tableGroup, List.of(dummyTables.get(0), invalidTable));
-            System.out.println("id: " + invalidTable.getId());
+            final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, true));
+            final TableGroup tableGroup = tableGroupRepository.save(
+                    new TableGroup(LocalDateTime.now(), List.of(invalidTable, dummyTables.get(0))));
             orderRepository.save(new Order(invalidTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1))));
 
@@ -191,29 +186,15 @@ class TableGroupServiceTest {
         @Test
         void 주문_상태가_조리중인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
-            final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, false));
+            final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, true));
             orderRepository.save(new Order(invalidTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1))));
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(invalidTable));
-            relationTablesWithTableGroup(tableGroup, List.of(dummyTables.get(0), invalidTable));
+            final TableGroup tableGroup = tableGroupRepository.save(
+                    new TableGroup(LocalDateTime.now(), List.of(invalidTable, dummyTables.get(0))));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(1L))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-    }
-
-    void relationTablesWithTableGroup(final TableGroup tableGroup, final List<OrderTable> orderTables) {
-//        if (!tableGroup.getOrderTables().isEmpty()) {
-//            throw new IllegalArgumentException();
-//        }
-//        final List<OrderTable> createdOrderTables = orderTables.stream()
-//                .map(orderTable -> orderTableRepository.save(orderTable))
-//                .collect(Collectors.toList());
-//        tableGroup.setOrderTables(createdOrderTables);
-        final long tableGroupId = tableGroupRepository.save(tableGroup).getId();
-//        createdOrderTables.forEach(table -> {
-//            orderTableRepository.save(table);
-//        });
     }
 }

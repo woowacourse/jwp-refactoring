@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.TableFixture.EMPTY_TABLE;
-import static kitchenpos.fixture.TableFixture.EMPTY_TABLE_REQUEST;
 import static kitchenpos.fixture.TableFixture.createTableByEmpty;
 import static kitchenpos.fixture.TableFixture.createTableById;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,12 +41,12 @@ class TableServiceTest {
     @Test
     void create_메서드는_주문_테이블을_생성한다() {
         // when
-        final OrderTable createdOrderTable = tableService.create(EMPTY_TABLE_REQUEST);
+        final OrderTable createdOrderTable = tableService.create(new OrderTableRequest(null, 0, true));
 
         // then
         assertThat(createdOrderTable)
                 .usingRecursiveComparison()
-                .isEqualTo(createTableById(createdOrderTable.getId()));
+                .isEqualTo(new OrderTable(createdOrderTable.getId(), null, 0, true));
     }
 
     @Test
@@ -94,14 +93,15 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_그룹에_속해있으면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = orderTableRepository.save(EMPTY_TABLE);
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
-            final TableGroup createdTableGroup = tableGroupRepository.save(tableGroup);
+            final OrderTable orderTable1 = orderTableRepository.save(EMPTY_TABLE);
+            final OrderTable orderTable2 = orderTableRepository.save(EMPTY_TABLE);
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+            tableGroupRepository.save(tableGroup);
 
             final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

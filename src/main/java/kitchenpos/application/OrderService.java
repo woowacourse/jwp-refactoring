@@ -29,8 +29,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = createOrderLineItemsByOrderRequest(orderRequest);
         final Order order = new Order(orderRequest.getOrderTableId(), orderLineItems);
         orderValidator.validate(order);
-        final Order savedOrder = orderRepository.save(order);
-        return savedOrder;
+        return orderRepository.save(order);
     }
 
     private static List<OrderLineItem> createOrderLineItemsByOrderRequest(final OrderRequest orderRequest) {
@@ -41,19 +40,14 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.changeStatus(orderStatus);
-
-        orderRepository.save(savedOrder);
+        savedOrder.changeStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return savedOrder;
     }
 }

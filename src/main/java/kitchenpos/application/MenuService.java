@@ -28,9 +28,7 @@ public class MenuService {
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
                 menuProducts);
         menuValidator.validate(menu);
-        final Menu savedMenu = menuRepository.save(menu);
-//        savedMenu.setMenuProducts(saveMenuProducts(savedMenu.getId(), menuProducts));
-        return savedMenu;
+        return menuRepository.save(menu);
     }
 
     private List<MenuProduct> createMenuProductsByMenuRequest(final MenuRequest request) {
@@ -40,18 +38,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-//    private List<MenuProduct> saveMenuProducts(final Long menuId, final List<MenuProduct> menuProducts) {
-//        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-//        for (final MenuProduct menuProduct : menuProducts) {
-//            menuProduct.setMenuId(menuId);
-//            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-//        }
-//        return savedMenuProducts;
-//    }
-
     public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        return menus;
+        return menuRepository.findAll();
     }
 }

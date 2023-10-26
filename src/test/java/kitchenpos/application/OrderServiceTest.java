@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.TableFixture.FILL_TABLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -59,7 +60,6 @@ class OrderServiceTest {
 
     private Menu menu;
     private MenuGroup menuGroup;
-    private TableGroup tableGroup;
     private OrderTable orderTable;
 
     @BeforeEach
@@ -68,9 +68,9 @@ class OrderServiceTest {
         final Product product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
         menu = menuRepository.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(),
                 List.of(new MenuProduct(null, product.getId(), 1))));
-//        menuProductRepository.save(new MenuProduct(null, product.getId(), 1));
-        tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), null));
-        orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 6, false));
+        orderTable = orderTableRepository.save(new OrderTable(6, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(6, true));
+        tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2)));
     }
 
     @Nested
@@ -78,6 +78,7 @@ class OrderServiceTest {
         @Test
         void 주문을_생성한다() {
             // given
+            final OrderTable orderTable = orderTableRepository.save(FILL_TABLE);
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
@@ -186,6 +187,7 @@ class OrderServiceTest {
     void list_메서드는_모든_주문을_조회한다() {
         // given
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+        final OrderTable orderTable = orderTableRepository.save(FILL_TABLE);
         final OrderRequest order1 = new OrderRequest(
                 orderTable.getId(),
                 List.of(orderLineItemRequest)
@@ -212,6 +214,7 @@ class OrderServiceTest {
         @Test
         void 주문_상태를_변경한다() {
             // given
+            final OrderTable orderTable = orderTableRepository.save(FILL_TABLE);
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),

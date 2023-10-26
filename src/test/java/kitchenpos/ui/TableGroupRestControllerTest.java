@@ -36,8 +36,8 @@ class TableGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final OrderTable orderTable1 = new OrderTable(1L, 1L, 5, false);
-        final OrderTable orderTable2 = new OrderTable(2L, 2L, 10, false);
+        final OrderTable orderTable1 = new OrderTable(1L, null, 5, true);
+        final OrderTable orderTable2 = new OrderTable(2L, null, 10, true);
         final TableGroupRequest request = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
         final TableGroup responseTableGroup = new TableGroup(List.of(orderTable1, orderTable2));
         responseTableGroup.setId(1L);
