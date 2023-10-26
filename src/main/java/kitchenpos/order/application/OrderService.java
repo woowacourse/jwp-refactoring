@@ -58,7 +58,7 @@ public class OrderService {
         for (final OrderCreateRequest.MenuSnapShot menuSnapShot : menuSnapShots) {
             final Menu menu = menuRepository.findById(menuSnapShot.getMenuId()).orElseThrow(IllegalArgumentException::new);
             OrderSnapShotValidator.validate(menu,menuSnapShot);
-            savedOrder.addOrderLineItem(new OrderLineItem(menu.getId(), menuSnapShot.getQuantity()));
+            savedOrder.addOrderLineItem(new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), menuSnapShot.getQuantity()));
         }
 
         return savedOrder.getId();
