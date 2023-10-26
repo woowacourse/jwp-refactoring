@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
@@ -10,14 +11,23 @@ import org.springframework.stereotype.Component;
 public class MenuValidator {
 
     private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuValidator(final ProductRepository productRepository) {
+    public MenuValidator(final ProductRepository productRepository, final MenuGroupRepository menuGroupRepository) {
         this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     public void validate(final Menu menu) {
+        validateMenuGroup(menu.getMenuGroupId());
         validatePrice(menu.getPrice());
         validateSum(menu.getPrice(), menu.getMenuProducts());
+    }
+
+    private void validateMenuGroup(final Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateSum(final BigDecimal price, final List<MenuProduct> menuProducts) {

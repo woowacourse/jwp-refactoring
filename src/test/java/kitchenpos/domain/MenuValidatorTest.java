@@ -30,8 +30,10 @@ class MenuValidatorTest extends ServiceTest {
     void 메뉴의_가격이_null_이거나_0보다_작으면_예외가_발생한다(final BigDecimal value) {
         // given
         final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+        단일_메뉴그룹_저장(menuGroup);
+
         final var menuProducts = Collections.<MenuProduct>emptyList();
-        final Menu menu = new Menu("망고 치킨", value, menuGroup.getId(), menuProducts);
+        final var menu = new Menu("망고 치킨", value, menuGroup.getId(), menuProducts);
 
         // when & then
         assertThatThrownBy(() -> menuValidator.validate(menu))
@@ -42,6 +44,7 @@ class MenuValidatorTest extends ServiceTest {
     void 메뉴_가격과_메뉴_상품의_총_가격이_다르면_예외가_발생한다() {
         // given
         final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+        단일_메뉴그룹_저장(menuGroup);
 
         final var product1 = ProductFixture.상품_망고_1000원();
         final var product2 = ProductFixture.상품_치킨_15000원();
@@ -50,8 +53,8 @@ class MenuValidatorTest extends ServiceTest {
         final var menuProduct1 = MenuProductFixture.메뉴상품_생성(product1, 2L);
         final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
         final var menuProducts = List.of(menuProduct1, menuProduct2);
-        final BigDecimal price = BigDecimal.valueOf(1_000_000);
-        final Menu menu = new Menu("망고 치킨", price, menuGroup.getId(), menuProducts);
+        final var price = BigDecimal.valueOf(1_000_000);
+        final var menu = new Menu("망고 치킨", price, menuGroup.getId(), menuProducts);
 
         // when & then
         assertThatThrownBy(() -> menuValidator.validate(menu))
