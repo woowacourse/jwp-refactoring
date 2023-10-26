@@ -1,4 +1,4 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.OrderTableRepository;
-import kitchenpos.order.domain.TableGroup;
-import kitchenpos.order.domain.TableGroupRepository;
-import kitchenpos.order.presentation.dto.CreateTableGroupRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.presentation.dto.CreateTableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
