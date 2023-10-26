@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
+    private static final int ORDER_TABLE_COUNT_LOWER_LIMIT_WHEN_GROUPING = 2;
+
     private final ApplicationEventPublisher eventPublisher;
     private final OrderTableRepository orderTableRepository;
 
@@ -104,7 +106,7 @@ public class TableService {
     }
 
     private void validateOrderTableCount(List<OrderTable> orderTables) {
-        if (orderTables.size() < 2) {
+        if (orderTables.size() < ORDER_TABLE_COUNT_LOWER_LIMIT_WHEN_GROUPING) {
             throw new OrderTableCountNotEnoughException();
         }
     }
