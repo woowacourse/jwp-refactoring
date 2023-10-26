@@ -1,51 +1,46 @@
-package kitchenpos.dao;
+package kitchenpos.persistence.jdbc.specific;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.domain.Order;
+import kitchenpos.persistence.dto.OrderDataDto;
+import kitchenpos.persistence.jdbc.NamedParameterJdbcDataAccessor;
+import kitchenpos.persistence.specific.OrderDataAccessor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcTemplateOrderDao implements OrderDao {
+public class JdbcOrderDataAccessor extends NamedParameterJdbcDataAccessor implements OrderDataAccessor {
 
     private static final String TABLE_NAME = "orders";
     private static final String KEY_COLUMN_NAME = "id";
+    private static final RowMapper<OrderDataDto> ORDER_DATA_DTO_ROW_MAPPER = (rs, rowNum) -> {
+        final long id = rs.getLong(KEY_COLUMN_NAME);
+        final long tableId = rs.getLong("order_table_id");
+        final String orderStatus = rs.getString("order_status");
+        final LocalDateTime orderedTime = rs.getObject("ordered_time", LocalDateTime.class);
+        return new OrderDataDto(id, tableId, orderStatus, orderedTime);
+    };
 
-    private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderDao(final DataSource dataSource) {
-        jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+    public JdbcOrderDataAccessor(final DataSource dataSource) {
+        super(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
-    public Order save(final Order entity) {
+    public OrderDataDto save(final OrderDataDto entity) {
         if (Objects.isNull(entity.getId())) {
-            final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity) {
-                @Override
-                public Object getValue(final String paramName) throws IllegalArgumentException {
-                    final Object value = super.getValue(paramName);
-                    if (value instanceof Enum) {
-                        return value.toString();
-                    }
-                    return value;
-                }
-            };
+            final SqlParameterSource parameters = generateParameters(entity);
             final Number key = jdbcInsert.executeAndReturnKey(parameters);
             return select(key.longValue());
         }
@@ -53,8 +48,17 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return entity;
     }
 
+    private SqlParameterSource generateParameters(final OrderDataDto entity) {
+        final MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+        mapSqlParameterSource.addValue("id", entity.getId());
+        mapSqlParameterSource.addValue("order_status", entity.getOrderStatus());
+        mapSqlParameterSource.addValue("ordered_time", entity.getOrderedTime());
+        mapSqlParameterSource.addValue("order_table_id", entity.getOrderTableId());
+        return mapSqlParameterSource;
+    }
+
     @Override
-    public Optional<Order> findById(final Long id) {
+    public Optional<OrderDataDto> findById(final Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -63,9 +67,9 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public List<Order> findAll() {
+    public List<OrderDataDto> findAll() {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, ORDER_DATA_DTO_ROW_MAPPER);
     }
 
     @Override
@@ -75,7 +79,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderTableId", orderTableId)
                 .addValue("orderStatuses", orderStatuses);
-        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
+        return namedParameterJdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
     @Override
@@ -86,29 +90,21 @@ public class JdbcTemplateOrderDao implements OrderDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderTableIds", orderTableIds)
                 .addValue("orderStatuses", orderStatuses);
-        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
+        return namedParameterJdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
-    private Order select(final Long id) {
+    private OrderDataDto select(final Long id) {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return namedParameterJdbcTemplate.queryForObject(sql, parameters, ORDER_DATA_DTO_ROW_MAPPER);
     }
 
-    private void update(final Order entity) {
+    private void update(final OrderDataDto entity) {
         final String sql = "UPDATE orders SET order_status = (:orderStatus) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderStatus", entity.getOrderStatus().name())
+                .addValue("orderStatus", entity.getOrderStatus())
                 .addValue("id", entity.getId());
-        jdbcTemplate.update(sql, parameters);
-    }
-
-    private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final long id = resultSet.getLong(KEY_COLUMN_NAME);
-        final long tableId = resultSet.getLong("order_table_id");
-        final String orderStatus = resultSet.getString("order_status");
-        final LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
-        return new Order(id, tableId, orderStatus, orderedTime);
+        namedParameterJdbcTemplate.update(sql, parameters);
     }
 }
