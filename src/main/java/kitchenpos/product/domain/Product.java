@@ -20,14 +20,14 @@ public class Product {
     protected Product() {
     }
 
-    public Product(ProductName name, ProductPrice price) {
+    public Product(String name, BigDecimal price) {
         this(null, name, price);
     }
 
-    public Product(Long id, ProductName name, ProductPrice price) {
+    public Product(Long id, String name, BigDecimal price) {
         this.id = id;
-        this.name = name;
-        this.price = price;
+        this.name = new ProductName(name);
+        this.price = new ProductPrice(price);
     }
 
     public Long getId() {

@@ -3,8 +3,6 @@ package kitchenpos.menu.domain;
 import kitchenpos.BaseTest;
 import kitchenpos.menu.exception.MenuException;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductName;
-import kitchenpos.product.domain.ProductPrice;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -21,12 +19,8 @@ class MenuTest extends BaseTest {
             BigDecimal secondProductPrice, Long secondProductQuantity,
             BigDecimal menuPrice) {
         // given
-        Product firstProduct = new Product(
-                new ProductName("chicken"),
-                new ProductPrice(firstProductPrice));
-        Product secondProduct = new Product(
-                new ProductName("chicken"),
-                new ProductPrice(secondProductPrice));
+        Product firstProduct = new Product("chicken", firstProductPrice);
+        Product secondProduct = new Product("chicken", secondProductPrice);
 
         MenuProductQuantity firstQuantity = new MenuProductQuantity(firstProductQuantity);
         MenuProductQuantity secondQuantity = new MenuProductQuantity(secondProductQuantity);
@@ -50,12 +44,8 @@ class MenuTest extends BaseTest {
             BigDecimal menuPrice) {
 
         // given
-        Product firstProduct = new Product(
-                new ProductName("chicken"),
-                new ProductPrice(firstProductPrice));
-        Product secondProduct = new Product(
-                new ProductName("chicken"),
-                new ProductPrice(secondProductPrice));
+        Product firstProduct = new Product("chicken", firstProductPrice);
+        Product secondProduct = new Product("chicken", secondProductPrice);
 
         MenuProductQuantity firstQuantity = new MenuProductQuantity(firstProductQuantity);
         MenuProductQuantity secondQuantity = new MenuProductQuantity(secondProductQuantity);

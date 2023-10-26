@@ -3,11 +3,8 @@ package kitchenpos.product.application;
 import kitchenpos.MockServiceTest;
 import kitchenpos.product.application.dto.CreateProductDto;
 import kitchenpos.product.application.dto.ProductDto;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductName;
-import kitchenpos.product.domain.ProductPrice;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.exception.ProductPriceException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,14 +40,8 @@ class ProductServiceTest extends MockServiceTest {
                 expectedSecondProduct
         );
 
-        Product mockFirstProduct = new Product(
-                1L,
-                new ProductName("pizza"),
-                new ProductPrice(BigDecimal.valueOf(18000L)));
-        Product mockSecondProduct = new Product(
-                2L,
-                new ProductName("chicken"),
-                new ProductPrice(BigDecimal.valueOf(21000L)));
+        Product mockFirstProduct = new Product(1L, "pizza", BigDecimal.valueOf(18000L));
+        Product mockSecondProduct = new Product(2L, "chicken", BigDecimal.valueOf(21000L));
 
         BDDMockito.given(productRepository.findAll())
                 .willReturn(List.of(mockFirstProduct, mockSecondProduct));
@@ -74,10 +65,7 @@ class ProductServiceTest extends MockServiceTest {
                 "pizza",
                 BigDecimal.valueOf(18000L));
 
-        Product mockReturnProduct = new Product(
-                1L,
-                new ProductName("pizza"),
-                new ProductPrice(BigDecimal.valueOf(18000L)));
+        Product mockReturnProduct = new Product(1L, "pizza", BigDecimal.valueOf(18000L));
 
         BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
                 .willReturn(mockReturnProduct);
@@ -96,10 +84,7 @@ class ProductServiceTest extends MockServiceTest {
                 "pizza",
                 BigDecimal.valueOf(0L));
         BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
-                .willReturn(new Product(
-                        1L,
-                        new ProductName("pizza"),
-                        new ProductPrice(BigDecimal.valueOf(0L))));
+                .willReturn(new Product(1L, "pizza", BigDecimal.valueOf(0L)));
 
         // when, then
         Assertions.assertThatNoException()
@@ -113,10 +98,7 @@ class ProductServiceTest extends MockServiceTest {
                 "",
                 BigDecimal.valueOf(1000L));
         BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
-                .willReturn(new Product(
-                        1L,
-                        new ProductName(""),
-                        new ProductPrice(BigDecimal.valueOf(1000L))));
+                .willReturn(new Product(1L, "", BigDecimal.valueOf(1000L)));
 
         // when, then
         Assertions.assertThatNoException()
@@ -126,9 +108,7 @@ class ProductServiceTest extends MockServiceTest {
     @Test
     void 상품을_추가할_때_가격이_null_이면_예외를_던진다() {
         // given
-        CreateProductDto createProductDto = new CreateProductDto(
-                "pizza",
-                null);
+        CreateProductDto createProductDto = new CreateProductDto("pizza", null);
 
         // when, then
         Assertions.assertThatThrownBy(() -> productService.create(createProductDto))
@@ -138,9 +118,7 @@ class ProductServiceTest extends MockServiceTest {
     @Test
     void 상품을_추가할_때_가격이_음수면_예외를_던진다() {
         // given
-        CreateProductDto createProductDto = new CreateProductDto(
-                "pizza",
-                BigDecimal.valueOf(-100L));
+        CreateProductDto createProductDto = new CreateProductDto("pizza", BigDecimal.valueOf(-100L));
 
         // when, then
         Assertions.assertThatThrownBy(() -> productService.create(createProductDto))

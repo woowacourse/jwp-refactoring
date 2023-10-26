@@ -23,10 +23,7 @@ public class ProductService {
 
     @Transactional
     public ProductDto create(CreateProductDto createProductDto) {
-        Product product = new Product(
-                new ProductName(createProductDto.getName()),
-                new ProductPrice(createProductDto.getPrice()));
-
+        Product product = new Product(createProductDto.getName(), createProductDto.getPrice());
         Product savedProduct = productRepository.save(product);
         return new ProductDto(
                 savedProduct.getId(),

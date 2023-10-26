@@ -6,18 +6,14 @@ import kitchenpos.menu.application.dto.CreateMenuProductDto;
 import kitchenpos.menu.application.dto.MenuDto;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProductQuantity;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductName;
-import kitchenpos.product.domain.ProductPrice;
 import kitchenpos.menu.exception.MenuException;
 import kitchenpos.menu.exception.MenuGroupException;
 import kitchenpos.menu.exception.MenuPriceException;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.exception.ProductException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -50,8 +46,8 @@ class MenuServiceTest extends MockServiceTest {
         Long menuGroupId = 1L;
         Menu menu = new Menu(1L, "chicken + chicken + pizza", BigDecimal.valueOf(29000L), menuGroupId);
 
-        Product chicken = new Product(1L, new ProductName("chicken"), new ProductPrice(BigDecimal.valueOf(10000L)));
-        Product pizza = new Product(10L, new ProductName("pizza"), new ProductPrice(BigDecimal.valueOf(9500L)));
+        Product chicken = new Product(1L, "chicken", BigDecimal.valueOf(10000L));
+        Product pizza = new Product(10L, "pizza", BigDecimal.valueOf(9500L));
         MenuProduct twoChicken = new MenuProduct(1L, menu, chicken, new MenuProductQuantity(2L));
         MenuProduct onePizza = new MenuProduct(5L, menu, pizza, new MenuProductQuantity(1L));
         menu.addMenuProducts(List.of(twoChicken, onePizza));
@@ -79,8 +75,8 @@ class MenuServiceTest extends MockServiceTest {
         Long menuGroupId = 1L;
         Menu menu = new Menu(1L, "chicken + chicken + pizza", BigDecimal.valueOf(29000L), menuGroupId);
 
-        Product chicken = new Product(1L, new ProductName("chicken"), new ProductPrice(BigDecimal.valueOf(10000L)));
-        Product pizza = new Product(10L, new ProductName("pizza"), new ProductPrice(BigDecimal.valueOf(9500L)));
+        Product chicken = new Product(1L, "chicken", BigDecimal.valueOf(10000L));
+        Product pizza = new Product(10L, "pizza", BigDecimal.valueOf(9500L));
         MenuProduct twoChicken = new MenuProduct(1L, menu, chicken, new MenuProductQuantity(2L));
         MenuProduct onePizza = new MenuProduct(5L, menu, pizza, new MenuProductQuantity(1L));
         menu.addMenuProducts(List.of(twoChicken, onePizza));
@@ -166,8 +162,8 @@ class MenuServiceTest extends MockServiceTest {
         // given
         Long menuGroupId = 1L;
 
-        Product chicken = new Product(1L, new ProductName("chicken"), new ProductPrice(BigDecimal.valueOf(10000L)));
-        Product pizza = new Product(10L, new ProductName("pizza"), new ProductPrice(BigDecimal.valueOf(9500L)));
+        Product chicken = new Product(1L, "chicken", BigDecimal.valueOf(10000L));
+        Product pizza = new Product(10L, "pizza", BigDecimal.valueOf(9500L));
 
         BDDMockito.given(menuGroupRepository.existsById(BDDMockito.anyLong()))
                 .willReturn(true);

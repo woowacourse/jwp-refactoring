@@ -1,10 +1,8 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductName;
-import kitchenpos.product.domain.ProductPrice;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.RepositoryTest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,7 @@ class MenuRepositoryTest extends RepositoryTest {
     void 메뉴를_가져올_때_메뉴_상품을_같이_조회한다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("one plus one"));
-        Product product = productRepository.save(new Product(new ProductName("pizza"), new ProductPrice(BigDecimal.valueOf(14000L))));
+        Product product = productRepository.save(new Product("pizza", BigDecimal.valueOf(14000L)));
         Menu menu = new Menu("pizza one plus one", BigDecimal.valueOf(27000L), menuGroup.getId());
         MenuProduct menuProduct = new MenuProduct(product, new MenuProductQuantity(2L));
         menu.addMenuProducts(List.of(menuProduct));
