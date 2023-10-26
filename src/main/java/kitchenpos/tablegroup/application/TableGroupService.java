@@ -3,8 +3,6 @@ package kitchenpos.tablegroup.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.application.dto.OrderTableIdDto;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
@@ -18,19 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private static final List<String> UNGROUPABLE_ORDER_STATUSES = List.of(
-            OrderStatus.COOKING.name(),
-            OrderStatus.MEAL.name()
-    );
-
-    private final OrderRepository orderRepository;
+    private final OrdersInTablesCompleteValidator ordersInTablesCompleteValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository,
+    public TableGroupService(final OrdersInTablesCompleteValidator ordersInTablesCompleteValidator,
                              final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.ordersInTablesCompleteValidator = ordersInTablesCompleteValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -97,13 +90,11 @@ public class TableGroupService {
     }
 
     private void validateAllOrderInTableCompleted(final List<OrderTable> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
+        final List<Long> orderIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, UNGROUPABLE_ORDER_STATUSES)) {
-            throw new IllegalArgumentException();
-        }
+        ordersInTablesCompleteValidator.validate(orderIds);
     }
 
     private void upGroupAllOrderTables(final List<OrderTable> orderTables) {

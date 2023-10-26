@@ -3,7 +3,6 @@ package kitchenpos.order.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderResponse;
@@ -22,18 +21,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
+    private final MenuExistenceValidator menuExistenceValidator;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
+            final MenuExistenceValidator menuExistenceValidator,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
-        this.menuRepository = menuRepository;
+        this.menuExistenceValidator = menuExistenceValidator;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
@@ -62,9 +61,7 @@ public class OrderService {
     }
 
     private void validateOrderLineItemsMenuAllExist(final OrderLineItems orderLineItems) {
-        if (orderLineItems.getItemSize() != menuRepository.countByIdIn(orderLineItems.getMenuIds())) {
-            throw new IllegalArgumentException();
-        }
+        menuExistenceValidator.validate(orderLineItems.getMenuIds());
     }
 
     private OrderTable findSavedOrderTableById(final Long id) {

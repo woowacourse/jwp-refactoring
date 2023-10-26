@@ -1,8 +1,6 @@
 package kitchenpos.ordertable.application;
 
 import java.util.List;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
@@ -15,16 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private static final List<String> UNCHANGEABLE_ORDER_STATUSES = List.of(
-            OrderStatus.COOKING.name(),
-            OrderStatus.MEAL.name()
-    );
-
-    private final OrderRepository orderRepository;
+    private final OrdersInTableCompleteValidator ordersInTableCompleteValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrdersInTableCompleteValidator ordersInTableCompleteValidator,
+                        final OrderTableRepository orderTableRepository) {
+        this.ordersInTableCompleteValidator = ordersInTableCompleteValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -65,9 +59,7 @@ public class TableService {
     }
 
     private void validateOrderTableOrderStatuses(final OrderTable orderTable) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), UNCHANGEABLE_ORDER_STATUSES)) {
-            throw new IllegalArgumentException();
-        }
+        ordersInTableCompleteValidator.validate(orderTable.getId());
     }
 
     @Transactional
