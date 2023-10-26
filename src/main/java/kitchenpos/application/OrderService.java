@@ -44,6 +44,11 @@ public class OrderService {
         return OrderResponse.of(orderRepository.save(order));
     }
 
+    private OrderTable findOrderTable(OrderCreateRequest request) {
+        return orderTableRepository.findById(request.getOrderTableId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
+    }
+
     private Order makeOrder(OrderCreateRequest request) {
         Order order = new Order(null, null, OrderStatus.COOKING.name(), LocalDateTime.now(),
             new ArrayList<>());
@@ -61,23 +66,18 @@ public class OrderService {
             .collect(toList());
     }
 
-    private Long findMenuId(OrderLineRequest req, List<Menu> menus) {
-        return menus.stream()
-            .filter(menu -> menu.getId() == req.getMenuId())
-            .findAny()
-            .orElseThrow(() -> new IllegalArgumentException("해당 메뉴가 존재하지 않습니다."))
-            .getId();
-    }
-
     private List<Menu> findMenus(OrderCreateRequest request) {
         return request.getOrderLines().stream()
             .map(OrderLineRequest::getMenuId)
             .collect(collectingAndThen(toList(), menuRepository::findAllByIdIn));
     }
 
-    private OrderTable findOrderTable(OrderCreateRequest request) {
-        return orderTableRepository.findById(request.getOrderTableId())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
+    private Long findMenuId(OrderLineRequest req, List<Menu> menus) {
+        return menus.stream()
+            .filter(menu -> menu.getId() == req.getMenuId())
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException("해당 메뉴가 존재하지 않습니다."))
+            .getId();
     }
 
     @Transactional(readOnly = true)
