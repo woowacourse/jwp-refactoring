@@ -18,25 +18,31 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuRepository menuRepository;
     private final ProductRepository productRepository;
+    private final MenuRepository menuRepository;
 
-    public MenuService(final MenuGroupRepository menuGroupRepository, final MenuRepository menuRepository,
-                       final ProductRepository productRepository) {
+    public MenuService(final MenuGroupRepository menuGroupRepository, final ProductRepository productRepository,
+                       final MenuRepository menuRepository) {
         this.menuGroupRepository = menuGroupRepository;
-        this.menuRepository = menuRepository;
         this.productRepository = productRepository;
+        this.menuRepository = menuRepository;
     }
 
     @Transactional
     public MenuDto create(final MenuCreateDto request) {
+        final Menu menu = getMenu(request);
+        menuRepository.save(menu);
+
+        return MenuDto.toDto(menu);
+    }
+
+    private Menu getMenu(final MenuCreateDto request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         final Menu menu = new Menu(request.getName(), new Price(request.getPrice()), menuGroup);
         menu.addMenuProducts(getMenuProducts(request));
 
-        menuRepository.save(menu);
-        return MenuDto.toDto(menu);
+        return menu;
     }
 
     private List<MenuProduct> getMenuProducts(final MenuCreateDto request) {
