@@ -177,4 +177,17 @@ class TableServiceTest extends ServiceTestContext {
             softly.assertThat(response.getNumberOfGuests()).isEqualTo(5);
         });
     }
+
+    @Test
+    void 존재하지_않는_테이블에_대해_그룹화하려_하면_예외를_던진다() {
+        // given
+        TableGroup tableGroup = TableGroupFixture.from(LocalDateTime.now());
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+        orderTableRepository.save(orderTable);
+        tableGroupRepository.save(tableGroup);
+
+        // when, then
+        assertThatThrownBy(() -> tableService.groupOrderTables(tableGroup.getId(), List.of(orderTable.getId(), 999L)))
+                .isInstanceOf(OrderTableNotFoundException.class);
+    }
 }

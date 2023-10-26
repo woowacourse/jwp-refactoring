@@ -8,9 +8,9 @@ import kitchenpos.table.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.table.dto.request.ChangeTableGuestRequest;
 import kitchenpos.table.dto.request.CreateOrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
+import kitchenpos.table.exception.OrderTableCountNotEnoughException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.table.exception.OrderTableCountNotEnoughException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,10 +95,12 @@ public class TableService {
     }
 
     private List<OrderTable> findOrderTables(List<Long> orderTableIds) {
-        return orderTableIds.stream()
-                .map(each -> orderTableRepository.findById(each)
-                        .orElseThrow(OrderTableNotFoundException::new))
-                .collect(Collectors.toList());
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+
+        if (orderTables.size() != orderTableIds.size()) {
+            throw new OrderTableNotFoundException();
+        }
+        return orderTables;
     }
 
     private void validateOrderTableCount(List<OrderTable> orderTables) {
