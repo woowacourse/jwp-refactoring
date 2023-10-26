@@ -10,9 +10,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.util.BigDecimalUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,20 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
-    private final ProductRepository productRepository;
+    private final MenuGroupValidator menuGroupValidator;
+    private final ProductTotalPriceValidator productTotalPriceValidator;
 
-    public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
-            final ProductRepository productRepository
-    ) {
+    public MenuService(final MenuRepository menuRepository,
+                       final MenuProductRepository menuProductRepository,
+                       final MenuGroupValidator menuGroupValidator,
+                       final ProductTotalPriceValidator productTotalPriceValidator) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
-        this.productRepository = productRepository;
+        this.menuGroupValidator = menuGroupValidator;
+        this.productTotalPriceValidator = productTotalPriceValidator;
     }
 
     @Transactional
@@ -63,9 +58,7 @@ public class MenuService {
     }
 
     private void validateMenuGroupExist(final Long menuGroupId) {
-        if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
-        }
+        menuGroupValidator.validateMenuGroupExist(menuGroupId);
     }
 
     private void validateMenuPriceNotBiggerThanMenuProductsTotalPrice(final BigDecimal price,
@@ -84,9 +77,10 @@ public class MenuService {
     }
 
     private BigDecimal getProductTotalPrice(final MenuProduct menuProduct) {
-        final Product product = productRepository.findById(menuProduct.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
-        return product.getTotalPrice(BigDecimal.valueOf(menuProduct.getQuantity()));
+        return productTotalPriceValidator.getTotalPriceThrowIfNotExist(
+                menuProduct.getProductId(),
+                BigDecimal.valueOf(menuProduct.getQuantity())
+        );
     }
 
     private List<MenuProduct> saveAllMenuProducts(final List<MenuProduct> menuProducts, final Long menuId) {
