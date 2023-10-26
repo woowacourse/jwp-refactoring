@@ -47,8 +47,7 @@ public class TableService {
 
     @Transactional
     public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableDto orderTableDto) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(() -> new OrderTableException(ORDER_TABLE_IS_NOT_FOUND));
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         eventPublisher.publishEvent(new TableChangeEmptyEvent(savedOrderTable.getId()));
         savedOrderTable.changeEmpty(orderTableDto.getEmpty());
         return OrderTableDto.from(savedOrderTable);

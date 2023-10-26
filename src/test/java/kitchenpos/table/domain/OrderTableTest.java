@@ -9,11 +9,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.table.domain.exception.OrderTableException;
-import kitchenpos.table_group.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 class OrderTableTest {
 
@@ -43,8 +41,8 @@ class OrderTableTest {
         @Test
         @DisplayName("tableGroup에 속해있는 orderTalbe인 경우 예외처리 한다.")
         void throwExceptionTableGroupIdIsNull() {
-            final TableGroup mockTableGroup = Mockito.mock(TableGroup.class);
-            final OrderTable orderTable = new OrderTable(mockTableGroup, 0, true);
+            final OrderTable orderTable = new OrderTable(0, true);
+            orderTable.changeTableGroupId(1L);
 
             assertThatThrownBy(() -> orderTable.changeEmpty(false))
                 .isInstanceOf(OrderTableException.class)
