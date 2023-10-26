@@ -54,7 +54,7 @@ public class TableGroup {
     }
 
     private static void checkOrderTableHasGroup(final OrderTable orderTable) {
-        if (orderTable.getTableGroup().isPresent()) {
+        if (orderTable.getTableGroupId().isPresent()) {
             throw new IllegalArgumentException(TABLE_IS_IN_TABLE_GROUP_ERROR_MESSAGE);
         }
     }
@@ -71,7 +71,7 @@ public class TableGroup {
 
     public void ungroup() {
         orderTables.forEach(orderTable -> {
-            orderTable.setTableGroup(null);
+            orderTable.setTableGroupId(null);
             orderTable.setOrderable(false);
         });
     }

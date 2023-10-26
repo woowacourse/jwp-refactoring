@@ -35,9 +35,9 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final CreateTableGroupRequest request) {
         final List<OrderTable> orderTables = convertToOrderTables(request);
-        final TableGroup tableGroup = TableGroup.of(orderTables);
-        orderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.of(orderTables));
+        orderTables.forEach(orderTable -> orderTable.setTableGroupId(savedTableGroup.getId()));
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     private List<OrderTable> convertToOrderTables(final CreateTableGroupRequest request) {

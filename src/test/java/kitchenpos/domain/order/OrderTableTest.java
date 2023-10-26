@@ -2,10 +2,7 @@ package kitchenpos.domain.order;
 
 import kitchenpos.domain.DomainTest;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -32,7 +29,7 @@ class OrderTableTest extends DomainTest {
     @Test
     void throw_when_change_unorderable_table_when_in_table_group() {
         // given
-        final OrderTable orderTable = OrderTable.of(TableGroup.of(List.of(OrderTable.of(0), OrderTable.of(0))));
+        final OrderTable orderTable = OrderTable.of(3L);
 
         // when & then
         assertThatThrownBy(orderTable::setUnOrderable)
