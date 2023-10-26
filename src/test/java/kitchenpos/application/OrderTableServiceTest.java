@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.order.domain.MenuSnapshot;
 import kitchenpos.ordertable.controller.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.controller.dto.OrderTableChangeNumberOfGuests;
 import kitchenpos.ordertable.controller.dto.OrderTableCreateRequest;
@@ -20,6 +21,7 @@ import kitchenpos.ordertable.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -37,6 +39,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
 @Transactional
+@Sql("/truncate.sql")
 class OrderTableServiceTest {
     
     @Autowired
@@ -125,7 +128,7 @@ class OrderTableServiceTest {
         
         final OrderTable orderTable = ORDER_TABLE(false, 1);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        final Order orderWithCookingStatus = ORDER(savedOrderTable, List.of(new OrderLineItem(null, savedMenu, 3L)), COOKING);
+        final Order orderWithCookingStatus = ORDER(savedOrderTable, List.of(new OrderLineItem(null, MenuSnapshot.from(savedMenu), 3L)), COOKING);
         orderRepository.save(orderWithCookingStatus);
         
         //when & then
@@ -147,7 +150,7 @@ class OrderTableServiceTest {
     
         final OrderTable orderTable = ORDER_TABLE(false, 1);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        final Order orderWithCookingStatus = ORDER(savedOrderTable, List.of(new OrderLineItem(null, savedMenu, 3L)), COMPLETION);
+        final Order orderWithCookingStatus = ORDER(savedOrderTable, List.of(new OrderLineItem(null, MenuSnapshot.from(savedMenu), 3L)), COMPLETION);
         orderRepository.save(orderWithCookingStatus);
     
         //when & then

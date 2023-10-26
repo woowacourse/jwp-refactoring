@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.order.domain.MenuSnapshot;
 import kitchenpos.order.controller.dto.OrderChangeStatusRequest;
 import kitchenpos.order.controller.dto.OrderCreateRequest;
 import kitchenpos.order.controller.dto.OrderLineItemRequest;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
@@ -44,6 +46,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
 @Transactional
+@Sql("/truncate.sql")
 class OrderServiceTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -162,7 +165,7 @@ class OrderServiceTest {
         
         Order expected = Order.of(savedOrderTable,
                 COOKING,
-                List.of(new OrderLineItem(null, chineseNoodleMenu, 3L)));
+                List.of(new OrderLineItem(null, MenuSnapshot.from(chineseNoodleMenu), 3L)));
         
         // then : 주문에 속한 주문 항목들은 모두 주문id를 가지고 있다
         assertSoftly(softly -> {
