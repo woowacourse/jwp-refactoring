@@ -42,8 +42,6 @@ public class MenuService {
         final List<Long> quantities = collectQuantities(request);
         final MenuProducts menuProducts = MenuProducts.from(products, quantities);
         final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup.getId(), menuProducts);
-        menuProducts.setMenu(menu);
-
         return MenuResponse.from(menuRepository.save(menu));
     }
 

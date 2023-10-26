@@ -17,9 +17,6 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
     @NotNull
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -39,10 +36,6 @@ public class MenuProduct {
 
     public static MenuProduct of(final Product product, final Quantity quantity) {
         return new MenuProduct(null, product, quantity);
-    }
-
-    protected void setMenu(final Menu menu) {
-        this.menu = menu;
     }
 
     public Long getSeq() {
