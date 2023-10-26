@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.config.RepositoryTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.config.RepositoryTest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.repository.OrderTableRepository;
@@ -38,7 +38,7 @@ class OrderRepositoryTest {
         TableGroup tableGroup = tableGroupRepository.save(tableGroupEntity);
 
         OrderTable orderTableEntity = OrderTable.builder()
-                .tableGroup(tableGroup)
+                .tableGroupId(tableGroup.getId())
                 .numberOfGuests(5)
                 .build();
         orderTable = orderTableRepository.save(orderTableEntity);

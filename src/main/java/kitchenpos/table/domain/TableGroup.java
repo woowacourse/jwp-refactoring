@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -24,18 +25,16 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
+    private TableGroup(List<OrderTable> orderTables) {
         this.createdDate = LocalDateTime.now();
-        for (OrderTable orderTable : orderTables) {
-            this.orderTables.add(orderTable);
-            orderTable.group(this);
-        }
+        this.orderTables.addAll(orderTables);
     }
 
     public Long getId() {
@@ -44,10 +43,6 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 
     public static TableGroupBuilder builder() {

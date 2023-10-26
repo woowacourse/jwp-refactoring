@@ -91,7 +91,7 @@ class OrderTableRepositoryTest {
     private OrderTable createOrderTableEntity() {
         return OrderTable.builder()
                 .empty(false)
-                .tableGroup(tableGroup)
+                .tableGroupId(tableGroup.getId())
                 .numberOfGuests(10)
                 .build();
     }

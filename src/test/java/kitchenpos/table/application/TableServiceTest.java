@@ -4,16 +4,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.Collections;
 import java.util.List;
+import javax.persistence.EntityManager;
 import kitchenpos.config.ServiceTest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.application.request.OrderTableCreateRequest;
 import kitchenpos.table.application.request.OrderTableUpdateRequest;
 import kitchenpos.table.application.response.OrderTableResponse;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
@@ -28,6 +30,9 @@ class TableServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private EntityManager em;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -87,16 +92,18 @@ class TableServiceTest {
 
         @Test
         void 주문_테이블이_그룹에_포함되어_있으면_예외가_발생한다() {
+            TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.builder()
+                    .orderTables(Collections.emptyList())
+                    .build()
+            );
             OrderTable savedOrderTable = orderTableRepository.save(
                     OrderTable.builder()
+                            .tableGroupId(savedTableGroup.getId())
                             .numberOfGuests(4)
                             .empty(false)
                             .build()
             );
-            tableGroupRepository.save(TableGroup.builder()
-                    .orderTables(List.of(savedOrderTable))
-                    .build()
-            );
+
             OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(10, true);
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableUpdateRequest))

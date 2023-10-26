@@ -1,14 +1,12 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.application.request.TableGroupCreateRequest;
 import kitchenpos.table.application.response.TableGroupResponse;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.TableGroupValidator;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
@@ -17,29 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupValidator tableGroupValidator;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
-                             TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository,
+                             TableGroupValidator tableGroupValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupValidator = tableGroupValidator;
     }
 
     @Transactional
     public TableGroupResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
         List<Long> tableIds = tableGroupCreateRequest.getOrderTables();
-
         List<OrderTable> foundOrderTables = orderTableRepository.findAllByIdIn(tableIds);
-        if (foundOrderTables.isEmpty() || foundOrderTables.size() < 2) {
-            throw new IllegalArgumentException("테이블 그룹화를 위한 테이블이 2개 이상 필요합니다.");
-        }
 
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            validateTableStatus(foundOrderTable);
-        }
+        tableGroupValidator.validateCreateGroup(foundOrderTables);
 
         TableGroup tableGroup = TableGroup.builder()
                 .orderTables(foundOrderTables)
@@ -47,16 +39,6 @@ public class TableGroupService {
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         return TableGroupResponse.from(savedTableGroup);
-    }
-
-    private void validateTableStatus(OrderTable foundOrderTable) {
-        if (!foundOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("비어있지 않은 테이블은 그룹화할 수 없습니다.");
-        }
-
-        if (foundOrderTable.isGrouped()) {
-            throw new IllegalArgumentException("이미 그룹화된 테이블은 그룹화할 수 없습니다.");
-        }
     }
 
     @Transactional
@@ -67,10 +49,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("요리중이거나 식사중인 테이블이 존재합니다.");
-        }
+        tableGroupValidator.validateUnGroup(orderTableIds);
 
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();
