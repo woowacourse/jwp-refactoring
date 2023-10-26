@@ -1,8 +1,6 @@
 package kitchenpos.order;
 
 import kitchenpos.menu.MenuRepository;
-import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.OrderTableRepository;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
 import org.springframework.stereotype.Service;
@@ -18,35 +16,43 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderPlaceableValidator orderPlaceableValidator;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository, OrderPlaceableValidator orderPlaceableValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderPlaceableValidator = orderPlaceableValidator;
     }
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
-        List<OrderLineItem> orderLineItems = toOrderLineItems(orderRequest.getOrderLineItems());
-
-        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        //
-        validateFull(orderTable);
-        //
-        Order order = new Order(orderRequest.getOrderTableId(), orderLineItems);
-        return orderRepository.save(order);
+        return orderRepository.save(new Order(
+                orderPlaceableValidator,
+                orderRequest.getOrderTableId(),
+                toOrderLineItems(orderRequest.getOrderLineItems())
+        ));
     }
 
-    //
-    private void validateFull(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("비어있는 테이블에서 주문할 수 없습니다");
+    @Transactional(readOnly = true)
+    public List<Order> list() {
+        return orderRepository.findAll();
+    }
+
+    @Transactional
+    public Order changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
+        final Order order = orderRepository.getBy(orderId);
+
+        if (orderStatus == OrderStatus.COOKING) {
+            order.cook();
         }
+        if (orderStatus == OrderStatus.MEAL) {
+            order.serve();
+        }
+        if (orderStatus == OrderStatus.COMPLETION) {
+            order.complete();
+        }
+        return order;
     }
-    //
 
     private List<OrderLineItem> toOrderLineItems(List<OrderLineItemRequest> orderLineItemsRequests) {
         if (Objects.nonNull(orderLineItemsRequests)) {
@@ -58,32 +64,10 @@ public class OrderService {
     }
 
     private OrderLineItem toOrderLineItem(OrderLineItemRequest request) {
-        menuRepository.findById(request.getMenuId()).orElseThrow(IllegalArgumentException::new);
+        menuRepository.validateContains(request.getMenuId());
         return new OrderLineItem(
                 request.getMenuId(),
                 request.getQuantity()
         );
-    }
-
-    @Transactional(readOnly = true)
-    public List<Order> list() {
-        return orderRepository.findAll();
-    }
-
-    @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderStatus == OrderStatus.COOKING) {
-            savedOrder.cook();
-        }
-        if (orderStatus == OrderStatus.MEAL) {
-            savedOrder.serve();
-        }
-        if (orderStatus == OrderStatus.COMPLETION) {
-            savedOrder.complete();
-        }
-        return savedOrder;
     }
 }

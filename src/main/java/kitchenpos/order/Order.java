@@ -4,7 +4,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,13 +23,10 @@ public class Order {
     private Long orderTableId;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.COOKING;
-
     private LocalDateTime orderedTime = LocalDateTime.now();
-
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(
             name = "order_id",
-            foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"),
             nullable = false, updatable = false
     )
     private List<OrderLineItem> orderLineItems;
@@ -38,7 +34,8 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public Order(OrderPlaceableValidator orderPlaceableValidator, Long orderTableId, List<OrderLineItem> orderLineItems) {
+        orderPlaceableValidator.validate(orderTableId);
         validateHas(orderLineItems);
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
