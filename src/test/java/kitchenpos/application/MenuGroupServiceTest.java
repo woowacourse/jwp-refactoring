@@ -1,54 +1,40 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixtures.Fixtures;
+import kitchenpos.ui.dto.request.MenuGroupRequest;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
-    @Mock
-    MenuGroupDao menuGroupDao;
-
-    @InjectMocks
+    @Autowired
     MenuGroupService menuGroupService;
+
+    @Autowired
+    Fixtures fixtures;
 
     @Test
     void 메뉴그룹을_등록한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("세트메뉴");
-        menuGroup.setId(1L);
-
-        given(menuGroupDao.save(any(MenuGroup.class))).willReturn(menuGroup);
+        MenuGroupRequest request = new MenuGroupRequest("세트메뉴");
 
         // when
-        MenuGroup result = menuGroupService.create(menuGroup);
+        MenuGroupResponse response = menuGroupService.create(request);
 
         // then
-        assertThat(result)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(menuGroup);
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getName()).isEqualTo("세트메뉴");
     }
 
     @Test
     void 모든_메뉴그룹_목록을_불러온다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("세트메뉴");
-        menuGroup.setId(1L);
-
-        given(menuGroupDao.findAll()).willReturn(List.of(menuGroup));
+        MenuGroup menuGroup = fixtures.메뉴_그룹_저장("세트메뉴");
 
         // when
         List<MenuGroup> menuGroups = menuGroupService.list();

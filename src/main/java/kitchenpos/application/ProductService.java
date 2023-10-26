@@ -1,34 +1,37 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.dao.JpaProductRepository;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class ProductService {
-    private final ProductDao productDao;
+    private final JpaProductRepository jpaProductRepository;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(final JpaProductRepository JpaProductRepository) {
+        this.jpaProductRepository = JpaProductRepository;
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public ProductResponse create(final ProductRequest request) {
+        Price price = new Price(request.getPrice());
+        Product product = new Product(request.getName(), price);
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return productDao.save(product);
+        Product savedProduct = jpaProductRepository.save(product);
+        return new ProductResponse(savedProduct);
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductResponse> list() {
+        List<Product> savedProducts = jpaProductRepository.findAll();
+
+        return savedProducts.stream()
+                .map(ProductResponse::new)
+                .collect(Collectors.toList());
     }
 }

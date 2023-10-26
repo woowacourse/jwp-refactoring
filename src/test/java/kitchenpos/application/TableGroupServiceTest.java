@@ -5,33 +5,33 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import javax.persistence.EntityManager;
+import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.ui.dto.request.TableGroupRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class TableGroupServiceTest extends ServiceTest {
-
-    @Autowired
-    OrderDao orderDao;
-
-    @Autowired
-    OrderTableDao orderTableDao;
-
-    @Autowired
-    TableGroupDao tableGroupDao;
 
     @Autowired
     Fixtures fixtures;
 
     @Autowired
     TableGroupService tableGroupService;
+
+    @Autowired
+    EntityManager entityManager;
+
+    @Autowired
+    JpaOrderTableRepository jpaOrderTableRepository;
 
     @Nested
     class 단체_지정_등록 {
@@ -42,90 +42,36 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTableA = fixtures.빈_테이블_저장();
             OrderTable orderTableB = fixtures.빈_테이블_저장();
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
+            TableGroupRequest request = new TableGroupRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId())
+            );
 
             // when
-            TableGroup result = tableGroupService.create(tableGroup);
+            TableGroupResponse result = tableGroupService.create(request);
 
             // then
-            List<Long> orderTableIds = result.getOrderTables()
+            List<Long> orderTableIds = result.getOrderTableResponses()
                     .stream()
-                    .map(OrderTable::getId)
+                    .map(OrderTableResponse::getId)
                     .collect(Collectors.toList());
 
             assertThat(orderTableIds).contains(orderTableA.getId(), orderTableB.getId());
         }
 
         @Test
-        void 주문_테이블이_1개_인경우_예외가_발생한다() {
-            // given
-            OrderTable orderTableA = fixtures.빈_테이블_저장();
-//            OrderTable orderTableB = fixtures.빈_테이블_저장();
-
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTableA));
-
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-        }
-
-        @Test
-        void 주문_테이블이_null인_경우_예외가_발생한다() {
-            // given
-            TableGroup tableGroup = new TableGroup();
-
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-        }
-
-        @Test
         void 주문_테이블이_존재하지_않는_경우_예외가_발생한다() {
             // given
             OrderTable orderTableA = fixtures.빈_테이블_저장();
-            OrderTable orderTableB = new OrderTable();
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
+            TableGroupRequest request = new TableGroupRequest(
+                    List.of(orderTableA.getId(), -1L)
+            );
 
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void 주문_테이블이_비어있지_않는_경우_예외가_발생한다() {
-            // given
-            OrderTable orderTableA = fixtures.빈_테이블_저장();
-            OrderTable orderTableB = fixtures.주문_테이블_저장();
-
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
-
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 이미_단체_지정이_등록이_되어있는_경우_예외가_발생한다() {
-            // given
-            TableGroup tableGroup = fixtures.단체_지정_저장();
-            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup.getId(), true);
-            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup.getId(), true);
-
-            TableGroup newTableGroup = new TableGroup();
-            OrderTable orderTableC = fixtures.빈_테이블_저장();
-            tableGroup.setOrderTables(List.of(orderTableA, orderTableC));
-
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
     }
 
     @Nested
@@ -134,28 +80,36 @@ class TableGroupServiceTest extends ServiceTest {
         void 단체_지정을_헤제한다() {
             // given
             TableGroup tableGroup = fixtures.단체_지정_저장();
-            fixtures.주문_테이블_저장(tableGroup.getId(), true);
-            fixtures.주문_테이블_저장(tableGroup.getId(), true);
+            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup, false);
+            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup, false);
+            fixtures.주문_저장(orderTableA, OrderStatus.COMPLETION);
+            fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
+            ReflectionTestUtils.setField(orderTableA, "isEmpty", true);
+            ReflectionTestUtils.setField(orderTableB, "isEmpty", true);
+            entityManager.clear();
 
             // when
             tableGroupService.ungroup(tableGroup.getId());
 
             // then
-            List<OrderTable> orderTables = orderTableDao.findAll();
-
-            assertThat(orderTables.get(0).getTableGroupId()).isNull();
-            assertThat(orderTables.get(1).getTableGroupId()).isNull();
+            List<OrderTable> orderTables = jpaOrderTableRepository.findAllByIdIn(
+                    List.of(orderTableA.getId(), orderTableB.getId())
+            );
+            assertThat(orderTables.get(0).getTableGroup()).isNull();
+            assertThat(orderTables.get(1).getTableGroup()).isNull();
         }
 
         @Test
         void 주문_테이블_상태가_계산완료가_아닌_경우_예외가_발생한다() {
             // given
             TableGroup tableGroup = fixtures.단체_지정_저장();
-            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup.getId(), true);
-            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup.getId(), true);
-
-            fixtures.주문_저장(orderTableA.getId(), OrderStatus.COOKING);
-            fixtures.주문_저장(orderTableB.getId(), OrderStatus.COMPLETION);
+            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup, false);
+            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup, false);
+            fixtures.주문_저장(orderTableA, OrderStatus.COOKING);
+            fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
+            ReflectionTestUtils.setField(orderTableA, "isEmpty", true);
+            ReflectionTestUtils.setField(orderTableB, "isEmpty", true);
+            entityManager.clear();
 
             // when
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
