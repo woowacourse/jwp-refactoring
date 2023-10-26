@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.common.BaseDate;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Entity;
@@ -19,7 +20,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order extends BaseDate {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
