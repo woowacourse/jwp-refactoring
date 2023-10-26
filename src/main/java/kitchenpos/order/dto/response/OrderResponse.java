@@ -26,7 +26,7 @@ public class OrderResponse {
     public static OrderResponse of(final Order order) {
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTable().getId(),
+                order.getOrderTableId(),
                 order.getOrderedTime(),
                 order.getOrderLineItems().stream()
                         .map(orderLineItem -> OrderLineItemResponse.of(order.getId(), orderLineItem))

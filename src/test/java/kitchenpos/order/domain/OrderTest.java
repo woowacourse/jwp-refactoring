@@ -13,7 +13,7 @@ class OrderTest {
     void changeStatus() {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
-        final Order order = new Order(orderTable, List.of(new OrderLineItem(), new OrderLineItem()));
+        final Order order = new Order(orderTable.getId(), List.of(new OrderLineItem(), new OrderLineItem()));
 
         // when
         order.changeStatus(OrderStatus.MEAL);
@@ -27,7 +27,7 @@ class OrderTest {
     void changeStatus_completionException() {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
-        final Order order = new Order(orderTable, List.of(new OrderLineItem(), new OrderLineItem()));
+        final Order order = new Order(orderTable.getId(), List.of(new OrderLineItem(), new OrderLineItem()));
         order.changeStatus(OrderStatus.COMPLETION);
 
         // when & then

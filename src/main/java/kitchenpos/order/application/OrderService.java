@@ -50,7 +50,7 @@ public class OrderService {
                 .map(this::generateOrderLineItem)
                 .collect(Collectors.toUnmodifiableList());
 
-        final Order order = new Order(orderTable, orderLineItems);
+        final Order order = new Order(orderTable.getId(), orderLineItems);
         orderRepository.save(order);
 
         return OrderResponse.of(order);
