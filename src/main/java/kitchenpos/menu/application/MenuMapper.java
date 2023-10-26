@@ -32,7 +32,7 @@ public class MenuMapper {
         this.publisher = publisher;
     }
 
-    public Menu toDomain(final MenuCreateRequest request) {
+    public Menu toMenu(final MenuCreateRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final Menu menu = menuRepository.save(new Menu(request.getName(), Price.of(request.getPrice()), menuGroup));
 

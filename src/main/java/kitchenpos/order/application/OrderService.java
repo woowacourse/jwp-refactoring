@@ -28,7 +28,7 @@ public class OrderService {
     }
 
     public OrderResponse create(final OrderCreateRequest request) {
-        return OrderResponse.of(orderMapper.toDomain(request));
+        return OrderResponse.of(orderMapper.toOrderTables(request));
     }
 
     @Transactional(readOnly = true)
@@ -50,7 +50,7 @@ public class OrderService {
 
     @EventListener
     public void group(OrderTableGroupEventDto event) {
-        List<OrderTable> orderTables = orderMapper.toDomain(event.getOrderTableIds());
+        List<OrderTable> orderTables = orderMapper.toOrderTables(event.getOrderTableIds());
         for (OrderTable orderTable : orderTables) {
             orderTable.attachTableGroup(event.getTableGroupId());
         }
@@ -58,7 +58,7 @@ public class OrderService {
 
     @EventListener
     public void ungroup(OrderTableUnGroupEventDto event) {
-        List<OrderTable> orderTables = orderMapper.toDomain(event.getOrderTableIds());
+        List<OrderTable> orderTables = orderMapper.toOrderTables(event.getOrderTableIds());
         for (OrderTable orderTable : orderTables) {
             orderTable.detachTableGroup();
         }

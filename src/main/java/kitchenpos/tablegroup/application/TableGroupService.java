@@ -35,7 +35,7 @@ public class TableGroupService {
 
         validateOrderTablesSize(requests);
 
-        final List<Long> orderTableIds = mapper.toDomain(requests);
+        final List<Long> orderTableIds = mapper.toOrderTableIds(requests);
         TableGroup group = group(orderTableIds);
 
         return TableGroupResponse.of(group, orderTableIds);
@@ -61,7 +61,7 @@ public class TableGroupService {
     }
 
     public void ungroup(final Long tableGroupId) {
-        List<Long> orderTableIds = mapper.toDomain(tableGroupId);
+        List<Long> orderTableIds = mapper.toOrderTableIds(tableGroupId);
 
         OrderTableUnGroupEventDto orderTableUnGroupEventDto = new OrderTableUnGroupEventDto();
         orderTableUnGroupEventDto.setOrderTableIds(orderTableIds);

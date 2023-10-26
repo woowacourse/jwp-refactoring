@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest.OrderTableRequest;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.springframework.stereotype.Component;
 import suppoert.domain.BaseEntity;
 
@@ -12,15 +11,12 @@ import suppoert.domain.BaseEntity;
 public class TableMapper {
 
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupRepository tableGroupRepository;
 
-    public TableMapper(final OrderTableRepository orderTableRepository,
-                       final TableGroupRepository tableGroupRepository) {
+    public TableMapper(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupRepository = tableGroupRepository;
     }
 
-    public List<Long> toDomain(final List<OrderTableRequest> orderTables) {
+    public List<Long> toOrderTableIds(final List<OrderTableRequest> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
@@ -35,7 +31,7 @@ public class TableMapper {
         return savedOrderTables;
     }
 
-    public List<Long> toDomain(final Long tableGroupId) {
+    public List<Long> toOrderTableIds(final Long tableGroupId) {
         return orderTableRepository.findAllByTableGroupId(tableGroupId)
                 .stream()
                 .map(BaseEntity::getId)

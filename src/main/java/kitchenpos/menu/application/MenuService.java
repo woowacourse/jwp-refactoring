@@ -23,7 +23,7 @@ public class MenuService {
     }
 
     public MenuResponse create(final MenuCreateRequest request) {
-        return MenuResponse.of(menuMapper.toDomain(request));
+        return MenuResponse.of(menuMapper.toMenu(request));
     }
 
     @Transactional(readOnly = true)

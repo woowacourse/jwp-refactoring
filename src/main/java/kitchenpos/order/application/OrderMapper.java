@@ -33,7 +33,7 @@ public class OrderMapper {
         this.publisher = publisher;
     }
 
-    public Order toDomain(final OrderCreateRequest request) {
+    public Order toOrderTables(final OrderCreateRequest request) {
         final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
 
         final Order order = orderRepository.save(new Order(orderTable));
@@ -49,7 +49,7 @@ public class OrderMapper {
         return order;
     }
 
-    public List<OrderTable> toDomain(List<Long> ids){
+    public List<OrderTable> toOrderTables(List<Long> ids){
         return orderTableRepository.findAllByIdIn(ids);
     }
 }
