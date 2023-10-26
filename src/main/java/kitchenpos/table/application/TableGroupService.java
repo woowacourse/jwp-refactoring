@@ -1,6 +1,5 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.application.OrderVerificationEvent;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
@@ -42,7 +41,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            publisher.publishEvent(new OrderVerificationEvent(this, savedOrderTable.getId()));
+            publisher.publishEvent(new TableGroupCreateEvent(this, savedOrderTable.getId()));
             savedOrderTable.group(savedTableGroup);
         }
 
@@ -52,7 +51,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (final OrderTable orderTable : orderTables) {
-            publisher.publishEvent(new OrderVerificationEvent(this, orderTable.getId()));
+            publisher.publishEvent(new TableGroupCreateEvent(this, orderTable.getId()));
             orderTable.unGroup();
         }
     }

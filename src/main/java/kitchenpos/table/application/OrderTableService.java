@@ -1,6 +1,5 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.application.OrderVerificationEvent;
 import kitchenpos.order.presentation.dto.OrderTableCreateRequest;
 import kitchenpos.order.presentation.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.order.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
@@ -38,7 +37,7 @@ public class OrderTableService {
                                   final OrderTableUpdateEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        publisher.publishEvent(new OrderVerificationEvent(this, savedOrderTable.getId()));
+        publisher.publishEvent(new OrderTableChangeEmptyEvent(this, savedOrderTable.getId()));
 
         savedOrderTable.changeEmpty(request.isEmpty());
 

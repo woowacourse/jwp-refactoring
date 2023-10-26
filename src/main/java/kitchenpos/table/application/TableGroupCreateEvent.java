@@ -1,12 +1,12 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
-public class OrderVerificationEvent {
+public class TableGroupCreateEvent {
 
     private final Object source;
     private final Long orderTableId;
 
-    public OrderVerificationEvent(Object source,
-                                  Long orderTableId) {
+    public TableGroupCreateEvent(Object source,
+                                 Long orderTableId) {
         this.source = source;
         this.orderTableId = orderTableId;
     }

@@ -1,25 +1,23 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.repository.OrderRepository;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@Async
-public class OrderVerificationEventListener {
+public class TableGroupCreateEventListener {
 
     private final OrderRepository orderRepository;
 
-    public OrderVerificationEventListener(final OrderRepository orderRepository) {
+    public TableGroupCreateEventListener(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     @EventListener
-    public void onApplicationEvent(final OrderVerificationEvent event) {
+    public void onApplicationEvent(final TableGroupCreateEvent event) {
         final List<Order> orders = orderRepository.findByOrderTableId(event.getOrderTableId());
         for (final Order order : orders) {
             if (order.isInProgress()) {
