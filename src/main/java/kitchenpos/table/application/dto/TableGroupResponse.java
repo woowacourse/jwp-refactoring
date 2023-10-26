@@ -1,10 +1,11 @@
-package kitchenpos.table.application.dto.table;
+package kitchenpos.table.application.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.application.dto.OrderTableResponse;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
 
 public class TableGroupResponse {
@@ -23,9 +24,8 @@ public class TableGroupResponse {
         this.orderTableResponses = orderTableResponses;
     }
 
-    public static TableGroupResponse from(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        final List<OrderTableResponse> orderTableResponses = orderTables.stream()
+    public static TableGroupResponse from(final TableGroup tableGroup, final OrderTables orderTables) {
+        final List<OrderTableResponse> orderTableResponses = orderTables.getOrderTables().stream()
             .map(OrderTableResponse::from)
             .collect(Collectors.toUnmodifiableList());
 

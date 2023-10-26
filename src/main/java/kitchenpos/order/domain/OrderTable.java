@@ -88,7 +88,11 @@ public class OrderTable {
         return empty;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void joinTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
     }
 }

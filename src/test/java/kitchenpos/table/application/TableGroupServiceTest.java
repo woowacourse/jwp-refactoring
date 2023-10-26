@@ -4,14 +4,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.support.DataCleaner;
 import kitchenpos.order.application.dto.OrderTableResponse;
-import kitchenpos.table.application.dto.table.OrderTableIdRequest;
-import kitchenpos.table.application.dto.table.TableGroupRequest;
-import kitchenpos.table.application.dto.table.TableGroupResponse;
+import kitchenpos.table.application.dto.OrderTableIdRequest;
+import kitchenpos.table.application.dto.TableGroupRequest;
+import kitchenpos.table.application.dto.TableGroupResponse;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.order.domain.repository.OrderTableRepository;
@@ -141,7 +140,7 @@ class TableGroupServiceTest {
         final TableGroup otherTableGroup = tableGroupRepository.save(TableGroup.forSave());
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
-        otherTableGroup.addOrderTable(orderTable1);
+        orderTable1.joinTableGroup(otherTableGroup);
 
         final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(
             new OrderTableIdRequest(orderTable1.getId()),
@@ -161,12 +160,12 @@ class TableGroupServiceTest {
         // given
         final TableGroup tableGroup = TableGroup.forSave();
         tableGroupRepository.save(tableGroup);
-        final OrderTable orderTable1 = new OrderTable(5);
-        final OrderTable orderTable2 = new OrderTable(4);
+        final OrderTable orderTable1 = new OrderTable(5, true);
+        final OrderTable orderTable2 = new OrderTable(4, true);
+        orderTable1.joinTableGroup(tableGroup);
+        orderTable2.joinTableGroup(tableGroup);
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
-        tableGroup.addOrderTable(orderTable1);
-        tableGroup.addOrderTable(orderTable2);
 
         final Order order1 = new Order(orderTable1.getId());
         final Order order2 = new Order(orderTable2.getId());
@@ -180,7 +179,6 @@ class TableGroupServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(tableGroup.getOrderTables()).isEmpty();
             softly.assertThat(orderTable1.getTableGroup()).isNull();
             softly.assertThat(orderTable1.isEmpty()).isTrue();
             softly.assertThat(orderTable2.getTableGroup()).isNull();
@@ -196,8 +194,8 @@ class TableGroupServiceTest {
         tableGroupRepository.save(tableGroup);
         final OrderTable orderTable1 = new OrderTable(5);
         final OrderTable orderTable2 = new OrderTable(4);
-        tableGroup.addOrderTable(orderTable1);
-        tableGroup.addOrderTable(orderTable2);
+        orderTable1.joinTableGroup(tableGroup);
+        orderTable2.joinTableGroup(tableGroup);
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
         orderRepository.save(new Order(orderTable1.getId()));

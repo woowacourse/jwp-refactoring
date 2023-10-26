@@ -7,11 +7,13 @@ import kitchenpos.order.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class OrderTablesTest {
 
@@ -37,11 +39,13 @@ class OrderTablesTest {
     @DisplayName("OrderTables에 비어있지 않거나 이미 다른 테이블 그룹에 포함된 경우 예외를 발생한다.")
     @MethodSource("getWrongOrderTables")
     @ParameterizedTest
-    void validate_orderTables_is_not_empty_or_already_contained(final List<OrderTable> orderTables) {
+    void validate_orderTables_is_not_empty_or_already_contained(final List<OrderTable> inputOrderTables) {
         // given
+        final TableGroup tableGroup = new TableGroup(1L);
+        final OrderTables orderTables = new OrderTables(inputOrderTables);
         // when
         // then
-        assertThatThrownBy(() -> new OrderTables(orderTables))
+        assertThatThrownBy(() -> orderTables.join(tableGroup))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("테이블이 비어있지 않거나 이미 다른 그룹에 포함된 주문 테이블은 새로운 테이블 그룹에 속할 수 없습니다.");
     }
@@ -57,5 +61,43 @@ class OrderTablesTest {
                 new OrderTable(3, true)
             ))
         );
+    }
+
+    @DisplayName("테이블 그룹을 조인한다.")
+    @Test
+    void join_tableGroup() {
+        // given
+        final TableGroup tableGroup = new TableGroup(1L);
+        final OrderTable orderTable1 = new OrderTable(2, true);
+        final OrderTable orderTable2 = new OrderTable(4, true);
+        final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+
+        // when
+        orderTables.join(tableGroup);
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(orderTable1.getTableGroup()).isEqualTo(tableGroup);
+            softly.assertThat(orderTable2.getTableGroup()).isEqualTo(tableGroup);
+        });
+
+    }@DisplayName("테이블 그룹을 해제한다.")
+    @Test
+    void ungroup_tableGroup() {
+        // given
+        final TableGroup tableGroup = new TableGroup(1L);
+        final OrderTable orderTable1 = new OrderTable(2, true);
+        final OrderTable orderTable2 = new OrderTable(4, true);
+        final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+        orderTables.join(tableGroup);
+
+        // when
+        orderTables.ungroup();
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(orderTable1.getTableGroup()).isNull();
+            softly.assertThat(orderTable2.getTableGroup()).isNull();
+        });
     }
 }
