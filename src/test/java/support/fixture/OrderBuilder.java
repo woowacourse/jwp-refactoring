@@ -1,7 +1,7 @@
 package support.fixture;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.table.OrderTable;
 
 public class OrderBuilder {
 

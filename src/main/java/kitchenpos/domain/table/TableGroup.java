@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
+import kitchenpos.domain.order.OrderTables;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 

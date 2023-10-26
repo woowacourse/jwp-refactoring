@@ -1,6 +1,6 @@
 package kitchenpos.domain.order_table;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
