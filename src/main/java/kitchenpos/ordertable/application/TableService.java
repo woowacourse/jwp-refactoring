@@ -38,6 +38,10 @@ public class TableService {
     public void changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] OrderTable이 존재하지 않습니다. id : " + orderTableId));
+        if (orders.hasCookingOrMealOrders()) {
+            throw new IllegalArgumentException("[ERROR] 요리중이거나 식사중인 주문이 존재합니다.");
+        }
+
         savedOrderTable.changeEmpty(request.isEmpty());
     }
 

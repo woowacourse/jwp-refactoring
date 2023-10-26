@@ -25,6 +25,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @JoinColumn(name = "order_table_id", nullable = false, foreignKey = @ForeignKey(name = "fk_orders_order_table"))
     @ManyToOne(fetch = FetchType.LAZY)
     private OrderTable orderTable;
