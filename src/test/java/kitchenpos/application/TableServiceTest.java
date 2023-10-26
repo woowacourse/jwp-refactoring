@@ -7,7 +7,6 @@ import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,7 +17,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import support.fixture.TableBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,13 +35,11 @@ class TableServiceTest {
     private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
 
     private static Stream<List<OrderTable>> listTest() {
-        final OrderTable table1 = new TableBuilder().build();
-        final OrderTable table2 = new TableBuilder().build();
-        final OrderTable table3 = new TableBuilder().build();
+        final OrderTable table1 = new OrderTable(0);
+        final OrderTable table2 = new OrderTable(0);
+        final OrderTable table3 = new OrderTable(0);
 
         return Stream.of(
                 List.of(),
@@ -157,9 +153,7 @@ class TableServiceTest {
         @DisplayName("테이블이 비어있지 않고 손님의 수가 0 이상일 경우 정상적으로 업데이트된다.")
         void changeEmptyTest(final int expectNumberOfGuests) {
             // given
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(1));
 
             // when
             final OrderTableRequest request = new OrderTableRequest(null, expectNumberOfGuests, false);
@@ -176,9 +170,7 @@ class TableServiceTest {
         @DisplayName("테이블이 비어있지 않고 테이블이 존재하지 않을 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_table_does_not_exists() {
             // given
-            final OrderTable table = new TableBuilder()
-                    .setEmpty(false)
-                    .build();
+            final OrderTable table = new OrderTable(1);
 
             final OrderTableRequest request = new OrderTableRequest(null, 0, false);
 
@@ -191,9 +183,7 @@ class TableServiceTest {
         @DisplayName("비어있는 테이블의 인원수를 변경하면 IllegalArgumentException이 발생한다.")
         void should_throw_when_table_is_empty() {
             // given
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(true)
-                    .build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
             final OrderTableRequest request = new OrderTableRequest(null, 0, false);
 

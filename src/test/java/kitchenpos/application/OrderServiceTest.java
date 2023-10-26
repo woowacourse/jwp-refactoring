@@ -18,7 +18,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import support.fixture.TableBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -80,7 +79,7 @@ class OrderServiceTest {
         @DisplayName("생성된 주문의 상태는 COOKING이다.")
         void createOrderTest() {
             // given
-            final OrderTable table = orderTableRepository.save(new OrderTable(null, 0, false));
+            final OrderTable table = orderTableRepository.save(new OrderTable(1));
 
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
 
@@ -97,9 +96,7 @@ class OrderServiceTest {
         @DisplayName("OrderLineItem이 비어있을 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_OrderLineItem_is_empty() {
             // given
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
             final OrderRequest request = new OrderRequest(table.getId(), null, Collections.emptyList());
 

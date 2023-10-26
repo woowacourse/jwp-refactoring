@@ -1,6 +1,7 @@
 package kitchenpos.domain.table;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -10,31 +11,22 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
-
     private int numberOfGuests;
-
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
     private boolean empty;
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        validateNumberOfGuests(numberOfGuests);
-
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
     public OrderTable(final int numberOfGuests) {
-        this(null, numberOfGuests, true);
+        validateGuests(numberOfGuests);
+
+        this.numberOfGuests = numberOfGuests;
+        this.empty = numberOfGuests == MIN_NUMBER_OF_GUESTS;
     }
 
     protected OrderTable() {
     }
 
-    private void validateNumberOfGuests(final int numberOfGuests) {
+    private void validateGuests(final int numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
             throw new IllegalArgumentException();
         }
@@ -44,14 +36,6 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
@@ -59,6 +43,10 @@ public class OrderTable {
     public void setNumberOfGuests(final int numberOfGuests) {
         validateIsEmpty();
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     private void validateIsEmpty() {
@@ -73,5 +61,28 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void validateGroupable() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void ungroup() {
+        this.empty = true;
+        this.tableGroupId = null;
+    }
+
+    public void updateEmpty(final boolean empty) {
+        validateClearable();
+
+        this.empty = empty;
+    }
+
+    private void validateClearable() {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
     }
 }

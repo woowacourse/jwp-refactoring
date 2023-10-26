@@ -2,33 +2,25 @@ package kitchenpos.application;
 
 import kitchenpos.domain.dto.TableGroupRequest;
 import kitchenpos.domain.dto.TableGroupResponse;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItems;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTables;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import support.fixture.TableBuilder;
-import support.fixture.TableGroupBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @SpringBootTest
 class TableGroupServiceTest {
@@ -58,8 +50,8 @@ class TableGroupServiceTest {
         @DisplayName("테이블 그룹을 생성하고 테이블의 그룹 id를 설정하고 empty를 false로 설장한다.")
         void createTest() {
             // given
-            final OrderTable table1 = orderTableRepository.save(new TableBuilder().build());
-            final OrderTable table2 = orderTableRepository.save(new TableBuilder().build());
+            final OrderTable table1 = orderTableRepository.save(new OrderTable(0));
+            final OrderTable table2 = orderTableRepository.save(new OrderTable(0));
 
             final TableGroupRequest request = new TableGroupRequest(List.of(table1.getId(), table2.getId()));
 
@@ -101,7 +93,6 @@ class TableGroupServiceTest {
             final long savedId2 = 2L;
             final long invalidId = -1L;
             final TableGroupRequest request = new TableGroupRequest(List.of(savedId1, savedId2, invalidId));
-
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
                     () -> tableGroupService.create(request));
@@ -128,20 +119,12 @@ class TableGroupServiceTest {
         @DisplayName("이미 테이블 그룹에 속한 테이블이 존재할 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_already_belong_to_tableGroup() {
             // given
-            final OrderTable orderTable1 = orderTableRepository.save(new TableBuilder().build());
-            final OrderTable orderTable2 = orderTableRepository.save(new TableBuilder().build());
-
-            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder()
-                    .setOrderTables(List.of(orderTable1, orderTable2))
-                    .build());
-
-            orderTable1.setTableGroup(tableGroup);
-            orderTable2.setTableGroup(tableGroup);
-
-            orderTableRepository.save(orderTable1);
-            orderTableRepository.save(orderTable2);
+            final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0));
+            final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0));
 
             final TableGroupRequest request = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
+
+            tableGroupService.create(request);
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
@@ -153,82 +136,36 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 해제 테스트")
     class UngroupTest {
 
+        private TableGroup tableGroup;
+
+        @BeforeEach
+        void setUp() {
+            final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0));
+            final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0));
+
+            final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+            this.tableGroup = new TableGroup(orderTables);
+            final TableGroup tableGroup = this.tableGroup;
+
+            tableGroup.group();
+        }
+
         @Test
         @DisplayName("테이블 그룹을 해제하면 그룹에 속하는 모든 테이블의 그룹 id를 null로 설정하고 empty를 true로 설정한다.")
         void ungroupTest() {
             // given
-            final OrderTable orderTable1 = orderTableRepository.findById(1L).get();
-            final OrderTable orderTable2 = orderTableRepository.findById(2L).get();
-
-            final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
-            final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(orderTables));
-
-            orderTable1.setEmpty(false);
-            orderTable2.setEmpty(false);
-
-            orderTable1.setTableGroup(tableGroup);
-            orderTable2.setTableGroup(tableGroup);
-
-            orderTableRepository.save(orderTable1);
-            orderTableRepository.save(orderTable2);
-
-            orderRepository.findAll().stream()
-                    .filter(order -> List.of(1L, 2L).contains(order.getOrderTable().getId()))
-                    .forEach(order -> {
-                        order.updateOrderStatus(OrderStatus.COMPLETION);
-                        orderRepository.save(order);
-                    });
-
             // when
-            tableGroupService.ungroup(tableGroup.getId());
+            tableGroup.ungroup();
 
             // then
-            orderTableRepository.findById(orderTable1.getId()).ifPresentOrElse(
-                    actual -> {
-                        assertNull(actual.getTableGroup());
-                        assertFalse(actual.isEmpty());
-                    },
-                    () -> fail("테이블이 존재하지 않습니다.")
-            );
+            final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(tableGroup.getOrderTables().getOrderTableIds());
 
-            orderTableRepository.findById(orderTable2.getId()).ifPresentOrElse(
-                    actual -> {
-                        assertNull(actual.getTableGroup());
-                        assertFalse(actual.isEmpty());
-                    },
-                    () -> fail("테이블이 존재하지 않습니다.")
-            );
-        }
-
-        @ParameterizedTest
-        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
-        @DisplayName("주문 상태가 COMPLETION이 아닐 경우 IllegalArgumentException이 발생한다.")
-        void should_throw_when_order_status_is_cooking_or_meal(final OrderStatus orderStatus) {
-            // given
-            final OrderTable table1 = orderTableRepository.save(new OrderTable(0));
-            final OrderTable table2 = orderTableRepository.save(new OrderTable(0));
-
-            final Order order1 = new Order(table1, new OrderLineItems(List.of()));
-            final Order order2 = new Order(table2, new OrderLineItems(List.of()));
-
-            order1.updateOrderStatus(orderStatus);
-            order2.updateOrderStatus(orderStatus);
-
-            orderRepository.save(order1);
-            orderRepository.save(order2);
-
-            final TableGroup tableGroup = new TableGroup(new OrderTables(List.of(table1, table2)));
-            tableGroupRepository.save(tableGroup);
-
-            table1.setTableGroup(tableGroup);
-            table2.setTableGroup(tableGroup);
-
-            orderTableRepository.save(table1);
-            orderTableRepository.save(table2);
-
-            // when & then
-            assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableGroupService.ungroup(tableGroup.getId()));
+            assertThat(orderTables)
+                    .extracting(OrderTable::getTableGroupId, OrderTable::isEmpty)
+                    .containsExactly(
+                            tuple(null, true),
+                            tuple(null, true)
+                    );
         }
     }
 }

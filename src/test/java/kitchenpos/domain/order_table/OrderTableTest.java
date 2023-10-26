@@ -14,6 +14,6 @@ class OrderTableTest {
     @DisplayName("테이블의 손님의 수가 0 미만일 경우 IllegalArgumentException이 발생한다.")
     void changeNumberOfGuestsWithNegativeNumberOfGuests(final int invalidNumberOfGuests) {
         assertThrowsExactly(IllegalArgumentException.class,
-                () -> new OrderTable(null, invalidNumberOfGuests, true));
+                () -> new OrderTable(invalidNumberOfGuests));
     }
 }

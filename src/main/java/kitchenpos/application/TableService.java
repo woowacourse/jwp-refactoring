@@ -49,20 +49,13 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        validateNotGrouped(orderTable);
-        validateChangeableOrderStatus(orderTableId);
+        orderTable.updateEmpty(request.isEmpty());
 
-        orderTable.setEmpty(request.isEmpty());
+        validateChangeableOrderStatus(orderTableId);
 
         orderTableRepository.save(orderTable);
 
         return OrderTableResponse.from(orderTable);
-    }
-
-    private void validateNotGrouped(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateChangeableOrderStatus(final Long orderTableId) {
