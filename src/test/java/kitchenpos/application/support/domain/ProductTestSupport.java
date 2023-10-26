@@ -1,6 +1,9 @@
 package kitchenpos.application.support.domain;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 
 public class ProductTestSupport {
@@ -11,16 +14,8 @@ public class ProductTestSupport {
 
     public static class Builder {
 
-        private static Long autoCount = 0L;
-
-        private Long id = ++autoCount;
-        private String name = "상품 이름" + id;
+        private String name = "상품 이름" + UUID.randomUUID().toString().substring(0, 5);
         private BigDecimal price = new BigDecimal("3000");
-
-        public Builder id(final Long id) {
-            this.id = id;
-            return this;
-        }
 
         public Builder name(final String name) {
             this.name = name;
@@ -33,11 +28,11 @@ public class ProductTestSupport {
         }
 
         public Product build() {
-            final var result = new Product();
-            result.setId(id);
-            result.setName(name);
-            result.setPrice(price);
-            return result;
+            return new Product(name, Price.from(price));
+        }
+
+        public ProductCreateRequest buildToProductCreateRequest() {
+            return new ProductCreateRequest(name, price);
         }
     }
 }

@@ -1,6 +1,8 @@
 package kitchenpos.application.support.domain;
 
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableTestSupport {
 
@@ -10,20 +12,12 @@ public class OrderTableTestSupport {
 
     public static final class Builder {
 
-        private static Long autoCount = 0L;
-
-        private Long id = ++autoCount;
-        private Long tableGroupId = null;
+        private TableGroup tableGroup = null;
         private int numberOfGuests = 4;
         private boolean empty = false;
 
-        public Builder id(final Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder tableGroupId(final Long tableGroupId) {
-            this.tableGroupId = tableGroupId;
+        public Builder tableGroup(final TableGroup tableGroup) {
+            this.tableGroup = tableGroup;
             return this;
         }
 
@@ -38,12 +32,13 @@ public class OrderTableTestSupport {
         }
 
         public OrderTable build() {
-            final var result = new OrderTable();
-            result.setId(id);
-            result.setTableGroupId(tableGroupId);
-            result.setNumberOfGuests(numberOfGuests);
-            result.setEmpty(empty);
+            final var result = new OrderTable(numberOfGuests, empty);
+            result.updateTableGroup(tableGroup);
             return result;
+        }
+
+        public OrderTableCreateRequest buildToOrderTableCreateRequest() {
+            return new OrderTableCreateRequest(numberOfGuests, empty);
         }
     }
 }

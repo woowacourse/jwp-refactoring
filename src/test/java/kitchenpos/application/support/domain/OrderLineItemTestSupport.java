@@ -1,5 +1,7 @@
 package kitchenpos.application.support.domain;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemTestSupport {
@@ -10,25 +12,17 @@ public class OrderLineItemTestSupport {
 
     public static class Builder {
 
-        private static Long autoCount = 0L;
-
-        private Long seq = ++autoCount;
-        private Long orderId = null;
-        private Long menuId = MenuTestSupport.builder().build().getId();
+        private Order order = null;
+        private Menu menu = MenuTestSupport.builder().build();
         private long quantity = 2;
 
-        public Builder Seq(final Long seq) {
-            this.seq = seq;
+        public Builder Order(final Order order) {
+            this.order = order;
             return this;
         }
 
-        public Builder OrderId(final Long orderId) {
-            this.orderId = orderId;
-            return this;
-        }
-
-        public Builder MenuId(final Long menuId) {
-            this.menuId = menuId;
+        public Builder Menu(final Menu menu) {
+            this.menu = menu;
             return this;
         }
 
@@ -38,12 +32,7 @@ public class OrderLineItemTestSupport {
         }
 
         public OrderLineItem build() {
-            final var result = new OrderLineItem();
-            result.setSeq(seq);
-            result.setOrderId(orderId);
-            result.setMenuId(menuId);
-            result.setQuantity(quantity);
-            return result;
+            return new OrderLineItem(menu, quantity);
         }
     }
 }

@@ -2,8 +2,14 @@ package kitchenpos.application.support.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 
 public class MenuTestSupport {
 
@@ -13,21 +19,13 @@ public class MenuTestSupport {
 
     public static final class Builder {
 
-        private static Long autoCount = 0L;
-
-        private Long id = ++autoCount;
-        private String name = "메뉴 이름" + autoCount;
+        private String name = "메뉴 이름" + UUID.randomUUID().toString().substring(0, 5);
         private BigDecimal price = new BigDecimal("16000");
-        private Long menuGroupId = MenuGroupTestSupport.builder().build().getId();
+        private MenuGroup menuGroup = MenuGroupTestSupport.builder().build();
         private List<MenuProduct> menuProducts = List.of(
-                MenuProductTestSupport.builder().menuId(id).build(),
-                MenuProductTestSupport.builder().menuId(id).build(),
-                MenuProductTestSupport.builder().menuId(id).build());
-
-        public Builder id(final Long id) {
-            this.id = id;
-            return this;
-        }
+                MenuProductTestSupport.builder().build(),
+                MenuProductTestSupport.builder().build(),
+                MenuProductTestSupport.builder().build());
 
         public Builder name(final String name) {
             this.name = name;
@@ -39,8 +37,8 @@ public class MenuTestSupport {
             return this;
         }
 
-        public Builder menuGroupId(final Long menuGroupId) {
-            this.menuGroupId = menuGroupId;
+        public Builder menuGroup(final MenuGroup menuGroup) {
+            this.menuGroup = menuGroup;
             return this;
         }
 
@@ -50,13 +48,19 @@ public class MenuTestSupport {
         }
 
         public Menu build() {
-            final var result = new Menu();
-            result.setId(id);
-            result.setName(name);
-            result.setPrice(price);
-            result.setMenuGroupId(menuGroupId);
-            result.setMenuProducts(menuProducts);
-            return result;
+            return new Menu(name, Price.from(price), menuGroup);
+        }
+
+        public MenuCreateRequest buildToMenuCreateRequest() {
+            final List<MenuProductRequest> menuProductRequests = menuProducts.stream()
+                    .map(it -> new MenuProductRequest(it.getProduct().getId() == null ? -1L : it.getProduct().getId(),
+                            it.getQuantity()))
+                    .collect(Collectors.toList());
+            if (menuGroup == null) {
+                return new MenuCreateRequest(name, price, -1L, menuProductRequests);
+            }
+            return new MenuCreateRequest(name, price, menuGroup.getId() == null ? -1 : menuGroup.getId(),
+                    menuProductRequests);
         }
     }
 }

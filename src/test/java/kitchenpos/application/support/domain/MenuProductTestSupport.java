@@ -1,6 +1,8 @@
 package kitchenpos.application.support.domain;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 public class MenuProductTestSupport {
 
@@ -10,25 +12,17 @@ public class MenuProductTestSupport {
 
     public static final class Builder {
 
-        private static Long autoCount = 0L;
-
-        private Long seq = ++autoCount;
-        private Long menuId = null;
-        private Long productId = ProductTestSupport.builder().build().getId();
+        private Menu menu = null;
+        private Product product = ProductTestSupport.builder().build();
         private long quantity = 2;
 
-        public Builder seq(final Long seq) {
-            this.seq = seq;
+        public Builder menu(final Menu menu) {
+            this.menu = menu;
             return this;
         }
 
-        public Builder menuId(final Long menuId) {
-            this.menuId = menuId;
-            return this;
-        }
-
-        public Builder productId(final Long productId) {
-            this.productId = productId;
+        public Builder product(final Product product) {
+            this.product = this.product;
             return this;
         }
 
@@ -38,12 +32,7 @@ public class MenuProductTestSupport {
         }
 
         public MenuProduct build() {
-            final var result = new MenuProduct();
-            result.setSeq(seq);
-            result.setMenuId(menuId);
-            result.setProductId(productId);
-            result.setQuantity(quantity);
-            return result;
+            return new MenuProduct(product, quantity);
         }
     }
 }
