@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.TableFixture.EMPTY_TABLE_REQUEST;
 import static kitchenpos.fixture.TableFixture.TABLE;
 import static kitchenpos.fixture.TableFixture.createTableById;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,7 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableEmptyChangeRequest;
+import kitchenpos.dto.OrderTableNumberOfGuestsChangeRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -42,7 +44,7 @@ class TableRestControllerTest {
         // when & then
         mockMvc.perform(post("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createTableById(null))))
+                        .content(objectMapper.writeValueAsString(EMPTY_TABLE_REQUEST)))
                 .andExpect(status().isCreated())
                 .andExpect(redirectedUrl("/api/tables/1"));
     }
@@ -56,39 +58,36 @@ class TableRestControllerTest {
         mockMvc.perform(get("/api/tables"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value(TABLE.getId()))
-                .andExpect(jsonPath("$[0].tableGroupId").value(TABLE.getTableGroupId()))
                 .andExpect(jsonPath("$[0].numberOfGuests").value(TABLE.getNumberOfGuests()));
     }
 
     @Test
     void changeEmpty() throws Exception {
         // given
-        final OrderTable requestTable = new OrderTable();
+        final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
         given(tableService.changeEmpty(any(), any())).willReturn(TABLE);
 
         // when & then
         mockMvc.perform(put("/api/tables/1/empty")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestTable)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(TABLE.getId()))
-                .andExpect(jsonPath("$.tableGroupId").value(TABLE.getTableGroupId()))
                 .andExpect(jsonPath("$.numberOfGuests").value(TABLE.getNumberOfGuests()));
     }
 
     @Test
     void changeNumberOfGuests() throws Exception {
         // given
-        final OrderTable requestTable = new OrderTable();
+        final OrderTableNumberOfGuestsChangeRequest request = new OrderTableNumberOfGuestsChangeRequest(10);
         given(tableService.changeNumberOfGuests(any(), any())).willReturn(TABLE);
 
         // when & then
         mockMvc.perform(put("/api/tables/1/number-of-guests")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestTable)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(TABLE.getId()))
-                .andExpect(jsonPath("$.tableGroupId").value(TABLE.getTableGroupId()))
                 .andExpect(jsonPath("$.numberOfGuests").value(TABLE.getNumberOfGuests()));
     }
 }

@@ -5,8 +5,9 @@ import static kitchenpos.fixture.MenuGroupFixture.CHICKEN_SET_NON_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.dto.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuGroupServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -22,7 +23,7 @@ class MenuGroupServiceTest {
     @Test
     void create_메서드는_메뉴_그룹을_생성한다() {
         // when
-        final MenuGroup response = menuGroupService.create(CHICKEN_SET_NON_ID);
+        final MenuGroup response = menuGroupService.create(new MenuGroupRequest("치킨세트"));
 
         // then
         assertThat(response)
@@ -33,7 +34,7 @@ class MenuGroupServiceTest {
     @Test
     void list_메서드는_모든_메뉴_그룹을_조회한다() {
         // given
-        menuGroupDao.save(CHICKEN_SET_NON_ID);
+        menuGroupRepository.save(CHICKEN_SET_NON_ID);
 
         // when
         final List<MenuGroup> menuGroups = menuGroupService.list();
