@@ -39,7 +39,7 @@ class OrderTest {
         //given
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
         doThrow(new IllegalArgumentException("주문할 수 없는 상태의 테이블이 존재합니다."))
-                .when(orderValidator).validateOrderTable(any());
+                .when(orderValidator).validate(any(),any());
 
         //when then
         assertThatThrownBy(() -> Order.create(1L, orderLineItems, orderValidator))

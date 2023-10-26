@@ -22,7 +22,12 @@ public class OrderValidator {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public void validateOrderLineItems(OrderLineItems orderLineItems) {
+    public void validate(OrderLineItems orderLineItems, Long orderTableId) {
+        validateOrderLineItems(orderLineItems);
+        validateOrderTable(orderTableId);
+    }
+
+    private void validateOrderLineItems(OrderLineItems orderLineItems) {
         List<Long> menuIds = extractMenuIds(orderLineItems);
 
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
@@ -37,10 +42,10 @@ public class OrderValidator {
                 .collect(Collectors.toList());
     }
 
-    public void validateOrderTable(Long orderTableId) {
+    private void validateOrderTable(Long orderTableId) {
         OrderTable orderTable = findOrderTable(orderTableId);
 
-        if (Boolean.TRUE.equals(orderTable.isEmpty())) {
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문할 수 없는 상태의 테이블이 존재합니다.");
         }
     }

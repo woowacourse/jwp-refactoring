@@ -46,8 +46,7 @@ public class Order {
             OrderValidator orderValidator
     ) {
         validate(orderTableId, orderLineItems);
-        orderValidator.validateOrderLineItems(orderLineItems);
-        orderValidator.validateOrderTable(orderTableId);
+        orderValidator.validate(orderLineItems, orderTableId);
 
         this.orderStatus = orderStatus;
         this.orderTableId = orderTableId;
