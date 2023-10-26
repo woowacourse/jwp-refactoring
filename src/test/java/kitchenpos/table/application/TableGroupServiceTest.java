@@ -9,6 +9,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.order.application.OrderValidator;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.vo.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
@@ -34,6 +35,9 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderValidator orderValidator;
 
     @Nested
     class 테이블_그룹_추가_시 {
@@ -151,7 +155,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(orderTableA.getId(), orderTableB.getId()));
             TableGroupResponse response = tableGroupService.create(request);
-            orderRepository.save(주문(orderTableA, orderStatus, LocalDateTime.now()));
+            orderRepository.save(주문(orderTableA.getId(), orderStatus, LocalDateTime.now(), orderValidator));
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.ungroup(response.getId()))
@@ -166,7 +170,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(orderTableA.getId(), orderTableB.getId()));
             TableGroupResponse response = tableGroupService.create(request);
-            orderRepository.save(주문(orderTableA, OrderStatus.COMPLETION, LocalDateTime.now()));
+            orderRepository.save(주문(orderTableA.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), orderValidator));
 
             //when, then
             assertThatNoException()

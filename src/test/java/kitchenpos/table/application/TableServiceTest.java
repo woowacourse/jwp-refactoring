@@ -9,6 +9,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.order.application.OrderValidator;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.vo.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
@@ -40,6 +41,9 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderValidator orderValidator;
 
     @Nested
     class 테이블_목록_조회_시 {
@@ -130,7 +134,7 @@ class TableServiceTest extends ServiceTest {
         void 조리중이거나_식사중인_테이블이라면_예외를_던진다(OrderStatus orderStatus) {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(2, false));
-            orderRepository.save(주문(orderTable, orderStatus, LocalDateTime.now()));
+            orderRepository.save(주문(orderTable.getId(), orderStatus, LocalDateTime.now(), orderValidator));
             OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
             //when, then

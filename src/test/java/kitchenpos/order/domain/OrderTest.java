@@ -22,7 +22,7 @@ class OrderTest {
         void 요리_중이거나_식사_중이라면_주문이_진행중이다(OrderStatus orderStatus) {
             //given
             OrderTable orderTable = new OrderTable(2, false);
-            Order order = OrderFixture.주문(orderTable, orderStatus, LocalDateTime.now());
+            Order order = OrderFixture.주문(orderTable.getId(), orderStatus, LocalDateTime.now());
 
             //when
             boolean progress = order.isProgress();
@@ -35,7 +35,7 @@ class OrderTest {
         void 종료된_상태라면_주문이_진행중이_아니다() {
             //given
             OrderTable orderTable = new OrderTable(2, false);
-            Order order = OrderFixture.주문(orderTable, OrderStatus.COMPLETION, LocalDateTime.now());
+            Order order = OrderFixture.주문(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now());
 
             //when
             boolean progress = order.isProgress();

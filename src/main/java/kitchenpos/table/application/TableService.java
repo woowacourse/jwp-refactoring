@@ -46,7 +46,7 @@ public class TableService {
             throw new IllegalArgumentException("그룹이 존재하는 테이블은 수정할 수 없습니다.");
         }
 
-        List<Order> orders = orderRepository.findAllByOrderTable(orderTable);
+        List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
         orders.stream()
                 .filter(Order::isProgress)
                 .findAny()

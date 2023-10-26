@@ -141,10 +141,7 @@ class OrderServiceTest extends ServiceTest {
             //then
             assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isNotNull();
-                softly.assertThat(response.getOrderTable().getId()).isEqualTo(orderTable.getId());
-                softly.assertThat(response.getOrderTable().getNumberOfGuests())
-                        .isEqualTo(orderTable.getNumberOfGuests());
-                softly.assertThat(response.getOrderTable().isEmpty()).isEqualTo(orderTable.isEmpty());
+                softly.assertThat(response.getOrderTableId()).isEqualTo(orderTable.getId());
                 softly.assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
                 softly.assertThat(response.getOrderedTime()).isAfter(now);
                 softly.assertThat(response.getOrderLineItems()).hasSize(1);
