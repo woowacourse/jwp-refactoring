@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.dto.OrderLineItemResponse;
 import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.table.domain.OrderTable;
 
 public class OrderMapper {
 
@@ -43,8 +43,7 @@ public class OrderMapper {
                                 orderLineItem.getSeq(),
                                 orderLineItem.getOrderId()
                                         .orElseThrow(() -> new IllegalArgumentException("orderId 가 NULL 입니다")),
-                                orderLineItem.getMenuId()
-                                        .orElseThrow(() -> new IllegalArgumentException("menuId 가 NULL 입니다")),
+                                orderLineItem.getMenuId(),
                                 orderLineItem.getQuantity().getValue()
                         )
                 )

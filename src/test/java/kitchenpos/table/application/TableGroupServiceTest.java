@@ -185,8 +185,8 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     private Order createOrder(final OrderTable orderTable) {
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, menu, 1L),
-                new OrderLineItem(null, menu, 1L));
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, menu.getId(), 1L),
+                new OrderLineItem(null, menu.getId(), 1L));
         return new Order(orderTable, LocalDateTime.now(), orderLineItems);
     }
 }

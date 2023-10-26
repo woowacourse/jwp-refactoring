@@ -5,17 +5,17 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.mapper.OrderMapper;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderUpdateStatusRequest;
-import kitchenpos.order.application.mapper.OrderMapper;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +59,7 @@ public class OrderService {
         final Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu입니다. menuId: " + request.getMenuId()));
 
-        return new OrderLineItem(null, menu, request.getQuantity());
+        return new OrderLineItem(null, menu.getId(), request.getQuantity());
     }
 
     private Order saveOrder(

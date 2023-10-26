@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.util.Optional;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.vo.Quantity;
-import kitchenpos.menu.domain.Menu;
 
 
 @Entity
@@ -23,9 +23,8 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
+    @Column(nullable = false)
+    private Long menuId;
 
     @Embedded
     private Quantity quantity;
@@ -36,21 +35,21 @@ public class OrderLineItem {
     private OrderLineItem(
             final Long seq,
             final Order order,
-            final Menu menu,
+            final Long menuId,
             final Quantity quantity
     ) {
         this.seq = seq;
         this.order = order;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
     public OrderLineItem(
             final Order order,
-            final Menu menu,
+            final Long menuId,
             final long quantity
     ) {
-        this(null, order, menu, new Quantity(quantity));
+        this(null, order, menuId, new Quantity(quantity));
     }
 
     public void updateOrder(final Order order) {
@@ -65,10 +64,6 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
-    }
-
     public Optional<Long> getOrderId() {
         if (order == null) {
             return Optional.empty();
@@ -76,11 +71,8 @@ public class OrderLineItem {
         return Optional.ofNullable(order.getId());
     }
 
-    public Optional<Long> getMenuId() {
-        if (menu == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(menu.getId());
+    public Long getMenuId() {
+        return menuId;
     }
 
     public Quantity getQuantity() {

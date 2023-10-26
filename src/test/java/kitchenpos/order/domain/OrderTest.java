@@ -9,9 +9,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -22,8 +19,8 @@ import org.junit.jupiter.api.Test;
 class OrderTest {
 
     private final Menu menu = Menu.of("메뉴", BigDecimal.valueOf(1_000L), null, List.of(메뉴_상품_1000원_2개));
-    private final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu, 1L);
-    private final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu, 1L);
+    private final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu.getId(), 1L);
+    private final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu.getId(), 1L);
     private final List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
 
     @Test
