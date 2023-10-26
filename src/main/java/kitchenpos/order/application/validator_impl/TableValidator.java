@@ -1,27 +1,24 @@
-package kitchenpos.order.application.listner;
+package kitchenpos.order.application.validator_impl;
 
 import kitchenpos.order.application.OrderRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.order.domain.exception.OrderExceptionType;
-import kitchenpos.table.application.TableChangeEmptyEvent;
-import org.springframework.context.event.EventListener;
+import kitchenpos.table.application.validator.TableChangeEmptyValidator;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class TableChangeEmptyEventHandler {
+public class TableValidator implements TableChangeEmptyValidator {
 
     private final OrderRepository orderRepository;
 
-    public TableChangeEmptyEventHandler(final OrderRepository orderRepository) {
+    public TableValidator(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
-    @Transactional
-    @EventListener
-    public void handle(final TableChangeEmptyEvent event) {
-        orderRepository.findByOrderTableId(event.getOrderTableId())
+    @Override
+    public void validateChangeEmpty(final Long orderTableId) {
+        orderRepository.findByOrderTableId(orderTableId)
             .ifPresent(this::validateOrderIsNotCompletion);
     }
 

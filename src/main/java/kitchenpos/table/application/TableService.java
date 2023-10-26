@@ -2,11 +2,10 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.application.TableValidator;
+import kitchenpos.order.application.validator_impl.TableValidator;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,16 +14,13 @@ public class TableService {
 
     private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     public TableService(
         final TableValidator tableValidator,
-        final OrderTableRepository orderTableRepository,
-        final ApplicationEventPublisher eventPublisher
+        final OrderTableRepository orderTableRepository
     ) {
         this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
-        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
