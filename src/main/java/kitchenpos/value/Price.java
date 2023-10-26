@@ -30,8 +30,8 @@ public class Price {
         return this.price;
     }
 
-    public BigDecimal multiply(final Quantity quantity) {
-        return this.price.multiply(BigDecimal.valueOf(quantity.getValue()));
+    public BigDecimal multiply(final Long quantity) {
+        return this.price.multiply(BigDecimal.valueOf(quantity));
     }
 
     public void isValidPrice(final BigDecimal sum) {

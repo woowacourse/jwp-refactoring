@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import kitchenpos.exception.InvalidNumberException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.dto.MenuProductDto;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
@@ -41,9 +40,9 @@ class MenuServiceTest extends ServiceTest {
         final int newMenuId = menuService.list().size() + 1;
         final List<MenuProductDto> dto = List.of(
                 MenuProductDto.from(
-                        new MenuProduct(1L, 1L, ObjectCreator.getObject(Product.class, 1L), new Quantity(1L))),
+                        new MenuProduct(1L, 1L, 1L, new Quantity(1L))),
                 MenuProductDto.from(
-                        new MenuProduct(2L, 2L, ObjectCreator.getObject(Product.class, 2L), new Quantity(2L)))
+                        new MenuProduct(2L, 2L, 1L, new Quantity(2L)))
         );
         final CreateMenuRequest request = ObjectCreator.getObject(CreateMenuRequest.class, "test",
                 BigDecimal.valueOf(29), 1L, dto);
@@ -82,8 +81,8 @@ class MenuServiceTest extends ServiceTest {
                     new MenuProduct(
                             productId,
                             productId,
-                            ObjectCreator.getObject(Product.class, productId)
-                            , new Quantity(1L))
+                            productId,
+                            new Quantity(1L))
             ));
         }
         return ObjectCreator.getObject(CreateMenuRequest.class, "test", price, menuGroupId, dto);

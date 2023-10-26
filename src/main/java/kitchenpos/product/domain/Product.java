@@ -1,4 +1,4 @@
-package kitchenpos.menu.domain;
+package kitchenpos.product.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -24,10 +24,6 @@ public class Product {
     private Price price;
 
     protected Product() {
-    }
-
-    public Product(final Long id) {
-        this.id = id;
     }
 
     public Product(final String name, final Price price) {
