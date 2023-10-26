@@ -8,6 +8,9 @@ public class OrderLineItemResponse {
     private Long menuId;
     private Long quantity;
 
+    private OrderLineItemResponse() {
+    }
+
     private OrderLineItemResponse(final Long id, final Long menuId, final Long quantity) {
         this.id = id;
         this.menuId = menuId;

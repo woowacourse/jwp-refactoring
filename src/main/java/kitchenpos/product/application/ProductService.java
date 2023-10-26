@@ -35,8 +35,6 @@ public class ProductService {
     public ProductResponse update(final ProductUpdateRequest productUpdateRequest) {
         Product product = productRepository.getById(productUpdateRequest.getProductId());
         product.delete();
-
-        Product updatedProduct = productRepository.save(productUpdateRequest.toEntity());
-        return ProductResponse.of(updatedProduct);
+        return create(productUpdateRequest);
     }
 }

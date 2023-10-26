@@ -3,11 +3,18 @@ package kitchenpos;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.menu.application.dto.MenuProductRequest;
 import kitchenpos.menu.application.dto.MenuRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.application.dto.MenuUpdateRequest;
+import kitchenpos.order.application.dto.OrderLineItemRequest;
+import kitchenpos.order.application.dto.OrderRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.dto.OrderTableEmptyRequest;
+import kitchenpos.order.application.dto.OrderTableResponse;
 import kitchenpos.order.ui.OrderRestController;
 import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.application.dto.ProductUpdateRequest;
@@ -25,20 +32,13 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class OrderAcceptanceTest {
-
-    @Autowired
-    OrderRestController orderRestController;
-
-    @Autowired
-    ProductRestController productRestController;
+class AcceptanceTest {
 
     @Autowired
     TestRestTemplate restTemplate;
-
-
+    
     @Test
-    @DisplayName("상품 정보를 변경하면 기존 상품을 soft delete하고, 변경된 정보를 가져온다.")
+    @DisplayName("상품 정보를 변경하면 기존 상품을 soft delete하고, 메뉴를 조회할 시엔 그 이전 정보를, 상품을 조회할 땐 변경된 정보를 가져온다.")
     void updateProduct() {
         MenuRequest menuRequest = new MenuRequest("kong", BigDecimal.valueOf(1000), 1L,
                 List.of(new MenuProductRequest(1L, 10)));
@@ -69,6 +69,43 @@ public class OrderAcceptanceTest {
             softAssertions.assertThat(updatedProductMenuResponse.getMenuProductResponses()).hasSize(1);
             softAssertions.assertThat(updatedProductMenuResponse.getMenuProductResponses().get(0).getProductId())
                     .isNotEqualTo(updatedProductResponse.getBody().getId()); // 새롭게 저장된 상품 정보와 매핑되지 않고, 기존 상품 정보에 매핑된다.
+        });
+    }
+
+    @Test
+    @DisplayName("메뉴 정보를 변경하면 기존 메뉴를 soft delete하고, 주문 시엔 그 이전 정보를, 메뉴를 조회할 땐 변경된 정보를 가져온다.")
+    void updateMenu() {
+        restTemplate.exchange("/api/tables/1/empty",
+                HttpMethod.PUT,
+                new HttpEntity<>(new OrderTableEmptyRequest(false)),
+                OrderTableResponse.class);
+
+        OrderRequest orderRequest = new OrderRequest(1L, List.of(new OrderLineItemRequest(1L, 10)));
+        ResponseEntity<OrderResponse> createdOrderResponse = restTemplate.exchange("/api/orders",
+                HttpMethod.POST,
+                new HttpEntity<>(orderRequest),
+                OrderResponse.class);
+
+        MenuRequest menuRequest = new MenuUpdateRequest(1L, "kong", BigDecimal.valueOf(1000), 1L,
+                List.of(new MenuProductRequest(1L, 10)));
+        ResponseEntity<MenuResponse> createdMenuResponse = restTemplate.exchange("/api/menus",
+                HttpMethod.PUT,
+                new HttpEntity<>(menuRequest),
+                MenuResponse.class);
+
+        List<OrderResponse> orderResponses = Arrays.asList(
+                restTemplate.getForObject("/api/orders", OrderResponse[].class));
+
+        OrderResponse updatedMenuOrderResponse = orderResponses.stream()
+                .filter(orderResponse -> orderResponse.getId().equals(createdOrderResponse.getBody().getId()))
+                .findFirst()
+                .orElseThrow();
+
+        assertSoftly(softAssertions -> {
+            // 메뉴 업데이트 확인
+            softAssertions.assertThat(createdMenuResponse.getBody().getName()).isEqualTo("kong");
+            softAssertions.assertThat(createdMenuResponse.getBody().getPrice()).isEqualTo(BigDecimal.valueOf(1000));
+
         });
     }
 }

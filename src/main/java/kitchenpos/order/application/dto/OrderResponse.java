@@ -16,6 +16,9 @@ public class OrderResponse {
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItemResponses;
 
+    private OrderResponse() {
+    }
+
     private OrderResponse(final Long id,
                           final OrderTableResponse orderTableResponse,
                           final OrderStatus orderStatus,

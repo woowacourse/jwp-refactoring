@@ -105,6 +105,6 @@ class MenuServiceTest {
     void list_success1() {
         menuService.list();
 
-        verify(menuRepository, times(1)).findAll();
+        verify(menuRepository, times(1)).findAllByDeletedFalse();
     }
 }

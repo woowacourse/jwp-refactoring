@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuProductRequest;
 import kitchenpos.menu.application.dto.MenuRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.application.dto.MenuUpdateRequest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.exception.MenuException.NotExistsProductException;
@@ -94,10 +95,17 @@ public class MenuService {
 
     public List<MenuResponse> list() {
         List<MenuResponse> menuResponses = new ArrayList<>();
-        List<Menu> menus = menuRepository.findAll();
+        List<Menu> menus = menuRepository.findAllByDeletedFalse();
         for (Menu menu : menus) {
             menuResponses.add(MenuResponse.of(menu, menuProductRepository.findByMenu(menu)));
         }
         return menuResponses;
+    }
+
+    public MenuResponse update(final MenuUpdateRequest menuRequest) {
+        Menu menu = menuRepository.getById(menuRequest.getId());
+        menu.delete();
+
+        return create(menuRequest);
     }
 }

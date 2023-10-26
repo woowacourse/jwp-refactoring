@@ -8,6 +8,9 @@ public class OrderTableResponse {
     private int numberOfGuests;
     private boolean empty;
 
+    private OrderTableResponse() {
+    }
+
     private OrderTableResponse(final Long id, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.numberOfGuests = numberOfGuests;

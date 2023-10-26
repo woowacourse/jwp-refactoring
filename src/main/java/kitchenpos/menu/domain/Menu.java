@@ -24,6 +24,8 @@ public class Menu {
     private Price price;
     @Column
     private Long menuGroupId;
+    @Column
+    private boolean deleted = false;
 
     protected Menu() {
     }
@@ -48,6 +50,10 @@ public class Menu {
         if (name == null || name.isEmpty()) {
             throw new InvalidMenuNameException();
         }
+    }
+
+    public void delete() {
+        deleted = true;
     }
 
     public Long getId() {

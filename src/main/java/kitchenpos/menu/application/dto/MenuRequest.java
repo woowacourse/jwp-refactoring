@@ -12,7 +12,7 @@ public class MenuRequest {
     private Long menuGroupId;
     private List<MenuProductRequest> menuProductRequests;
 
-    private MenuRequest() {
+    protected MenuRequest() {
     }
 
     public MenuRequest(final String name,
