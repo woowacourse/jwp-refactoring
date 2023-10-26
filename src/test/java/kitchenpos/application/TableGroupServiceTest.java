@@ -96,7 +96,7 @@ class TableGroupServiceTest {
         void throwExceptionWhenContainsInvalidOrderTable() {
             // given
             final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroupRequest tableGroup = new TableGroupRequest(List.of(orderTable1.getId(), INVALID_ID));
+            final TableGroupRequest tableGroup = TableGroupFixture.fromIds(orderTable1.getId(), INVALID_ID);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -109,7 +109,7 @@ class TableGroupServiceTest {
         void throwExceptionWhenContainsDuplicatedOrderTable() {
             // given
             final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroupRequest tableGroup = new TableGroupRequest(List.of(orderTable1.getId(), orderTable1.getId()));
+            final TableGroupRequest tableGroup = TableGroupFixture.fromIds(orderTable1.getId(), orderTable1.getId());
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.request.OrderTableIdRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.OrderStatus;
@@ -30,12 +31,18 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final List<Long> orderTableIds = request.getOrderTables();
+        final List<Long> orderTableIds = convertToLong(request.getOrderTables());
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateInvalidOrderTable(orderTableIds, savedOrderTables);
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+    }
+
+    private List<Long> convertToLong(List<OrderTableIdRequest> requests) {
+        return requests.stream()
+                .map(OrderTableIdRequest::getId)
+                .collect(Collectors.toList());
     }
 
     private void validateInvalidOrderTable(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
