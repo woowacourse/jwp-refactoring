@@ -8,25 +8,29 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.dto.OrderLineItemRequest;
-import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.application.dto.OrderStatusChangeRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.exception.OrderException.CompletionOrderException;
-import kitchenpos.domain.exception.OrderException.EmptyOrderTableException;
-import kitchenpos.domain.exception.OrderException.NotExistsMenuException;
-import kitchenpos.domain.exception.OrderException.NotExistsOrderException;
-import kitchenpos.domain.exception.OrderTableException.NotExistsOrderTableException;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderLineItemRequest;
+import kitchenpos.order.application.dto.OrderRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.dto.OrderStatusChangeRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.exception.OrderException.CompletionOrderException;
+import kitchenpos.order.domain.exception.OrderException.EmptyOrderLineItemsException;
+import kitchenpos.order.domain.exception.OrderException.EmptyOrderTableException;
+import kitchenpos.order.domain.exception.OrderException.NotExistsMenuException;
+import kitchenpos.order.domain.exception.OrderException.NotExistsOrderException;
+import kitchenpos.order.domain.exception.OrderTableException.NotExistsOrderTableException;
+import kitchenpos.order.repository.OrderLineItemRepository;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.repository.OrderTableRepository;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,25 +44,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
+    private final OrderTable orderTable = new OrderTable(10);
+    private final Order order = Order.of(orderTable);
     @InjectMocks
     private OrderService orderService;
-
     @Mock
     private MenuRepository menuRepository;
     @Mock
     private OrderRepository orderRepository;
     @Mock
+    private OrderLineItemRepository orderLineItemRepository;
+    @Mock
     private OrderTableRepository orderTableRepository;
-
-
-    private final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 10);
-    private final OrderLineItem orderLineItem2 = new OrderLineItem(1L, 10);
-    private final OrderTable orderTable = new OrderTable(10);
-    private final Order order = Order.of(orderTable, List.of(orderLineItem1, orderLineItem2));
 
     @BeforeEach
     void init() {
-        orderTable.setEmpty(false);
+        orderTable.changeEmpty(false);
     }
 
     @Test
@@ -74,12 +75,12 @@ class OrderServiceTest {
         OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
 
         orderService.create(orderRequest);
-        LocalDateTime end = LocalDateTime.now();
 
-        assertAll(
-                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
-                () -> assertThat(order.getOrderedTime()).isBefore(end)
-        );
+        SoftAssertions.assertSoftly(softAssertions -> {
+            assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+            verify(orderLineItemRepository, times(1)).saveAll(any());
+            verify(orderRepository, times(1)).save(any());
+        });
     }
 
     @Test
@@ -95,6 +96,18 @@ class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(NotExistsMenuException.class);
+    }
+
+    @Test
+    @DisplayName("주문을 생성할 때 주문 항목의 메뉴가 하나도 없으면 예외가 발생한다.")
+    void create_fail_orderLineItems_empty() {
+        when(orderTableRepository.getById(1L)).thenReturn(orderTable);
+
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
+
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(EmptyOrderLineItemsException.class);
     }
 
     @Test
@@ -114,7 +127,7 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문을 생성할 때 주문 테이블이 빈 테이블이면 예외가 발생한다.")
     void create_fail_empty_orderTable() {
-        orderTable.setEmpty(true);
+        orderTable.changeEmpty(true);
         when(menuRepository.countByIdIn(List.of(1L, 1L))).thenReturn(2L);
         when(orderTableRepository.getById(1L)).thenReturn(orderTable);
 
@@ -144,6 +157,8 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회할 수 있다. - n개의 주문 목록")
     void list_success2(int n) {
         when(orderRepository.findAll()).thenReturn(getOrdersByNTimes(n));
+        when(orderTableRepository.getById(any())).thenReturn(new OrderTable(10));
+        when(orderLineItemRepository.findAllByOrder(any())).thenReturn(List.of(OrderLineItem.of(order, 1L, 10)));
 
         orderService.list();
 
@@ -159,8 +174,10 @@ class OrderServiceTest {
         OrderStatus newOrderStatus = OrderStatus.MEAL;
 
         when(orderRepository.getById(1L)).thenReturn(order);
+        when(orderTableRepository.getById(any())).thenReturn(new OrderTable(10));
+        when(orderLineItemRepository.findAllByOrder(order)).thenReturn(List.of(OrderLineItem.of(order, 1L, 10)));
 
-        Order savedOrder = orderService.changeOrderStatus(1L, new OrderStatusChangeRequest(newOrderStatus));
+        OrderResponse savedOrder = orderService.changeOrderStatus(1L, new OrderStatusChangeRequest(newOrderStatus));
 
         assertThat(savedOrder.getOrderStatus()).isEqualTo(newOrderStatus);
     }
