@@ -5,6 +5,9 @@ public class OrderLineItemDto {
     private Long menuId;
     private int quantity;
 
+    public OrderLineItemDto() {
+    }
+
     public OrderLineItemDto(final Long menuId, final int quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
