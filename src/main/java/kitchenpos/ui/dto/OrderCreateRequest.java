@@ -16,7 +16,7 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public List<Long> extractOrderLineItemIds() {
+    public List<Long> extractMenuIds() {
         return orderLineItems.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());

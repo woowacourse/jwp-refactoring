@@ -58,7 +58,7 @@ public class OrderService {
     }
 
     private void validateEqualsMenuCount(final OrderCreateRequest request) {
-        if (request.getOrderLineItems().size() != menuRepository.countByIdIn(request.extractOrderLineItemIds())) {
+        if (request.getOrderLineItems().size() != menuRepository.countByIdIn(request.extractMenuIds())) {
             throw new IllegalArgumentException();
         }
     }
