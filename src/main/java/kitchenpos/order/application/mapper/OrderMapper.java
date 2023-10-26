@@ -41,8 +41,6 @@ public class OrderMapper {
         return orderLineItems.stream()
                 .map(orderLineItem -> new OrderLineItemResponse(
                                 orderLineItem.getSeq(),
-                                orderLineItem.getOrderId()
-                                        .orElseThrow(() -> new IllegalArgumentException("orderId 가 NULL 입니다")),
                                 orderLineItem.getMenuId(),
                                 orderLineItem.getQuantity().getValue()
                         )

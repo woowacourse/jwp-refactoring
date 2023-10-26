@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 class OrderTest {
 
     private final Menu menu = Menu.of("메뉴", BigDecimal.valueOf(1_000L), null, List.of(메뉴_상품_1000원_2개));
-    private final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu.getId(), 1L);
-    private final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu.getId(), 1L);
+    private final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getId(), 1L);
+    private final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 1L);
     private final List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
 
     @Test
@@ -51,16 +51,5 @@ class OrderTest {
                 () -> order.updateOrderStatus("COOKING"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문의 상태가 COMPLETION일 때는 상태 변경이 불가 합니다.");
-    }
-
-    @Test
-    void 주문_상품_변경() {
-        final OrderTable orderTable = new OrderTable(null, 10, false);
-        final Order order = new Order(orderTable, LocalDateTime.now(), orderLineItems);
-
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        order.updateOrderLineItems(List.of(orderLineItem));
-
-        assertThat(order.getOrderLineItems()).contains(orderLineItem);
     }
 }

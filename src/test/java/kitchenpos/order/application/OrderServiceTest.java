@@ -51,7 +51,7 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct = new MenuProduct(null, product, 1L);
         Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup.getId(), List.of(menuProduct));
         menu = menuRepository.save(newMenu);
-        orderLineItems = List.of(new OrderLineItem(null, menu.getId(), 1L), new OrderLineItem(null, menu.getId(), 1L));
+        orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L), new OrderLineItem(menu.getId(), 1L));
     }
 
     @Nested
