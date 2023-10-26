@@ -1,19 +1,15 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
-import static kitchenpos.exception.MenuExceptionType.PRICE_IS_UNDER_TOTAL_PRODUCT_AMOUNT;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import kitchenpos.exception.MenuException;
+import kitchenpos.vo.Price;
 
 @Entity
 public class Menu {
@@ -31,9 +27,6 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
-    private final List<MenuProduct> menuProducts = new ArrayList<>();
-
     protected Menu() {
     }
 
@@ -46,23 +39,6 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-    }
-
-    public void add(MenuProduct menuProduct) {
-        validatePrice(menuProduct);
-        menuProducts.add(menuProduct);
-    }
-
-    private void validatePrice(MenuProduct menuProduct) {
-        List<MenuProduct> tmp = new ArrayList<>(menuProducts);
-        tmp.add(menuProduct);
-        Price totalMenuProductPrice = tmp.stream()
-                .map(MenuProduct::amount)
-                .reduce(Price::add)
-                .get();
-        if (this.price.isBiggerThan(totalMenuProductPrice)) {
-            throw new MenuException(PRICE_IS_UNDER_TOTAL_PRODUCT_AMOUNT);
-        }
     }
 
     public Long id() {
@@ -79,9 +55,5 @@ public class Menu {
 
     public MenuGroup menuGroup() {
         return menuGroup;
-    }
-
-    public List<MenuProduct> menuProducts() {
-        return List.copyOf(menuProducts);
     }
 }
