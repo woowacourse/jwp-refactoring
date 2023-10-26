@@ -1,11 +1,10 @@
 package kitchenpos.domain;
 
-import org.springframework.util.CollectionUtils;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,8 +27,8 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.REMOVE})
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -42,13 +42,6 @@ public class Order {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-        this.orderLineItems = orderLineItems;
     }
 
     public void changeOrderStatus(final String orderStatusName) {
@@ -90,5 +83,12 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void setOrderLineItems(final List<OrderLineItem> savedOrderLineItems) {
+        for (final OrderLineItem orderLineItem : savedOrderLineItems) {
+            this.orderLineItems.add(orderLineItem);
+            orderLineItem.setOrder(this);
+        }
     }
 }

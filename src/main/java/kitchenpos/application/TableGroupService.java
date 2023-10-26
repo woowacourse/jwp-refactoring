@@ -35,21 +35,14 @@ public class TableGroupService {
     public TableGroup create(final CreateTableGroupRequest orderTableRequests) {
         final List<OrderTable> savedOrderTables = findOrderTables(orderTableRequests);
         final TableGroup tableGroup = new TableGroup(savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.group(tableGroup);
-            orderTableRepository.save(savedOrderTable);
-        }
-
-        return savedTableGroup;
+        return tableGroupRepository.save(tableGroup);
     }
 
     private List<OrderTable> findOrderTables(final CreateTableGroupRequest orderTableRequest) {
         final List<Long> orderTableIds = orderTableRequest.getOrderTables()
-                                                           .stream()
-                                                           .map(OrderTableDto::getId)
-                                                           .collect(Collectors.toUnmodifiableList());
+                                                          .stream()
+                                                          .map(OrderTableDto::getId)
+                                                          .collect(Collectors.toUnmodifiableList());
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdsIn(orderTableIds);
         if (orderTableIds.size() != orderTables.size() || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();

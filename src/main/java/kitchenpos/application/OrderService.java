@@ -49,17 +49,18 @@ public class OrderService {
         final Order order = new Order(orderTable, OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
 
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final List<Menu> menus = new ArrayList<>();
         for (final OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
             final Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                                             .orElseThrow(() -> new IllegalArgumentException("잘못된 메뉴입니다."));
-            final OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemDto.getQuantity());
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            final OrderLineItem orderLineItem = new OrderLineItem(menu, orderLineItemDto.getQuantity());
+//            orderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            orderLineItems.add(orderLineItem);
             menus.add(menu);
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-        validateMenuIds(savedOrderLineItems.size(), menus);
+        savedOrder.setOrderLineItems(orderLineItems);
+        validateMenuIds(orderLineItems.size(), menus);
 
         return savedOrder;
     }

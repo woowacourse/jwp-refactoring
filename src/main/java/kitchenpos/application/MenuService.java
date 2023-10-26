@@ -47,7 +47,7 @@ public class MenuService {
 
         final Products products = findProducts(menuRequest);
         final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
+        for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
             final Product product = products.findProductById(menuProductDto.getProductId());
             final MenuProduct menuProduct = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
             menuProducts.add(menuProduct);
@@ -58,7 +58,7 @@ public class MenuService {
 
     private Products findProducts(final CreateMenuRequest menuRequest) {
         final List<Product> products = new ArrayList<>();
-        for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
+        for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
             final Product product = productRepository.findById(menuProductDto.getProductId())
                                                      .orElseThrow(IllegalArgumentException::new);
             products.add(product);
