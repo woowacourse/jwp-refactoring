@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
@@ -39,7 +38,7 @@ public class OrderService {
     public Order create(final CreateOrderRequest request) {
         validateOrderLineItems(request);
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                                   .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+                                                          .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         return saveOrder(request, orderTable);
     }
@@ -64,10 +63,12 @@ public class OrderService {
     private List<OrderLineItem> getOrderLineItems(final CreateOrderRequest request) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final CreateOrderLineItemRequest createOrderLineItemRequest : request.getOrderLineItems()) {
-            final Menu findMenu = menuRepository.findById(createOrderLineItemRequest.getMenuId())
-                                                .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
+            final Long menuId = createOrderLineItemRequest.getMenuId();
+            if (!menuRepository.existsById(menuId)) {
+                throw new IllegalArgumentException("메뉴가 존재하지 않습니다.");
+            }
 
-            final OrderLineItem orderLineItem = new OrderLineItem(findMenu, createOrderLineItemRequest.getQuantity());
+            final OrderLineItem orderLineItem = new OrderLineItem(menuId, createOrderLineItemRequest.getQuantity());
             orderLineItems.add(orderLineItem);
         }
 

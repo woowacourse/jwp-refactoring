@@ -1,7 +1,5 @@
 package kitchenpos.domain.order;
 
-import kitchenpos.domain.menu.Menu;
-
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -22,21 +20,19 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "order_line_item_order"))
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "order_line_item_menu"))
-    private Menu menu;
+    private Long menuId;
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Menu menu, final long quantity) {
-        this.menu = menu;
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public void initOrder(final Order order) {
