@@ -1,4 +1,4 @@
-package kitchenpos.menu.domain;
+package kitchenpos.menugroup.domain;
 
 import java.util.Objects;
 import javax.persistence.Entity;

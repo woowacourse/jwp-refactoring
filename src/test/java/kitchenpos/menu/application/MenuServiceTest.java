@@ -6,7 +6,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.common.annotation.ServiceTest;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.presentation.dto.request.CreateMenuRequest;
 import kitchenpos.menu.presentation.dto.request.MenuProductRequest;
 import kitchenpos.product.domain.Product;
