@@ -3,9 +3,9 @@ package kitchenpos.order.domain;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.table.domain.OrderTables;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.OrderTables;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -81,7 +81,9 @@ class OrderTablesTest {
             softly.assertThat(orderTable2.getTableGroup()).isEqualTo(tableGroup);
         });
 
-    }@DisplayName("테이블 그룹을 해제한다.")
+    }
+
+    @DisplayName("테이블 그룹을 해제한다.")
     @Test
     void ungroup_tableGroup() {
         // given
