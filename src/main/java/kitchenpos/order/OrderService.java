@@ -1,11 +1,6 @@
 package kitchenpos.order;
 
-import kitchenpos.order.OrderDao;
-import kitchenpos.order.OrderLineItemDao;
-import kitchenpos.order.Order;
-import kitchenpos.order.OrderLineItem;
-import kitchenpos.order.OrderStatus;
-import kitchenpos.order.OrderDto;
+import kitchenpos.menu.MenuDao;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +15,13 @@ public class OrderService {
     private final ApplicationEventPublisher eventPublisher;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
+    private final MenuDao menuDao;
 
-    public OrderService(ApplicationEventPublisher eventPublisher, OrderDao orderDao, OrderLineItemDao orderLineItemDao) {
+    public OrderService(ApplicationEventPublisher eventPublisher, OrderDao orderDao, OrderLineItemDao orderLineItemDao, MenuDao menuDao) {
         this.eventPublisher = eventPublisher;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
+        this.menuDao = menuDao;
     }
 
     @Transactional
@@ -34,8 +31,22 @@ public class OrderService {
         }
 
         Order order = new Order(orderDto.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderDto.getOrderLineItems());
-        eventPublisher.publishEvent(order);
+
+        validateMenu(order);
+        eventPublisher.publishEvent(OrderCreatedEvent.from(order));
         return OrderDto.from(order);
+    }
+
+    private void validateMenu(Order order) {
+        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+
+        final List<Long> menuIds = orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+
+        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<OrderDto> list() {
