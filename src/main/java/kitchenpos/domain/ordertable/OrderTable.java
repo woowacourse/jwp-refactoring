@@ -1,14 +1,9 @@
 package kitchenpos.domain.ordertable;
 
-import kitchenpos.domain.tablegroup.TableGroup;
-
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -17,9 +12,7 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     private int numberOfGuests = 0;
     private boolean empty = true;
 
@@ -30,15 +23,15 @@ public class OrderTable {
         this.id = id;
     }
 
-    public void assign(TableGroup tableGroup) {
+    public void assign(Long tableGroupId) {
         validateEmpty();
         validateNotGrouped();
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.empty = false;
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
@@ -84,15 +77,15 @@ public class OrderTable {
     }
 
     public boolean hasGroup() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

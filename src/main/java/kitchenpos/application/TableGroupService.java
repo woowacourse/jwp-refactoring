@@ -8,8 +8,10 @@ import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.TableGroupRepository;
 import kitchenpos.ui.dto.OrderTableRequest;
 import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,10 +31,21 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest tableGroup) {
-        TableGroup newTableGroup = new TableGroup(toOrderTables(tableGroup.getOrderTables()));
+    public TableGroupResponse create(final TableGroupRequest tableGroup) {
+        List<OrderTable> orderTables = toOrderTables(tableGroup.getOrderTables());
+        validateSizeOf(orderTables);
+        TableGroup newTableGroup = tableGroupRepository.save(new TableGroup());
+        orderTables.forEach(table -> table.assign(newTableGroup.getId()));
 
-        return tableGroupRepository.save(newTableGroup);
+        return TableGroupResponse.from(newTableGroup, orderTables);
+    }
+
+    private void validateSizeOf(List<OrderTable> orderTables) {
+        /*private static */
+        final int MINIMUM_GROUP_SIZE = 2;
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_GROUP_SIZE) {
+            throw new IllegalArgumentException(MINIMUM_GROUP_SIZE + "개 이상의 테이블이 필요합니다");
+        }
     }
 
     @Transactional

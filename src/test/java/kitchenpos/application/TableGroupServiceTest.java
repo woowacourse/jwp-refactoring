@@ -88,7 +88,7 @@ class TableGroupServiceTest {
                 new OrderTableRequest(테이블2().getId())
         ));
 
-        assertThat(tableGroupService.create(tableGroup).getOrderTables()).allMatch(it -> it.isFull());
+        assertThat(tableGroupService.create(tableGroup).getOrderTables()).allMatch(it -> !it.isEmpty());
     }
 
     @Test
@@ -127,7 +127,7 @@ class TableGroupServiceTest {
         var grouped = tableGroupService.create(tableGroup);
         tableGroupService.ungroup(grouped.getId());
 
-        tableService.list().forEach(it -> assertThat(it.getTableGroup()).isNull());
+        tableService.list().forEach(it -> assertThat(it.getTableGroupId()).isNull());
     }
 
     private OrderTable fillTable(OrderTable emptyTable) {
