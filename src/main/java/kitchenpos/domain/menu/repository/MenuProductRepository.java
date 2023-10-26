@@ -13,7 +13,7 @@ public interface MenuProductRepository extends JpaRepository<MenuProduct, Long> 
 
     @Query(value = "select mp from MenuProduct mp " +
             "join fetch Menu m on m.id = mp.menu.id " +
-            "join fetch Product p on p.id = mp.product.id " +
-            "where mp.seq in :menuProductIds ")
+            "join fetch Product p on p.id = mp.productId " +
+            "where mp.seq in :menuProductIds")
     List<MenuProduct> fetchAllById(@Param("menuProductIds") final List<Long> menuProductIds);
 }

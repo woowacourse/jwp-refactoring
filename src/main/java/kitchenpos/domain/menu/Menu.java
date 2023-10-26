@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -58,18 +59,17 @@ public class Menu {
     }
 
     public void addMenuProducts(final MenuProducts toAddMenuProducts) {
-        final Price sum = toAddMenuProducts.getPriceSumOfProducts();
-
-        if (isMenuPriceGreaterThan(sum)) {
-            throw new IllegalArgumentException();
-        }
-
         toAddMenuProducts.getMenuProducts().forEach(menuProduct -> menuProduct.changeMenu(this));
         this.menuProducts.addAll(toAddMenuProducts.getMenuProducts());
     }
 
-    private boolean isMenuPriceGreaterThan(final Price sum) {
-        return price.compareTo(sum) > 0;
+
+    public void validatePrice(final MenuValidator menuValidator, final List<MenuProduct> toSaveMenuProducts) {
+        menuValidator.validatePrice(this, toSaveMenuProducts);
+    }
+
+    public boolean hasPriceGreaterThan(final Price target) {
+        return price.compareTo(target) > 0;
     }
 
     public Long getId() {

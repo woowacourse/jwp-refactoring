@@ -15,7 +15,6 @@ import kitchenpos.domain.order.service.dto.OrderCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderLineItemCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderResponse;
 import kitchenpos.domain.order.service.dto.OrderUpateRequest;
-import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +38,6 @@ import static kitchenpos.application.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.application.fixture.MenuProductFixture.menuProduct;
 import static kitchenpos.application.fixture.OrderFixture.order;
 import static kitchenpos.application.fixture.OrderLineItemFixture.orderLineItem;
-import static kitchenpos.application.fixture.ProductFixture.product;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -98,7 +96,8 @@ class OrderServiceTest {
         void 주문을_생성할_수_있다() {
             // given
             final Menu menu = menu("우동세트", BigDecimal.valueOf(5_000), menuGroup("일식"), List.of());
-            final MenuProduct menuProduct = menuProduct(menu, product("면", BigDecimal.valueOf(5_000)), 5000L);
+            final long productId = 1L;
+            final MenuProduct menuProduct = menuProduct(menu, productId, 5000L);
             final MenuProducts menuProducts = new MenuProducts();
             menuProducts.addAll(List.of(menuProduct));
             menu.addMenuProducts(menuProducts);
@@ -146,8 +145,8 @@ class OrderServiceTest {
         void 주문_항목의_총합과_메뉴의_총합이_다르면_예외를_발생한다() {
             // given
             final Order order = order(COMPLETION, now(), List.of(wooDong, frenchFries));
-            final Product product = product("우동", BigDecimal.valueOf(3_000L));
-            final Menu menu = menu("우동세트", BigDecimal.valueOf(8_000), menuGroup("일식"), List.of(menuProduct(product, 3_000L)));
+            final Long wooDongId = 1L;
+            final Menu menu = menu("우동세트", BigDecimal.valueOf(8_000), menuGroup("일식"), List.of(menuProduct(wooDongId, 3_000L)));
             given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(new OrderLineItem(order, menu, 1)));
 
             // when
@@ -165,7 +164,8 @@ class OrderServiceTest {
         void 주문에_있는_주문_테이블이_없으면_예외가_발생한다() {
             // given
             final Menu menu = menu("우동세트", BigDecimal.valueOf(5_000), menuGroup("일식"), List.of());
-            final MenuProduct menuProduct = menuProduct(menu, product("면", BigDecimal.valueOf(5_000)), 5000L);
+            final Long productId = 1L;
+            final MenuProduct menuProduct = menuProduct(menu, productId, 5000L);
             final MenuProducts menuProducts = new MenuProducts();
             menuProducts.addAll(List.of(menuProduct));
             menu.addMenuProducts(menuProducts);

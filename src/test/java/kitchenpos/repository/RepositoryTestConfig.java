@@ -50,8 +50,8 @@ public abstract class RepositoryTestConfig {
         return product;
     }
 
-    protected MenuProduct createMenuProduct(final Menu menu, final Product product, final long price) {
-        final MenuProduct menuProduct = menuProduct(menu, product, price);
+    protected MenuProduct createMenuProduct(final Menu menu, final Long productId, final long price) {
+        final MenuProduct menuProduct = menuProduct(menu, productId, price);
         em.persist(menuProduct);
         return menuProduct;
     }
