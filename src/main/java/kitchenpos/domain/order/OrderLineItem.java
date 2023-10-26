@@ -1,5 +1,6 @@
 package kitchenpos.domain.order;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.common.Name;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.common.Quantity;
 
 @Entity
@@ -26,11 +29,17 @@ public class OrderLineItem {
 
     private Quantity quantity;
 
+    private Name menuName;
+
+    private Price menuPrice;
+
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final long quantity) {
+    public OrderLineItem(final Long menuId, final Name menuName, final Price menuPrice, final long quantity) {
         this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = new Quantity(quantity);
     }
 
@@ -48,6 +57,14 @@ public class OrderLineItem {
 
     public Long getMenuId() {
         return menuId;
+    }
+
+    public String getMenuName() {
+        return menuName.getValue();
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice.getValue();
     }
 
     public long getQuantity() {

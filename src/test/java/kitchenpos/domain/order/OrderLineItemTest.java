@@ -33,6 +33,6 @@ class OrderLineItemTest {
         );
 
         // when & then
-        assertThatCode(() -> new OrderLineItem(menu.getId(), 1L)).doesNotThrowAnyException();
+        assertThatCode(() -> new OrderLineItem(menu.getId(), menu.name(), menu.price(), 1L)).doesNotThrowAnyException();
     }
 }

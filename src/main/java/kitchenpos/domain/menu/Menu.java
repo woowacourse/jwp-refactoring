@@ -48,6 +48,10 @@ public class Menu {
         menuProducts.initMenu(this);
     }
 
+    public Name name() {
+        return name;
+    }
+
     public Price price() {
         return price;
     }
