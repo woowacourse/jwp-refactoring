@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menugroup.MenuGroupCreateRequest;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,16 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("메뉴 그룹을 정상적으로 생성한다.")
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup(null, "치킨");
+        final MenuGroupCreateRequest request = new MenuGroupCreateRequest("치킨");
 
         // when
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = menuGroupService.create(request);
 
         // then
         assertAll(
@@ -44,10 +45,10 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 정상적으로 조회한다.")
     void list() {
         // given
-        final MenuGroup menuGroupA = new MenuGroup(1L, "치킨");
-        final MenuGroup menuGroupB = new MenuGroup(2L, "피자");
-        menuGroupDao.save(menuGroupA);
-        menuGroupDao.save(menuGroupB);
+        final MenuGroup menuGroupA = new MenuGroup("치킨");
+        final MenuGroup menuGroupB = new MenuGroup("피자");
+        menuGroupRepository.save(menuGroupA);
+        menuGroupRepository.save(menuGroupB);
 
         // when
         final List<MenuGroup> menuGroups = menuGroupService.list();
