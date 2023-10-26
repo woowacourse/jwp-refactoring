@@ -1,68 +1,44 @@
 package kitchenpos.application;
 
-import kitchenpos.application.response.OrderResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.application.request.OrderLineItemsRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.request.OrderLineItemsRequest;
+import kitchenpos.application.response.OrderResponse;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderValidator;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final List<OrderValidator> orderValidators;
 
-    public OrderService(final MenuDao menuDao, final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.menuDao = menuDao;
+    public OrderService(final OrderDao orderDao, final List<OrderValidator> orderValidators) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderValidators = orderValidators;
     }
 
     @Transactional
     public OrderResponse create(final Long orderTableId, final List<OrderLineItemsRequest> orderLineItemRequests) {
-        validateOrderMenus(orderLineItemRequests);
+        final List<OrderLineItem> orderLineItems = convertToLineItems(orderLineItemRequests);
 
-        final OrderTable orderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-        validateOrderTableStatus(orderTable);
+        final Order order = new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        for (OrderValidator orderValidator : orderValidators) {
+            orderValidator.validate(order);
+        }
 
-        final List<OrderLineItem> orderLineItems = orderLineItemRequests
+        return OrderResponse.from(orderDao.save(order));
+    }
+
+    private static List<OrderLineItem> convertToLineItems(final List<OrderLineItemsRequest> orderLineItemRequests) {
+        return orderLineItemRequests
                 .stream().map(OrderLineItemsRequest::toEntity)
                 .collect(Collectors.toList());
-
-        return OrderResponse.from(orderDao.save(
-                new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)
-        ));
-    }
-
-    private void validateOrderMenus(final List<OrderLineItemsRequest> orderLineItemRequests) {
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemsRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static void validateOrderTableStatus(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public List<OrderResponse> list() {
@@ -74,9 +50,7 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId) {
         final Order savedOrder = orderDao.findMandatoryById(orderId);
         savedOrder.transitionToNextStatus();
-
         orderDao.save(savedOrder);
-
         return OrderResponse.from(savedOrder);
     }
 }
