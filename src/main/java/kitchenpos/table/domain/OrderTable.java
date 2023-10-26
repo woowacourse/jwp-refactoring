@@ -1,5 +1,6 @@
 package kitchenpos.table.domain;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,29 +21,22 @@ public class OrderTable {
     @NotNull
     private Integer numberOfGuests;
 
-    @NotNull
-    private Boolean empty;
+    @Embedded
+    private Empty empty;
 
     protected OrderTable() {
     }
 
     private OrderTable(Integer numberOfGuests, Boolean empty) {
         validateNumberOfGuests(numberOfGuests);
-        validateEmpty(empty);
 
         this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this.empty = Empty.from(empty);
     }
 
     private void validateNumberOfGuests(Integer numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
             throw new IllegalArgumentException("테이블에 방문한 손님 수는 0 이상이어야 합니다.");
-        }
-    }
-
-    private void validateEmpty(Boolean empty) {
-        if (empty == null) {
-            throw new NullPointerException("empty는 null일 수 없습니다.");
         }
     }
 
@@ -68,7 +62,7 @@ public class OrderTable {
         validateChangeableEmpty();
         orderTableValidator.validateChangeableEmpty(id);
 
-        this.empty = empty;
+        this.empty.change(empty);
     }
 
     private void validateChangeableEmpty() {
@@ -83,12 +77,12 @@ public class OrderTable {
         }
 
         this.tableGroupId = tableGroupId;
-        this.empty = Boolean.FALSE;
+        this.empty.change(Boolean.FALSE);
     }
 
     public void ungroup() {
         this.tableGroupId = null;
-        this.empty = Boolean.FALSE;
+        this.empty.change(Boolean.FALSE);
     }
 
     public boolean isGrouped() {
@@ -104,7 +98,7 @@ public class OrderTable {
     }
 
     public Boolean isEmpty() {
-        return empty;
+        return empty.isEmpty();
     }
 
     public Long getTableGroupId() {
