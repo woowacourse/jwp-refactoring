@@ -1,4 +1,5 @@
-SET FOREIGN_KEY_CHECKS = 0;
+SET
+FOREIGN_KEY_CHECKS = 0;
 
 truncate table menu;
 truncate table menu_group;
@@ -9,4 +10,5 @@ truncate table order_table;
 truncate table product;
 truncate table table_group;
 
-SET FOREIGN_KEY_CHECKS = 1;
+SET
+FOREIGN_KEY_CHECKS = 1;
