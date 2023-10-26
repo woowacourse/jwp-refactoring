@@ -19,7 +19,7 @@ public class MenuProductQueryResponse {
 
     public static MenuProductQueryResponse from(final Long menuId, final MenuProduct menuProduct) {
         return new MenuProductQueryResponse(menuProduct.getSeq(), menuId,
-                menuProduct.getProductId(), menuProduct.getQuantity());
+                menuProduct.getProduct().getId(), menuProduct.getQuantity());
     }
 
     public MenuProductQueryResponse() {

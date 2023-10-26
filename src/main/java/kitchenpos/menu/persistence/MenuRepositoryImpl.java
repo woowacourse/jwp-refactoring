@@ -5,6 +5,8 @@ import kitchenpos.menu.application.entity.MenuProductEntity;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.persistence.ProductDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -14,10 +16,12 @@ import java.util.stream.Collectors;
 @Repository
 public class MenuRepositoryImpl implements MenuRepository {
 
+    private final ProductDao productDao;
     private final MenuDao menuDao;
     private final MenuProductDao menuProductDao;
 
-    public MenuRepositoryImpl(final MenuDao menuDao, final MenuProductDao menuProductDao) {
+    public MenuRepositoryImpl(final ProductDao productDao, final MenuDao menuDao, final MenuProductDao menuProductDao) {
+        this.productDao = productDao;
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
     }
@@ -32,13 +36,18 @@ public class MenuRepositoryImpl implements MenuRepository {
 
     private List<MenuProduct> saveMenuProducts(final Menu entity, final MenuEntity savedMenu) {
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : entity.getMenuProducts()) {
-            final MenuProductEntity savedMenuProduct = new MenuProductEntity(savedMenu.getId(),
-                    menuProduct.getProductId(), menuProduct.getQuantity());
-
-            savedMenuProducts.add(menuProductDao.save(savedMenuProduct).toMenuProduct());
+        for (final MenuProduct menuProduct : entity.getMenuProducts().getMenuProducts()) {
+            savedMenuProducts.add(saveMenuProduct(savedMenu.getId(), menuProduct));
         }
         return savedMenuProducts;
+    }
+
+    private MenuProduct saveMenuProduct(final Long menuId, MenuProduct menuProduct) {
+        final MenuProductEntity menuProductEntity = menuProductDao.save(MenuProductEntity.of(menuId, menuProduct));
+        final Product product = productDao.findById(menuProductEntity.getProductId())
+                .orElseThrow(IllegalArgumentException::new)
+                .toProduct();
+        return menuProductEntity.toMenuProduct(product);
     }
 
     @Override
@@ -48,7 +57,10 @@ public class MenuRepositoryImpl implements MenuRepository {
                 .map(menu -> {
                     final List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId())
                             .stream()
-                            .map(MenuProductEntity::toMenuProduct)
+                            .map(entity -> entity.toMenuProduct(
+                                    productDao.findById(entity.getProductId()).orElseThrow(IllegalArgumentException::new)
+                                            .toProduct())
+                            )
                             .collect(Collectors.toList());
                     return menu.toMenu(menuProducts);
                 })

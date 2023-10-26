@@ -1,6 +1,7 @@
 package kitchenpos.menu.application.entity;
 
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
 
 public class MenuProductEntity {
 
@@ -15,11 +16,6 @@ public class MenuProductEntity {
         this.productId = productId;
         this.quantity = quantity;
     }
-
-    public MenuProductEntity(final Long menuId, final Long productId, final long quantity) {
-        this(null, menuId, productId, quantity);
-    }
-
 
     public Long getSeq() {
         return seq;
@@ -38,10 +34,10 @@ public class MenuProductEntity {
     }
 
     public static MenuProductEntity of(final Long menuId, final MenuProduct menuProduct) {
-        return new MenuProductEntity(menuProduct.getSeq(), menuId, menuProduct.getProductId(), menuProduct.getQuantity());
+        return new MenuProductEntity(menuProduct.getSeq(), menuId, menuProduct.getProduct().getId(), menuProduct.getQuantity());
     }
 
-    public MenuProduct toMenuProduct() {
-        return new MenuProduct(seq, productId, quantity);
+    public MenuProduct toMenuProduct(final Product product) {
+        return new MenuProduct(seq, product, quantity);
     }
 }

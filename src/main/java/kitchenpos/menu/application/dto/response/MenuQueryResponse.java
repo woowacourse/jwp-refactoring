@@ -28,15 +28,14 @@ public class MenuQueryResponse {
     }
 
     public static MenuQueryResponse from(final Menu menu) {
-        return new MenuQueryResponse(
-                menu.getId(),
-                menu.getName(),
-                menu.getPrice().getValue(),
-                menu.getMenuGroupId(),
+        final List<MenuProductQueryResponse> menuProductQueryResponses =
                 menu.getMenuProducts()
+                        .getMenuProducts()
                         .stream()
                         .map(menuProduct -> MenuProductQueryResponse.from(menu.getId(), menuProduct))
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList());
+        return new MenuQueryResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(),
+                menu.getMenuGroupId(), menuProductQueryResponses);
     }
 
     public Long getId() {

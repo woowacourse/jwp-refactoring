@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +30,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
     void create_success() {
         //given, when
         final MenuQueryResponse savedMenu = menuService.create(getMenu(BigDecimal.valueOf(19000), 1L));
-        final Menu actual = menuDao.findById(savedMenu.getId()).get().toMenu(new ArrayList<>());
+        final Menu actual = menuDao.findById(savedMenu.getId()).get().toMenu();
 
         //then
         Assertions.assertAll(
