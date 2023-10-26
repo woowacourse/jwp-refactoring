@@ -2,7 +2,7 @@ package kitchenpos.tablegroup.domain;
 
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public class OrderTables {
 

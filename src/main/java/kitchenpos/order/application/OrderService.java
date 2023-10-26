@@ -11,10 +11,10 @@ import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
-import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
