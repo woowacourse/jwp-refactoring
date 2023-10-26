@@ -3,6 +3,7 @@ package kitchenpos.ordertable.domain;
 import kitchenpos.ordertable.exception.InvalidOrderTableChangeEmptyException;
 import kitchenpos.ordertable.exception.InvalidOrderTableChangeNumberOfGuestsException;
 import kitchenpos.ordertable.exception.InvalidOrderTableException;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 import javax.persistence.*;
 import java.util.Objects;

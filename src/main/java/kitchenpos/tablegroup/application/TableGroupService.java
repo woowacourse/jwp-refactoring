@@ -1,13 +1,13 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.tablegroup.application;
 
-import kitchenpos.ordertable.controller.dto.TableGroupCreateRequest;
-import kitchenpos.ordertable.domain.OrderCompletionValidator;
+import kitchenpos.tablegroup.controller.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.domain.OrderCompletionValidator;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.exception.NotExistOrderTable;
-import kitchenpos.ordertable.exception.NotExistTableGroupException;
+import kitchenpos.tablegroup.exception.NotExistTableGroupException;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.ordertable.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

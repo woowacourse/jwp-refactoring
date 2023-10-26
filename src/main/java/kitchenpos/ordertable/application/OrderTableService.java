@@ -5,10 +5,10 @@ import kitchenpos.ordertable.controller.dto.OrderTableChangeNumberOfGuests;
 import kitchenpos.ordertable.controller.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.domain.OrderStatusValidator;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.exception.NotExistOrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.ordertable.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,6 +1,6 @@
-package kitchenpos.ordertable.domain;
+package kitchenpos.tablegroup.domain;
 
-import kitchenpos.ordertable.exception.InvalidTableGroupException;
+import kitchenpos.tablegroup.exception.InvalidTableGroupException;
 import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
