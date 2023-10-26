@@ -77,7 +77,8 @@ public class TableService {
                 .collect(Collectors.toList());
         eventPublisher.publishEvent(new ValidateOrderTablesOrderStatusEvent(orderTableIds));
 
-        orderTables.stream().forEach(orderTable -> orderTable.ungroup());
+        orderTables.stream()
+                .forEach(orderTable -> orderTable.ungroup());
     }
 
     @EventListener
@@ -90,7 +91,7 @@ public class TableService {
         orderTables.stream().forEach(orderTable -> orderTable.changeTableGroup(groupOrderTablesEvent.getTableGroupId()));
     }
 
-    private static void validateOrderTable(final List<OrderTable> orderTables, final List<Long> orderTableIds) {
+    private void validateOrderTable(final List<OrderTable> orderTables, final List<Long> orderTableIds) {
         if (orderTables.size() != orderTableIds.size()) {
             throw new InvalidOrderTableException();
         }

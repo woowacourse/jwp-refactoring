@@ -3,8 +3,10 @@ package kitchenpos.domain;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.exception.InvalidOrderLineItemException;
+import kitchenpos.product.domain.Price;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,7 +17,7 @@ class OrderLineItemsTest {
     @Test
     void create() {
         //given
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
+        final OrderLineItem orderLineItem = new OrderLineItem("메뉴", new Price(new BigDecimal(1000)), 1);
 
         //when&then
         assertDoesNotThrow(() -> new OrderLineItems(List.of(orderLineItem)));

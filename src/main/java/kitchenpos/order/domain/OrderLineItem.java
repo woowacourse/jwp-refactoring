@@ -1,5 +1,8 @@
 package kitchenpos.order.domain;
 
+import kitchenpos.product.domain.Price;
+
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,20 +15,24 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    private Long menuId;
+    private String menuName;
+
+    @Embedded
+    private Price price;
 
     private Long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this(null, menuId, quantity);
+    public OrderLineItem(final String menuName, final Price price, final long quantity) {
+        this(null, menuName, price, quantity);
     }
 
-    public OrderLineItem(final Long seq, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long seq, final String menuName, final Price price, final long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
+        this.menuName = menuName;
+        this.price = price;
         this.quantity = quantity;
     }
 
@@ -33,8 +40,12 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public Price getPrice() {
+        return price;
     }
 
     public long getQuantity() {

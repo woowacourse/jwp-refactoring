@@ -12,6 +12,7 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.product.domain.Price;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.menu.exception.MenuNotFoundException;
@@ -54,10 +55,10 @@ public class OrderService {
 
     private OrderLineItems getOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
         return new OrderLineItems(orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> {
-                    final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                .map(request -> {
+                    final Menu menu = menuRepository.findById(request.getMenuId())
                             .orElseThrow(MenuNotFoundException::new);
-                    return new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
+                    return new OrderLineItem(menu.getName(), new Price(menu.getPrice()), request.getQuantity());
                 }).collect(Collectors.toList()));
     }
 
