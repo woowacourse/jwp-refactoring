@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.application.dto.MenuGroupCreateRequest;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,37 +17,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 class MenuGroupServiceTest {
-
+    
     @Autowired
-    private MenuGroupDao menuGroupDao;
-
+    private MenuGroupRepository menuGroupRepository;
+    
     @Autowired
     private MenuGroupService menuGroupService;
-
+    
     @Test
     void 메뉴그룹을_생성한다() {
         //given
-        MenuGroup expected = MENU_GROUP("중국식 메뉴 그룹");
-
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("중국식 메뉴 그룹");
+        
         //when
-        MenuGroup actual = menuGroupService.create(expected);
-
+        MenuGroup expected = MENU_GROUP("중국식 메뉴 그룹");
+        MenuGroup actual = menuGroupService.create(request);
+        
         //then
         assertThat(actual.getName())
                 .isEqualTo(expected.getName());
     }
-
+    
     @Test
     void 메뉴_그룹_목록을_조회한다() {
         //given
         MenuGroup menuGroup1 = MENU_GROUP("중국식 메뉴 그룹");
-        MenuGroup savedMenuGroup1 = menuGroupDao.save(menuGroup1);
+        MenuGroup savedMenuGroup1 = menuGroupRepository.save(menuGroup1);
         MenuGroup menuGroup2 = MENU_GROUP("한식 메뉴 그룹");
-        MenuGroup savedMenuGroup2 = menuGroupDao.save(menuGroup2);
-
+        MenuGroup savedMenuGroup2 = menuGroupRepository.save(menuGroup2);
+        
         //when
         List<MenuGroup> queriedMenuGroups = menuGroupService.list();
-
+        
         //then
         List<MenuGroup> expected = List.of(savedMenuGroup1, savedMenuGroup2);
         assertThat(queriedMenuGroups)

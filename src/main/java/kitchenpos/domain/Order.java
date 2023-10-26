@@ -1,52 +1,125 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exception.InvalidOrderChangeException;
+import kitchenpos.domain.exception.InvalidOrderException;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.CollectionUtils;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@EntityListeners(AuditingEntityListener.class)
+@Entity(name = "orders")
 public class Order {
+    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+    
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+    
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+    
+    @CreatedDate
     private LocalDateTime orderedTime;
+    
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
-
+    
+    public static Order of(final OrderTable orderTable,
+                           final OrderStatus orderStatus,
+                           final List<OrderLineItem> orderLineItems) {
+        Order order = new Order(orderTable,
+                orderStatus,
+                orderLineItems);
+        order.putOrderInOrderLineItems();
+        return order;
+    }
+    
+    public Order(final OrderTable orderTable,
+                 final OrderStatus orderStatus,
+                 final List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, orderLineItems);
+    }
+    
+    public Order(final Long id,
+                 final OrderTable orderTable,
+                 final OrderStatus orderStatus,
+                 final List<OrderLineItem> orderLineItems) {
+        validate(orderTable, orderLineItems);
+        this.id = id;
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderLineItems = orderLineItems;
+    }
+    
+    private void validate(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        validateIfOrderTableIsEmpty(orderTable);
+        validateOrderLineItemsEmpty(orderLineItems);
+        validateIfDuplicatedMenuInOrderLineItems(orderLineItems);
+        
+    }
+    
+    private void validateOrderLineItemsEmpty(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new InvalidOrderException("주문 항목이 없으면 주문할 수 없습니다");
+        }
+    }
+    
+    private void validateIfOrderTableIsEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new InvalidOrderException("빈 테이블에서는 주문할 수 없습니다");
+        }
+    }
+    
+    private void validateIfDuplicatedMenuInOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        List<Long> menuIds = orderLineItems.stream()
+                                           .map(OrderLineItem::getMenu)
+                                           .map(Menu::getId)
+                                           .collect(Collectors.toList());
+        Set<Long> notDuplicatedMenuIds = new HashSet<>(menuIds);
+        if (notDuplicatedMenuIds.size() != menuIds.size()) {
+            throw new InvalidOrderException("같은 메뉴에 대한 주문 항목이 있을 수 없습니다");
+        }
+    }
+    
+    private void putOrderInOrderLineItems() {
+        this.orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
+    }
+    
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new InvalidOrderChangeException("이미 종료된 주문입니다");
+        }
+        this.orderStatus = orderStatus;
+    }
+    
     public Long getId() {
         return id;
     }
-
-    public void setId(final Long id) {
-        this.id = id;
+    
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
-
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
+    
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
+    
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

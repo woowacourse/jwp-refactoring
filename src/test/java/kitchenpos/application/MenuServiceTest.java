@@ -1,22 +1,27 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.dto.MenuCreateRequest;
+import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidMenuPriceException;
+import kitchenpos.domain.exception.InvalidProductPriceException;
+import kitchenpos.domain.exception.NotExistMenuGroupException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuFixture.MENU;
 import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP;
 import static kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT;
 import static kitchenpos.fixture.ProductFixture.PRODUCT;
@@ -30,16 +35,16 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class MenuServiceTest {
     
     @Autowired
-    private MenuDao menuDao;
+    private MenuGroupRepository menuGroupRepository;
     
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuProductRepository menuProductRepository;
     
     @Autowired
-    private MenuProductDao menuProductDao;
+    private ProductRepository productRepository;
     
     @Autowired
-    private ProductDao productDao;
+    private MenuRepository menuRepository;
     
     @Autowired
     private MenuService menuService;
@@ -54,79 +59,89 @@ class MenuServiceTest {
     @BeforeEach
     void setup() {
         final MenuGroup menuGroup = MENU_GROUP("중국식 메뉴 그룹");
-        chineseMenuGroup = menuGroupDao.save(menuGroup);
+        chineseMenuGroup = menuGroupRepository.save(menuGroup);
         
         final Product product1 = PRODUCT("짜장면", 8000L);
-        chineseNoodle = productDao.save(product1);
+        chineseNoodle = productRepository.save(product1);
         
         final Product product2 = PRODUCT("딤섬", 8000L);
-        chineseDimsum = productDao.save(product2);
+        chineseDimsum = productRepository.save(product2);
         
-        chineseNoodleMenuProduct = MENU_PRODUCT(chineseNoodle.getId());
-        chineseDimsumMenuProduct = MENU_PRODUCT(chineseDimsum.getId());
+        chineseNoodleMenuProduct = MENU_PRODUCT(chineseNoodle);
+        chineseDimsumMenuProduct = MENU_PRODUCT(chineseDimsum);
     }
     
     @Test
     void 메뉴를_생성할_때_메뉴의_가격이_0_미만이면_예외가_발생한다() {
         //given
-        final long priceUnderZero = -1L;
-        Menu menu = MENU("식사류",
-                priceUnderZero,
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(chineseNoodle.getId(), 1L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("식사류",
+                BigDecimal.valueOf(-1L),
                 chineseMenuGroup.getId(),
-                List.of(chineseNoodleMenuProduct));
+                List.of(menuProductCreateRequest));
         
         //when&then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("메뉴의 가격은 0원 이상이어야 합니다");
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isInstanceOf(InvalidProductPriceException.class)
+                .hasMessageContaining("메뉴 가격은 0원 이상이어야 합니다");
     }
     
+    
+    //TODO : 왜 2일 때는 안되는 걸까?
     @Test
-    void 메뉴를_생성할_때_메뉴가_메뉴_그룹에_속하지_않으면_예외가_발생한다() {
+    void 메뉴를_생성할_때_메뉴가_속한_메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
         //given
-        final long notExistGroupId = 2L;
-        final Menu menu = MENU("식사류",
-                15000L,
-                notExistGroupId,
-                List.of(chineseDimsumMenuProduct, chineseDimsumMenuProduct));
+        Long notExistMenuGroupId = 200L;
+        MenuProductCreateRequest menuProductCreateRequest1 = new MenuProductCreateRequest(chineseNoodle.getId(), 1L);
+        MenuProductCreateRequest menuProductCreateRequest2 = new MenuProductCreateRequest(chineseDimsum.getId(), 1L);
+        
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("식사류",
+                BigDecimal.valueOf(8000L),
+                notExistMenuGroupId,
+                List.of(menuProductCreateRequest1, menuProductCreateRequest2));
         
         //when&then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("메뉴 그룹이 존재하지 않습니다");
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isInstanceOf(NotExistMenuGroupException.class)
+                .hasMessageContaining("존재하지 않는 메뉴 그룹입니다");
     }
     
     @Test
     void 메뉴를_생성할_때_메뉴_가격의_합이_메뉴에_속한_개별_메뉴_상품들의_가격_총합보다_크면_예외가_발생한다() {
         //given
         final long priceOverSumOfMenuProductPrice = 17000L;
-        final Menu menu = MENU("식사류",
-                priceOverSumOfMenuProductPrice,
+        MenuProductCreateRequest menuProductCreateRequest1 = new MenuProductCreateRequest(chineseNoodle.getId(), 1L);
+        MenuProductCreateRequest menuProductCreateRequest2 = new MenuProductCreateRequest(chineseDimsum.getId(), 1L);
+        
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("식사류",
+                BigDecimal.valueOf(priceOverSumOfMenuProductPrice),
                 chineseMenuGroup.getId(),
-                List.of(chineseDimsumMenuProduct, chineseDimsumMenuProduct));
+                List.of(menuProductCreateRequest1, menuProductCreateRequest2));
         
         //when&then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("메뉴의 가격은 메뉴 상품들의 가격의 합보다 클 수 없습니다");
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isInstanceOf(InvalidMenuPriceException.class)
+                .hasMessageContaining("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다");
         
     }
     
     @Test
     void 메뉴를_생성할_때_모든_조건을_만족하면_메뉴를_정상적으로_생성한다() {
         //given
-        MenuGroup savedMenuGroup = menuGroupDao.save(chineseMenuGroup);
-        Product savedProduct = productDao.save(chineseNoodle);
-        MenuProduct menuProduct = MENU_PRODUCT(savedProduct.getId());
-        Menu menu = MENU("식사류", 8000L, savedMenuGroup.getId(), List.of(menuProduct));
+        MenuProductCreateRequest menuProductCreateRequest1 = new MenuProductCreateRequest(chineseNoodle.getId(), 1L);
+        MenuProductCreateRequest menuProductCreateRequest2 = new MenuProductCreateRequest(chineseDimsum.getId(), 1L);
         
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("식사류",
+                chineseNoodle.getProductPrice().getPrice().add(chineseDimsum.getProductPrice().getPrice()),
+                chineseMenuGroup.getId(),
+                List.of(menuProductCreateRequest1, menuProductCreateRequest2));
         //when
-        Menu actual = menuService.create(menu);
+        Menu actual = menuService.create(menuCreateRequest);
         
         //then : 메뉴에 속한 상품들은 메뉴의 id를 가지고 있다.
         assertSoftly(softly -> {
-            softly.assertThat(menuDao.findById(actual.getId())).isPresent();
-            softly.assertThat(menuProductDao.findAllByMenuId(actual.getId()))
+            softly.assertThat(menuRepository.findById(actual.getId())).isPresent();
+            softly.assertThat(menuProductRepository.findAllByMenuId(actual.getId()))
                   .usingRecursiveComparison()
                   .isEqualTo(actual.getMenuProducts());
         });
@@ -136,17 +151,16 @@ class MenuServiceTest {
     @Test
     void 메뉴_목록을_조회한다() {
         //given1
-        Menu menu1 = MENU("짜장면",
-                8000L,
-                chineseMenuGroup.getId(),
-                List.of(chineseNoodleMenuProduct));
-        Menu savedMenu1 = menuService.create(menu1);
+        MenuProductCreateRequest menuProductCreateRequest1 = new MenuProductCreateRequest(chineseNoodle.getId(), 1L);
+        MenuProductCreateRequest menuProductCreateRequest2 = new MenuProductCreateRequest(chineseDimsum.getId(), 1L);
         
-        Menu menu2 = MENU("딤섬",
-                8000L,
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("식사류",
+                chineseNoodle.getProductPrice().getPrice().add(chineseDimsum.getProductPrice().getPrice()),
                 chineseMenuGroup.getId(),
-                List.of(chineseDimsumMenuProduct));
-        Menu savedMenu2 = menuService.create(menu2);
+                List.of(menuProductCreateRequest1, menuProductCreateRequest2));
+        //when
+        Menu menu1 = menuService.create(menuCreateRequest);
+        Menu menu2 = menuService.create(menuCreateRequest);
         
         //when
         List<Menu> actual = menuService.list();
@@ -155,6 +169,6 @@ class MenuServiceTest {
         assertThat(actual)
                 .usingRecursiveComparison()
                 .ignoringExpectedNullFields()
-                .isEqualTo(List.of(savedMenu1, savedMenu2));
+                .isEqualTo(List.of(menu1, menu2));
     }
 }
