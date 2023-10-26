@@ -58,10 +58,6 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public Order(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public Long getId() {
         return id;
     }

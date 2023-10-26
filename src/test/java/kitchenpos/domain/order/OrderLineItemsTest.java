@@ -15,4 +15,12 @@ class OrderLineItemsTest extends DomainTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(OrderLineItems.ORDER_LINE_ITEMS_IS_EMPTY_ERROR_MESSAGE);
     }
+
+    @Test
+    void throw_when_menuIds_size_and_quantities_size_not_match() {
+        // when & then
+        assertThatThrownBy(() -> OrderLineItems.from(List.of(1L, 2L), List.of()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(OrderLineItems.MENU_AND_QUANTITY_SIZE_NOT_MATCH_ERROR_MESSAGE);
+    }
 }

@@ -1,7 +1,6 @@
 package kitchenpos.application.order;
 
 import kitchenpos.domain.common.Quantity;
-import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItems;
@@ -11,7 +10,6 @@ import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.order.CreateOrderRequest;
 import kitchenpos.dto.order.ListOrderResponse;
-import kitchenpos.dto.order.OrderLineItemRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.exception.menu.MenuNotFoundException;
 import kitchenpos.exception.order.OrderNotFoundException;
@@ -39,38 +37,30 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final CreateOrderRequest request) {
-        final List<Menu> menus = convertToMenus(request);
-        final List<Quantity> quantities = convertToQuantities(request);
-        final OrderTable orderTable = convertToOrderTable(request);
+        final List<Long> menus = request.getMenuIds();
+        final List<Quantity> quantities = convertToQuantityList(request.getQuantities());
+        menus.forEach(this::validateMenuExist);
         final OrderLineItems orderLineItems = OrderLineItems.from(menus, quantities);
 
+        final OrderTable orderTable = findOrderTable(request);
         final Order order = Order.of(orderTable, orderLineItems);
         orderLineItems.setOrder(order);
         return OrderResponse.of(orderRepository.save(order));
     }
 
-    private List<Quantity> convertToQuantities(final CreateOrderRequest request) {
-        return request.getOrderLineItems().stream()
-                .map(OrderLineItemRequest::getQuantity)
-                .map(Quantity::of)
-                .collect(Collectors.toList());
+    private void validateMenuExist(final Long menuId) {
+        if (!menuRepository.existsById(menuId)) {
+            throw new MenuNotFoundException(menuId);
+        }
     }
 
-    private OrderTable convertToOrderTable(final CreateOrderRequest request) {
+    private List<Quantity> convertToQuantityList(final List<Long> quantities) {
+        return quantities.stream().map(Quantity::of).collect(Collectors.toList());
+    }
+
+    private OrderTable findOrderTable(final CreateOrderRequest request) {
         return orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new OrderTableNotFoundException(request.getOrderTableId()));
-    }
-
-    private List<Menu> convertToMenus(final CreateOrderRequest request) {
-        return request.getOrderLineItems().stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .map(this::checkMenuExists)
-                .collect(Collectors.toList());
-    }
-
-    private Menu checkMenuExists(Long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(() -> new MenuNotFoundException(menuId));
     }
 
     public ListOrderResponse list() {
@@ -79,12 +69,12 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
-        final Order savedOrder = convertToOrder(orderId);
+        final Order savedOrder = findOrder(orderId);
         savedOrder.setOrderStatus(request.getOrderStatus());
         return OrderResponse.of(savedOrder);
     }
 
-    private Order convertToOrder(final Long orderId) {
+    private Order findOrder(final Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
     }

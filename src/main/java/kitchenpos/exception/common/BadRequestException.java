@@ -7,6 +7,10 @@ public abstract class BadRequestException extends ApplicationException {
         super(MESSAGE + resourceName + " [id=" + id + "]");
     }
 
+    public BadRequestException(final String message) {
+        super(MESSAGE + message);
+    }
+
     @Override
     public int getErrorCode() {
         return 400;
