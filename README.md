@@ -105,7 +105,7 @@
   - TO-BE : 단방향 직접 참조
   ```mermaid
   graph LR
-    MenuProduct --> Menu
+    Menu --> MenuProduct
   ```
 - [ ] MenuProduct -> Product
   - AS-IS : 단방향 직접 참조
@@ -139,7 +139,7 @@
   - TO-BE : 단방향 직접 참조
   ```mermaid
   graph LR
-    OrderLineItem --> Order
+    Order --> OrderLineItem
   ```
 - [ ] Order -> OrderTable
   - AS-IS : 단방향 직접 참조
@@ -162,6 +162,5 @@
   - TO-BE : 단방향 직접 참조
   ```mermaid
   graph LR
-    OrderTable --> TableGroup
+    TableGroup --> OrderTable
   ```
-
