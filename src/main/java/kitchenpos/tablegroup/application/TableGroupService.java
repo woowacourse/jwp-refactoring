@@ -36,7 +36,7 @@ public class TableGroupService {
         tableGroupRepository.save(tableGroup);
 
         List<OrderTable> orderTables = getOrderTables(request);
-        orderTables.forEach(it -> it.group(tableGroup));
+        orderTables.forEach(it -> it.group(tableGroup.getId()));
 
         return TableGroupDto.toDto(tableGroup, orderTables);
     }
@@ -47,7 +47,12 @@ public class TableGroupService {
                 .map(TableIdDto::getId)
                 .collect(Collectors.toList());
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateOrderTables(orderTableIds, orderTables);
 
+        return orderTables;
+    }
+
+    private void validateOrderTables(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
         if (orderTableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException();
         }
@@ -55,8 +60,6 @@ public class TableGroupService {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
-
-        return orderTables;
     }
 
     @Transactional

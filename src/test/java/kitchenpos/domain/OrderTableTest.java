@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +27,8 @@ class OrderTableTest {
         @Test
         void 테이블그룹을_가지는_테이블이면_바꿀_수_없다() {
             // given
-            final var table = new OrderTable(new TableGroup(), 3, true);
+            final var tableGroupId = 1L;
+            final var table = new OrderTable(tableGroupId, 3, true);
 
             // when & then
             assertThatThrownBy(() -> table.changeEmpty(true));
@@ -76,12 +76,13 @@ class OrderTableTest {
         void 테이블을_그룹화_할_수_있다() {
             // given
             final var table = new OrderTable(3, true);
+            final var tableGroupId = 1L;
 
             // when
-            table.group(new TableGroup());
+            table.group(tableGroupId);
 
             // then
-            assertThat(table.getTableGroup()).isNotNull();
+            assertThat(table.getTableGroupId()).isNotNull();
             assertThat(table.isEmpty()).isFalse();
         }
 
@@ -89,18 +90,22 @@ class OrderTableTest {
         void 빈_테이블이_아니면_그룹화_할_수_없다() {
             // given
             final var table = new OrderTable(3, false);
+            final var tableGroupId = 1L;
 
             // when & then
-            assertThatThrownBy(() -> table.group(new TableGroup()));
+            assertThatThrownBy(() -> table.group(tableGroupId));
         }
 
         @Test
         void 이미_테이블그룹이_있으면_그룹화_할_수_없다() {
             // given
-            final var table = new OrderTable(new TableGroup(), 3, true);
+            final var tableGroupId1 = 1L;
+            final var table = new OrderTable(tableGroupId1, 3, true);
+
+            final var tableGroupId2 = 2L;
 
             // when & then
-            assertThatThrownBy(() -> table.group(new TableGroup()));
+            assertThatThrownBy(() -> table.group(tableGroupId2));
         }
     }
 
@@ -110,13 +115,14 @@ class OrderTableTest {
         @Test
         void 그룹화를_해제할_수_있다() {
             // given
-            final var table = new OrderTable(new TableGroup(), 3, true);
+            final var tableGroupId = 1L;
+            final var table = new OrderTable(tableGroupId, 3, true);
 
             // when
             table.unGroup();
 
             // then
-            assertThat(table.getTableGroup()).isNull();
+            assertThat(table.getTableGroupId()).isNull();
             assertThat(table.isEmpty()).isFalse();
         }
     }

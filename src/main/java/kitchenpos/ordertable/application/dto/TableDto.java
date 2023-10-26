@@ -18,10 +18,10 @@ public class TableDto {
     }
 
     public static TableDto toDto(final OrderTable orderTable) {
-        if (Objects.isNull(orderTable.getTableGroup())) {
+        if (Objects.isNull(orderTable.getTableGroupId())) {
             return new TableDto(orderTable.getId(), null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
         }
-        return new TableDto(orderTable.getId(), orderTable.getTableGroup().getId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        return new TableDto(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 
     public Long getId() {

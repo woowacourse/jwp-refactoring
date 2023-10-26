@@ -99,8 +99,8 @@ class TableServiceTest extends ServiceTest {
             final var 테이블1 = orderTableRepository.save(빈테이블());
             final var 테이블2 = orderTableRepository.save(빈테이블());
             final var 테이블그룹 = tableGroupRepository.save(테이블그룹());
-            테이블1.group(테이블그룹);
-            테이블2.group(테이블그룹);
+            테이블1.group(테이블그룹.getId());
+            테이블2.group(테이블그룹.getId());
 
             final var request = 주문테이블_EMPTY_변경_요청(false);
 
