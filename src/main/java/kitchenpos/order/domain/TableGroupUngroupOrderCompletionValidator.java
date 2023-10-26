@@ -4,12 +4,14 @@ import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderCompletionValidator;
 import kitchenpos.ordertable.exception.InvalidTableGroupUngroupException;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 
+@Component
 public class TableGroupUngroupOrderCompletionValidator implements OrderCompletionValidator {
     
     private final OrderRepository orderRepository;
