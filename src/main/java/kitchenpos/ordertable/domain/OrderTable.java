@@ -2,6 +2,7 @@ package kitchenpos.ordertable.domain;
 
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.TableGroupException;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;

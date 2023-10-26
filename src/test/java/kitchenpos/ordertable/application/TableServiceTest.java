@@ -9,7 +9,7 @@ import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.domain.OrderValidator;
-import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.ordertable.exception.OrderTableGuestNumberException;
 import org.assertj.core.api.Assertions;
