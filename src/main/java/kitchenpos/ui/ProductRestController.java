@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.CreateProductRequest;
-import kitchenpos.ui.dto.ReadProductResponse;
+import kitchenpos.ui.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,20 +23,28 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(@RequestBody final CreateProductRequest productRequest) {
-        final Product created = productService.create(productRequest);
-        final URI uri = URI.create("/api/products/" + created.getId());
+    public ResponseEntity<ProductResponse> create(@RequestBody final CreateProductRequest productRequest) {
+        final Product product = productService.create(productRequest);
+        final URI uri = URI.create("/api/products/" + product.getId());
         return ResponseEntity.created(uri)
-                             .body(created);
+                             .body(toResponse(product));
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<ReadProductResponse>> list() {
-        final List<ReadProductResponse> productResponses = productService.list()
-                                                                         .stream()
-                                                                         .map(ReadProductResponse::from)
-                                                                         .collect(Collectors.toUnmodifiableList());
+    public ResponseEntity<List<ProductResponse>> list() {
+        final List<ProductResponse> productResponses = productService.list()
+                                                                     .stream()
+                                                                     .map(this::toResponse)
+                                                                     .collect(Collectors.toUnmodifiableList());
         return ResponseEntity.ok()
                              .body(productResponses);
+    }
+
+    private ProductResponse toResponse(final Product product) {
+        return new ProductResponse(
+                product.getId(),
+                product.getPrice(),
+                product.getName()
+        );
     }
 }

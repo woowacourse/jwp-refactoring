@@ -55,7 +55,6 @@ public class OrderService {
             final Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                                             .orElseThrow(() -> new IllegalArgumentException("잘못된 메뉴입니다."));
             final OrderLineItem orderLineItem = new OrderLineItem(menu, orderLineItemDto.getQuantity());
-//            orderLineItems.add(orderLineItemRepository.save(orderLineItem));
             orderLineItems.add(orderLineItem);
             menus.add(menu);
         }

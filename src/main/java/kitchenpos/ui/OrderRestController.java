@@ -4,6 +4,8 @@ import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.ui.dto.CreateOrderRequest;
 import kitchenpos.ui.dto.PutOrderStatusRequest;
+import kitchenpos.ui.response.OrderLineItemDtoInOrderResponse;
+import kitchenpos.ui.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class OrderRestController {
@@ -24,24 +27,41 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final CreateOrderRequest orderRequest) {
-        final Order created = orderService.create(orderRequest);
-        final URI uri = URI.create("/api/orders/" + created.getId());
+    public ResponseEntity<OrderResponse> create(@RequestBody final CreateOrderRequest orderRequest) {
+        final Order order = orderService.create(orderRequest);
+        final OrderResponse response = toResponse(order);
+        final URI uri = URI.create("/api/orders/" + order.getId());
         return ResponseEntity.created(uri)
-                             .body(created);
+                             .body(response);
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<List<OrderResponse>> list() {
+        final List<OrderResponse> responses = orderService.list().stream()
+                                                          .map(this::toResponse)
+                                                          .collect(Collectors.toUnmodifiableList());
         return ResponseEntity.ok()
-                             .body(orderService.list());
+                             .body(responses);
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
             @RequestBody final PutOrderStatusRequest orderStatusRequest
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusRequest));
+        final Order order = orderService.changeOrderStatus(orderId, orderStatusRequest);
+        return ResponseEntity.ok(toResponse(order));
+    }
+
+    private OrderResponse toResponse(final Order order) {
+        final List<OrderLineItemDtoInOrderResponse> orderLineItems = order.getOrderLineItems()
+                                                                          .stream()
+                                                                          .map(orderLineItem ->
+                                                                                  new OrderLineItemDtoInOrderResponse(
+                                                                                          orderLineItem.getMenu()
+                                                                                                       .getId()
+                                                                                  )
+                                                                          ).collect(Collectors.toUnmodifiableList());
+        return new OrderResponse(order.getId(), order.getOrderedTime(), order.getOrderStatus(), orderLineItems);
     }
 }
