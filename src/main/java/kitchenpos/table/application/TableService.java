@@ -3,7 +3,7 @@ package kitchenpos.table.application;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableChangeEmptyValidateOrderStatusEvent;
+import kitchenpos.table.domain.OrderTableEvent;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -49,7 +49,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        applicationEventPublisher.publishEvent(new OrderTableChangeEmptyValidateOrderStatusEvent(savedOrderTable.getId()));
+        applicationEventPublisher.publishEvent(new OrderTableEvent(savedOrderTable.getId()));
 
         savedOrderTable.changeEmpty(empty);
 

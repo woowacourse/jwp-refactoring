@@ -2,7 +2,7 @@ package kitchenpos.order.application;
 
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTableChangeEmptyValidateOrderStatusEvent;
+import kitchenpos.table.domain.OrderTableEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -19,7 +19,7 @@ public final class OrderStatusValidateEventListener {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void validateOrderStatus(final OrderTableChangeEmptyValidateOrderStatusEvent event) {
+    public void validateOrderStatus(final OrderTableEvent event) {
         final Long orderTableId = event.getOrderTableId();
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
