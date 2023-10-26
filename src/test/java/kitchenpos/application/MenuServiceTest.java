@@ -13,6 +13,7 @@ import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.common.vo.Price;
 import kitchenpos.menu.service.MenuService;
+import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.product.service.ProductService;
 import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;

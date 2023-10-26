@@ -6,7 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.util.List;
 import kitchenpos.application.dto.request.MenuGroupRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;

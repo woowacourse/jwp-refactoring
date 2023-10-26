@@ -1,6 +1,6 @@
-package kitchenpos.repository;
+package kitchenpos.tablegroup.domain;
 
-import kitchenpos.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

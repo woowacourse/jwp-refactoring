@@ -15,6 +15,7 @@ import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.application.dto.response.TableResponse;
 import kitchenpos.menu.service.MenuService;
+import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.product.service.ProductService;
 import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;
