@@ -47,7 +47,9 @@ public class OrderTable {
         return tableGroup != null;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty,
+                            final OrderTableOrderStatusValidator orderTableOrderStatusValidator) {
+        orderTableOrderStatusValidator.validateOrderStatus(this.id);
         this.empty = empty;
     }
 

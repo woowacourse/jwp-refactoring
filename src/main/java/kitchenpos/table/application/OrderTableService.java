@@ -1,9 +1,8 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableOrderStatusValidator;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.presentation.dto.ChangeEmptyRequest;
 import kitchenpos.table.presentation.dto.ChangeNumberOfGuestsRequest;
@@ -17,12 +16,12 @@ public class OrderTableService {
 
     private final OrderTableRepository orderTableRepository;
 
-    private final OrderRepository orderRepository;
+    private final OrderTableOrderStatusValidator orderTableOrderStatusValidator;
 
     public OrderTableService(final OrderTableRepository orderTableRepository,
-                             final OrderRepository orderRepository) {
+                             final OrderTableOrderStatusValidator orderTableOrderStatusValidator) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.orderTableOrderStatusValidator = orderTableOrderStatusValidator;
     }
 
     public OrderTable create(final CreateOrderTableRequest request) {
@@ -44,14 +43,8 @@ public class OrderTableService {
         if (orderTable.isGrouped()) {
             throw new IllegalArgumentException("이미 그룹화된 주문 테이블의 상태를 변경할 수 없습니다.");
         }
-        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        final boolean isOrderStillInProgress = orders.stream()
-                                                     .anyMatch(order -> !order.isCompleted());
-        if (isOrderStillInProgress) {
-            throw new IllegalArgumentException("진행중인 주문이 있어, 주문 테이블의 상태를 변경할 수 없습니다.");
-        }
         final boolean empty = request.isEmpty();
-        orderTable.changeEmpty(empty);
+        orderTable.changeEmpty(empty, orderTableOrderStatusValidator);
         return orderTable;
     }
 
