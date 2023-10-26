@@ -152,15 +152,15 @@
   graph LR
     Order -.-> OrderTable
   ```
-- [ ] OrderTable <-> TableGroup
+- [X] OrderTable <-> TableGroup
   - AS-IS : 양방향 직접 참조
   ```mermaid
   graph LR
     OrderTable --> TableGroup
     TableGroup --> OrderTable
   ```
-  - TO-BE : 단방향 직접 참조
+  - TO-BE : 단방향 간접 참조
   ```mermaid
   graph LR
-    TableGroup --> OrderTable
+    OrderTable -.-> TableGroup
   ```

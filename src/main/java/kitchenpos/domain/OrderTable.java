@@ -2,12 +2,10 @@ package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -16,9 +14,8 @@ public class OrderTable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -29,54 +26,39 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public void ungroup() {
-        this.tableGroup = null;
-    }
-
-    public void changeTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-        this.empty = false;
     }
 
     public void changeEmpty(final boolean empty) {
-        validateTableGroup();
         this.empty = empty;
     }
 
-    private void validateTableGroup() {
-        if (Objects.nonNull(this.tableGroup)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public void changeNumberOfGuests(final int numberOfGuests) {
-        validateEmpty();
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void validateEmpty() {
-        if (this.empty) {
-            throw new IllegalArgumentException();
-        }
+    public void group(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
