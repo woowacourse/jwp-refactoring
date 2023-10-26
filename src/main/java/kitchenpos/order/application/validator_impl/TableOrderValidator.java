@@ -8,11 +8,11 @@ import kitchenpos.table.application.validator.TableChangeEmptyValidator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TableValidator implements TableChangeEmptyValidator {
+public class TableOrderValidator implements TableChangeEmptyValidator {
 
     private final OrderRepository orderRepository;
 
-    public TableValidator(final OrderRepository orderRepository) {
+    public TableOrderValidator(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
