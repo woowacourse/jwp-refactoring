@@ -14,7 +14,7 @@ public class InMemoryOrderTableDao implements OrderTableDao {
     @Override
     public OrderTable save(final OrderTable entity) {
         final var id = (long) (orderTables.size() + 1);
-        final var saved = new OrderTable(id, entity.getTableGroup(), entity.getNumberOfGuests(), entity.isEmpty());
+        final var saved = new OrderTable(id, entity.getTableGroupId(), entity.getNumberOfGuests(), entity.isEmpty());
         orderTables.add(saved);
         return saved;
     }

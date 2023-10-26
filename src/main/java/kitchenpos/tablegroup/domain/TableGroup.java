@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.ordertable.domain.OrderTable;
 
@@ -17,7 +18,8 @@ public class TableGroup {
     @Id
     private Long id;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
     @Column(name = "created_date", nullable = false, updatable = false)
@@ -28,14 +30,13 @@ public class TableGroup {
 
     public static TableGroup of(final List<OrderTable> orderTables, final LocalDateTime createdDate) {
         validateCanGroup(orderTables);
-        final var tableGroup = new TableGroup(null, orderTables, createdDate);
-        orderTables.forEach(orderTable -> orderTable.group(tableGroup));
-        return tableGroup;
+        return new TableGroup(null, orderTables, createdDate);
     }
 
     public TableGroup(final Long id, final List<OrderTable> orderTables, final LocalDateTime createdDate) {
         this.id = id;
         this.orderTables = orderTables;
+        orderTables.forEach(orderTable -> orderTable.group(id));
         this.createdDate = createdDate;
     }
 

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.exception.CannotChangeEmptyException;
 import kitchenpos.common.exception.InvalidGuestNumberException;
@@ -13,10 +12,10 @@ import kitchenpos.menu.MenuFactory;
 import kitchenpos.menu.dao.InMemoryMenuDao;
 import kitchenpos.menu.repository.MenuDao;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.dao.InMemoryOrderDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.dao.InMemoryOrderDao;
 import kitchenpos.order.repository.OrderDao;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.repository.OrderTableDao;
@@ -25,7 +24,6 @@ import kitchenpos.ordertable.ui.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ordertable.ui.request.OrderTableCreateRequest;
 import kitchenpos.table.OrderTableFactory;
 import kitchenpos.table.dao.InMemoryOrderTableDao;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -129,7 +127,8 @@ class TableServiceTest {
             final var savedTable = fakeOrderTableDao.save(table);
             final var table2 = OrderTableFactory.createOrderTableOf(0, true);
             final var savedTable2 = fakeOrderTableDao.save(table2);
-            final var tableGroup = TableGroup.of(List.of(savedTable, savedTable2), LocalDateTime.now());
+            savedTable.group(1L);
+            savedTable2.group(1L);
 
             final var tableService = new TableService(fakeOrderTableDao);
 
@@ -170,7 +169,6 @@ class TableServiceTest {
             final var previousState = table.isEmpty();
 
             final var request = new OrderTableChangeEmptyRequest(true);
-
 
             // when
             final var changed = tableService.changeEmpty(savedTable.getId(), request);

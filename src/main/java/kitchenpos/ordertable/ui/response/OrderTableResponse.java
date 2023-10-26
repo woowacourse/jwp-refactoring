@@ -17,13 +17,7 @@ public class OrderTableResponse {
     }
 
     public static OrderTableResponse from(OrderTable orderTable) {
-        return new OrderTableResponse(orderTable.getId(), getTableGroupId(orderTable), orderTable.getNumberOfGuests(), orderTable.isEmpty());
-    }
-    private static Long getTableGroupId(OrderTable orderTable) {
-        if (orderTable.getTableGroup() == null) {
-            return null;
-        }
-        return orderTable.getTableGroup().getId();
+        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 
     public Long getId() {
