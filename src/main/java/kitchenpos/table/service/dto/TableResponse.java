@@ -1,8 +1,8 @@
-package kitchenpos.application.dto.response;
+package kitchenpos.table.service.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public class TableResponse {
 

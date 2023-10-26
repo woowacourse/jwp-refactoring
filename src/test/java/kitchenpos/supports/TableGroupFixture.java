@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableIdRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
-import kitchenpos.application.dto.response.TableResponse;
+import kitchenpos.table.service.dto.TableResponse;
 
 public class TableGroupFixture {
 

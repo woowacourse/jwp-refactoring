@@ -1,10 +1,10 @@
-package kitchenpos.application;
+package kitchenpos.table.service;
 
 import java.util.List;
-import kitchenpos.application.dto.request.TableRequest;
-import kitchenpos.application.dto.response.TableResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.table.service.dto.TableRequest;
+import kitchenpos.table.service.dto.TableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
