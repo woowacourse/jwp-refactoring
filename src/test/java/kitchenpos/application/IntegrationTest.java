@@ -2,22 +2,33 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.application.menu.MenuGroupService;
+import kitchenpos.application.menu.MenuService;
+import kitchenpos.application.menu.ProductService;
+import kitchenpos.application.order.OrderService;
+import kitchenpos.application.order.TableEmptyChangedEventListener;
+import kitchenpos.application.order.TableUngroupedEventListener;
+import kitchenpos.application.table.OrderedEventListener;
+import kitchenpos.application.table.TableGroupService;
+import kitchenpos.application.table.TableService;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.Price;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +76,15 @@ public class IntegrationTest {
     @Autowired
     protected ProductRepository productRepository;
 
+    @Autowired
+    protected TableEmptyChangedEventListener tableEmptyChangedEventListener;
+
+    @Autowired
+    protected OrderedEventListener orderedEventListener;
+
+    @Autowired
+    protected TableUngroupedEventListener tableUngroupedEventListener;
+
     protected Price 가격(long 가격) {
         return new Price(BigDecimal.valueOf(가격));
     }
@@ -86,19 +106,30 @@ public class IntegrationTest {
     }
 
     protected Menu 메뉴(String 메뉴이름, Price 가격, MenuGroup 메뉴그룹, MenuProduct... 메뉴상품) {
-        return new Menu(메뉴이름, 가격, 메뉴그룹, Arrays.asList(메뉴상품));
+        return new Menu(메뉴이름, 가격, 메뉴그룹, 메뉴상품들(메뉴상품));
+    }
+
+    protected MenuProducts 메뉴상품들(MenuProduct... 메뉴상품) {
+        return new MenuProducts(Arrays.asList(메뉴상품));
     }
 
     protected Order 주문(OrderTable 주문테이블, OrderStatus 주문상태, OrderLineItem... 주문항목) {
-        return new Order(주문테이블, 주문상태, Arrays.asList(주문항목));
+        return new Order(주문테이블.id(), 주문상태, 주문항목들(주문항목));
+    }
+
+    protected OrderLineItems 주문항목들(OrderLineItem... 주문항목) {
+        return new OrderLineItems(Arrays.asList(주문항목));
     }
 
     protected OrderLineItem 주문항목(Menu 메뉴, long 수량) {
-        return new OrderLineItem(메뉴, 수량);
+        return new OrderLineItem(메뉴.id(), 수량);
     }
 
     protected TableGroup 테이블그룹(OrderTable... 주문테이블) {
-        return new TableGroup(Arrays.asList(주문테이블));
+        TableGroup tableGroup = new TableGroup();
+        Arrays.stream(주문테이블)
+                .forEach(it -> it.group(tableGroup));
+        return tableGroup;
     }
 
     protected Product 상품저장(Product 상품) {
