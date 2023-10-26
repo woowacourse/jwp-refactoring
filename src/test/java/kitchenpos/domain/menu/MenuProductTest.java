@@ -18,7 +18,7 @@ class MenuProductTest extends DomainTest {
         // when & then
         assertThatThrownBy(() -> MenuProduct.of(product, Quantity.of(quantity)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(MenuProduct.PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE);
+                .hasMessage(Quantity.PRODUCT_QUANTITY_IS_UNDER_ONE_ERROR_MESSAGE);
     }
 
     @Test
@@ -30,7 +30,7 @@ class MenuProductTest extends DomainTest {
         // when & then
         assertThatThrownBy(() -> MenuProduct.of(product, Quantity.of(quantity)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(MenuProduct.PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE);
+                .hasMessage(Quantity.PRODUCT_QUANTITY_IS_UNDER_ONE_ERROR_MESSAGE);
     }
 
     @Test
@@ -45,7 +45,7 @@ class MenuProductTest extends DomainTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(menuProduct.getProduct()).isEqualTo(product);
-            softAssertions.assertThat(menuProduct.getQuantity()).isEqualTo(quantity);
+            softAssertions.assertThat(menuProduct.getQuantity().getQuantity()).isEqualTo(quantity);
         });
     }
 

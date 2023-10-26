@@ -14,19 +14,18 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 public class MenuProduct {
-    public static final String PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE = "수량은 0보다 커야 합니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
     @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "product_id")
-    @NotNull
     private Product product;
-    @Embedded
     @NotNull
+    @Embedded
     private Quantity quantity;
 
     protected MenuProduct() {

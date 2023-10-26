@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ import java.util.stream.IntStream;
 @Embeddable
 public class MenuProducts {
     public static final String PRODUCTS_SIZE_AND_QUANTITIES_SIZE_ARE_DIFFERENT_ERROR_MESSAGE = "상품 개수와 상품 수량의 개수가 일치하지 않습니다.";
-
+    @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "menu_id")
     private List<MenuProduct> items;

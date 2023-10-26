@@ -8,6 +8,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -15,6 +16,7 @@ import java.util.stream.IntStream;
 @Embeddable
 public class OrderLineItems {
     public static final String ORDER_LINE_ITEMS_IS_EMPTY_ERROR_MESSAGE = "주문 항목이 존재하지 않습니다.";
+    @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems;

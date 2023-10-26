@@ -31,7 +31,7 @@ class OrderTableTest extends DomainTest {
     @Test
     void throw_when_change_unorderable_table_when_in_table_group() {
         // given
-        final OrderTable orderTable = OrderTable.of(TableGroup.of(List.of()));
+        final OrderTable orderTable = OrderTable.of(TableGroup.of(List.of(OrderTable.of(0), OrderTable.of(0))));
 
         // when & then
         assertThatThrownBy(() -> orderTable.setUnOrderable())
