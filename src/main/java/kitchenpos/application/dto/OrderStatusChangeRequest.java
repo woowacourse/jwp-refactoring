@@ -4,7 +4,7 @@ public class OrderStatusChangeRequest {
 
     private final String orderStatus;
 
-    public OrderStatusChangeRequest() {
+    private OrderStatusChangeRequest() {
         this(null);
     }
 
