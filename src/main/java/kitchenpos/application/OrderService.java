@@ -7,7 +7,6 @@ import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -39,7 +38,7 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
         final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-                .map(this::convertRequestToOrderLineItem)
+                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
         validateExistMenu(orderLineItemRequests, orderLineItems);
 
@@ -59,12 +58,6 @@ public class OrderService {
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private OrderLineItem convertRequestToOrderLineItem(final OrderLineItemRequest request) {
-        final Menu menu = menuRepository.findById(request.getMenuId())
-                .orElseThrow(IllegalArgumentException::new);
-        return new OrderLineItem(menu, request.getQuantity());
     }
 
     public List<OrderResponse> list() {

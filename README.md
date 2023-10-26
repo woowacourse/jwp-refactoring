@@ -118,7 +118,7 @@
   graph LR
     MenuProduct -.-> Product
   ```
-- [ ] OrderLineItem -> Menu
+- [X] OrderLineItem -> Menu
   - AS-IS : 단방향 직접 참조
   ```mermaid
   graph LR

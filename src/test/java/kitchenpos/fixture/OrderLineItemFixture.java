@@ -7,10 +7,10 @@ import kitchenpos.domain.OrderLineItem;
 public class OrderLineItemFixture {
 
     public static OrderLineItem 주문항목_망고치킨_2개() {
-        return new OrderLineItem(MenuFixture.메뉴_망고치킨_17000원_신메뉴(), 2L);
+        return new OrderLineItem(MenuFixture.메뉴_망고치킨_17000원_신메뉴().getId(), 2L);
     }
 
     public static OrderLineItem 주문항목_망고치킨_2개(final Menu menu) {
-        return new OrderLineItem(menu, 2L);
+        return new OrderLineItem(menu.getId(), 2L);
     }
 }

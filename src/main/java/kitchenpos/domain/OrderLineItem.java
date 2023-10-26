@@ -18,17 +18,14 @@ public class OrderLineItem {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    private Long menuId;
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Menu menu, final long quantity) {
-        this.menu = menu;
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
@@ -40,8 +37,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public long getQuantity() {

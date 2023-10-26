@@ -14,7 +14,7 @@ public class OrderFixture {
 
     public static OrderCreateRequest 주문요청_생성(final OrderTable orderTable, final OrderLineItem... orderLineItems) {
         final var orderLineItemRequests = Arrays.stream(orderLineItems)
-                .map(it -> new OrderLineItemRequest(it.getMenu().getId(), it.getQuantity()))
+                .map(it -> new OrderLineItemRequest(it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new OrderCreateRequest(orderTable.getId(), orderLineItemRequests);
     }
