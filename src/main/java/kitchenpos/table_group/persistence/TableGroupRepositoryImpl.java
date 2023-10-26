@@ -1,8 +1,5 @@
 package kitchenpos.table_group.persistence;
 
-import kitchenpos.table.application.entity.OrderTableEntity;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.persistence.OrderTableDao;
 import kitchenpos.table_group.application.entity.TableGroupEntity;
 import kitchenpos.table_group.domain.TableGroup;
@@ -10,7 +7,6 @@ import kitchenpos.table_group.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,38 +28,19 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
         final TableGroupEntity savedTableGroup = tableGroupDao.save(
                 TableGroupEntity.from(new TableGroup(LocalDateTime.now())));
 
-        final List<OrderTable> savedOrderTables = new ArrayList<>();
-        for (final OrderTable orderTable : entity.getOrderTables().getOrderTables()) {
-            savedOrderTables.add(
-                    orderTableDao.save(new OrderTableEntity(orderTable.getId(), savedTableGroup.getId(),
-                            orderTable.getNumberOfGuests().getValue(), false)).toOrderTable()
-            );
-        }
-
-        return savedTableGroup.toTableGroup(new OrderTables(savedOrderTables));
+        return savedTableGroup.toTableGroup();
     }
 
     @Override
     public Optional<TableGroup> findById(final Long id) {
-        final OrderTables orderTables = new OrderTables(orderTableDao.findAllByTableGroupId(id)
-                .stream()
-                .map(OrderTableEntity::toOrderTable)
-                .collect(Collectors.toList()));
-        return tableGroupDao.findById(id).map(entity -> entity.toTableGroup(orderTables));
+        return tableGroupDao.findById(id).map(TableGroupEntity::toTableGroup);
     }
 
     @Override
     public List<TableGroup> findAll() {
         return tableGroupDao.findAll()
                 .stream()
-                .map(entity -> {
-                    final OrderTables orderTables = new OrderTables(
-                            orderTableDao.findAllByTableGroupId(entity.getId())
-                                    .stream()
-                                    .map(OrderTableEntity::toOrderTable)
-                                    .collect(Collectors.toList()));
-                    return entity.toTableGroup(orderTables);
-                })
+                .map(TableGroupEntity::toTableGroup)
                 .collect(Collectors.toList());
     }
 }

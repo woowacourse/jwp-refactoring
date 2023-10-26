@@ -1,6 +1,5 @@
 package kitchenpos.table_group.application.entity;
 
-import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table_group.domain.TableGroup;
 
 import java.time.LocalDateTime;
@@ -22,8 +21,8 @@ public class TableGroupEntity {
         return new TableGroupEntity(tableGroup.getId(), tableGroup.getCreatedDate());
     }
 
-    public TableGroup toTableGroup(final OrderTables orderTables) {
-        return new TableGroup(id, createdDate, orderTables);
+    public TableGroup toTableGroup() {
+        return new TableGroup(id, createdDate);
     }
 
     public Long getId() {

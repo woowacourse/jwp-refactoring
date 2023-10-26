@@ -1,6 +1,5 @@
 package kitchenpos.table_group.application.dto.request;
 
-import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table_group.domain.TableGroup;
 
 import java.time.LocalDateTime;
@@ -14,8 +13,8 @@ public class TableGroupCreateRequest {
         this.orderTables = orderTables;
     }
 
-    public TableGroup toTableGroup(final OrderTables orderTables) {
-        return new TableGroup(LocalDateTime.now(), orderTables);
+    public TableGroup toTableGroup() {
+        return new TableGroup(LocalDateTime.now());
     }
 
     public TableGroupCreateRequest() {

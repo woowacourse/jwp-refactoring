@@ -2,7 +2,6 @@ package kitchenpos.table_group.application;
 
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.application.dto.response.OrderTableQueryResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.repository.OrderTableRepository;
@@ -14,6 +13,7 @@ import kitchenpos.table_group.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,13 +44,16 @@ public class TableGroupService {
                 orderTableRepository.findAllByIdIn(orderTableIds));
         validateTableGroupCreateRequest(savedOrderTables, orderTableIds);
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(
-                request.toTableGroup(savedOrderTables));
+        final TableGroup savedTableGroup = tableGroupRepository.save(request.toTableGroup());
 
-        final List<OrderTableQueryResponse> orderTableQueryResponses =
-                OrderTableQueryResponse.from(savedTableGroup.getOrderTables());
-        return new TableGroupQueryResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
-                orderTableQueryResponses);
+        final List<OrderTable> initializedOrderTabled = new ArrayList<>();
+        for (final OrderTable orderTable : savedOrderTables.getOrderTables()) {
+            initializedOrderTabled.add(
+                    orderTableRepository.save(new OrderTable(orderTable.getId(), savedTableGroup.getId(),
+                            orderTable.getNumberOfGuests(), false))
+            );
+        }
+        return TableGroupQueryResponse.of(savedTableGroup, new OrderTables(initializedOrderTabled));
     }
 
     private void validateTableGroupCreateRequest(final OrderTables savedOrderTables,
