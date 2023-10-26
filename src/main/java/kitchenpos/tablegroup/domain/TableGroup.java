@@ -84,6 +84,14 @@ public class TableGroup {
         }
     }
     
+    public void ungroup(final List<OrderTable> orderTables,
+                        final OrderCompletionValidator orderCompletionValidator) {
+        orderCompletionValidator.validateIfOrderOfOrderTableIsCompleted(orderTables, this.id);
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.detachFromTableGroup();
+        }
+    }
+    
     public Long getId() {
         return id;
     }

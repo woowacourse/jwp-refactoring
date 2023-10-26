@@ -49,12 +49,9 @@ public class TableGroupService {
     
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        tableGroupRepository.findById(tableGroupId)
-                            .orElseThrow(() -> new NotExistTableGroupException("존재하지 않는 단체 테이블입니다"));
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                                                           .orElseThrow(() -> new NotExistTableGroupException("존재하지 않는 단체 테이블입니다"));
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        orderCompletionValidator.validateIfOrderOfOrderTableIsCompleted(orderTables, tableGroupId);
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.detachFromTableGroup();
-        }
+        tableGroup.ungroup(orderTables, orderCompletionValidator);
     }
 }
