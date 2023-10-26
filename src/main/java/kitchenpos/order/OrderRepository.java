@@ -3,7 +3,7 @@ package kitchenpos.order;
 import java.util.List;
 import java.util.Optional;
 
-public interface OrderDao {
+public interface OrderRepository {
     Order save(Order entity);
 
     Optional<Order> findById(Long id);

@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class JdbcTemplateOrderRepository implements OrderDao {
+public class JdbcTemplateOrderRepository implements OrderRepository {
     private static final String TABLE_NAME = "orders";
     private static final String KEY_COLUMN_NAME = "id";
 

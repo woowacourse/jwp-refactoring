@@ -1,5 +1,7 @@
 package kitchenpos.order;
 
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuRepository;
 import kitchenpos.order.request.OrderCreateRequest;
 import kitchenpos.order.request.OrderLineItemCreateRequest;
 import kitchenpos.order.request.OrderUpdateRequest;
@@ -12,44 +14,50 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderValidator orderValidator;
+    private final MenuRepository menuRepository;
 
-    public OrderService(OrderDao orderDao, OrderLineItemRepository orderLineItemRepository, OrderValidator orderValidator) {
-        this.orderDao = orderDao;
+    public OrderService(OrderRepository orderRepository, OrderLineItemRepository orderLineItemRepository, OrderValidator orderValidator, MenuRepository menuRepository) {
+        this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderValidator = orderValidator;
+        this.menuRepository = menuRepository;
     }
 
     @Transactional
     public Order create(OrderCreateRequest request) {
-        List<OrderLineItemCreateRequest> orderLineItems = request.getOrderLineItems();
-
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = request.getOrderLineItems();
         Order order = OrderMapper.mapToOrder(request, orderValidator);
-        final Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItems) {
-            OrderLineItem orderLineItem = mapToOrderLineItem(orderLineItemCreateRequest, orderId);
+        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        for (OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItemCreateRequests) {
+            OrderLineItem orderLineItem = mapToOrderLineItem(orderLineItemCreateRequest, savedOrder.getId());
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
+        return orderRepository.save(savedOrder);
     }
 
+
     private OrderLineItem mapToOrderLineItem(OrderLineItemCreateRequest orderLineItem, Long orderId) {
+        Long menuId = orderLineItem.getMenuId();
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(IllegalArgumentException::new);
+
         return OrderLineItem.of(
                 orderId,
                 orderLineItem.getMenuId(),
-                orderLineItem.getQuantity()
+                orderLineItem.getQuantity(),
+                menu.getName(),
+                menu.getPrice()
         );
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
@@ -63,14 +71,14 @@ public class OrderService {
         final Order order = getOrder(orderId);
         order.changeOrderStatus(request.getOrderStatus());
 
-        orderDao.save(order);
+        orderRepository.save(order);
         order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return order;
     }
 
     private Order getOrder(Long orderId) {
-        return orderDao.findById(orderId)
+        return orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 }
