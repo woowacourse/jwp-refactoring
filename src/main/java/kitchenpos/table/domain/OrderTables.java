@@ -4,6 +4,8 @@ import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,8 @@ import java.util.List;
 public class OrderTables {
 
     @BatchSize(size = 100)
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "tableGroup")
+    @JoinColumn(name = "table_group_id", nullable = true, foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTableItems;
 
     protected OrderTables() {
@@ -30,8 +33,9 @@ public class OrderTables {
         orderTableItems.addAll(requestOrderTables.orderTableItems);
     }
 
-    public void assignTableGroup(final TableGroup tableGroup) {
-        orderTableItems.forEach(orderTable -> orderTable.assignTableGroup(tableGroup));
+    public void assignTableGroup(final Long tableGroupId) {
+        orderTableItems.forEach(orderTable -> orderTable.assignTableGroup(tableGroupId));
+        orderTableItems.forEach(orderTable -> orderTable.changeOrderTableEmpty(false));
     }
 
     public List<OrderTable> getOrderTableItems() {

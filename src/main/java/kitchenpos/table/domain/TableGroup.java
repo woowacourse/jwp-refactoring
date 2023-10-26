@@ -22,7 +22,7 @@ public class TableGroup extends BaseEntity {
     protected TableGroup() {
     }
 
-    protected TableGroup(final OrderTables orderTables) {
+    public TableGroup(final OrderTables orderTables) {
         this(null, orderTables);
     }
 
@@ -32,6 +32,12 @@ public class TableGroup extends BaseEntity {
     }
 
     public static TableGroup withOrderTables(final List<OrderTable> requestOrderTables) {
+        validateOrderTables(requestOrderTables);
+
+        return new TableGroup(new OrderTables(requestOrderTables));
+    }
+
+    private static void validateOrderTables(final List<OrderTable> requestOrderTables) {
         if (requestOrderTables.size() < 2) {
             throw new IllegalArgumentException("단체 지정할 주문 테이블의 수가 2 미만일 수 없습니다.");
         }
@@ -41,18 +47,13 @@ public class TableGroup extends BaseEntity {
         if (requestOrderTables.stream().noneMatch(OrderTable::isEmpty)) {
             throw new IllegalArgumentException("비어있지 않은 주문 테이블을 단체 지정할 수 없습니다.");
         }
-
-        final TableGroup tableGroup = new TableGroup(OrderTables.empty());
-        requestOrderTables.forEach(requestOrderTable -> requestOrderTable.changeOrderTableEmpty(false));
-        tableGroup.addOrderTables(requestOrderTables);
-
-        return tableGroup;
     }
 
-    private void addOrderTables(final List<OrderTable> requestOrderTables) {
+    public void addOrderTables(final List<OrderTable> requestOrderTables) {
+        validateOrderTables(requestOrderTables);
         final OrderTables newOrderTables = new OrderTables(requestOrderTables);
         orderTables.addOrderTables(newOrderTables);
-        newOrderTables.assignTableGroup(this);
+        newOrderTables.assignTableGroup(id);
     }
 
     public Long getId() {

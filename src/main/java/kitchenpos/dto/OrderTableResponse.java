@@ -36,10 +36,10 @@ public class OrderTableResponse {
 
     @Nullable
     private static Long getTableGroupId(final OrderTable orderTable) {
-        if (orderTable.getTableGroup() == null) {
+        if (orderTable.getTableGroupId() == null) {
             return null;
         }
-        return orderTable.getTableGroup().getId();
+        return orderTable.getTableGroupId();
     }
 
     public static List<OrderTableResponse> from(final List<OrderTable> orderTables) {

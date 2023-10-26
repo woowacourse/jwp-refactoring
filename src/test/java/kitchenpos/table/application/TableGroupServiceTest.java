@@ -1,21 +1,20 @@
 package kitchenpos.table.application;
 
 import kitchenpos.config.ApplicationTestConfig;
+import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.domain.vo.Name;
+import kitchenpos.menu.domain.vo.Price;
+import kitchenpos.menu.domain.vo.Quantity;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.menu.domain.Product;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.menu.domain.vo.Name;
-import kitchenpos.menu.domain.vo.Price;
-import kitchenpos.menu.domain.vo.Quantity;
-import kitchenpos.dto.OrderTableResponse;
-import kitchenpos.dto.TableGroupCreateRequest;
-import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -133,25 +132,6 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-
-        @DisplayName("[EXCEPTION] 주문 테이블이 비어있어도 단체 지정이 할당되어 있을 경우 예외가 발생한다.")
-        @Test
-        void throwException_when_orderTable_hasAlreadyTableGroup() {
-            // given
-            final List<OrderTable> savedOrderTables = List.of(
-                    orderTableRepository.save(OrderTable.withoutTableGroup(5, true)),
-                    orderTableRepository.save(OrderTable.withoutTableGroup(10, true))
-            );
-            tableGroupRepository.save(TableGroup.withOrderTables(savedOrderTables));
-
-            // expect
-            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
-            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
-
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
     }
 
     @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)

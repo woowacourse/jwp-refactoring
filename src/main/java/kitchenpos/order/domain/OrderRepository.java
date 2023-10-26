@@ -22,7 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select o " +
            "from Order o " +
-           "where o.orderTable.tableGroup.id = :tableGroupId")
+           "where o.orderTable.tableGroupId = :tableGroupId")
     List<Order> findOrdersByTableGroupId(@Param("tableGroupId") final Long tableGroupId);
 
     @Query("select case when coalesce(count(1), 0) > 0 then true else false end " +

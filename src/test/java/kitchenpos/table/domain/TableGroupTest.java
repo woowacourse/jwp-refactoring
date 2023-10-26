@@ -1,7 +1,5 @@
 package kitchenpos.table.domain;
 
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,21 +36,9 @@ class TableGroupTest {
         @DisplayName("[EXCEPTION] 주문 테이블이 이미 단체 지정되어 있는 경우 예외가 발생한다.")
         @Test
         void throwException_create_when_orderTable_isAlreadyAssigned() {
-            // given
-            final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
-                    OrderTable.withoutTableGroup(10, true),
-                    OrderTable.withoutTableGroup(10, true)
-            ));
-
-            // when
-            final OrderTable alreadyAssignedOrderTable = OrderTable.withoutTableGroup(10, true);
-            alreadyAssignedOrderTable.assignTableGroup(tableGroup);
-            final OrderTable orderTable = OrderTable.withoutTableGroup(10, true);
-
-            // then
             assertThatThrownBy(() -> TableGroup.withOrderTables(List.of(
-                    alreadyAssignedOrderTable,
-                    orderTable
+                    new OrderTable(1L, 10, false),
+                    OrderTable.withoutTableGroup(10, true)
             ))).isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -72,10 +58,10 @@ class TableGroupTest {
         // given
         final OrderTable orderTableOne = OrderTable.withoutTableGroup(10, true);
         final OrderTable orderTableTwo = OrderTable.withoutTableGroup(10, true);
-        final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
-                orderTableOne,
-                orderTableTwo
-        ));
+        final TableGroup tableGroup = new TableGroup(OrderTables.empty());
+
+        // when
+        tableGroup.addOrderTables(List.of(orderTableOne, orderTableTwo));
 
         // then
         assertSoftly(softly -> {
@@ -85,9 +71,7 @@ class TableGroupTest {
             final OrderTable actualOrderTableOne = actualOrderTables.get(0);
             final OrderTable actualOrderTableTwo = actualOrderTables.get(1);
 
-            softly.assertThat(actualOrderTableOne.getTableGroup()).isEqualTo(tableGroup);
             softly.assertThat(actualOrderTableOne.isEmpty()).isFalse();
-            softly.assertThat(actualOrderTableTwo.getTableGroup()).isEqualTo(tableGroup);
             softly.assertThat(actualOrderTableTwo.isEmpty()).isFalse();
         });
     }

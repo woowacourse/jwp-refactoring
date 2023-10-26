@@ -2,13 +2,9 @@ package kitchenpos.table.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -17,9 +13,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "table_group_id", nullable = true, foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id", nullable = true)
+    private Long tableGroupId;
 
     @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
@@ -30,20 +25,20 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    protected OrderTable(final TableGroup tableGroup,
+    public OrderTable(final Long tableGroupId,
                          final int numberOfGuests,
                          final boolean empty
     ) {
-        this(null, tableGroup, numberOfGuests, empty);
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     protected OrderTable(final Long id,
-                         final TableGroup tableGroup,
+                         final Long tableGroupId,
                          final int numberOfGuests,
                          final boolean empty
     ) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -53,26 +48,26 @@ public class OrderTable {
     }
 
     public boolean isGrouped() {
-        return tableGroup != null;
+        return tableGroupId != null;
     }
 
     public void changeOrderTableEmpty(final boolean isEmpty) {
-        if (isEmpty && tableGroup != null) {
+        if (isEmpty && tableGroupId != null) {
             throw new IllegalArgumentException("단체 지정이 되어 있으므로 주문 테이블 상태를 비어있게 할 수 없습니다.");
         }
 
         this.empty = isEmpty;
     }
 
-    public void assignTableGroup(final TableGroup requestTableGroup) {
-        if (tableGroup != null) {
+    public void assignTableGroup(final Long requestTableGroupId) {
+        if (tableGroupId != null) {
             throw new IllegalArgumentException("이미 단체 지정이 되어있는 주문 테이블을 새롭게 단체 지정할 수 없습니다.");
         }
-        tableGroup = requestTableGroup;
+        tableGroupId = requestTableGroupId;
     }
 
     public void deassignTableGroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
@@ -91,8 +86,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

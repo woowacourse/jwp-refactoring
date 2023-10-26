@@ -1,8 +1,5 @@
 package kitchenpos.table.domain;
 
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTables;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -64,21 +61,21 @@ class OrderTablesTest {
         @Test
         void success_assignTableGroup() {
             // given
-            final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
-                    OrderTable.withoutTableGroup(5, true),
-                    OrderTable.withoutTableGroup(5, true)
+            final OrderTables orderTables = new OrderTables(List.of(
+                    new OrderTable(1L , 5, false),
+                    new OrderTable(1L , 5, false),
+                    new OrderTable(1L , 5, false),
+                    new OrderTable(1L , 5, false),
+                    new OrderTable(1L , 5, false),
+                    new OrderTable(1L , 5, false),
+                    new OrderTable(1L , 5, false),
+                    new OrderTable(1L , 5, false)
             ));
-
-            // when
-            final OrderTables actual = new OrderTables(List.of(
-                    OrderTable.withoutTableGroup(5, true)
-            ));
-            actual.assignTableGroup(tableGroup);
 
             // then
-            final boolean isAllGrouped = actual.getOrderTableItems().stream().allMatch(OrderTable::isGrouped);
+            final boolean actual = orderTables.getOrderTableItems().stream().allMatch(OrderTable::isGrouped);
 
-            assertThat(isAllGrouped).isTrue();
+            assertThat(actual).isTrue();
         }
     }
 }
