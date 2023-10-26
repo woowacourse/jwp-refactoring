@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 import kitchenpos.domain.exception.InvalidPriceException;
 
 @Embeddable
-public class Price implements Comparable<Price> {
+public class Price {
 
     public static final Price ZERO = new Price();
 
@@ -42,9 +42,8 @@ public class Price implements Comparable<Price> {
         return value;
     }
 
-    @Override
-    public int compareTo(final Price other) {
-        return this.value.compareTo(other.value);
+    public boolean isGreaterThan(final Price other) {
+        return this.value.compareTo(other.value) > 0;
     }
 
     @Override
