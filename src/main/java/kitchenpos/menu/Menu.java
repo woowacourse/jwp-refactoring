@@ -1,7 +1,7 @@
 package kitchenpos.menu;
 
-import kitchenpos.menugroup.MenuGroup;
 import kitchenpos.common.vo.Price;
+import kitchenpos.menugroup.MenuGroup;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;

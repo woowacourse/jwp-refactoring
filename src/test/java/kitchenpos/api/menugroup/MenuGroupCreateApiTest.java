@@ -1,9 +1,9 @@
 package kitchenpos.api.menugroup;
 
 import kitchenpos.api.config.ApiTestConfig;
+import kitchenpos.menugroup.MenuGroup;
 import kitchenpos.menugroup.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.menugroup.application.dto.response.MenuGroupResponse;
-import kitchenpos.menugroup.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

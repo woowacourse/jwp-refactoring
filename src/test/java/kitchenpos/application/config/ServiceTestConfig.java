@@ -1,32 +1,30 @@
 package kitchenpos.application.config;
 
 import kitchenpos.common.DataTestExecutionListener;
+import kitchenpos.common.vo.Price;
 import kitchenpos.config.JpaConfig;
 import kitchenpos.menu.Menu;
-import kitchenpos.menugroup.MenuGroup;
 import kitchenpos.menu.MenuProduct;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.OrderTables;
-import kitchenpos.product.Product;
-import kitchenpos.tablegroup.TableGroup;
-import kitchenpos.ordertable.vo.NumberOfGuests;
-import kitchenpos.common.vo.Price;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.ordertable.vo.NumberOfGuests;
+import kitchenpos.product.Product;
 import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.tablegroup.TableGroup;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestExecutionListeners;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -34,9 +32,6 @@ import java.util.List;
 @Import(JpaConfig.class)
 @TestExecutionListeners(value = DataTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class ServiceTestConfig {
-
-    @PersistenceContext
-    protected EntityManager em;
 
     @Autowired
     protected ProductRepository productRepository;
@@ -55,6 +50,9 @@ public class ServiceTestConfig {
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher;
 
     protected Product saveProduct() {
         final Product product = new Product("여우가 좋아하는 피자", new Price(BigDecimal.valueOf(10000)));
@@ -88,10 +86,13 @@ public class ServiceTestConfig {
         return orderTableRepository.save(new OrderTable(new NumberOfGuests(2), true));
     }
 
+    protected TableGroup saveTableGroup() {
+        return tableGroupRepository.save(new TableGroup());
+    }
+
     protected TableGroup saveTableGroup(List<OrderTable> orderTables) {
-        final TableGroup tableGroup = new TableGroup(new OrderTables(orderTables));
-        // TODO: em 사용해보기, setter 제거
-        orderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
+        final TableGroup tableGroup = new TableGroup();
+        orderTables.forEach(orderTable -> orderTable.makeGroup(tableGroup));
         return tableGroupRepository.save(tableGroup);
     }
 }

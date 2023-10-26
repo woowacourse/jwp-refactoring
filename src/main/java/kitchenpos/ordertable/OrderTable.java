@@ -46,6 +46,21 @@ public class OrderTable {
         this(null, numberOfGuests, empty, null);
     }
 
+    public void makeGroup(final TableGroup tableGroup) {
+        validateCanGroup();
+        this.empty = false;
+        this.tableGroup = tableGroup;
+    }
+
+    private void validateCanGroup() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
+        if (!empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public void ungroup() {
         empty = false;
         tableGroup = null;
@@ -60,14 +75,6 @@ public class OrderTable {
         if (empty) {
             throw new IllegalArgumentException();
         }
-    }
-
-    public void changeToOccupied() {
-        empty = false;
-    }
-
-    public boolean canGroup() {
-        return tableGroup == null && empty;
     }
 
     public void changeEmpty(final boolean empty) {
@@ -95,9 +102,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
     }
 }

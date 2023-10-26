@@ -1,13 +1,12 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.OrderTables;
 import kitchenpos.tablegroup.TableGroup;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.tablegroup.repository.TableGroupRepository;
 import kitchenpos.tablegroup.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.response.TableGroupResponse;
+import kitchenpos.tablegroup.application.event.TableGroupCreateRequestEvent;
+import kitchenpos.tablegroup.application.event.TableGroupDeleteRequestEvent;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -18,35 +17,27 @@ import java.util.List;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public TableGroupService(
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final TableGroupRepository tableGroupRepository,
+            final ApplicationEventPublisher eventPublisher
     ) {
-        this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest orderTableIds) {
-        final List<OrderTable> orderTablesResult = orderTableRepository.findAllById(orderTableIds.getOrderTableIds());
-        final OrderTables orderTables = new OrderTables(orderTablesResult);
-        validateTableGroupInput(orderTableIds.getOrderTableIds(), orderTables);
-        orderTables.validateCanGroupAndChangeToOccupied();
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(orderTables));
-        return TableGroupResponse.from(savedTableGroup);
+        validateTableGroupInput(orderTableIds.getOrderTableIds());
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
+        eventPublisher.publishEvent(new TableGroupCreateRequestEvent(orderTableIds.getOrderTableIds(), tableGroup));
+        return TableGroupResponse.of(tableGroup, orderTableIds.getOrderTableIds());
     }
 
-    private void validateTableGroupInput(final List<Long> idsInput, final OrderTables savedOrderTables) {
+    private void validateTableGroupInput(final List<Long> idsInput) {
         if (CollectionUtils.isEmpty(idsInput) || idsInput.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-        if (!savedOrderTables.hasSizeOf(idsInput.size())) {
             throw new IllegalArgumentException();
         }
     }
@@ -54,10 +45,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findMandatoryById(tableGroupId);
-        final List<OrderTable> orderTablesResult = orderTableRepository.findByTableGroup(tableGroup);
-        final OrderTables orderTables = new OrderTables(orderTablesResult);
-        final Long completionOrderCount = orderRepository.countCompletionOrderByOrderTableIds(orderTables.getIds());
-        orderTables.validateSizeAndUngroup(completionOrderCount.intValue());
-        orderTableRepository.saveAll(orderTables.getOrderTables());
+        final TableGroupDeleteRequestEvent event = new TableGroupDeleteRequestEvent(tableGroup);
+        eventPublisher.publishEvent(event);
     }
 }

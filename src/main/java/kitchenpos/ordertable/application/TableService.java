@@ -1,13 +1,13 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.vo.NumberOfGuests;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.request.OrderTableChangeGuestNumberRequest;
 import kitchenpos.ordertable.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.dto.response.OrderTableResponse;
+import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.ordertable.vo.NumberOfGuests;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

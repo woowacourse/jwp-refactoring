@@ -1,6 +1,6 @@
 package kitchenpos.ordertable;
 
-import kitchenpos.ordertable.OrderTable;
+import kitchenpos.tablegroup.TableGroup;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -27,18 +27,8 @@ public class OrderTables {
         return orderTables.size() == size;
     }
 
-    public void validateCanGroupAndChangeToOccupied() {
-        validateAllCanGroup();
-        orderTables.forEach(OrderTable::changeToOccupied);
-    }
-
-    private void validateAllCanGroup() {
-        final long validatedCount = orderTables.stream()
-                .filter(OrderTable::canGroup)
-                .count();
-        if (validatedCount != orderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+    public void assignGroup(final TableGroup tableGroup) {
+        orderTables.forEach(orderTable -> orderTable.makeGroup(tableGroup));
     }
 
     public void validateSizeAndUngroup(final int size) {

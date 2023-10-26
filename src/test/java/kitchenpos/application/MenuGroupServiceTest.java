@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menugroup.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.menugroup.application.dto.response.MenuGroupResponse;
-import kitchenpos.menugroup.application.MenuGroupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

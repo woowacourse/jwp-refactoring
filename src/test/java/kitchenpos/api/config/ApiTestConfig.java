@@ -1,18 +1,18 @@
 package kitchenpos.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.tablegroup.application.TableGroupService;
-import kitchenpos.ordertable.application.TableService;
-import kitchenpos.menugroup.ui.MenuGroupRestController;
 import kitchenpos.menu.ui.MenuRestController;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.ui.MenuGroupRestController;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.ui.OrderRestController;
-import kitchenpos.product.ui.ProductRestController;
-import kitchenpos.tablegroup.ui.TableGroupRestController;
+import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.ui.TableRestController;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.ui.ProductRestController;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.ui.TableGroupRestController;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

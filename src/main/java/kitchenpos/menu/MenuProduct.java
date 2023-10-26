@@ -1,8 +1,8 @@
 package kitchenpos.menu;
 
 
-import kitchenpos.product.Product;
 import kitchenpos.common.vo.Price;
+import kitchenpos.product.Product;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

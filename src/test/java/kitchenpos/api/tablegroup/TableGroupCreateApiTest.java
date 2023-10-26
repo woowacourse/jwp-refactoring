@@ -2,7 +2,6 @@ package kitchenpos.api.tablegroup;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.tablegroup.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.ordertable.application.dto.response.OrderTableInTableGroupResponse;
 import kitchenpos.tablegroup.application.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,11 +25,7 @@ class TableGroupCreateApiTest extends ApiTestConfig {
         final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(1L, 2L));
 
         // when
-        final List<OrderTableInTableGroupResponse> orderTableInTableGroupRespons = List.of(
-                new OrderTableInTableGroupResponse(1L, 0, true),
-                new OrderTableInTableGroupResponse(2L, 0, true)
-        );
-        final TableGroupResponse response = new TableGroupResponse(1L, LocalDateTime.now(), orderTableInTableGroupRespons);
+        final TableGroupResponse response = new TableGroupResponse(1L, LocalDateTime.now(), request.getOrderTableIds());
         when(tableGroupService.create(eq(request))).thenReturn(response);
 
         // then

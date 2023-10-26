@@ -1,8 +1,8 @@
 package kitchenpos.api.product;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.product.Product;
 import kitchenpos.common.vo.Price;
+import kitchenpos.product.Product;
 import kitchenpos.product.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

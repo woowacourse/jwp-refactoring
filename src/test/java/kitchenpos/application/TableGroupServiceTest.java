@@ -5,30 +5,36 @@ import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.tablegroup.TableGroup;
-import kitchenpos.tablegroup.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.ordertable.application.dto.response.OrderTableInTableGroupResponse;
-import kitchenpos.tablegroup.application.dto.response.TableGroupResponse;
 import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.dto.response.TableGroupResponse;
+import kitchenpos.tablegroup.application.event.TableGroupCreateRequestEvent;
+import kitchenpos.tablegroup.application.event.TableGroupDeleteRequestEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@RecordApplicationEvents
 class TableGroupServiceTest extends ServiceTestConfig {
+
+    @Autowired
+    private ApplicationEvents applicationEvents;
 
     private TableGroupService tableGroupService;
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
+        tableGroupService = new TableGroupService(tableGroupRepository, eventPublisher);
     }
 
     @DisplayName("주문 테이블 그룹 생성")
@@ -48,13 +54,8 @@ class TableGroupServiceTest extends ServiceTestConfig {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getOrderTables().size()).isEqualTo(orderTableIdsInput.size());
-                softly.assertThat(actual.getOrderTables().stream()
-                                .map(OrderTableInTableGroupResponse::getId))
-                        .isEqualTo(orderTableIdsInput);
-                softly.assertThat(actual.getOrderTables().stream()
-                                .map(OrderTableInTableGroupResponse::isEmpty))
-                        .containsOnly(false);
+                softly.assertThat(actual.getOrderTableIds().size()).isEqualTo(orderTableIdsInput.size());
+                softly.assertThat(actual.getOrderTableIds()).isEqualTo(orderTableIdsInput);
             });
         }
 
@@ -81,48 +82,21 @@ class TableGroupServiceTest extends ServiceTestConfig {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("잘못된 OrderTableId 가 있으면 실패한다.")
+        @DisplayName("event가 하나 발행된다.")
         @Test
-        void fail_if_orderTables_contains_invalid_orderTableId() {
-            // given
-            final OrderTable orderTable = saveEmptyOrderTable();
-            final Long invalidOrderTableId = -1L;
-            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable.getId(), invalidOrderTableId));
-
-            // then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("착석되어있는 OrderTable 이 존재하면 실패한다.")
-        @Test
-        void fail_orderTables_contains_not_empty_orderTable() {
+        void event() {
             // given
             final OrderTable orderTable1 = saveEmptyOrderTable();
-            final OrderTable orderTable2 = saveOccupiedOrderTable();
+            final OrderTable orderTable2 = saveEmptyOrderTable();
             final List<Long> orderTableIdsInput = List.of(orderTable1.getId(), orderTable2.getId());
             final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTableIdsInput);
 
-            // then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("이미 그룹 지정된 OrderTable 이 존재하면 실패한다.")
-        @Test
-        void fail_orderTables_contains_already_grouping() {
-            // given
-            final OrderTable orderTable1 = saveEmptyOrderTable();
-            orderTable1.changeToOccupied();
-            final OrderTable orderTable2 = saveEmptyOrderTable();
-            orderTable2.changeToOccupied();
-            final TableGroup savedTableGroup = saveTableGroup(List.of(orderTable1, orderTable2));
-
-            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()));
+            // when
+            tableGroupService.create(request);
+            final long eventPublishedCount = applicationEvents.stream(TableGroupCreateRequestEvent.class).count();
 
             // then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThat(eventPublishedCount).isOne();
         }
     }
 
@@ -133,8 +107,26 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void success_if_all_orders_orderStatus_are_COMPLETION() {
             // given
-            final OrderTable orderTable1 = saveOccupiedOrderTable();
-            final OrderTable orderTable2 = saveOccupiedOrderTable();
+            final OrderTable orderTable1 = saveEmptyOrderTable();
+            final OrderTable orderTable2 = saveEmptyOrderTable();
+            final TableGroup tableGroup = saveTableGroup(List.of(orderTable1, orderTable2));
+
+            final Order order1 = saveOrder(orderTable1);
+            order1.changeStatus(OrderStatus.COMPLETION);
+            final Order order2 = saveOrder(orderTable2);
+            order2.changeStatus(OrderStatus.COMPLETION);
+
+            // then
+            assertThatCode(() -> tableGroupService.ungroup(tableGroup.getId()))
+                    .doesNotThrowAnyException();
+        }
+
+        @DisplayName("이벤트가 하나 발행된다.")
+        @Test
+        void event() {
+            // given
+            final OrderTable orderTable1 = saveEmptyOrderTable();
+            final OrderTable orderTable2 = saveEmptyOrderTable();
             final TableGroup tableGroup = saveTableGroup(List.of(orderTable1, orderTable2));
 
             final Order order1 = saveOrder(orderTable1);
@@ -145,35 +137,10 @@ class TableGroupServiceTest extends ServiceTestConfig {
             // when
             tableGroupService.ungroup(tableGroup.getId());
 
-            // then
-            final List<OrderTable> updatedOrderTables = orderTableRepository.findAllById(
-                    List.of(orderTable1.getId(), orderTable2.getId())
-            );
-            final List<Long> filteredOrderTablesId = updatedOrderTables.stream()
-                    .filter(orderTable -> orderTable.getTableGroup() == null)
-                    .filter(orderTable -> !orderTable.isEmpty())
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toUnmodifiableList());
-
-            assertThat(filteredOrderTablesId).containsExactly(orderTable1.getId(), orderTable2.getId());
-        }
-
-        @DisplayName("주문 테이블 그룹의 주문들 일부가 완료 상태가 아니라면 실패한다.")
-        @Test
-        void fail_if_some_orders_orderStatus_are_not_COMPLETION() {
-            // given
-            final OrderTable orderTable1 = saveOccupiedOrderTable();
-            final OrderTable orderTable2 = saveOccupiedOrderTable();
-            final TableGroup tableGroup = saveTableGroup(List.of(orderTable1, orderTable2));
-
-            final Order order1 = saveOrder(orderTable1);
-            order1.changeStatus(OrderStatus.MEAL);
-            final Order order2 = saveOrder(orderTable2);
-            order2.changeStatus(OrderStatus.COMPLETION);
+            final long eventPublishedCount = applicationEvents.stream(TableGroupDeleteRequestEvent.class).count();
 
             // then
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThat(eventPublishedCount).isOne();
         }
     }
 }
