@@ -23,29 +23,25 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
-    private List<OrderTable> orderTables;
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate) {
-        this(id, createdDate, null);
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = makeOrderTables(orderTables);
+        makeOrderTables(orderTables);
     }
 
-    private List<OrderTable> makeOrderTables(List<OrderTable> orderTables) {
+    private void makeOrderTables(List<OrderTable> orderTables) {
         if (orderTables == null){
-            return new ArrayList<>();
+            throw new IllegalArgumentException("OrderTable 은 없을 수 없습니다.");
         }
-        return orderTables;
+        addOrderTable(orderTables);
     }
 
-    public void addOrderTable(List<OrderTable> orderTables) {
+    private void addOrderTable(List<OrderTable> orderTables) {
         validate(orderTables);
         this.orderTables = orderTables.stream()
             .map(orderTable -> {
@@ -56,16 +52,9 @@ public class TableGroup {
     }
 
     private void validate(List<OrderTable> orderTables) {
-        checkIdentified();
         checkMinOrderTable(orderTables);
         checkEmpty(orderTables);
         checkNotGrouped(orderTables);
-    }
-
-    private void checkIdentified() {
-        if (id == null) {
-            throw new IllegalStateException("TableGroup 의 식별자가 정의되지 않았습니다.");
-        }
     }
 
     private void checkMinOrderTable(List<OrderTable> orderTables) {

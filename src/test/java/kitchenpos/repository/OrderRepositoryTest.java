@@ -47,11 +47,11 @@ class OrderRepositoryTest extends RepositoryTest {
     void 주문_테이블들_중_특정_주문_상태의_주문_존재_확인() {
         // given
         Order order = defaultOrder();
-        OrderTable newOrderTable = makeOrderTable();
+        List<OrderTable> newOrderTable = makeOrderTable();
 
         // when
         boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(order.getOrderTableId(), newOrderTable.getId()),
+                List.of(order.getOrderTableId(), newOrderTable.get(0).getId()),
                 List.of(OrderStatus.COOKING.name()));
 
         // then

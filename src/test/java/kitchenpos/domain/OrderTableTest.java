@@ -3,7 +3,8 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import kitchenpos.fixture.OrderFixture;
+import java.util.List;
+import kitchenpos.fixture.OrderLineItemFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -18,9 +19,8 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(1L, null, 100, true);
 
         // when && then
-        Order order = OrderFixture.builder().build();
         assertThatThrownBy(() -> {
-            orderTable.order(order);
+            orderTable.order(List.of(OrderLineItemFixture.builder().build()));
         })
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("해당 테이블은 비어있습니다.");
@@ -29,7 +29,10 @@ class OrderTableTest {
     @Test
     void 그룹화된_주문_테이블의_빈_여부를_바꾸면_예외() {
         // given
-        OrderTable orderTable = new OrderTable(1L, new TableGroup(1L, LocalDateTime.now()), 100, true);
+        OrderTable orderTable = new OrderTable(1L, new TableGroup(1L, LocalDateTime.now(), List.of(
+            new OrderTable(null, null, 10, true),
+            new OrderTable(null, null, 10, true)
+        )), 100, true);
 
         // when && then
         assertThatThrownBy(() -> orderTable.changeEmpty(false))

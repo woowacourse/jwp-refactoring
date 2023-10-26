@@ -2,6 +2,7 @@ package kitchenpos.repository.support;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -104,10 +105,10 @@ public abstract class RepositoryTest {
     protected Order defaultOrder() {
         Menu menu = defaultMenu();
 
-        OrderTable orderTable = prepareOrdertable();
+        List<OrderTable> orderTables = prepareOrdertable();
 
         Order order = orderRepository.save(
-            new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+            new Order(null, orderTables.get(0).getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
 
         orderLineItemRepository.save(new OrderLineItem(null, menu.getId(), order, 10));
         orderLineItemRepository.save(new OrderLineItem(null, menu.getId(), order, 20));
@@ -115,17 +116,19 @@ public abstract class RepositoryTest {
         return orderRepository.findById(order.getId()).get();
     }
 
-    private OrderTable prepareOrdertable() {
+    private List<OrderTable> prepareOrdertable() {
         TableGroup tableGroup = prepareTableGroup();
-        return orderTableRepository.save(
-            new OrderTable(null, tableGroup, 10, false));
+        return tableGroup.getOrderTables();
     }
 
     private TableGroup prepareTableGroup() {
-        return tableGroupRepository.save(new TableGroup(null, LocalDateTime.now()));
+        return tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), List.of(
+            new OrderTable(null, null, 10, true),
+            new OrderTable(null, null, 7, true)
+        )));
     }
 
-    protected OrderTable makeOrderTable(){
+    protected List<OrderTable> makeOrderTable(){
         return prepareOrdertable();
     }
 }

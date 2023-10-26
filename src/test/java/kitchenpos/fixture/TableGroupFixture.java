@@ -37,7 +37,10 @@ public final class TableGroupFixture {
         return new TableGroup(
             id,
             createdDate,
-            orderTables
+            orderTables == null ? List.of(
+                new OrderTable(null, null, 100, true),
+                new OrderTable(null, null, 100, true))
+                : orderTables
         );
     }
 }

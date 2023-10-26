@@ -32,7 +32,7 @@ class OrderTableRepositoryTest extends RepositoryTest {
             orderTable.getTableGroup().getId());
 
         // then
-        assertThat(actual).hasSize(1);
+        assertThat(actual).hasSize(2);
     }
 
     @Test
@@ -46,5 +46,5 @@ class OrderTableRepositoryTest extends RepositoryTest {
             List.of(order.getOrderTableId(), nonexistenceOrderTableId));
 
         // then
-        assertThat(actual).hasSize(1);}
+        assertThat(actual).hasSize(2);}
 }

@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -13,12 +15,12 @@ import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
-import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -54,7 +56,7 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Captor
-    private ArgumentCaptor<OrderTable> orderTableArgumentCaptor;
+    private ArgumentCaptor<TableGroup> tableGroupArgumentCaptor;
 
     @Nested
     class 테이블_그룹_생성 {
@@ -63,9 +65,6 @@ class TableGroupServiceTest {
         void 주문_테이블이_없으면_예외() {
             // given
             TableGroupCreateRequest request = new TableGroupCreateRequest(NOW, Collections.emptyList());
-
-            given(tableGroupRepository.save(any()))
-                .willReturn(TABLE_GROUP);
 
             // when && then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -77,6 +76,12 @@ class TableGroupServiceTest {
         void 주문_테이블이_한개면_예외() {
             // given
             TableGroupCreateRequest request = new TableGroupCreateRequest(NOW, List.of(1L));
+
+            given(orderTableRepository.findAllByIdIn(anyList()))
+                .willReturn(List.of(
+                    new OrderTable(null, null, 10, true),
+                    new OrderTable(null, null, 7, true)
+                ));
 
             // when && then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -117,9 +122,6 @@ class TableGroupServiceTest {
             given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(emptyOrderTable, nonEmptyOrderTable));
 
-            given(tableGroupRepository.save(any()))
-                .willReturn(TABLE_GROUP);
-
             // when && then
             assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -144,12 +146,10 @@ class TableGroupServiceTest {
             given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(groupedOrderTable, orderTable));
 
-            given(tableGroupRepository.save(any()))
-                .willReturn(TABLE_GROUP);
-
             // when && then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 이미 그룹화 되어 있습니다.");
         }
 
         @Test
@@ -170,13 +170,20 @@ class TableGroupServiceTest {
                 .willReturn(List.of(firstOrderTable, secondOrderTable));
 
             given(tableGroupRepository.save(any()))
-                .willReturn(TABLE_GROUP);
+                .willReturn(new TableGroup(1L, LocalDateTime.now(), List.of(
+                    new OrderTable(null, null, 100, true),
+                    new OrderTable(null, null, 100, true)
+                )));
 
             // when
-            TableGroupResponse actual = tableGroupService.create(request);
+            tableGroupService.create(request);
 
             // then
-            assertThat(actual.getOrderTables()).hasSize(2);
+            SoftAssertions.assertSoftly(softAssertions -> {
+                verify(tableGroupRepository, times(1)).save(tableGroupArgumentCaptor.capture());
+                TableGroup savingTableGroup = tableGroupArgumentCaptor.getValue();
+                assertThat(savingTableGroup.getOrderTables()).hasSize(2);
+            });
         }
     }
 

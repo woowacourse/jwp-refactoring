@@ -193,8 +193,8 @@ class MenuServiceTest {
                 new ArrayList<>()
             );
             menu.addMenuProducts(List.of(
-                    new MenuProduct(1L, PRODUCT_1000, menu, 5),
-                    new MenuProduct(2L, PRODUCT_500, menu, 3)));
+                    new MenuProduct(1L, PRODUCT_1000, null, 5),
+                    new MenuProduct(2L, PRODUCT_500, null, 3)));
             given(menuRepository.save(any()))
                 .willReturn(menu);
 
