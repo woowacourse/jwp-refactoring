@@ -48,10 +48,11 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public static Menu of(final String name,
-                          final BigDecimal price,
-                          final MenuGroup menuGroup,
-                          final  Map<Product, Integer> productWithQuantity
+    public static Menu of(
+            final String name,
+            final BigDecimal price,
+            final MenuGroup menuGroup,
+            final Map<Product, Integer> productWithQuantity
     ) {
         validatePrice(price);
         final Menu menu = new Menu(name, price, menuGroup);

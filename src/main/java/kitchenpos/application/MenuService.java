@@ -38,8 +38,8 @@ public class MenuService {
         final Map<Product, Integer> productWithQuantity = makeProductWithQuantityMap(request.getMenuProducts(), products);
         final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup, productWithQuantity);
-
-        return menuRepository.save(menu).getId();
+        final Menu saveMenu = menuRepository.save(menu);
+        return saveMenu.getId();
     }
 
     private List<Product> findAllProducts(List<Long> productIds) {
