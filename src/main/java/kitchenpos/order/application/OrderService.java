@@ -62,7 +62,14 @@ public class OrderService {
     private OrderLineItems getOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
                                              final Order order) {
         final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-            .map(orderLineItemRequest -> new OrderLineItem(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()))
+            .map(orderLineItemRequest -> {
+                final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+                return new OrderLineItem(order,
+                    orderLineItemRequest.getMenuId(),
+                    orderLineItemRequest.getQuantity(),
+                    menu.getName(), menu.getPrice().intValue());
+            })
             .collect(Collectors.toUnmodifiableList());
         return new OrderLineItems(orderLineItems);
     }

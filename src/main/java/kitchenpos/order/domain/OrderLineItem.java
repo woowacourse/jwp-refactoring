@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.vo.Price;
 
 @Entity
 public class OrderLineItem {
@@ -27,18 +28,35 @@ public class OrderLineItem {
     @Column(name = "quantity", nullable = false)
     private long quantity;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "price", nullable = false)
+    private Price price;
+
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long seq,
+                         final Order order,
+                         final Long menuId,
+                         final long quantity,
+                         final String name,
+                         final Price price) {
         this.seq = seq;
         this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
+        this.name = name;
+        this.price = price;
     }
 
-    public OrderLineItem(final Order order, final Long menuId, final long quantity) {
-        this(null, order, menuId, quantity);
+    public OrderLineItem(final Order order,
+                         final Long menuId,
+                         final long quantity,
+                         final String name,
+                         final Integer price) {
+        this(null, order, menuId, quantity, name, Price.from(price));
     }
 
     public Long getSeq() {
@@ -59,5 +77,13 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price.getValue().intValue();
     }
 }

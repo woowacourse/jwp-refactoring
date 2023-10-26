@@ -85,7 +85,7 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
         final Order order = new Order(savedOrderTable.getId());
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(order, 1L, 2));
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(order, 1L, 2, "음식", 1000));
         order.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
         final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);

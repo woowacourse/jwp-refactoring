@@ -12,18 +12,31 @@ public class OrderLineItemResponse {
 
     private long quantity;
 
-    public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    private String productName;
+
+    private int productPrice;
+
+    public OrderLineItemResponse(final Long seq,
+                                 final Long orderId,
+                                 final Long menuId,
+                                 final long quantity,
+                                 final String productName,
+                                 final int productPrice) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
+        this.productName = productName;
+        this.productPrice = productPrice;
     }
 
     public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(orderLineItem.getSeq(),
             orderLineItem.getOrder().getId(),
             orderLineItem.getMenuId(),
-            orderLineItem.getQuantity());
+            orderLineItem.getQuantity(),
+            orderLineItem.getName(),
+            orderLineItem.getPrice());
     }
 
     public Long getSeq() {
@@ -40,5 +53,13 @@ public class OrderLineItemResponse {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public int getProductPrice() {
+        return productPrice;
     }
 }
