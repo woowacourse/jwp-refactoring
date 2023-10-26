@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.product;
+
+import kitchenpos.domain.Price;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -22,7 +24,7 @@ public class Product {
     )
     private Price price;
 
-    protected Product() {
+    public Product() {
     }
 
     public Product(Long id, String name, Price price) {

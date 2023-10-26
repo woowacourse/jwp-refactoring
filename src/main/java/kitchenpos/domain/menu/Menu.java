@@ -1,4 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
+
+import kitchenpos.domain.Price;
+import kitchenpos.domain.menugroup.MenuGroup;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
@@ -29,7 +32,6 @@ public class Menu {
     )
     private Price price;
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"))
     private MenuGroup menuGroup;
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(

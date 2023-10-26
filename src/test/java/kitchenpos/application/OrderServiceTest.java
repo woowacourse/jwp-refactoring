@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;

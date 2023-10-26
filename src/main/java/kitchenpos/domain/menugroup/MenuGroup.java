@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menugroup;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

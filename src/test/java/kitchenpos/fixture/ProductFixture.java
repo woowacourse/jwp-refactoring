@@ -1,10 +1,9 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.ProductRequest;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.FixtureUtil.listAllInDatabaseFrom;

@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;

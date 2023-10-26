@@ -1,4 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.ordertable;
+
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.tablegroup.TableGroup;
 
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;

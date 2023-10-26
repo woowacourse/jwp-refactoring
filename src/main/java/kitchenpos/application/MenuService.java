@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.persistence.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.persistence.MenuRepository;
 import kitchenpos.domain.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.persistence.MenuGroupRepository;
+import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.ProductRepository;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
