@@ -50,10 +50,12 @@ class OrderTablesTest {
     void ungroup() {
         // given
         final OrderTable orderTable1 = new OrderTable(1L, 1, true, List.of(
-            new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))
+            new Order(1L, OrderStatus.COMPLETION,
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L)
         ));
         final OrderTable orderTable2 = new OrderTable(2L, 1, true, List.of(
-            new Order(2L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))
+            new Order(2L, OrderStatus.COMPLETION,
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 2L)
         ));
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
 
@@ -70,11 +72,11 @@ class OrderTablesTest {
     void ungroup_failNotCompletionOrder() {
         // given
         final OrderTable orderTable1 = new OrderTable(1L, 1, true, List.of(
-            new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))
-        ));
+            new Order(1L, OrderStatus.COOKING,
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L)));
         final OrderTable orderTable2 = new OrderTable(2L, 1, true, List.of(
-            new Order(2L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))
-        ));
+            new Order(2L, OrderStatus.COMPLETION,
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 2L)));
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
 
         // when

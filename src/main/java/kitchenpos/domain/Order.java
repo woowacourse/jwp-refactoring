@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -10,8 +11,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -31,9 +30,8 @@ public class Order {
     @Embedded
     private OrderLineItems orderLineItems;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @CreatedDate
     private LocalDateTime orderedTime;
@@ -41,14 +39,17 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
+    public Order(final Long id, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems,
+                 final Long orderTableId) {
         this.id = id;
         this.orderStatus = orderStatus;
         this.orderLineItems = new OrderLineItems(orderLineItems, this);
+        this.orderTableId = orderTableId;
     }
 
-    public static Order forSave(final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
-        return new Order(null, orderStatus, orderLineItems);
+    public static Order forSave(final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems,
+                                final OrderTable orderTable) {
+        return new Order(null, orderStatus, orderLineItems, orderTable.getId());
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
@@ -62,17 +63,6 @@ public class Order {
         }
     }
 
-    public void joinOrderTable(final OrderTable orderTable) {
-        validateOrderTable();
-        this.orderTable = orderTable;
-    }
-
-    private void validateOrderTable() {
-        if (this.orderTable != null) {
-            throw new IllegalArgumentException("주문 테이블이 이미 존재합니다.");
-        }
-    }
-
     public Long getId() {
         return id;
     }
@@ -83,6 +73,10 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

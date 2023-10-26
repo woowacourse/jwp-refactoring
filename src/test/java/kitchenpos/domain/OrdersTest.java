@@ -15,9 +15,12 @@ class OrdersTest {
         // given
         final Orders orders = new Orders(
             List.of(
-                new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null))),
-                new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null))),
-                new Order(3L, OrderStatus.MEAL, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))
+                new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                          1L),
+                new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                          1L),
+                new Order(3L, OrderStatus.MEAL, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                          1L)
             )
         );
 

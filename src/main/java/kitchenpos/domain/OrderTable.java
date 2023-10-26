@@ -30,7 +30,6 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-
     protected OrderTable() {
     }
 
@@ -70,12 +69,19 @@ public class OrderTable {
 
     public void addOrder(final Order order) {
         validateEmptyStatus();
-        orders.addOrder(order, this);
+        validateOrderTable(order);
+        orders.addOrder(order);
     }
 
     private void validateEmptyStatus() {
         if (empty) {
             throw new IllegalArgumentException("빈 테이블에는 주문을 추가할 수 없습니다.");
+        }
+    }
+
+    private void validateOrderTable(final Order order) {
+        if (order.getOrderTableId() != null) {
+            throw new IllegalArgumentException("이미 주문 테이블에 속한 주문은 추가할 수 없습니다.");
         }
     }
 

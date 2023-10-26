@@ -53,7 +53,7 @@ class OrderServiceTest {
             new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), menu1),
             new OrderLineItem(2L, 2L, "피자", new Price(BigDecimal.TEN), menu2));
 
-        final Order order = new Order(1L, OrderStatus.COOKING, orderLineItems);
+        final Order order = new Order(1L, OrderStatus.COOKING, orderLineItems, 1L);
         final OrderTable orderTable = new OrderTable(1L, 10, false, Collections.emptyList());
 
         given(menuRepository.countByIds(any()))
@@ -81,6 +81,10 @@ class OrderServiceTest {
     void create_emptyOrderLineItems() {
         // given
         final OrderCreateRequest cooking = new OrderCreateRequest(1L, Collections.emptyList());
+        given(menuRepository.countByIds(any()))
+            .willReturn(0L);
+        given(orderTableRepository.getById(any()))
+            .willReturn(new OrderTable(1L, 10, true, Collections.emptyList()));
 
         // when
         // then
@@ -109,6 +113,9 @@ class OrderServiceTest {
         final long notExistOrderTable = 0L;
         given(menuRepository.countByIds(any()))
             .willReturn(2L);
+        given(menuRepository.getById(any()))
+            .willReturn(new Menu(1L, "후라이드", Collections.emptyList(), 1L),
+                        new Menu(2L, "양념", Collections.emptyList(), 1L));
         given(orderTableRepository.getById(notExistOrderTable))
             .willThrow(IllegalArgumentException.class);
 
@@ -128,9 +135,11 @@ class OrderServiceTest {
             .willReturn(new OrderTable(1L, 10, true, Collections.emptyList()));
         given(menuRepository.countByIds(any()))
             .willReturn(2L);
+        final Menu menu1 = new Menu(1L, "후라이드", Collections.emptyList(), 1L);
+        final Menu menu2 = new Menu(2L, "양념", Collections.emptyList(), 1L);
         given(menuRepository.getById(any()))
-            .willReturn(new Menu(1L, "후라이드", Collections.emptyList(), 1L))
-            .willReturn(new Menu(2L, "양념", Collections.emptyList(), 1L));
+            .willReturn(menu1)
+            .willReturn(menu2);
 
         // when
         // then
@@ -147,7 +156,7 @@ class OrderServiceTest {
         final Order order = new Order(1L, OrderStatus.COOKING, List.of(
             new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null),
             new OrderLineItem(2L, 2L, "치킨", new Price(BigDecimal.TEN), null)
-        ));
+        ), 1L);
 
         given(orderRepository.getById(any()))
             .willReturn(order);
@@ -181,7 +190,8 @@ class OrderServiceTest {
         // given
         final Long orderTableId = 1L;
         final Order order = new Order(1L, OrderStatus.COMPLETION,
-                                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)));
+                                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                                      orderTableId);
 
         given(orderRepository.getById(order.getId()))
             .willReturn(order);

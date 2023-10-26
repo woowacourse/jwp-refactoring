@@ -151,8 +151,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "치킨", new Price(BigDecimal.valueOf(40L)),
                                                                    menu);
 
-        final Order order = Order.forSave(OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2));
-        orderTable.addOrder(order);
+        final Order order = Order.forSave(OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2), orderTable);
         orderRepository.save(order);
 
         return order;
@@ -188,8 +187,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new Price(BigDecimal.TEN), menu);
         final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "피자", new Price(BigDecimal.TEN), menu);
 
-        final Order order = Order.forSave(OrderStatus.COMPLETION, List.of(orderLineItem1, orderLineItem2));
-        orderTable.addOrder(order);
+        final Order order = Order.forSave(OrderStatus.COMPLETION, List.of(orderLineItem1, orderLineItem2), orderTable);
         orderRepository.save(order);
 
         // when

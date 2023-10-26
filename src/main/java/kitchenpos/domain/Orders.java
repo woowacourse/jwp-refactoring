@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class Orders {
 
-    @OneToMany(mappedBy = "orderTable", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_table_id")
     private List<Order> orders;
 
     protected Orders() {
@@ -19,9 +21,8 @@ public class Orders {
         this.orders = new ArrayList<>(orders);
     }
 
-    public void addOrder(final Order order, final OrderTable orderTable) {
+    public void addOrder(final Order order) {
         orders.add(order);
-        order.joinOrderTable(orderTable);
     }
 
     public boolean hasProceedingOrder() {

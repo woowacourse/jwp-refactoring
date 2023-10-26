@@ -36,10 +36,10 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         validateAllExistOrderLineItems(request.getOrderLineItems());
-        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
         final List<OrderLineItem> orderLineItems = makeOrderLineItems(request.getOrderLineItems());
-        final Order order = Order.forSave(OrderStatus.COOKING, orderLineItems);
-        orderTable.addOrder(order);
+        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+        validateEmptyOrderTable(orderTable);
+        final Order order = Order.forSave(OrderStatus.COOKING, orderLineItems, orderTable);
 
         return OrderResponse.from(orderRepository.save(order));
     }
@@ -65,6 +65,12 @@ public class OrderService {
         }
 
         return orderLineItems;
+    }
+
+    private void validateEmptyOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
+        }
     }
 
     public List<OrderResponse> list() {

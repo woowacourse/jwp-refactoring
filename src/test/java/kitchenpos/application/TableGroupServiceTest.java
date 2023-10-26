@@ -155,12 +155,10 @@ class TableGroupServiceTest {
     void ungroup_failNotOrderEnd() {
         // given
         final List<OrderTable> orderTables = List.of(
-            new OrderTable(1L, 2, true, List.of(new Order(1L, OrderStatus.COOKING,
-                                                          List.of(
-                                                              new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null))))),
-            new OrderTable(2L, 2, true, List.of(new Order(1L, OrderStatus.COOKING,
-                                                          List.of(
-                                                              new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)))))
+            new OrderTable(1L, 2, true, List.of(new Order(1L, OrderStatus.COOKING, List.of(
+                new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L))),
+            new OrderTable(2L, 2, true, List.of(new Order(1L, OrderStatus.COOKING, List.of(
+                new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 2L)))
         );
         final TableGroup tableGroup = new TableGroup(1L, orderTables);
 

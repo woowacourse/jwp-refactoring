@@ -55,7 +55,8 @@ class TableServiceTest {
 
         given(orderTableRepository.getById(orderTableId))
             .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.singletonList(
-                new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null))))));
+                new Order(1L, OrderStatus.COOKING,
+                          List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), orderTableId))));
 
         // when
         // then
