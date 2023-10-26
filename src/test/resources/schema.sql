@@ -16,10 +16,12 @@ create table menu_group
 
 create table menu_product
 (
-    seq        bigint not null auto_increment,
-    quantity   bigint not null,
-    menu_id    bigint not null,
-    product_id bigint not null,
+    seq        bigint         not null auto_increment,
+    quantity   bigint         not null,
+    menu_id    bigint         not null,
+    `name`     varchar(255)   not null default null,
+    price      numeric(19, 2) not null default null,
+    product_id bigint         not null,
     primary key (seq)
 );
 
@@ -27,7 +29,8 @@ create table order_line_item
 (
     seq      bigint not null auto_increment,
     quantity bigint not null,
-    menu_id  bigint not null,
+    `menu_name`     varchar(255)   not null default null,
+    price      numeric(19, 2) not null default null,
     order_id bigint not null,
     primary key (seq)
 );
@@ -79,11 +82,6 @@ alter table menu_product
     add constraint fk_menu_product_to_product
         foreign key (product_id)
             references product (id);
-
-alter table order_line_item
-    add constraint fk_order_line_item_to_menu
-        foreign key (menu_id)
-            references menu (id);
 
 alter table order_line_item
     add constraint fk_order_line_item_to_orders

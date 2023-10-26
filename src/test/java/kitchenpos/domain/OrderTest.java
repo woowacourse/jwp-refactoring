@@ -1,8 +1,16 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.orderException.IllegalOrderStatusException;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Price;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.exception.IllegalOrderStatusException;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,20 +22,18 @@ class OrderTest {
     void create() {
         //given
         final OrderTable orderTable = new OrderTable(null, 0, false);
-        final Menu menu = new Menu("메뉴", null, null, null);
-        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu, 1)));
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem("메뉴", new Price(new BigDecimal(1000)), 1)));
 
         //when&then
-        assertDoesNotThrow(() -> new Order(orderTable, orderLineItems));
+        assertDoesNotThrow(() -> new Order(orderTable.getId(), orderLineItems));
     }
 
     @Test
     void changeOrderStatus() {
         //given
         final OrderTable orderTable = new OrderTable(null, 0, false);
-        final Menu menu = new Menu("메뉴", null, null, null);
-        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu, 1)));
-        final Order order = new Order(orderTable, orderLineItems);
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem("메뉴", new Price(new BigDecimal(1000)), 1)));
+        final Order order = new Order(orderTable.getId(), orderLineItems);
 
         //when&then
         assertDoesNotThrow(() -> order.changeOrderStatus(OrderStatus.COMPLETION));
@@ -37,9 +43,8 @@ class OrderTest {
     void validChangeOrderStatus() {
         //given
         final OrderTable orderTable = new OrderTable(null, 0, false);
-        final Menu menu = new Menu("메뉴", null, null, null);
-        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu, 1)));
-        final Order order = new Order(orderTable, orderLineItems);
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem("메뉴", new Price(new BigDecimal(1000)), 1)));
+        final Order order = new Order(orderTable.getId(), orderLineItems);
 
         order.changeOrderStatus(OrderStatus.COMPLETION);
         //when&then

@@ -1,10 +1,10 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.orderTableException.IllegalOrderTableGuestNumberException;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.tableGroup.domain.TableGroup;
+import kitchenpos.table.exception.IllegalOrderTableGuestNumberException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -44,15 +44,15 @@ class OrderTableTest {
         //given
         final OrderTable orderTable = new OrderTable(null, 3, false);
         final OrderTable orderTable2 = new OrderTable(null, 3, false);
-        final TableGroup tableGroup = new TableGroup(new OrderTables(List.of(orderTable, orderTable2)));
+        final TableGroup tableGroup = new TableGroup();
 
         //when
-        orderTable.changeTableGroup(tableGroup);
+        orderTable.changeTableGroup(tableGroup.getId());
 
         //then
         assertAll(
-                () -> assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup),
-                () -> assertThat(orderTable2.getTableGroup()).isEqualTo(tableGroup)
+                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroup.getId()),
+                () -> assertThat(orderTable2.getTableGroupId()).isEqualTo(tableGroup.getId())
         );
     }
 
@@ -61,8 +61,8 @@ class OrderTableTest {
         //given
         final OrderTable orderTable = new OrderTable(null, 3, false);
         final OrderTable orderTable2 = new OrderTable(null, 3, false);
-        final TableGroup tableGroup = new TableGroup(new OrderTables(List.of(orderTable, orderTable2)));
-        orderTable.changeTableGroup(tableGroup);
+        final TableGroup tableGroup = new TableGroup();
+        orderTable.changeTableGroup(tableGroup.getId());
 
         //when
         orderTable.ungroup();
@@ -70,9 +70,9 @@ class OrderTableTest {
 
         //then
         assertAll(
-                () -> assertThat(orderTable.getTableGroup()).isNull(),
+                () -> assertThat(orderTable.getTableGroupId()).isNull(),
                 () -> assertThat(orderTable.isEmpty()).isTrue(),
-                () -> assertThat(orderTable2.getTableGroup()).isNull(),
+                () -> assertThat(orderTable2.getTableGroupId()).isNull(),
                 () -> assertThat(orderTable2.isEmpty()).isTrue()
         );
     }

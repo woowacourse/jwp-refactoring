@@ -1,6 +1,10 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.menuProductException.InvalidMenuProductsPriceException;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.exception.InvalidMenuProductsPriceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +17,9 @@ class MenuProductsTest {
     @Test
     void create() {
         //given
-        final MenuProduct menuProduct1 = new MenuProduct(new Product("이름", new Price(new BigDecimal(1000))), 1);
-        final MenuProduct menuProduct2 = new MenuProduct(new Product("이름2", new Price(new BigDecimal(1000))), 1);
+        final Product product = new Product("이름", new Price(new BigDecimal(1000)));
+        final MenuProduct menuProduct1 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1L);
+        final MenuProduct menuProduct2 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1L);
 
         //when && then
         Assertions.assertDoesNotThrow(() -> new MenuProducts(List.of(menuProduct1, menuProduct2), new BigDecimal(1000)));
@@ -23,8 +28,9 @@ class MenuProductsTest {
     @Test
     void validateSum() {
         //given
-        final MenuProduct menuProduct1 = new MenuProduct(new Product("이름", new Price(new BigDecimal(1000))), 1);
-        final MenuProduct menuProduct2 = new MenuProduct(new Product("이름2", new Price(new BigDecimal(1000))), 1);
+        final Product product = new Product("이름", new Price(new BigDecimal(1000)));
+        final MenuProduct menuProduct1 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1L);
+        final MenuProduct menuProduct2 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1L);
 
         //when && then
         assertThatThrownBy(() -> new MenuProducts(List.of(menuProduct1, menuProduct2), new BigDecimal(10000)))

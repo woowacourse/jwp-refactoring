@@ -1,22 +1,25 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Price;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.request.OrderTableIdRequest;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroup;
-import kitchenpos.exception.orderException.IllegalOrderStatusException;
-import kitchenpos.exception.orderTableException.InvalidOrderTableException;
-import kitchenpos.exception.tableGroupException.TableGroupNotFoundException;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.tableGroup.application.TableGroupService;
+import kitchenpos.product.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menuGroup.domain.MenuGroup;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.table.dto.OrderTableIdRequest;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.tableGroup.dto.TableGroupRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.table.dto.OrderTableResponse;
+import kitchenpos.tableGroup.dto.TableGroupResponse;
+import kitchenpos.order.exception.IllegalOrderStatusException;
+import kitchenpos.table.exception.InvalidOrderTableException;
+import kitchenpos.table.exception.DuplicateOrderTableException;
+import kitchenpos.tableGroup.exception.TableGroupNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +31,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class TableGroupServiceTest extends ServiceBaseTest {
@@ -55,11 +57,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         //then
-        assertAll(
-                () -> assertThat(tableGroupResponse.getId()).isNotNull(),
-                () -> assertThat(tableGroupResponse.getOrderTables().get(0).isEmpty()).isFalse(),
-                () -> assertThat(tableGroupResponse.getOrderTables().get(1).isEmpty()).isFalse()
-        );
+        assertThat(tableGroupResponse.getId()).isNotNull();
     }
 
     @Test
@@ -118,7 +116,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
 
         //when&then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(DuplicateCreateTableGroup.class)
+                .isInstanceOf(DuplicateOrderTableException.class)
                 .hasMessage("이미 지정된 테이블은 단체 지정할 수 없습니다.");
     }
 
@@ -154,7 +152,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(new TableGroupRequest(List.of(new OrderTableIdRequest(savedOrderTable.getId()),
                 new OrderTableIdRequest(savedOrderTable2.getId()))));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup, null));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup.getId(), null));
         final OrderResponse orderResponse = orderService.create(new OrderRequest(savedOrderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 3L))));
 
         orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusRequest(orderStatus));

@@ -1,17 +1,18 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Price;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.exception.orderException.IllegalOrderStatusException;
-import kitchenpos.exception.menuException.MenuNotFoundException;
-import kitchenpos.exception.orderException.OrderNotFoundException;
-import kitchenpos.exception.orderTableException.OrderTableNotFoundException;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.product.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menuGroup.domain.MenuGroup;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.menu.exception.MenuNotFoundException;
+import kitchenpos.order.exception.IllegalOrderStatusException;
+import kitchenpos.order.exception.OrderNotFoundException;
+import kitchenpos.table.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -35,7 +36,7 @@ class OrderServiceTest extends ServiceBaseTest {
     void create() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup, null));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup.getId(), null));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
 
@@ -81,7 +82,7 @@ class OrderServiceTest extends ServiceBaseTest {
     void list() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup, null));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup.getId(), null));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
@@ -104,7 +105,7 @@ class OrderServiceTest extends ServiceBaseTest {
     void changeOrderStatus() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup, null));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup.getId(), null));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
@@ -132,7 +133,7 @@ class OrderServiceTest extends ServiceBaseTest {
     void changeOrderStatusValidComplitionOrder() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup, null));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup.getId(), null));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));

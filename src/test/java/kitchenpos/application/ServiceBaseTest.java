@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.ProductRepository;
-import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.menuGroup.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.tableGroup.domain.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
