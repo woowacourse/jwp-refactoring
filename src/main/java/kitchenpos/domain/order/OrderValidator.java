@@ -4,6 +4,7 @@ import static kitchenpos.domain.vo.OrderStatus.COOKING;
 import static kitchenpos.domain.vo.OrderStatus.MEAL;
 
 import java.util.List;
+import kitchenpos.domain.order.repository.OrderRepository;
 import org.springframework.stereotype.Component;
 
 @Component

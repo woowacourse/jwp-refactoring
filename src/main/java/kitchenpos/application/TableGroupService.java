@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.OrderValidator;
-import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
+import kitchenpos.domain.table.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

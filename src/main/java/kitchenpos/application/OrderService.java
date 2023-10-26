@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

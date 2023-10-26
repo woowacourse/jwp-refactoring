@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.domain.menu.repository;
 
 import kitchenpos.domain.menu.MenuGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
