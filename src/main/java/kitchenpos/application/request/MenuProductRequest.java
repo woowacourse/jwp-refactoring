@@ -20,10 +20,6 @@ public class MenuProductRequest {
         return quantity;
     }
 
-    public MenuProduct toEntity() {
-        return new MenuProduct(null, productId, quantity);
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

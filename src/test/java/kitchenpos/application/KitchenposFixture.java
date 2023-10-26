@@ -9,6 +9,7 @@ import kitchenpos.application.response.TableResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -20,11 +21,11 @@ import org.springframework.util.ReflectionUtils;
 public class KitchenposFixture {
     public static Menu 저장할메뉴만들기(final String name, final String price, final Long menuGroupId,
                                 final MenuProduct... menuProducts) {
-        return new Menu(9987L, name, new Price(new BigDecimal(price)), menuGroupId, List.of(menuProducts));
+        return new Menu(9987L, name, new Price(new BigDecimal(price)), menuGroupId, new MenuProducts(List.of(menuProducts)));
     }
 
     public static MenuProduct 메뉴상품만들기(final Product savedProduct, final long quantity) {
-        return new MenuProduct(999L, savedProduct.getId(), quantity);
+        return new MenuProduct(999L, savedProduct.getPrice(), savedProduct.getId(), quantity);
     }
 
     public static Product 상품만들기(final String name, final String price, final ProductService productService) {

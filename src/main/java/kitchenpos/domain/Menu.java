@@ -20,12 +20,12 @@ public class Menu {
     private Set<MenuProduct> menuProducts;
 
     public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+                final MenuProducts menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new HashSet<>(menuProducts);
+        this.menuProducts = new HashSet<>(menuProducts.getMenuProducts());
     }
 
     public Long getId() {
