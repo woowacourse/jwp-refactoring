@@ -39,7 +39,7 @@ public class MenuService {
         final Menu menu = new Menu(
                 request.getName(),
                 request.getPrice(),
-                findMenuGroupById(request.getMenuGroupId())
+                findMenuGroupById(request.getMenuGroupId()).getId()
         );
         menu.addMenuProducts(extractMenuProduct(request.getMenuProducts()));
 
