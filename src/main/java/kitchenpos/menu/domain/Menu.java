@@ -26,33 +26,26 @@ public class Menu {
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
 
-    @Embedded
-    private MenuProducts menuProducts;
-
     protected Menu() {
     }
 
     public Menu(final Long id,
                 final String name,
                 final Price price,
-                final Long menuGroupId,
-                final MenuProducts menuProducts) {
-        validateOverPrice(price, menuProducts.getTotalPrice());
+                final Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts.join(this);
     }
 
     public Menu(final String name,
                 final Integer price,
-                final Long menuGroupId,
-                final MenuProducts menuProducts) {
-        this(null, name, Price.from(price), menuGroupId, menuProducts);
+                final Long menuGroupId) {
+        this(null, name, Price.from(price), menuGroupId);
     }
 
-    private void validateOverPrice(final Price price, final BigDecimal productSumPrice) {
+    public void validateOverPrice(final BigDecimal productSumPrice) {
         if (price.isBigger(productSumPrice)) {
             throw new IllegalArgumentException("메뉴 금액은 상품들의 금액 합보다 클 수 없습니다.");
         }
@@ -74,7 +67,4 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts.getProducts();
-    }
 }

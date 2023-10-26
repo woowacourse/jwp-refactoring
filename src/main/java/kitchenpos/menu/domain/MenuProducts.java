@@ -26,11 +26,6 @@ public class MenuProducts {
             .get();
     }
 
-    public MenuProducts join(final Menu menu) {
-        products.forEach(menuProduct -> menuProduct.join(menu));
-        return new MenuProducts(products);
-    }
-
     public List<MenuProduct> getProducts() {
         return products;
     }

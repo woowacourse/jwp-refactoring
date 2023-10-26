@@ -14,11 +14,12 @@ class MenuTest {
     void validate_price_isBigger_than_products_price() {
         // given
         final Product product = new Product("상품", 100);
-        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product, 10)));
+        final Menu menu = new Menu("메뉴", 2000, 1L);
+        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product, menu, 10)));
 
         // when
         // then
-        assertThatThrownBy(() -> new Menu("메뉴", 30000, 1L, menuProducts))
+        assertThatThrownBy(() -> menu.validateOverPrice(menuProducts.getTotalPrice()))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("메뉴 금액은 상품들의 금액 합보다 클 수 없습니다.");
     }

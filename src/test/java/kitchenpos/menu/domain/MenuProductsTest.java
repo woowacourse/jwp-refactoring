@@ -16,31 +16,16 @@ class MenuProductsTest {
         // given
         final Product product1 = new Product("상품1", 20000);
         final Product product2 = new Product("상품2", 50000);
+        final Menu menu = new Menu("메뉴", 30000, 1L);
 
-        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product1, 2), new MenuProduct(product2, 1)));
+        final MenuProducts menuProducts = new MenuProducts(List.of
+            (new MenuProduct(product1, menu, 2),
+                new MenuProduct(product2, menu, 1)));
 
         // when
         final BigDecimal result = menuProducts.getTotalPrice();
 
         // then
         assertThat(result).isEqualTo(new BigDecimal(90000));
-    }
-
-    @DisplayName("메뉴 상품을 메뉴와 연관관계를 맺는다.")
-    @Test
-    void join() {
-        // given
-        final Menu menu = new Menu();
-        final Product product1 = new Product("상품1", 20000);
-        final Product product2 = new Product("상품2", 50000);
-
-        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product1, 2), new MenuProduct(product2, 1)));
-
-        // when
-        final MenuProducts result = menuProducts.join(menu);
-
-        // then
-        assertThat(result.getProducts().get(0).getMenu()).isNotNull();
-        assertThat(result.getProducts().get(1).getMenu()).isNotNull();
     }
 }

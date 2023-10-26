@@ -135,14 +135,14 @@ class MenuServiceTest {
     void find_all_menus() {
         // given
         final Product product1 = productRepository.save(new Product("상품", 10000));
-        final MenuProducts menuProducts1 = new MenuProducts(List.of(new MenuProduct(product1, 1)));
         final MenuGroup menuGroup1 = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        final Menu menu1 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup1.getId(), menuProducts1));
+        final Menu menu1 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup1.getId()));
+        final MenuProducts menuProducts1 = new MenuProducts(List.of(new MenuProduct(product1, menu1, 1)));
 
         final Product product2 = productRepository.save(new Product("상품", 10000));
-        final MenuProducts menuProducts2 = new MenuProducts(List.of(new MenuProduct(product2, 1)));
         final MenuGroup menuGroup2 = menuGroupRepository.save(new MenuGroup("메뉴 그룹2"));
-        final Menu menu2 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup2.getId(), menuProducts2));
+        final Menu menu2 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup2.getId()));
+        final MenuProducts menuProducts2 = new MenuProducts(List.of(new MenuProduct(product2, menu2, 1)));
 
         // when
         final List<MenuResponse> result = menuService.list();

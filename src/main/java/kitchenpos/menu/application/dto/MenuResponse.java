@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
 
 public class MenuResponse {
 
@@ -25,9 +26,8 @@ public class MenuResponse {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuResponse from(final Menu menu) {
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-        final List<MenuProductResponse> menuProductResponses = menuProducts.stream()
+    public static MenuResponse from(final Menu menu, final MenuProducts menuProducts) {
+        final List<MenuProductResponse> menuProductResponses = menuProducts.getProducts().stream()
             .map(MenuProductResponse::from)
             .collect(Collectors.toUnmodifiableList());
 

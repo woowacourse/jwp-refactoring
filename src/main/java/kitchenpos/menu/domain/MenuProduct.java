@@ -39,16 +39,12 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public MenuProduct(final Product product, final long quantity) {
-        this(null, null, product, quantity);
+    public MenuProduct(final Product product, final Menu menu, final long quantity) {
+        this(null, menu, product, quantity);
     }
 
     public BigDecimal getTotalPrice() {
         return product.getPrice().multiply(new BigDecimal(quantity));
-    }
-
-    public void join(final Menu menu) {
-        this.menu = menu;
     }
 
     public Long getSeq() {
