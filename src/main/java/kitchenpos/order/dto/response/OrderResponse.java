@@ -3,6 +3,8 @@ package kitchenpos.order.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.vo.OrderStatus;
@@ -29,19 +31,22 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse of(final Order order, final List<OrderLineItem> orderLineItems) {
+    public static OrderResponse of(final Order order, final List<OrderLineItem> orderLineItems, final List<Menu> menus) {
         return new OrderResponse(
                 order.id(),
                 OrderTableResponse.from(order.orderTable()),
                 order.orderStatus(),
                 order.orderedTime(),
-                parseOrderLineItemResponses(orderLineItems)
+                parseOrderLineItemResponses(orderLineItems, menus)
         );
     }
 
-    private static List<OrderLineItemResponse> parseOrderLineItemResponses(final List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-                .map(OrderLineItemResponse::from)
+    private static List<OrderLineItemResponse> parseOrderLineItemResponses(
+            final List<OrderLineItem> orderLineItems,
+            final List<Menu> menus
+    ) {
+        return IntStream.range(0, orderLineItems.size())
+                .mapToObj(index -> OrderLineItemResponse.of(orderLineItems.get(index), menus.get(index)))
                 .collect(Collectors.toUnmodifiableList());
     }
 

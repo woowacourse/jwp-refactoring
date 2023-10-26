@@ -21,9 +21,7 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    @JoinColumn(name = "menu_id", nullable = false, foreignKey = @ForeignKey(name = "fk_order_line_item_menu"))
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Menu menu;
+    private Long menuId;
 
     @Column(nullable = false)
     private long quantity;
@@ -31,18 +29,18 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Menu menu, final long quantity) {
-        this(null, menu, quantity);
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this(null, menuId, quantity);
     }
 
-    private OrderLineItem(final Order order, final Menu menu, final long quantity) {
-        this(null, order, menu, quantity);
+    private OrderLineItem(final Order order, final Long menuId, final long quantity) {
+        this(null, order, menuId, quantity);
     }
 
-    private OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
+    private OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
@@ -54,8 +52,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu menu() {
-        return menu;
+    public Long menuId() {
+        return menuId;
     }
 
     public long quantity() {

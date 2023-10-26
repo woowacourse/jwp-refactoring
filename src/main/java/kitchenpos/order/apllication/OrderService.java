@@ -64,16 +64,15 @@ public class OrderService {
     private List<OrderLineItem> createOrderLineItems(final OrderCreateRequest request) {
         final List<OrderLineItemCreateRequest> orderLineItemCreateRequests = request.orderLineItems();
 
-        final List<Long> menuIds = orderLineItemCreateRequests.stream()
-                .map(OrderLineItemCreateRequest::menuId)
-                .collect(Collectors.toUnmodifiableList());
-        final List<Menu> menus = menuRepository.findAllById(menuIds);
-
         if (orderLineItemCreateRequests.isEmpty()) {
             throw new IllegalArgumentException("[ERROR] OrderLineItem이 비어있습니다.");
         }
 
-        if (menuIds.size() != menus.size()) {
+        final List<Long> menuIds = orderLineItemCreateRequests.stream()
+                .map(OrderLineItemCreateRequest::menuId)
+                .collect(Collectors.toUnmodifiableList());
+
+        if (menuRepository.anyIdNotExists(menuIds)) {
             throw new IllegalArgumentException("[ERROR] 없는 메뉴가 존재합니다.");
         }
 
@@ -81,8 +80,8 @@ public class OrderService {
                 .map(OrderLineItemCreateRequest::quantity)
                 .collect(Collectors.toUnmodifiableList());
 
-        return IntStream.range(0, menus.size())
-                .mapToObj(index -> new OrderLineItem(menus.get(index), quantities.get(index)))
+        return IntStream.range(0, menuIds.size())
+                .mapToObj(index -> new OrderLineItem(menuIds.get(index), quantities.get(index)))
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -105,6 +104,11 @@ public class OrderService {
 
     private OrderResponse getOrderResponse(final Order order) {
         final List<OrderLineItem> orderLineItems = orderLineItemRepository.findByOrderId(order.id());
-        return OrderResponse.of(order, orderLineItems);
+        final List<Menu> menus = orderLineItems.stream()
+                .map(OrderLineItem::menuId)
+                .map(menuRepository::findById)
+                .map(menu -> menu.orElseThrow(() -> new IllegalArgumentException("[ERROR] 메뉴가 존재하지 않습니다.")))
+                .collect(Collectors.toUnmodifiableList());
+        return OrderResponse.of(order, orderLineItems, menus);
     }
 }
