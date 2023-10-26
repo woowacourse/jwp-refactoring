@@ -1,7 +1,7 @@
-ALTER TABLE menu_product
+ALTER TABLE order_line_item
     ADD COLUMN name VARCHAR(255) NOT NULL DEFAULT 'temp';
-ALTER TABLE menu_product
+ALTER TABLE order_line_item
     ADD COLUMN price DECIMAL(19, 2) NOT NULL DEFAULT 0;
 
-UPDATE menu_product m
-SET (price, name) = (SELECT p.price, p.name FROM product p WHERE p.id = m.product_id);
+UPDATE order_line_item o
+SET (price, name) = (SELECT m.price, m.name FROM menu m WHERE m.id = o.menu_id);

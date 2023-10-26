@@ -58,9 +58,12 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    public void validateExistenceByIds(final List<Long> menuIds) {
-        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
+    public List<Menu> findAllByIds(final List<Long> menuIds) {
+        final List<Menu> menus = menuRepository.findAllById(menuIds);
+        if (menuIds.size() != menus.size()) {
             throw new IllegalArgumentException("존재하지 않는 주문 항목입니다.");
         }
+
+        return menus;
     }
 }

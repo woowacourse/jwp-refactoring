@@ -1,7 +1,5 @@
 package kitchenpos.order.dto;
 
-import kitchenpos.order.domain.OrderLineItem;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,9 +27,7 @@ public class OrderCreateRequest {
         return orderTableId;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems.stream()
-                .map(request -> new OrderLineItem(request.getMenuId(), request.getQuantity()))
-                .collect(Collectors.toList());
+    public List<OrderLineItemCreateRequest> getOrderLineItems() {
+        return orderLineItems;
     }
 }

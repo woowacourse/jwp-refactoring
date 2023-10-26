@@ -56,7 +56,7 @@ public class EntityFactory {
 
     public Order saveOrder(final OrderTable orderTable) {
         final Menu menu = saveMenu();
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), 2);
 
         final Order request = new Order(orderTable.getId(), List.of(orderLineItem));
         return orderRepository.save(request);
@@ -65,7 +65,7 @@ public class EntityFactory {
     public Order saveOrder() {
         final OrderTable orderTable = saveOrderTableWithNotEmpty();
         final Menu menu = saveMenu();
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), 2);
 
         final Order request = new Order(orderTable.getId(), List.of(orderLineItem));
         return orderRepository.save(request);

@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class OrderTest {
     @Test
     @DisplayName("생성할 때 주문 테이블이 없으면 예외가 발생한다")
     void create() {
-        assertThatThrownBy(() -> new Order(null, List.of(new OrderLineItem(1L, 4))))
+        assertThatThrownBy(() -> new Order(null, List.of(new OrderLineItem(1L, "떡볶이 세트", Price.valueOf(3000), 4))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 없거나 빈 주문 테이블입니다.");
     }
@@ -35,7 +36,7 @@ class OrderTest {
     void changeOrderStatus() {
         //given
         final Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(),
-                List.of(new OrderLineItem(1L, 4)));
+                List.of(new OrderLineItem(1L, "떡볶이 세트", Price.valueOf(3000), 4)));
 
         //when, then
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))
