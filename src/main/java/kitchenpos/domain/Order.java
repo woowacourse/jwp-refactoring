@@ -55,6 +55,7 @@ public class Order {
     }
 
     public static Order ofCooking(final OrderTable orderTable, final Map<Menu, Long> menuWithQuantityMap) {
+        orderTable.validateIsEmpty();
         final Order order = new Order(orderTable, COOKING, LocalDateTime.now());
         order.orderLineItems = menuWithQuantityMap.keySet().stream()
                 .map(menu -> OrderLineItem.of(order, menu, menuWithQuantityMap.get(menu)))

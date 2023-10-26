@@ -37,9 +37,9 @@ public class OrderService {
         final List<Menu> menus = menuRepository.findByIdIn(request.extractMenuIds());
         final Map<Menu, Long> menuWithQuantityMap = makeMenuWithQuantityMap(menus, request.extractMenuIdWithQuantityMap());
         final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
-        orderTable.validateIsEmpty();
         final Order order = Order.ofCooking(orderTable, menuWithQuantityMap);
-        return orderRepository.save(order).getId();
+        final Order saveOrder = orderRepository.save(order);
+        return saveOrder.getId();
     }
 
     private Map<Menu, Long> makeMenuWithQuantityMap(final List<Menu> menus, final Map<Long, Long> menuIdWithQuantityMap) {
@@ -52,8 +52,7 @@ public class OrderService {
     }
 
     private static void validateAllMenusFound(final List<Menu> menus, final Map<Long, Long> menuIdWithQuantityMap) {
-        final boolean isAllMatch = menus.stream().allMatch(menu -> menuIdWithQuantityMap.containsKey(menu.getId()));
-        if (isAllMatch) {
+        if (menus.size() != menuIdWithQuantityMap.size()) {
             throw new IllegalArgumentException();
         }
     }
