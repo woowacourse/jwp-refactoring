@@ -17,7 +17,6 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,57 +33,57 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<Long> orderTableIds = request.getOrderTables().stream()
-                .map(OrderTableIdRequest::getId)
-                .collect(Collectors.toList());
-
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
+        final List<Long> orderTableIds = getOrderTableIds(request.getOrderTables());
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        if (orderTableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException();
         }
-
-        final List<OrderTable> savedOrderTables = orderTableIds.stream()
-                .map(id -> orderTableRepository.findById(id).orElseThrow(IllegalArgumentException::new))
-                .collect(Collectors.toList());
-
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
+        orderTables.forEach(OrderTable::validateCreateTableGroup);
 
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.updateTableGroup(savedTableGroup);
-            savedOrderTable.changeNotEmpty();
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.updateTableGroup(savedTableGroup);
+            orderTable.updateEmpty(false);
         }
-
         return convertToResponse(savedTableGroup);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+        final TableGroup tableGroup = findTableGroupById(tableGroupId);
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderStatus(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.updateTableGroup(null);
-            orderTable.changeNotEmpty();
+            orderTable.updateEmpty(true);
         }
+    }
+
+    private List<Long> getOrderTableIds(final List<OrderTableIdRequest> orderTableIdRequests) {
+        final List<Long> orderTableIds = orderTableIdRequests.stream()
+                .map(OrderTableIdRequest::getId)
+                .collect(Collectors.toList());
+        validateOrderTableIdsSize(orderTableIds);
+        return orderTableIds;
+    }
+
+    private void validateOrderTableIdsSize(final List<Long> orderTableIds) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderStatus(final List<OrderTable> orderTables) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
+                orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private TableGroup findTableGroupById(final Long tableGroupId) {
+        return tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private TableGroupResponse convertToResponse(final TableGroup tableGroup) {

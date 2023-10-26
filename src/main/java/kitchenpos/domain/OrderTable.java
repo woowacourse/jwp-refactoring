@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +15,7 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
     @NotNull
@@ -33,20 +32,22 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void changeNotEmpty() {
-        this.empty = false;
+    public void updateEmpty(final boolean empty) {
+        this.empty = empty;
     }
 
     public void updateTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
-    public void changeEmpty(final boolean empty) {
-        this.empty = empty;
+    public void updateNumberOfGuests(final OrderTableNumberOfGuests orderTableNumberOfGuests) {
+        this.numberOfGuests = orderTableNumberOfGuests;
     }
 
-    public void changeNumberOfGuests(final OrderTableNumberOfGuests orderTableNumberOfGuests) {
-        this.numberOfGuests = orderTableNumberOfGuests;
+    public void validateCreateTableGroup() {
+        if (!this.empty || Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
