@@ -32,7 +32,7 @@ public class MenuResponse {
     public static MenuResponse from(final Menu menu) {
         final List<MenuProduct> products = menu.getMenuProducts();
         final List<MenuProductResponse> menuProductResponse = products.stream()
-                .map(MenuProductResponse::from)
+                .map(menuProduct -> MenuProductResponse.from(menuProduct, menu.getId()))
                 .collect(Collectors.toUnmodifiableList());
         return new MenuResponse(
                 menu.getId(),
@@ -82,10 +82,10 @@ public class MenuResponse {
             this.quantity = quantity;
         }
 
-        public static MenuProductResponse from(final MenuProduct menuProduct) {
+        public static MenuProductResponse from(final MenuProduct menuProduct, final Long menuId) {
             return new MenuProductResponse(
                     menuProduct.getSeq(),
-                    menuProduct.getMenuId(),
+                    menuId,
                     menuProduct.getProductId(),
                     menuProduct.getQuantity()
             );

@@ -33,7 +33,8 @@ public class Menu {
     @JoinColumn(nullable = false, updatable = false)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST})
+    @OneToMany(cascade = {CascadeType.PERSIST})
+    @JoinColumn(name = "menu_id", updatable = false, nullable = false)
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
@@ -93,7 +94,7 @@ public class Menu {
         }
 
         public MenuFactory addProduct(final Product product, final long quantity) {
-            menu.addMenuProduct(new MenuProduct(menu, quantity, product));
+            menu.addMenuProduct(new MenuProduct(quantity, product));
             return this;
         }
 
