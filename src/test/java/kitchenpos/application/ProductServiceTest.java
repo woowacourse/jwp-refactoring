@@ -6,9 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.application.dto.product.ProductCreateRequest;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.product.application.ProductService;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

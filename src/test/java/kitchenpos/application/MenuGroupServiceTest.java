@@ -5,9 +5,10 @@ import static kitchenpos.support.fixture.dto.MenuGroupCreateRequestFixture.menuG
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.application.dto.menu.MenuGroupCreateRequest;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

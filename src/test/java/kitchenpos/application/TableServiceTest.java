@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.support.fixture.domain.OrderFixture.getOrder;
 import static kitchenpos.support.fixture.domain.OrderTableFixture.getOrderTable;
 import static kitchenpos.support.fixture.domain.TableGroupFixture.getTableGroup;
@@ -10,15 +10,16 @@ import static kitchenpos.support.fixture.dto.OrderTableCreateRequestFixture.orde
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.application.dto.ordertable.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.ordertable.OrderTableChangeNumberOfGuestsRequest;
-import kitchenpos.application.dto.ordertable.OrderTableCreateRequest;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.ordertable.application.TableService;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

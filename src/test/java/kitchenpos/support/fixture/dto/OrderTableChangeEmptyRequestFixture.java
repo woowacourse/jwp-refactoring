@@ -1,6 +1,6 @@
 package kitchenpos.support.fixture.dto;
 
-import kitchenpos.application.dto.ordertable.OrderTableChangeEmptyRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
 
 public abstract class OrderTableChangeEmptyRequestFixture {
 

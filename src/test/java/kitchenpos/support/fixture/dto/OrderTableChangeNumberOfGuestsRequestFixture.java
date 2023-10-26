@@ -1,6 +1,6 @@
 package kitchenpos.support.fixture.dto;
 
-import kitchenpos.application.dto.ordertable.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestsRequest;
 
 public abstract class OrderTableChangeNumberOfGuestsRequestFixture {
 

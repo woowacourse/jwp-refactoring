@@ -1,6 +1,6 @@
 package kitchenpos.support.fixture.dto;
 
-import kitchenpos.application.dto.menu.MenuProductRequest;
+import kitchenpos.menu.application.dto.MenuProductRequest;
 
 public abstract class MenuProductRequestFixture {
 

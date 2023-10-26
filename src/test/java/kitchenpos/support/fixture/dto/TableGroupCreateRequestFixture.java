@@ -2,9 +2,9 @@ package kitchenpos.support.fixture.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.ordertable.OrderTableIdDto;
-import kitchenpos.application.dto.tablegroup.TableGroupCreateRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.application.dto.OrderTableIdDto;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public abstract class TableGroupCreateRequestFixture {
 
