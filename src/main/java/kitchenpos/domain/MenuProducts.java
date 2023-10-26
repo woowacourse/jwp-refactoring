@@ -32,15 +32,9 @@ public class MenuProducts {
     }
 
     private static Price sum(final List<MenuProduct> menuProducts) {
-        Price sum = Price.from(BigDecimal.ZERO);
-
-        for (MenuProduct menuProduct : menuProducts) {
-            final Product product = menuProduct.getProduct();
-            final long quantity = menuProduct.getQuantity();
-            sum = sum.add(product.getPrice().multiply(quantity));
-        }
-
-        return sum;
+        return menuProducts.stream()
+                .map(MenuProduct::getPrice)
+                .reduce(Price.from(BigDecimal.ZERO), Price::add);
     }
 
     public List<MenuProduct> getValue() {

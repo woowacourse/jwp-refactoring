@@ -52,4 +52,9 @@ public class MenuProduct {
     public void updateMenu(final Menu menu) {
         this.menu = menu;
     }
+
+    public Price getPrice() {
+        final Price price = product.getPrice();
+        return price.multiply(quantity);
+    }
 }
