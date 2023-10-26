@@ -1,9 +1,14 @@
 package kitchenpos.menu;
 
+import kitchenpos.common.Price;
+import kitchenpos.product.Product;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class MenuProduct {
@@ -11,21 +16,27 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long productId;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Product product;
     private long quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Long productId, long quantity) {
-        this.productId = productId;
+    public MenuProduct(Product product, long quantity) {
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long seq, Long productId, long quantity) {
+    public MenuProduct(Long seq, Product product, long quantity) {
         this.seq = seq;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
+    }
+
+    public Price evaluate() {
+        return product.getPrice().multiply(quantity);
     }
 
     public Long getSeq() {
@@ -33,7 +44,7 @@ public class MenuProduct {
     }
 
     public Long getProductId() {
-        return productId;
+        return product.getId();
     }
 
     public long getQuantity() {

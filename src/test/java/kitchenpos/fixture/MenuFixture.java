@@ -17,42 +17,42 @@ public abstract class MenuFixture {
     @InDatabase
     public static Menu 후라이드치킨() {
         return new Menu(1L, "후라이드치킨", new Price("16000.00"), MenuGroupFixture.한마리메뉴().getId(),
-                List.of(new MenuProduct(1L, ProductFixture.후라이드().getId(), 1L))
+                List.of(new MenuProduct(1L, ProductFixture.후라이드(), 1L))
         );
     }
 
     @InDatabase
     public static Menu 양념치킨() {
         return new Menu(2L, "양념치킨", new Price("16000.00"), MenuGroupFixture.한마리메뉴().getId(),
-                List.of(new MenuProduct(2L, ProductFixture.양념치킨().getId(), 1L))
+                List.of(new MenuProduct(2L, ProductFixture.양념치킨(), 1L))
         );
     }
 
     @InDatabase
     public static Menu 반반치킨() {
         return new Menu(3L, "반반치킨", new Price("16000.00"), MenuGroupFixture.한마리메뉴().getId(),
-                List.of(new MenuProduct(3L, ProductFixture.반반치킨().getId(), 1L))
+                List.of(new MenuProduct(3L, ProductFixture.반반치킨(), 1L))
         );
     }
 
     @InDatabase
     public static Menu 통구이() {
         return new Menu(4L, "통구이", new Price("16000.00"), MenuGroupFixture.한마리메뉴().getId(),
-                List.of(new MenuProduct(4L, ProductFixture.통구이().getId(), 1L))
+                List.of(new MenuProduct(4L, ProductFixture.통구이(), 1L))
         );
     }
 
     @InDatabase
     public static Menu 간장치킨() {
         return new Menu(5L, "간장치킨", new Price("17000.00"), MenuGroupFixture.한마리메뉴().getId(),
-                List.of(new MenuProduct(5L, ProductFixture.간장치킨().getId(), 1L))
+                List.of(new MenuProduct(5L, ProductFixture.간장치킨(), 1L))
         );
     }
 
     @InDatabase
     public static Menu 순살치킨() {
         return new Menu(6L, "순살치킨", new Price("17000.00"), MenuGroupFixture.한마리메뉴().getId(),
-                List.of(new MenuProduct(6L, ProductFixture.순살치킨().getId(), 1L))
+                List.of(new MenuProduct(6L, ProductFixture.순살치킨(), 1L))
         );
     }
 
@@ -62,7 +62,7 @@ public abstract class MenuFixture {
                 new Price("32000.00"),
                 MenuGroupFixture.두마리메뉴().getId(),
                 List.of(new MenuProduct(
-                        ProductFixture.후라이드().getId(),
+                        ProductFixture.후라이드(),
                         2L
                 ))
         );
