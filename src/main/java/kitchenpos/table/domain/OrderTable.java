@@ -59,7 +59,7 @@ public class OrderTable {
     }
 
     public boolean isGroupable() {
-        return this.isEmpty() && Objects.isNull(this.tableGroupId);
+        return this.isEmpty() && isTableGroupNull();
     }
 
     public boolean isTableGroupNull() {
