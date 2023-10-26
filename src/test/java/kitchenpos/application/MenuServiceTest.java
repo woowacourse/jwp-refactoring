@@ -139,6 +139,27 @@ class MenuServiceTest extends ServiceTest {
                 .hasMessage("요청한 menuGroupId에 해당하는 MenuGroup이 존재하지 않습니다.");
     }
 
+    @DisplayName("메뉴 등록 시 상품이 존재하지 않는 경우 예외가 발생한다.")
+    @Test
+    void create_FailWithInvalidProducts() {
+        // given
+        long invalidProductId = 1000L;
+        MenuProductCreateRequest invalidRequest1 = new MenuProductCreateRequest(invalidProductId, 1L);
+        MenuProductCreateRequest invalidRequest2 = new MenuProductCreateRequest(invalidProductId, 1L);
+
+        MenuCreateRequest request = new MenuCreateRequest(
+                "후라이드1+양념1",
+                32000L,
+                두마리메뉴.getId(),
+                List.of(invalidRequest1, invalidRequest2)
+        );
+
+        // when & then
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("요청한 상품들 중 존재하지 않는 상품이 존재합니다.");
+    }
+
     @DisplayName("메뉴 목록을 조회할 수 있다.")
     @Test
     void list() {
