@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Test;
 

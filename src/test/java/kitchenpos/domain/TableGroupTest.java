@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.util.List;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

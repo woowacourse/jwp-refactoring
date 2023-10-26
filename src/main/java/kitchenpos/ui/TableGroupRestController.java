@@ -4,7 +4,6 @@ import java.net.URI;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.CreateTableGroupCommand;
 import kitchenpos.application.dto.domain.TableGroupDto;
-import kitchenpos.domain.tablegroup.TableGroup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;

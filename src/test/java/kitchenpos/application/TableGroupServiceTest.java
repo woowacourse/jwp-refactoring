@@ -4,16 +4,13 @@ import java.util.List;
 import kitchenpos.application.dto.CreateTableGroupCommand;
 import kitchenpos.application.dto.CreateTableGroupCommand.TableInGroup;
 import kitchenpos.application.dto.domain.TableGroupDto;
-import kitchenpos.domain.Money;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 import static kitchenpos.domain.order.OrderLineItemFixture.id_없는_주문항목;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;

@@ -8,7 +8,6 @@ import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
 import kitchenpos.application.dto.domain.MenuDto;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
