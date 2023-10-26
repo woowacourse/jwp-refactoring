@@ -2,9 +2,7 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.menu.exception.MenuProductException;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +11,8 @@ import java.util.Objects;
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public MenuProducts() {

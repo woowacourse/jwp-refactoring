@@ -47,9 +47,8 @@ class MenuServiceTest extends MockServiceTest {
         Menu menu = new Menu(1L, "chicken + chicken + pizza", BigDecimal.valueOf(29000L), menuGroupId);
 
         Product chicken = new Product(1L, "chicken", BigDecimal.valueOf(10000L));
-        Product pizza = new Product(10L, "pizza", BigDecimal.valueOf(9500L));
-        MenuProduct twoChicken = new MenuProduct(1L, menu, chicken, new MenuProductQuantity(2L));
-        MenuProduct onePizza = new MenuProduct(5L, menu, pizza, new MenuProductQuantity(1L));
+        Product pizza = new Product(10L, "pizza", BigDecimal.valueOf(9500L));MenuProduct twoChicken = new MenuProduct(1L, chicken, new MenuProductQuantity(2L));
+        MenuProduct onePizza = new MenuProduct(5L, pizza, new MenuProductQuantity(1L));
         menu.addMenuProducts(List.of(twoChicken, onePizza));
 
         BDDMockito.given(menuRepository.findAllWithMenuProducts())
@@ -77,8 +76,8 @@ class MenuServiceTest extends MockServiceTest {
 
         Product chicken = new Product(1L, "chicken", BigDecimal.valueOf(10000L));
         Product pizza = new Product(10L, "pizza", BigDecimal.valueOf(9500L));
-        MenuProduct twoChicken = new MenuProduct(1L, menu, chicken, new MenuProductQuantity(2L));
-        MenuProduct onePizza = new MenuProduct(5L, menu, pizza, new MenuProductQuantity(1L));
+        MenuProduct twoChicken = new MenuProduct(1L, chicken, new MenuProductQuantity(2L));
+        MenuProduct onePizza = new MenuProduct(5L, pizza, new MenuProductQuantity(1L));
         menu.addMenuProducts(List.of(twoChicken, onePizza));
 
         BDDMockito.given(menuGroupRepository.existsById(BDDMockito.anyLong()))

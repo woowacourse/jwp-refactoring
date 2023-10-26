@@ -47,9 +47,6 @@ public class Menu {
         if (price.isGreaterThan(menuProductsPrice)) {
             throw new MenuException("메뉴 가격이 전체 상품 * 수량 가격의 합 보다 큽니다");
         }
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.changeMenu(this);
-        }
     }
 
     public Long getId() {

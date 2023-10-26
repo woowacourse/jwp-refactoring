@@ -2,7 +2,13 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.product.domain.Product;
 
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -14,9 +20,6 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Menu menu;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
     @Embedded
@@ -26,12 +29,11 @@ public class MenuProduct {
     }
 
     public MenuProduct(Product product, MenuProductQuantity quantity) {
-        this(null, null, product, quantity);
+        this(null, product, quantity);
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, MenuProductQuantity quantity) {
+    public MenuProduct(Long seq, Product product, MenuProductQuantity quantity) {
         this.seq = seq;
-        this.menu = menu;
         this.product = product;
         this.quantity = quantity;
     }
@@ -41,16 +43,8 @@ public class MenuProduct {
                 BigDecimal.valueOf(quantity.getQuantity()));
     }
 
-    public void changeMenu(Menu menu) {
-        this.menu = menu;
-    }
-
     public Long getSeq() {
         return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 
     public Product getProduct() {
