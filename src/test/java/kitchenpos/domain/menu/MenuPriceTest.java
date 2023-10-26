@@ -26,4 +26,12 @@ class MenuPriceTest {
         assertThatThrownBy(() -> new MenuPrice(BigDecimal.valueOf(Math.pow(10, 17))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void 메뉴_가격이_메뉴_상품들의_금액을_합한_가격보다_크면_예외가_발생한다() {
+        final MenuPrice menuPrice = new MenuPrice(BigDecimal.TEN);
+
+        assertThatThrownBy(() -> menuPrice.validateMoreThanMenuProductsPrice(BigDecimal.ONE))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

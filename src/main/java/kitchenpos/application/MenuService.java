@@ -46,7 +46,7 @@ public class MenuService {
         final MenuName menuName = new MenuName(request.getName());
         final MenuPrice menuPrice = new MenuPrice(request.getPrice());
         final BigDecimal menuProductsPrice = calculateMenuProductsPrice(request.getMenuProducts());
-        menuPrice.compareTo(menuProductsPrice);
+        menuPrice.validateMoreThanMenuProductsPrice(menuProductsPrice);
         final MenuGroup menuGroup = findMenuGroupById(request.getMenuGroupId());
 
         final Menu savedMenu = menuRepository.save(new Menu(menuName, menuPrice, menuGroup));

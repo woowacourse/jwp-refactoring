@@ -35,7 +35,7 @@ public class MenuPrice {
         return price.compareTo(MIN_PRICE) < 0;
     }
 
-    public void compareTo(final BigDecimal menuProductsPrice) {
+    public void validateMoreThanMenuProductsPrice(final BigDecimal menuProductsPrice) {
         if (price.compareTo(menuProductsPrice) > 0) {
             throw new IllegalArgumentException();
         }
