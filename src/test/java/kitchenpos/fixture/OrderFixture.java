@@ -2,13 +2,13 @@ package kitchenpos.fixture;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderChangeDto;
-import kitchenpos.dto.OrderCreateDto;
-import kitchenpos.dto.OrderLineItemCreateDto;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.order.application.dto.OrderChangeDto;
+import kitchenpos.order.application.dto.OrderCreateDto;
+import kitchenpos.order.application.dto.OrderLineItemCreateDto;
 
 public class OrderFixture {
 

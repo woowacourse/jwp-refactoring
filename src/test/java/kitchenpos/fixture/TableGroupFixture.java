@@ -2,9 +2,9 @@ package kitchenpos.fixture;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateDto;
-import kitchenpos.dto.TableIdDto;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateDto;
+import kitchenpos.tablegroup.application.dto.TableIdDto;
 
 public class TableGroupFixture {
 
