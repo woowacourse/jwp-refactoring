@@ -27,6 +27,7 @@
 - 주문 상태를 변경한다
     - 주문 상태가 COMPLETION에서는 상태를 변경할 수 없다
     - 주문 상태는 COOKING, MEAL, COMPLETION 중 하나이다
+- 메뉴 정보가 변경되더라도 주문 항목은 변경되지 않는다.
 
 ### 상품
 - id, name, price
