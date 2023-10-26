@@ -68,8 +68,8 @@ class MenuTest {
 
         //when then
         assertThatThrownBy(() -> Menu.create(null, menuPrice, 1L, menuProducts, menuValidator))
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("메뉴 이름은 null일 수 없습니다.");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 이름의 길이는 1글자 이상, 255글자 이하여야 합니다.");
     }
 
     @Test

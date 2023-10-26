@@ -2,7 +2,6 @@ package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,20 +12,14 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Menu {
 
-    private static final int MAX_NAME_LENGTH = 255;
-    private static final int MIN_PRICE = 0;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    @NotNull
-    private String name;
+    @Embedded
+    private MenuName name;
 
-    @Column(nullable = false, precision = 19, scale = 2)
-    @NotNull
-    private BigDecimal price;
+    private MenuPrice price;
 
     @NotNull
     private Long menuGroupId;
@@ -44,19 +37,13 @@ public class Menu {
             MenuProducts menuProducts,
             MenuValidator menuValidator
     ) {
-        validate(name, price, menuGroupId);
+        validateMenuGroup(menuGroupId);
         menuValidator.validate(menuProducts, price, menuGroupId);
 
-        this.name = name;
-        this.price = price;
+        this.name = MenuName.from(name);
+        this.price = MenuPrice.from(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    private void validate(String name, BigDecimal price, Long menuGroupId) {
-        validateName(name);
-        validatePrice(price);
-        validateMenuGroup(menuGroupId);
     }
 
     public static Menu create(
@@ -67,24 +54,6 @@ public class Menu {
             MenuValidator menuValidator
     ) {
         return new Menu(name, price, menuGroupId, menuProducts, menuValidator);
-    }
-
-    private void validateName(String name) {
-        if (name == null) {
-            throw new NullPointerException("메뉴 이름은 null일 수 없습니다.");
-        }
-        if (name.isBlank() || name.length() > MAX_NAME_LENGTH) {
-            throw new IllegalArgumentException("메뉴 이름의 길이는 1글자 이상, 255글자 이하여야 합니다.");
-        }
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (price == null) {
-            throw new NullPointerException("메뉴 금액은 null일 수 없습니다.");
-        }
-        if (price.doubleValue() < MIN_PRICE) {
-            throw new IllegalArgumentException("메뉴 금액은 0원 이상이어야 합니다.");
-        }
     }
 
     private void validateMenuGroup(Long menuGroupId) {
@@ -98,11 +67,11 @@ public class Menu {
     }
 
     public String getName() {
-        return name;
+        return name.getName();
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 
     public Long getMenuGroupId() {

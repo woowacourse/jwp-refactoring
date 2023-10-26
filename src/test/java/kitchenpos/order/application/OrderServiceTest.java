@@ -83,8 +83,8 @@ class OrderServiceTest {
 
         //when then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 상품에 존재하지 않는 메뉴가 존재합니다.");
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("menuId에 해당하는 값이 존재하지 않습니다.");
     }
 
     @DisplayName("주문을 한 테이블이 존재하지 않을 경우, 생성할 수 없다.")

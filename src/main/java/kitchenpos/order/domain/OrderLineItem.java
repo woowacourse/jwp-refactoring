@@ -1,32 +1,31 @@
 package kitchenpos.order.domain;
 
 import java.math.BigDecimal;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import org.springframework.util.StringUtils;
+import kitchenpos.menu.domain.MenuName;
+import kitchenpos.menu.domain.MenuPrice;
 
 @Entity
 public class OrderLineItem {
 
     private static final int MIN_QUANTITY = 1;
-    private static final int MIN_PRICE = 0;
-    private static final int MAX_NAME_LENGTH = 255;
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @NotNull
-    private String name;
+    @Embedded
+    private MenuName name;
 
-    @Column(precision = 19, scale = 2)
-    @NotNull
-    private BigDecimal price;
+
+    @Embedded
+    private MenuPrice price;
 
     @NotNull
     private Long quantity;
@@ -35,31 +34,13 @@ public class OrderLineItem {
     }
 
     private OrderLineItem(String name, BigDecimal price, Long quantity) {
-        validate(name, price, quantity);
-        this.name = name;
-        this.price = price;
+        this.name = MenuName.from(name);
+        this.price = MenuPrice.from(price);
         this.quantity = quantity;
     }
 
     private void validate(String name, BigDecimal price, Long quantity) {
-        validateName(name);
-        validatePrice(price);
         validateQuantity(quantity);
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (price == null) {
-            throw new NullPointerException("주문 메뉴 금액은 null일 수 없습니다.");
-        }
-        if (price.doubleValue() < MIN_PRICE) {
-            throw new IllegalArgumentException("주문 메뉴 금액은 0원 이상이어야 합니다.");
-        }
-    }
-
-    private void validateName(String name) {
-        if (!StringUtils.hasText(name) || name.length() > MAX_NAME_LENGTH) {
-            throw new IllegalArgumentException("주문 메뉴 이름은 1글자 이상, 255자 이하여야 합니다.");
-        }
     }
 
     private void validateQuantity(Long quantity) {
@@ -76,15 +57,16 @@ public class OrderLineItem {
         return seq;
     }
 
-    public String getName() {
+    public MenuName getName() {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public MenuPrice getPrice() {
         return price;
     }
 
     public Long getQuantity() {
         return quantity;
     }
+
 }
