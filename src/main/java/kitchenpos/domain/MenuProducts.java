@@ -12,7 +12,7 @@ public class MenuProducts {
     }
 
     public void setMenu(Menu menu) {
-        menuProducts.forEach(menuProduct -> menuProduct.setMenu(menu));
+        menuProducts.forEach(menu::addMenuProduct);
     }
 
     public BigDecimal calculateSum() {

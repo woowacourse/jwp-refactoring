@@ -49,7 +49,6 @@ public class MenuProduct {
 
     public void setMenu(Menu menu) {
         this.menu = menu;
-        menu.addMenuProduct(this);
     }
 
     public Product getProduct() {
