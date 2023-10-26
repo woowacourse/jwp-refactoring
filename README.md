@@ -234,3 +234,31 @@
 - [x] 도메인별 의존성 단방향 설정
 
 - [x] 메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현
+
+```mermaid
+flowchart TB
+    subgraph a[tablegroup]
+        TableGroup
+    end
+    subgraph b[table]
+        OrderTable
+    end
+    subgraph c[product]
+        Product
+    end
+    subgraph d[order]
+        Order --> OrderLineItem
+    end
+    subgraph f[menugroup]
+        MenuGroup
+    end
+    subgraph g[menu]
+        Menu --> MenuProducts --> MenuProduct
+    end
+
+    g --> f
+    g --> c
+    d --> g
+    d --> b
+    a --> b
+```
