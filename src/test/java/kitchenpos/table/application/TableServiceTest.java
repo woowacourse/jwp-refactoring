@@ -113,7 +113,7 @@ class TableServiceTest {
                             .build()
             );
             orderRepository.save(Order.builder()
-                    .orderTable(savedOrderTable)
+                    .orderTableId(savedOrderTable.getId())
                     .orderStatus(OrderStatus.MEAL)
                     .build()
             );

@@ -7,15 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
 
 @Entity
 @Table(name = "orders")
@@ -25,9 +22,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -42,15 +38,10 @@ public class Order {
     protected Order() {
     }
 
-    private Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this.orderTable = orderTable;
-        orderTable.addOrder(this);
+    private Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
-        this.orderLineItems = orderLineItems;
-    }
-
-    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 
@@ -66,8 +57,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
@@ -88,12 +79,12 @@ public class Order {
 
     public static class OrderBuilder {
 
-        private OrderTable orderTable;
+        private Long orderTableId;
         private OrderStatus orderStatus;
         private List<OrderLineItem> orderLineItems;
 
-        public OrderBuilder orderTable(OrderTable orderTable) {
-            this.orderTable = orderTable;
+        public OrderBuilder orderTableId(Long orderTableId) {
+            this.orderTableId = orderTableId;
             return this;
         }
 
@@ -108,7 +99,7 @@ public class Order {
         }
 
         public Order build() {
-            return new Order(orderTable, orderStatus, orderLineItems);
+            return new Order(orderTableId, orderStatus, orderLineItems);
         }
     }
 }

@@ -11,8 +11,6 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -21,16 +19,13 @@ import org.springframework.util.CollectionUtils;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
     private final OrderValidator orderValidator;
 
     public OrderService(
             OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository,
             OrderValidator orderValidator
     ) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
         this.orderValidator = orderValidator;
     }
 
@@ -42,18 +37,9 @@ public class OrderService {
             throw new IllegalArgumentException("주문의 메뉴가 존재하지 않습니다.");
         }
 
-        OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("EMPTY 상태인 테이블에 주문할 수 없습니다.");
-        }
-
-        List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderCreateRequest.getOrderLineItems());
-
         Order order = Order.builder()
-                .orderTable(orderTable)
-                .orderLineItems(orderLineItems)
+                .orderTableId(orderCreateRequest.getOrderTableId())
+                .orderLineItems(convertToOrderLineItems(orderCreateRequest.getOrderLineItems()))
                 .orderStatus(OrderStatus.COOKING)
                 .build();
         orderValidator.validate(order);

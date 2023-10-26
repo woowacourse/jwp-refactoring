@@ -1,7 +1,5 @@
 package kitchenpos.table.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,10 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.dto.vo.NumberOfGuests;
-import kitchenpos.order.domain.Order;
 
 @Entity
 @Table(name = "order_table")
@@ -35,9 +31,6 @@ public class OrderTable {
     @Column(name = "empty")
     private boolean empty;
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders = new ArrayList<>();
-
     protected OrderTable() {
     }
 
@@ -55,11 +48,6 @@ public class OrderTable {
         return tableGroup != null;
     }
 
-    public boolean isAllOfOrderCompleted() {
-        return orders.stream()
-                .allMatch(Order::isCompleted);
-    }
-
     public void group(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
@@ -75,12 +63,6 @@ public class OrderTable {
 
     public void changeNumberOfGuests(int numberOfGuests) {
         this.numberOfGuests = NumberOfGuests.from(numberOfGuests);
-    }
-
-    public void addOrder(Order order) {
-        if (!orders.contains(order)) {
-            orders.add(order);
-        }
     }
 
     public Long getId() {

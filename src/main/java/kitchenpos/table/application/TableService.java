@@ -6,6 +6,7 @@ import kitchenpos.table.application.request.OrderTableCreateRequest;
 import kitchenpos.table.application.request.OrderTableUpdateRequest;
 import kitchenpos.table.application.response.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(OrderTableRepository orderTableRepository) {
+    public TableService(OrderTableRepository orderTableRepository, OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -41,14 +44,7 @@ public class TableService {
         OrderTable foundOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 주문 테이블이 존재하지 않습니다."));
 
-        if (foundOrderTable.isGrouped()) {
-            throw new IllegalArgumentException("주문 그룹에 속한 주문 테이블의 상태를 변경할 수 없습니다.");
-        }
-
-        if (!foundOrderTable.isAllOfOrderCompleted()) {
-            throw new IllegalArgumentException("테이블에 진행 중인 주문이 존재합니다.");
-        }
-
+        orderTableValidator.validateChangeStatusEmpty(foundOrderTable);
         foundOrderTable.changeTableStatus(orderTableUpdateRequest.isEmpty());
         return OrderTableResponse.from(foundOrderTable);
     }
@@ -58,10 +54,7 @@ public class TableService {
         OrderTable foundOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 주문 테이블이 존재하지 않습니다."));
 
-        if (foundOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("EMPTY 상태인 주문 테이블의 손님 수를 변경할 수 없습니다.");
-        }
-
+        orderTableValidator.validateChangingNumberOfGuests(foundOrderTable);
         foundOrderTable.changeNumberOfGuests(orderTableUpdateRequest.getNumberOfGuests());
 
         return OrderTableResponse.from(foundOrderTable);

@@ -91,8 +91,8 @@ class TableGroupServiceTest {
 
         @Test
         void 정상적으로_해지한다() {
-            Order orderA = Order.builder().orderTable(orderTableA).orderStatus(OrderStatus.COMPLETION).build();
-            Order orderB = Order.builder().orderTable(orderTableB).orderStatus(OrderStatus.COMPLETION).build();
+            Order orderA = Order.builder().orderTableId(orderTableA.getId()).orderStatus(OrderStatus.COMPLETION).build();
+            Order orderB = Order.builder().orderTableId(orderTableB.getId()).orderStatus(OrderStatus.COMPLETION).build();
             orderRepository.save(orderA);
             orderRepository.save(orderB);
             TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
@@ -104,7 +104,7 @@ class TableGroupServiceTest {
 
         @Test
         void 주문_테이블_주문_상태가_COMPLETE가_아니면_예외가_발생한다() {
-            Order order = Order.builder().orderTable(orderTableA).orderStatus(OrderStatus.MEAL).build();
+            Order order = Order.builder().orderTableId(orderTableA.getId()).orderStatus(OrderStatus.MEAL).build();
             orderRepository.save(order);
             TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
                     List.of(new OrderTableRequest(orderTableA.getId()), new OrderTableRequest(orderTableB.getId())));

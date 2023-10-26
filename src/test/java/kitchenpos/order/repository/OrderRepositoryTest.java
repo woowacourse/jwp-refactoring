@@ -28,7 +28,6 @@ class OrderRepositoryTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
 
-
     private OrderTable orderTable;
 
     @BeforeEach
@@ -128,17 +127,30 @@ class OrderRepositoryTest {
         ).isFalse();
     }
 
+    @Test
+    void 주문_테이블에_포함된_모든_주문을_조회한다() {
+        Order orderEntityA = createOrderEntity();
+        Order orderEntityB = createOrderEntity();
+        Order savedOrderA = orderRepository.save(orderEntityA);
+        Order savedOrderB = orderRepository.save(orderEntityB);
+
+        List<Order> foundOrders = orderRepository.findAllByOrderTableId(orderTable.getId());
+
+        assertThat(foundOrders).usingRecursiveFieldByFieldElementComparatorOnFields("id")
+                .contains(savedOrderA, savedOrderB);
+    }
+
     private Order createOrderEntity() {
         return Order.builder()
                 .orderStatus(OrderStatus.COOKING)
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .build();
     }
 
     private Order createOrderEntityWithStatus(OrderStatus orderStatus) {
         return Order.builder()
                 .orderStatus(orderStatus)
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .build();
     }
 }
