@@ -4,15 +4,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.tablegroup.TableGroupRequest;
 import kitchenpos.application.dto.tablegroup.TableGroupResponse;
 import kitchenpos.application.dto.tablegroup.TableOfGroupDto;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.support.DataDependentIntegrationTest;
@@ -29,6 +36,12 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -144,10 +157,17 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(request);
         final Long tableGroupId = tableGroupResponse.getId();
 
-        orderRepository.save(new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1))));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private long createMenuAndGetId() {
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Menu menu = menuRepository.save(new Menu("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup));
+
+        return menu.getId();
     }
 }

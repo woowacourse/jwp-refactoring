@@ -7,7 +7,6 @@ import kitchenpos.application.dto.order.MenuQuantityDto;
 import kitchenpos.application.dto.order.OrderRequest;
 import kitchenpos.application.dto.order.OrderResponse;
 import kitchenpos.application.dto.order.OrderStatusChangeRequest;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -44,28 +43,32 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
-        final Order order = Order.createDefault(orderTable, LocalDateTime.now());
-        final List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderRequest.getOrderLineItems(), order);
-
-        order.addOrderLineItems(orderLineItems);
+        final List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderRequest.getOrderLineItems());
+        final Order order = Order.createDefault(orderTable, LocalDateTime.now(), orderLineItems);
         orderRepository.save(order);
-        orderLineItemRepository.saveAll(orderLineItems);
 
         return OrderResponse.from(order);
     }
 
-    private List<OrderLineItem> convertToOrderLineItems(final List<MenuQuantityDto> menuQuantities, final Order order) {
+    private List<OrderLineItem> convertToOrderLineItems(final List<MenuQuantityDto> menuQuantities) {
+        validateAllMenusAvailable(menuQuantities);
+
         return menuQuantities
             .stream()
             .map(menuIdWithQuantity ->
-                new OrderLineItem(order, getMenuFromMenuIdQuantityDto(menuIdWithQuantity), menuIdWithQuantity.getQuantity())
+                new OrderLineItem(menuIdWithQuantity.getMenuId(), menuIdWithQuantity.getQuantity())
             )
             .collect(Collectors.toList());
     }
 
-    private Menu getMenuFromMenuIdQuantityDto(final MenuQuantityDto menuQuantityDto) {
-        return menuRepository.findById(menuQuantityDto.getMenuId())
-            .orElseThrow(IllegalArgumentException::new);
+    private void validateAllMenusAvailable(final List<MenuQuantityDto> menuQuantities) {
+        final List<Long> menuIds = menuQuantities.stream()
+            .map(MenuQuantityDto::getMenuId)
+            .collect(Collectors.toList());
+
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("잘못된 메뉴가 주문에 포함되었습니다.");
+        }
     }
 
     @Transactional(readOnly = true)

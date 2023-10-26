@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -35,34 +37,32 @@ public class Order {
     @Column
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {}
 
     public Order(final OrderTable orderTable,
                  final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> items) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = new ArrayList<>();
+        this.orderLineItems = items;
     }
 
-    public static Order createDefault(final OrderTable orderTable, final LocalDateTime orderedTime) {
+    public static Order createDefault(final OrderTable orderTable, final LocalDateTime orderedTime, final List<OrderLineItem> items) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문하려는 테이블은 비어있을 수 없습니다.");
         }
+        validateOrderLineItemsToAdd(items);
 
-        return new Order(orderTable, INITIAL_ORDER_STATUS, orderedTime);
+        return new Order(orderTable, INITIAL_ORDER_STATUS, orderedTime, items);
     }
 
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        validateOrderLineItemsToAdd(orderLineItems);
-        this.orderLineItems = orderLineItems;
-    }
-
-    private void validateOrderLineItemsToAdd(final List<OrderLineItem> orderLineItems) {
+    private static void validateOrderLineItemsToAdd(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 메뉴가 비어있을 수 없습니다.");
         }

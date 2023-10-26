@@ -3,16 +3,23 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.table.TableEmptyChangeRequest;
 import kitchenpos.application.dto.table.TableGuestChangeRequest;
 import kitchenpos.application.dto.table.TableRequest;
 import kitchenpos.application.dto.table.TableResponse;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -32,10 +39,13 @@ class TableServiceTest extends DataDependentIntegrationTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private TableGroupRepository tableGroupRepository;
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private TableService tableService;
@@ -123,7 +133,7 @@ class TableServiceTest extends DataDependentIntegrationTest {
         final TableRequest tableRequest = new TableRequest(3, false);
         final TableResponse savedOrderTable = tableService.create(tableRequest);
         final OrderTable orderTable = orderTableRepository.findById(savedOrderTable.getId()).get();
-        orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1))));
         final Long orderTableId = orderTable.getId();
 
         final TableEmptyChangeRequest request = new TableEmptyChangeRequest(true);
@@ -131,6 +141,13 @@ class TableServiceTest extends DataDependentIntegrationTest {
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private long createMenuAndGetId() {
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Menu menu = menuRepository.save(new Menu("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup));
+
+        return menu.getId();
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경한다.")
