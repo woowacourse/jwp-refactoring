@@ -70,7 +70,10 @@ public class OrderService {
         Map<Long, Long> menuIdToQuantity = requests.stream()
             .collect(toMap(OrderLineCreateRequest::getMenuId, OrderLineCreateRequest::getQuantity));
         return menus.stream()
-            .map(menu -> new OrderLineItem(null, menuIdToQuantity.get(menu.getId()), menu.getId()))
+            .map(menu -> {
+                long quantity = menuIdToQuantity.get(menu.getId());
+                return new OrderLineItem(null, quantity, menu.getId(), menu.getName(), menu.getPrice());
+            })
             .collect(toList());
     }
 

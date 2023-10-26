@@ -7,13 +7,16 @@ import static org.mockito.BDDMockito.anyList;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.common.domain.Money;
 import kitchenpos.common.exception.KitchenPosException;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
+import kitchenpos.menu.dto.MenuUpdateRequest;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
@@ -110,6 +113,64 @@ class MenuServiceTest {
 
             // then
             assertThat(actual.getName()).isEqualTo("맥주세트");
+        }
+    }
+
+    @Nested
+    class update {
+
+        @Test
+        void 요청의_가격이_null이면_가격을_수정하지_않는다() {
+            // given
+            Money price = Money.from(10000);
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
+            Menu menu = new Menu(1L, "소주세트", price, menuGroup);
+            menu.addMenuProducts(List.of(new MenuProduct(1L, 1, new Product(1L, "맥주", price))));
+            given(menuRepository.findById(1L))
+                .willReturn(Optional.of(menu));
+
+            // when
+            var response = menuService.update(1L, new MenuUpdateRequest("맥주세트", null));
+
+            // then
+            assertThat(response.getName()).isEqualTo("맥주세트");
+            assertThat(response.getPrice()).isEqualTo(BigDecimal.valueOf(10000));
+        }
+
+        @Test
+        void 요청의_이름이_null이면_이름을_수정하지_않는다() {
+            // given
+            Money price = Money.from(10000);
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
+            Menu menu = new Menu(1L, "소주세트", price, menuGroup);
+            menu.addMenuProducts(List.of(new MenuProduct(1L, 1, new Product(1L, "소주", price))));
+            given(menuRepository.findById(1L))
+                .willReturn(Optional.of(menu));
+
+            // when
+            var response = menuService.update(1L, new MenuUpdateRequest(null, 4885L));
+
+            // then
+            assertThat(response.getName()).isEqualTo("소주세트");
+            assertThat(response.getPrice()).isEqualTo(BigDecimal.valueOf(4885));
+        }
+
+        @Test
+        void 성공() {
+            // given
+            Money price = Money.from(10000);
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
+            Menu menu = new Menu(1L, "소주세트", price, menuGroup);
+            menu.addMenuProducts(List.of(new MenuProduct(1L, 1, new Product(1L, "맥주", price))));
+            given(menuRepository.findById(1L))
+                .willReturn(Optional.of(menu));
+
+            // when
+            var response = menuService.update(1L, new MenuUpdateRequest("맥주세트", 4885L));
+
+            // then
+            assertThat(response.getName()).isEqualTo("맥주세트");
+            assertThat(response.getPrice()).isEqualTo(BigDecimal.valueOf(4885));
         }
     }
 }

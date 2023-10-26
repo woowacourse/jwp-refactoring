@@ -75,6 +75,16 @@ public class Menu {
         }
     }
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changePrice(Money price) {
+        validate(price);
+        this.price = price;
+        validateMenuProducts(this.menuProducts);
+    }
+
     public Long getId() {
         return id;
     }

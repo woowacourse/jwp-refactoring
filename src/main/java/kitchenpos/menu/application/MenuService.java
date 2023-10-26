@@ -15,6 +15,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
 import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.menu.dto.MenuUpdateRequest;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
@@ -95,5 +96,17 @@ public class MenuService {
         return menuRepository.findAll().stream()
             .map(MenuResponse::from)
             .collect(toList());
+    }
+
+    public MenuResponse update(Long menuId, MenuUpdateRequest request) {
+        Menu menu = menuRepository.findById(menuId)
+            .orElseThrow(() -> new KitchenPosException("해당 메뉴가 없습니다. menuId=" + menuId));
+        if (request.getPrice() != null) {
+            menu.changePrice(Money.from(request.getPrice()));
+        }
+        if (request.getName() != null) {
+            menu.changeName(request.getName());
+        }
+        return MenuResponse.from(menu);
     }
 }

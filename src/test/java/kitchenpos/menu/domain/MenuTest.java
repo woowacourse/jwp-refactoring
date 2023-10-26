@@ -117,4 +117,81 @@ class MenuTest {
                 .containsExactly(Money.from(1000));
         }
     }
+
+    @Nested
+    class changeName {
+
+        @Test
+        void 성공() {
+            // given
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
+            Menu menu = new Menu(1L, "맥주세트", Money.from(1000), menuGroup);
+
+            // when
+            menu.changeName("소주세트");
+
+            // then
+            assertThat(menu.getName()).isEqualTo("소주세트");
+        }
+    }
+
+    @Nested
+    class changePrice {
+
+        @Test
+        void 메뉴_상품의_가격_총합보다_메뉴의_가격이_크면_예외() {
+            // given
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
+            Menu menu = new Menu(1L, "맥주세트", Money.from(1000), menuGroup);
+            menu.addMenuProducts(List.of(new MenuProduct(1L, 1, new Product(1L, "맥주", Money.from(1000)))));
+
+            // when
+            Money price = Money.from(1001);
+            assertThatThrownBy(() -> menu.changePrice(price))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("메뉴의 가격은 메뉴 상품의 총합 가격보다 작아야 합니다.");
+        }
+
+        @Test
+        void 가격이_null_이면_예외() {
+            // given
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
+            Menu menu = new Menu(1L, "맥주세트", Money.from(1000), menuGroup);
+
+            // when & then
+            Money price = null;
+            assertThatThrownBy(() -> menu.changePrice(price))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("메뉴의 가격은 null이 될 수 없습니다.");
+        }
+
+        @Test
+        void 가격이_0보다_작으면_예외() {
+            // given
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
+            Menu menu = new Menu(1L, "맥주세트", Money.from(1000), menuGroup);
+
+            // when & then
+            Money price = Money.from(-1);
+            assertThatThrownBy(() -> menu.changePrice(price))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("메뉴의 가격은 0보다 작을 수 없습니다.");
+        }
+
+        @ParameterizedTest
+        @ValueSource(longs = {0, 1, 1000})
+        void 가격이_0_이상이면_성공(long value) {
+            // given
+            Money price = Money.from(value);
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
+            Menu menu = new Menu(1L, "맥주세트", Money.from(0), menuGroup);
+            menu.addMenuProducts(List.of(new MenuProduct(1L, 1, new Product(1L, "맥주", price))));
+
+            // when
+            menu.changePrice(price);
+
+            // then
+            assertThat(menu.getPrice()).isEqualTo(price);
+        }
+    }
 }

@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.menu.dto.MenuCreateRequest;
+import kitchenpos.menu.dto.MenuUpdateRequest;
 import kitchenpos.menugroup.dto.MenuGroupCreateRequest;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderUpdateRequest;
@@ -91,6 +92,17 @@ public abstract class V1IntegrationTest {
         return mockMvc.perform(post("/api/v1/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)));
+    }
+
+    ResultActions 메뉴_수정(Long menuId, MenuUpdateRequest request) throws Exception {
+        return mockMvc.perform(patch("/api/v1/menus/{id}", menuId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)));
+    }
+
+    ResultActions 모든_메뉴_조회() throws Exception {
+        return mockMvc.perform(get("/api/v1/menus")
+            .contentType(MediaType.APPLICATION_JSON));
     }
 
     ResultActions 테이블_그룹_생성(TableGroupCreateRequest request) throws Exception {

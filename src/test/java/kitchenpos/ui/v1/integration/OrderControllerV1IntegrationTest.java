@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
+import kitchenpos.menu.dto.MenuUpdateRequest;
 import kitchenpos.menugroup.dto.MenuGroupCreateRequest;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequest;
@@ -147,6 +148,32 @@ public class OrderControllerV1IntegrationTest extends V1IntegrationTest {
             모든_주문_조회()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].orderStatus").value("MEAL"));
+        }
+    }
+
+    @Nested
+    class 메뉴의_상태가_변경되면 {
+
+        @Test
+        void 주문의_상태는_변하지_않는다() throws Exception {
+            // given
+            주문_테이블_생성(new OrderTableCreateRequest(false, 0));
+            메뉴_그룹_생성(new MenuGroupCreateRequest("주류"));
+            상품_생성(new ProductCreateRequest("맥주", 1000));
+            메뉴_생성(new MenuCreateRequest(1000, 1L, "맥주세트", List.of(
+                new MenuProductCreateRequest(1, 1L)
+            )));
+            주문_생성(new OrderCreateRequest(1L, List.of(
+                new OrderLineCreateRequest(1L, 3)
+            )));
+
+            // when
+            메뉴_수정(1L, new MenuUpdateRequest("소주세트", 100L));
+
+            // then
+            모든_주문_조회()
+                .andExpect(jsonPath("$[0].orderLineItemResponses[0].menuName").value("맥주세트"))
+                .andExpect(jsonPath("$[0].orderLineItemResponses[0].menuPrice").value("1000.0"));
         }
     }
 }
