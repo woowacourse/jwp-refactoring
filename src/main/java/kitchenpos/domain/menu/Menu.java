@@ -1,7 +1,6 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.domain.Price;
-import kitchenpos.domain.menugroup.MenuGroup;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
@@ -13,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +29,7 @@ public class Menu {
             column = @Column(name = "price", precision = 19, scale = 2, nullable = false)
     )
     private Price price;
-    @ManyToOne
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(
             name = "menu_id",
@@ -44,19 +41,19 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
         validateNotExceeded(price, menuProducts);
     }
 
-    public Menu(Long id, String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
         validateNotExceeded(price, menuProducts);
     }
@@ -83,8 +80,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

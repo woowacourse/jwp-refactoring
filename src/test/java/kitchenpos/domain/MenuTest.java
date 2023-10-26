@@ -18,7 +18,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 후라이드_두마리().getName(),
                 후라이드_두마리().getPrice().add(new Price(1)),
-                후라이드_두마리().getMenuGroup(),
+                후라이드_두마리().getMenuGroupId(),
                 후라이드_두마리().getMenuProducts()
         ))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -30,7 +30,7 @@ class MenuTest {
         assertThatNoException().isThrownBy(() -> new Menu(
                 후라이드_두마리().getName(),
                 후라이드_두마리().getPrice(),
-                후라이드_두마리().getMenuGroup(),
+                후라이드_두마리().getMenuGroupId(),
                 후라이드_두마리().getMenuProducts()
         ));
     }

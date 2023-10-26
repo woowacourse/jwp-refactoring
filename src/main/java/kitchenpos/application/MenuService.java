@@ -38,7 +38,7 @@ public class MenuService {
         return menuRepository.save(new Menu(
                 menu.getName(),
                 new Price(menu.getPrice()),
-                menuGroup,
+                menu.getMenuGroupId(),
                 toMenuProducts(menu.getMenuProducts())
         ));
     }
