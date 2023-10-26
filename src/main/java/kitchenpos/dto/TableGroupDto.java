@@ -3,6 +3,7 @@ package kitchenpos.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 public class TableGroupDto {
@@ -16,8 +17,8 @@ public class TableGroupDto {
         this.orderTables = orderTables;
     }
 
-    public static TableGroupDto toDto(final TableGroup tableGroup) {
-        final List<TableDto> tableDtos = tableGroup.getOrderTables()
+    public static TableGroupDto toDto(final TableGroup tableGroup, final List<OrderTable> orderTables) {
+        final List<TableDto> tableDtos = orderTables
                 .stream()
                 .map(TableDto::toDto)
                 .collect(Collectors.toList());

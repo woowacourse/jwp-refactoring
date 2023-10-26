@@ -14,6 +14,7 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -32,10 +33,12 @@ public class TableGroupService {
     @Transactional
     public TableGroupDto create(final TableGroupCreateDto request) {
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.addOrderTables(getOrderTables(request));
-
         tableGroupRepository.save(tableGroup);
-        return TableGroupDto.toDto(tableGroup);
+
+        List<OrderTable> orderTables = getOrderTables(request);
+        orderTables.forEach(it -> it.group(tableGroup));
+
+        return TableGroupDto.toDto(tableGroup, orderTables);
     }
 
     private List<OrderTable> getOrderTables(final TableGroupCreateDto request) {
@@ -46,6 +49,10 @@ public class TableGroupService {
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTableIds.size() != orderTables.size()) {
+            throw new IllegalArgumentException();
+        }
+
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
 

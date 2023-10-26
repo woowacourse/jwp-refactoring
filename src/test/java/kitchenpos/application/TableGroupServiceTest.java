@@ -86,7 +86,9 @@ class TableGroupServiceTest extends ServiceTest {
             final var 테이블2 = orderTableRepository.save(빈테이블());
             final var 테이블3 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹());
+            테이블1.group(테이블그룹);
+            테이블2.group(테이블그룹);
 
             final var request = 테이블그룹_생성_요청(List.of(테이블1.getId(), 테이블3.getId()));
 
@@ -105,7 +107,9 @@ class TableGroupServiceTest extends ServiceTest {
             final var 테이블1 = orderTableRepository.save(빈테이블());
             final var 테이블2 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹());
+            테이블1.group(테이블그룹);
+            테이블2.group(테이블그룹);
 
             // when
             tableGroupService.ungroup(테이블그룹.getId());
@@ -129,7 +133,9 @@ class TableGroupServiceTest extends ServiceTest {
             final var 테이블1 = orderTableRepository.save(빈테이블());
             final var 테이블2 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹());
+            테이블1.group(테이블그룹);
+            테이블2.group(테이블그룹);
 
             final var order = 주문(테이블1);
             order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
