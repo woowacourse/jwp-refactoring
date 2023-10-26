@@ -1,19 +1,20 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.MenuSnapshot;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.exception.NotExistMenuException;
 import kitchenpos.order.controller.dto.OrderChangeStatusRequest;
 import kitchenpos.order.controller.dto.OrderCreateRequest;
 import kitchenpos.order.controller.dto.OrderLineItemRequest;
-import kitchenpos.menu.exception.NotExistMenuException;
-import kitchenpos.order.exception.NotExistOrderException;
-import kitchenpos.ordertable.exception.NotExistOrderTable;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.exception.NotExistOrderException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.exception.NotExistOrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,15 +59,16 @@ public class OrderService {
         return request.stream()
                       .map(orderLineItemRequest ->
                               new OrderLineItem(null,
-                                      findMenuById(orderLineItemRequest.getMenuId()),
+                                      createMenuSnapshot(orderLineItemRequest.getMenuId()),
                                       orderLineItemRequest.getQuantity()
                               ))
                       .collect(Collectors.toList());
     }
     
-    private Menu findMenuById(final Long menuId) {
-        return menuRepository.findById(menuId)
-                             .orElseThrow(() -> new NotExistMenuException("존재하지 않는 메뉴입니다"));
+    private MenuSnapshot createMenuSnapshot(final Long menuId) {
+        Menu savedMenu = menuRepository.findById(menuId)
+                                       .orElseThrow(() -> new NotExistMenuException("존재하지 않는 메뉴입니다"));
+        return MenuSnapshot.from(savedMenu);
     }
     
     public List<Order> list() {
