@@ -2,6 +2,7 @@ package kitchenpos.order.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -23,9 +23,8 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    @JoinColumn(name = "menu_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Menu menu;
+    @Embedded
+    private MenuInfo menuInfo;
 
     private long quantity;
 
@@ -33,18 +32,18 @@ public class OrderLineItem {
     }
 
     public OrderLineItem(final Order order,
-                         final Menu menu,
+                         final MenuInfo menuInfo,
                          final long quantity) {
-        this(null, order, menu, quantity);
+        this(null, order, menuInfo, quantity);
     }
 
     public OrderLineItem(final Long id,
                          final Order order,
-                         final Menu menu,
+                         final MenuInfo menuInfo,
                          final long quantity) {
         this.id = id;
         this.order = order;
-        this.menu = menu;
+        this.menuInfo = menuInfo;
         this.quantity = quantity;
     }
 
@@ -56,8 +55,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public MenuInfo getMenuInfo() {
+        return menuInfo;
     }
 
     public long getQuantity() {
@@ -86,7 +85,7 @@ public class OrderLineItem {
         return "OrderLineItem{" +
                 "id=" + id +
                 ", orderId=" + order.getId() +
-                ", menuId=" + menu.getId() +
+                ", menuInfo=" + menuInfo +
                 ", quantity=" + quantity +
                 '}';
     }

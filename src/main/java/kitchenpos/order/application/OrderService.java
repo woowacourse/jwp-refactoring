@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.domain.MenuInfo;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -56,7 +57,8 @@ public class OrderService {
     private OrderLineItem convertFromDto(final OrderLineItemRequest request, final Order order) {
         final Menu menu = menuRepository.findById(request.getMenuId())
                                         .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
-        return new OrderLineItem(order, menu, request.getQuantity());
+        final MenuInfo menuInfo = MenuInfo.from(menu);
+        return new OrderLineItem(order, menuInfo, request.getQuantity());
     }
 
     @Transactional(readOnly = true)

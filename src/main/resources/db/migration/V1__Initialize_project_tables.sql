@@ -26,8 +26,9 @@ create table menu_product
 create table order_line_item
 (
     seq      bigint not null auto_increment,
+    menu_name varchar(255),
+    menu_price numeric(19,2),
     quantity bigint not null,
-    menu_id  bigint not null,
     order_id bigint not null,
     primary key (seq)
 );
@@ -65,6 +66,19 @@ create table table_group
     primary key (id)
 );
 
+create table menu_product_info
+(
+    order_line_item_seq   bigint not null,
+    menu_product_quantity bigint not null,
+    product_name          varchar(255),
+    product_price         numeric(19, 2)
+);
+
+alter table menu_product_info
+    add constraint fk_menu_product_info_order_line_item
+        foreign key (order_line_item_seq)
+            references order_line_item (seq);
+
 alter table menu
     add constraint fk_menu_to_menu_group
         foreign key (menu_group_id)
@@ -79,11 +93,6 @@ alter table menu_product
     add constraint fk_menu_product_to_product
         foreign key (product_id)
             references product (id);
-
-alter table order_line_item
-    add constraint fk_order_line_item_to_menu
-        foreign key (menu_id)
-            references menu (id);
 
 alter table order_line_item
     add constraint fk_order_line_item_to_orders

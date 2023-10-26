@@ -5,20 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.domain.MenuInfo;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.repository.TableGroupRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -86,7 +87,7 @@ public class TestSupporter {
                                       OrderStatus.COOKING,
                                       LocalDateTime.now(),
                                       new ArrayList<>());
-        final OrderLineItem orderLineItem = new OrderLineItem(order, menu, 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(order, MenuInfo.from(menu), 1);
         order.addOrderLineItems(List.of(orderLineItem));
         return orderRepository.save(order);
     }
@@ -97,7 +98,7 @@ public class TestSupporter {
                                       OrderStatus.COOKING,
                                       LocalDateTime.now(),
                                       new ArrayList<>());
-        final OrderLineItem orderLineItem = new OrderLineItem(order, menu, 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(order, MenuInfo.from(menu), 1);
         order.addOrderLineItems(List.of(orderLineItem));
         return orderRepository.save(order);
     }
