@@ -1,6 +1,6 @@
 package kitchenpos.dto.table;
 
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 
 public class OrderTableResponse {

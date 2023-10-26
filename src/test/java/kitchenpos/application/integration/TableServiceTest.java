@@ -1,7 +1,7 @@
 package kitchenpos.application.integration;
 
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.table.ChangeNumberOfGuestsRequest;

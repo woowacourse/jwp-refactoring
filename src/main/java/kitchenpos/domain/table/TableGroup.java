@@ -1,7 +1,5 @@
 package kitchenpos.domain.table;
 
-import kitchenpos.domain.order.OrderTable;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -66,9 +64,7 @@ public class TableGroup {
     }
 
     private static void setOrderTableOrderable(final List<OrderTable> orderTables) {
-        orderTables.forEach(orderTable -> {
-            orderTable.setOrderable(true);
-        });
+        orderTables.forEach(orderTable -> orderTable.setOrderable(true));
     }
 
     public void ungroup() {

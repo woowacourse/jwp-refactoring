@@ -5,8 +5,6 @@ import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.order.CreateOrderRequest;
 import kitchenpos.dto.order.ListOrderResponse;
@@ -24,15 +22,15 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderedTableService orderedTableService;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository) {
+            final OrderedTableService orderedTableService) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderedTableService = orderedTableService;
     }
 
     @Transactional
@@ -42,8 +40,8 @@ public class OrderService {
         menus.forEach(this::validateMenuExist);
         final OrderLineItems orderLineItems = OrderLineItems.from(menus, quantities);
 
-        final OrderTable orderTable = findOrderTable(request);
-        final Order order = Order.of(orderTable, orderLineItems);
+        validateOrderTable(request.getOrderTableId());
+        final Order order = Order.of(request.getOrderTableId(), orderLineItems);
         return OrderResponse.of(orderRepository.save(order));
     }
 
@@ -57,9 +55,10 @@ public class OrderService {
         return quantities.stream().map(Quantity::of).collect(Collectors.toList());
     }
 
-    private OrderTable findOrderTable(final CreateOrderRequest request) {
-        return orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(() -> new OrderTableNotFoundException(request.getOrderTableId()));
+    private void validateOrderTable(final Long orderTableId) {
+        if (!orderedTableService.doesTableExist(orderTableId)) {
+            throw new OrderTableNotFoundException(orderTableId);
+        }
     }
 
     public ListOrderResponse list() {

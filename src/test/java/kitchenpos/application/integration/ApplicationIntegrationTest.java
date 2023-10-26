@@ -1,10 +1,10 @@
 package kitchenpos.application.integration;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.application.TableGroupService;
 import kitchenpos.application.mengroup.MenuGroupService;
 import kitchenpos.application.menu.MenuService;
 import kitchenpos.application.order.OrderService;
+import kitchenpos.application.table.TableGroupService;
 import kitchenpos.application.table.TableService;
 import kitchenpos.domain.common.Money;
 import kitchenpos.dto.menu.CreateMenuRequest;

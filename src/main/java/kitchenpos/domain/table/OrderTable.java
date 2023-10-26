@@ -1,6 +1,4 @@
-package kitchenpos.domain.order;
-
-import kitchenpos.domain.table.TableGroup;
+package kitchenpos.domain.table;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -81,14 +79,6 @@ public class OrderTable {
     }
 
     public void setOrderable(final boolean orderable) {
-        this.orderable = orderable;
-    }
-
-    public OrderTable(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public OrderTable(final boolean orderable) {
         this.orderable = orderable;
     }
 
