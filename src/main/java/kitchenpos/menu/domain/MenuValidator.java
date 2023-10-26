@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import java.util.List;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.stereotype.Component;
@@ -9,12 +10,26 @@ import org.springframework.stereotype.Component;
 public class MenuValidator {
 
     private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuValidator(ProductRepository productRepository) {
+    public MenuValidator(ProductRepository productRepository, MenuGroupRepository menuGroupRepository) {
         this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     public void validate(Menu menu) {
+        validateMenuGroup(menu);
+        validateMenuProducts(menu);
+    }
+
+    private void validateMenuGroup(Menu menu) {
+        Long menuGroupId = menu.getMenuGroupId();
+
+        menuGroupRepository.findById(menuGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("일치하는 메뉴 그룹이 없습니다."));
+    }
+
+    private void validateMenuProducts(Menu menu) {
         long menuProductPriceSum = 0;
 
         List<MenuProduct> menuProducts = menu.getMenuProducts();

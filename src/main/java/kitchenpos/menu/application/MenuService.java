@@ -9,8 +9,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,27 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
     private final MenuValidator menuValidator;
 
     public MenuService(
             MenuRepository menuRepository,
-            MenuGroupRepository menuGroupRepository,
             MenuValidator menuValidator
     ) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.menuValidator = menuValidator;
     }
 
     @Transactional
     public MenuResponse create(MenuCreateRequest menuCreateRequest) {
         Long menuGroupId = menuCreateRequest.getMenuGroupId();
-        MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
-                .orElseThrow(() -> new IllegalArgumentException("일치하는 메뉴 그룹이 없습니다."));
 
         List<MenuProduct> menuProducts = getMenuProducts(menuCreateRequest);
-        Menu menu = createMenu(menuCreateRequest, menuGroup, menuProducts);
+        Menu menu = createMenu(menuCreateRequest, menuGroupId, menuProducts);
         menuValidator.validate(menu);
 
         Menu savedMenu = menuRepository.save(menu);
@@ -47,13 +40,13 @@ public class MenuService {
 
     private Menu createMenu(
             MenuCreateRequest menuCreateRequest,
-            MenuGroup menuGroup,
+            Long menuGroupId,
             List<MenuProduct> menuProducts
     ) {
         return Menu.builder()
                 .name(menuCreateRequest.getName())
                 .price(menuCreateRequest.getPrice())
-                .menuGroupId(menuGroup.getId())
+                .menuGroupId(menuGroupId)
                 .menuProducts(menuProducts)
                 .build();
     }
