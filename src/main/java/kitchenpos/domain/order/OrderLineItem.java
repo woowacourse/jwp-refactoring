@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "order_line_item")
@@ -21,12 +22,20 @@ public class OrderLineItem {
     @Column(name = "quantity")
     private long quantity;
 
+    @Column(name = "menu_name")
+    private String menuName;
+
+    @Column(name = "menu_price")
+    private BigDecimal menuPrice;
+
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
+    public OrderLineItem(Long menuId, long quantity, String menuName, BigDecimal menuPrice) {
         this.menuId = menuId;
         this.quantity = quantity;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
     }
 
     public Long getId() {
@@ -39,5 +48,13 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
     }
 }

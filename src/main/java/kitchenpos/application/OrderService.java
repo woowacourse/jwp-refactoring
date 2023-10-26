@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,12 +40,13 @@ public class OrderService {
         for (OrderLineItemCreateRequest orderLineItem : request.getOrderLineItems()) {
             validateMenuExists(orderLineItem);
         }
-        OrderLineItems orderLineItems = new OrderLineItems(request.getOrderLineItems().stream()
-                .map(item -> new OrderLineItem(
-                                item.getMenuId(),
-                                item.getQuantity()
-                        )
-                ).collect(Collectors.toList()));
+        List<OrderLineItem> items = new ArrayList<>();
+        for (OrderLineItemCreateRequest orderLineItem : request.getOrderLineItems()) {
+            Menu menu = menuRepository.findById(orderLineItem.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new);
+            items.add(new OrderLineItem(menu.getId(), orderLineItem.getQuantity(), menu.getName(), menu.getPrice()));
+        }
+        OrderLineItems orderLineItems = new OrderLineItems(items);
         validateSize(request, orderLineItems);
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
