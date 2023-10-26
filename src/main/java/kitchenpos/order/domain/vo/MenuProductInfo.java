@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.order.domain.vo;
 
 import java.util.List;
 import java.util.stream.Collectors;

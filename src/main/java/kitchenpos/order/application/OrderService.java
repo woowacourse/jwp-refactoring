@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.order.domain.MenuInfo;
+import kitchenpos.order.domain.vo.MenuInfo;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
