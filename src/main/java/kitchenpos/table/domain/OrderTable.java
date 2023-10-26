@@ -64,7 +64,6 @@ public class OrderTable {
         return empty;
     }
 
-    //TODO :private으로 바꾸기
     public void changeEmpty(final boolean empty) {
         if (tableGroupId != null) {
             throw new OrderTableException(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP);

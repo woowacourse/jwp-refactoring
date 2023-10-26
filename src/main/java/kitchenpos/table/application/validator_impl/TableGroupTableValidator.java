@@ -8,12 +8,11 @@ import java.util.List;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table_group.application.validator.GroupTableValidator;
-import kitchenpos.table_group.application.validator.UngroupTableValidator;
 import kitchenpos.table_group.domain.exception.TableGroupException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TableGroupTableValidator implements UngroupTableValidator, GroupTableValidator {
+public class TableGroupTableValidator implements GroupTableValidator {
 
     private static final int MINIMUM_TABLE_SIZE = 2;
 
@@ -53,10 +52,5 @@ public class TableGroupTableValidator implements UngroupTableValidator, GroupTab
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new TableGroupException(ORDER_TABLE_IS_NOT_PRESENT_ALL);
         }
-    }
-
-    @Override
-    public void validateUngroup(final Long tableGroupId) {
-
     }
 }
