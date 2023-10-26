@@ -9,6 +9,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 
 import static java.util.Objects.requireNonNull;
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 public class Menu {
@@ -35,25 +37,11 @@ public class Menu {
 
     private Long menuGroupId;
 
-    @OneToMany(cascade = ALL, orphanRemoval = true)
+    @OneToMany(fetch = LAZY, cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
-    }
-
-    public static Menu of(final String name, final Money price, final Long menuGroupId,
-                          final Map<Product, Integer> productToQuantity) {
-        Menu menu = new Menu(null, name, price, menuGroupId);
-        menu.changeMenuProducts(productToQuantity);
-        return menu;
-    }
-
-    private Menu(final Long id, final String name, final Money price, final Long menuGroupId) {
-        this.id = id;
-        this.name = requireNonNull(name, "메뉴 이름은 null일 수 없습니다.");
-        this.price = requireNonNull(price, "메뉴 가격은 null일 수 없습니다.");
-        this.menuGroupId = menuGroupId;
     }
 
     public Menu(final Long id, final String name, final Money price, final Long menuGroupId,
@@ -61,15 +49,23 @@ public class Menu {
         this.id = id;
         this.name = requireNonNull(name, "메뉴 이름은 null일 수 없습니다.");
         this.price = requireNonNull(price, "메뉴 가격은 null일 수 없습니다.");
-        this.menuGroupId = menuGroupId;
+        this.menuGroupId = requireNonNull(menuGroupId, "메뉴 그룹 ID는 null일 수 없습니다.");
         if (CollectionUtils.isEmpty(menuProducts)) {
-            throw new IllegalArgumentException("메뉴에 속한 상품은 null이나 비어있을 수 없습니다.");
+            throw new IllegalArgumentException("메뉴에 속한 상품은 null이거나 비어있을 수 없습니다.");
         }
         this.menuProducts = menuProducts;
     }
 
+    public void register(MenuValidator menuValidator) {
+        menuValidator.validate(this);
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public String getName() {
@@ -82,27 +78,6 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void changeMenuProducts(final Map<Product, Integer> productToQuantity) {
-        if (CollectionUtils.isEmpty(productToQuantity)) {
-            throw new IllegalArgumentException("메뉴에 속한 상품은 null이나 비어있을 수 없습니다.");
-        }
-        validatePrice(Money.ZERO, productToQuantity);
-        final List<MenuProduct> menuProducts = productToQuantity.keySet().stream()
-                .map(product -> new MenuProduct(null, product.getId(), product.getName(), product.getPrice(),
-                        productToQuantity.get(product)))
-                .collect(Collectors.toList());
-        this.menuProducts = menuProducts;
-    }
-
-    private void validatePrice(final Money initialPrice, final Map<Product, Integer> productToQuantity) {
-        final var sumOfMenuProductPrice = productToQuantity.entrySet().stream()
-                .map(entry -> entry.getKey().getPrice().times(entry.getValue()))
-                .reduce(initialPrice, Money::plus);
-        if (price.isHigherThan(sumOfMenuProductPrice)) {
-            throw new IllegalArgumentException("메뉴 가격이 메뉴에 속한 상품 가격의 합보다 큽니다.");
-        }
     }
 
     @Override

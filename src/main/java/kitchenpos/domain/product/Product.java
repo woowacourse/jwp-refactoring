@@ -1,6 +1,5 @@
 package kitchenpos.domain.product;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Embedded;

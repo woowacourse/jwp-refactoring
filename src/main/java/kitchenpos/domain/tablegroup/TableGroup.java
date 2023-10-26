@@ -13,6 +13,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import static java.util.Objects.isNull;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -26,7 +27,7 @@ public class TableGroup {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroupId")
+    @OneToMany(fetch = LAZY, mappedBy = "tableGroupId")
     private List<OrderTable> orderTables;
 
     public TableGroup() {

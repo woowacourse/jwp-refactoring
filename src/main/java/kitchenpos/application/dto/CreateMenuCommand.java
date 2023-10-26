@@ -2,7 +2,10 @@ package kitchenpos.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class CreateMenuCommand {
 
@@ -13,6 +16,10 @@ public class CreateMenuCommand {
         public CreateMenuProductCommand(final Long productId, final Integer quantity) {
             this.productId = productId;
             this.quantity = quantity;
+        }
+
+        public MenuProduct toDomain() {
+            return new MenuProduct(null, productId, quantity);
         }
 
         public Long getProductId() {
@@ -35,6 +42,13 @@ public class CreateMenuCommand {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public Menu toDomain() {
+        List<MenuProduct> products = menuProducts.stream()
+                .map(CreateMenuProductCommand::toDomain)
+                .collect(Collectors.toList());
+        return new Menu(null, name, new Money(price), menuGroupId, products);
     }
 
     public String getName() {

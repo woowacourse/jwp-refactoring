@@ -40,7 +40,7 @@ public class Money {
         return value;
     }
 
-    public Money times(final int quantity) {
+    public Money times(final long quantity) {
         return new Money(value.multiply(BigDecimal.valueOf(quantity)));
     }
 

@@ -1,14 +1,10 @@
 package kitchenpos.domain.menu;
 
 import java.util.Objects;
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.domain.Money;
 
 @Entity
 public class MenuProduct {
@@ -19,24 +15,17 @@ public class MenuProduct {
 
     private Long productId;
 
-    @Column(name = "product_name")
-    private String name;
-
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "product_price"))
-    private Money price;
-
     private long quantity;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long seq, final Long productId, final String name, final Money price,
-                       final long quantity) {
+    public MenuProduct(final Long seq, final Long productId, final long quantity) {
         this.seq = seq;
         this.productId = productId;
-        this.name = name;
-        this.price = price;
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("메뉴에 등록된 상품의 수량은 0 이하일 수 없습니다.");
+        }
         this.quantity = quantity;
     }
 
