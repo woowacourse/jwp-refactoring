@@ -1,14 +1,9 @@
 package kitchenpos.domain;
 
-import java.util.List;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItemFixture;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static kitchenpos.domain.order.OrderLineItemFixture.id_없는_주문항목;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -93,32 +88,5 @@ class OrderTableTest {
 
         //then
         assertThat(actual).isTrue();
-    }
-
-    @Test
-    void 주문할_수_있다() {
-        //given
-        OrderTable orderTable = new OrderTable(2, false);
-        List<OrderLineItem> orderLineItems = List.of(id_없는_주문항목());
-
-        //when
-        Order order = orderTable.order(orderLineItems);
-
-        //then
-        assertThat(order.getOrderLineItems()).containsAll(orderLineItems)
-                .usingRecursiveComparison()
-                .ignoringFields("id", "order");
-    }
-
-    @Test
-    void 테이블이_빈_상태이면_주문할_수_없다() {
-        //given
-        OrderTable 테이블 = new OrderTable(0, true);
-        List<OrderLineItem> 주문항목 = List.of(id_없는_주문항목());
-
-        //expect
-        assertThatThrownBy(() -> 테이블.order(주문항목))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("빈 테이블은 주문을 추가할 수 없습니다.");
     }
 }

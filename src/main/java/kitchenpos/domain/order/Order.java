@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.util.CollectionUtils;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
@@ -60,7 +59,12 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        changeOrderLineItems(orderLineItems);
+        this.orderLineItems = orderLineItems;
+    }
+
+    public void place(OrderValidator orderValidator) {
+        orderValidator.validate(this);
+        startCooking();
     }
 
     public Long getId() {
@@ -102,19 +106,6 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void changeOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
-        }
-
-        long distinctMenuCount = orderLineItems.stream().map(OrderLineItem::getMenuId).distinct().count();
-        if (orderLineItems.size() != distinctMenuCount) {
-            throw new IllegalArgumentException("주문 항목은 각각 다른 메뉴여야합니다.");
-        }
-
-        this.orderLineItems = orderLineItems;
     }
 
     @Override

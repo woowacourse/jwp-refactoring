@@ -150,12 +150,13 @@ class TableServiceTest extends ServiceTest {
         private void 주문만들기(final OrderTable 생성된_테이블) {
             OrderLineItem 주문상품 = 주문_상품_만들기();
             Order 주문 = new Order(생성된_테이블.getId(), List.of(주문상품));
+            주문.startCooking();
             orderRepository.save(주문);
         }
 
         private OrderLineItem 주문_상품_만들기() {
             final var 메뉴 = menuRepository.findAll().get(0);
-            return new OrderLineItem(null, 메뉴.getId(), "메뉴이름", Money.of(10_000), 1);
+            return OrderLineItem.of(null, 메뉴.getId(), "메뉴이름", Money.of(10_000), 1);
         }
 
         @Test

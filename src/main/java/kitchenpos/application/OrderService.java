@@ -4,50 +4,52 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
+import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
 import kitchenpos.application.dto.domain.OrderDto;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.MenuVo;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.order.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final MenuRepository menuRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(
-            final MenuRepository menuRepository,
-            final OrderTableRepository orderTableRepository,
-            final OrderRepository orderRepository) {
-        this.menuRepository = menuRepository;
-        this.orderTableRepository = orderTableRepository;
+    public OrderService(final OrderRepository orderRepository, final MenuRepository menuRepository,
+                        final OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderDto create(final CreateOrderCommand command) {
-        validateMenus(command);
-
-        final OrderTable orderTable = orderTableRepository.getById(command.getOrderTableId());
-        Order order = orderTable.order(command.getOrderLineItems());
-
+        Order order = toDomain(command);
+        order.place(orderValidator);
         return OrderDto.from(orderRepository.save(order));
     }
 
-    private void validateMenus(final CreateOrderCommand command) {
-        List<Long> menuIds = command.getOrderLineItemRequests().stream()
-                .map(request -> request.getMenuId())
+    public Order toDomain(CreateOrderCommand command) {
+        List<OrderLineItemRequest> orderLineItemRequests = command.getOrderLineItemRequests();
+        List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
+                .map(this::toDomain)
                 .collect(Collectors.toList());
+        return new Order(command.getOrderTableId(), orderLineItems);
+    }
 
-        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("메뉴가 존재하지 않습니다.");
-        }
+    public OrderLineItem toDomain(OrderLineItemRequest command) {
+        Long menuId = command.getMenuId();
+        Menu menu = menuRepository.getById(menuId);
+        return new OrderLineItem(null, new MenuVo(menuId, menu.getName(), menu.getPrice()), command.getQuantity());
     }
 
     public List<OrderDto> list() {

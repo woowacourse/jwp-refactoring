@@ -105,7 +105,7 @@ class OrderServiceTest extends ServiceTest {
 
     private OrderLineItemRequest 주문_상품_초기화() {
         final var 메뉴 = menuRepository.findAll().get(0);
-        return new OrderLineItemRequest(메뉴.getId(), 1);
+        return new OrderLineItemRequest(메뉴.getId(), 1L);
     }
 
     @Test

@@ -40,7 +40,7 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.getById(tableId);
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                tableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+                tableId, Arrays.asList(OrderStatus.NOT_STARTED, OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("주문 상태가 조리 또는 식사인 경우 테이블의 비어있을 수 없습니다.");
         }
 

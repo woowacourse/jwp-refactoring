@@ -1,12 +1,9 @@
 package kitchenpos.domain.table;
 
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 
 import static java.util.Objects.nonNull;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -37,13 +34,6 @@ public class OrderTable {
         }
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public Order order(List<OrderLineItem> orderLineItems) {
-        if (isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블은 주문을 추가할 수 없습니다.");
-        }
-        return new Order(id, orderLineItems);
     }
 
     public void ungroup() {
