@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 public class OrderTableFixture {
 
     public static OrderTable 주문_테이블_엔티티_생성() {
-        return new OrderTable(5, false);
+        return OrderTable.of(5, false);
     }
 
     public static OrderTable 주문_테이블_엔티티_생성(final int numberOfGuests) {
-        return new OrderTable(numberOfGuests, false);
+        return OrderTable.of(numberOfGuests, false);
     }
 
     public static OrderTable 비지_않은_테이블_엔티티_생성() {
@@ -23,7 +23,7 @@ public class OrderTableFixture {
     }
 
     public static OrderTable 빈_테이블_엔티티_생성() {
-        return new OrderTable(0, true);
+        return OrderTable.of(0, true);
     }
 
     public static List<OrderTable> 주문_테이블_엔티티들_생성(final int count) {

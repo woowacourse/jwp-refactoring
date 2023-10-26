@@ -24,7 +24,7 @@ class OrderTableTest {
         @Test
         void 주문_테이블을_생성한다() {
             // when
-            final OrderTable orderTable = new OrderTable(0, true);
+            final OrderTable orderTable = OrderTable.of(0, true);
 
             // then
             SoftAssertions.assertSoftly(softAssertions -> {
@@ -42,7 +42,7 @@ class OrderTableTest {
             // given
             final List<OrderTable> orderTables = OrderTableFixture.빈_테이블_엔티티들_생성(2);
             final TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), orderTables);
-            final OrderTable orderTable = new OrderTable(0, true);
+            final OrderTable orderTable = OrderTable.of(0, true);
             orderTable.updateTableGroup(tableGroup);
 
             // when
@@ -63,7 +63,7 @@ class OrderTableTest {
         @ValueSource(ints = {0, 1})
         void 주문_테이블의_사용자수를_수정한다(final int numberOfGuests) {
             // given
-            final OrderTable orderTable = new OrderTable(0, false);
+            final OrderTable orderTable = OrderTable.of(0, false);
 
             // when
             orderTable.updateNumberOfGuests(numberOfGuests);
@@ -76,7 +76,7 @@ class OrderTableTest {
         @Test
         void 주문_테이블의_사용자수를_음수로_수정하면_예외를_반환한다() {
             // given
-            final OrderTable orderTable = new OrderTable(0, false);
+            final OrderTable orderTable = OrderTable.of(0, false);
 
             // when & then
             assertThatThrownBy(() -> orderTable.updateNumberOfGuests(-5))
@@ -91,7 +91,7 @@ class OrderTableTest {
         @Test
         void 주문_테이블의_empty_상태를_참에서_거짓으로_변경할_수_있다() {
             // given
-            final OrderTable orderTable = new OrderTable(0, true);
+            final OrderTable orderTable = OrderTable.of(0, true);
 
             // when
             orderTable.updateEmpty(false);
@@ -103,7 +103,7 @@ class OrderTableTest {
         @Test
         void 주문_테이블의_empty_상태를_거짓에서_참으로_변경할_수_있다() {
             // given
-            final OrderTable orderTable = new OrderTable(0, false);
+            final OrderTable orderTable = OrderTable.of(0, false);
 
             // when
             orderTable.updateEmpty(true);

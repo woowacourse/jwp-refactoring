@@ -30,12 +30,21 @@ public class OrderTable {
 
     protected OrderTable() {}
 
-    public OrderTable(
-            final int numberOfGuests,
-            final boolean empty
-    ) {
+    private OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static OrderTable of(final int numberOfGuests, final boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
+
+        return new OrderTable(numberOfGuests, empty);
+    }
+
+    private static void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new InvalidUpdateNumberOfGuestsException("방문한 손님 수는 음수가 될 수 없습니다.");
+        }
     }
 
     public void ungroup() {
@@ -74,12 +83,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new InvalidUpdateNumberOfGuestsException("방문한 손님 수는 음수가 될 수 없습니다.");
-        }
     }
 
     public boolean isEmpty() {

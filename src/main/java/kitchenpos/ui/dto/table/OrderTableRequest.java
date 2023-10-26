@@ -13,7 +13,7 @@ public class OrderTableRequest {
     }
 
     public OrderTable toEntity() {
-        return new OrderTable(numberOfGuests, empty);
+        return OrderTable.of(numberOfGuests, empty);
     }
 
     public Integer getNumberOfGuests() {
