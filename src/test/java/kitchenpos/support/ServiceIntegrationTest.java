@@ -15,13 +15,17 @@ import kitchenpos.menu.application.dto.MenuDto;
 import kitchenpos.menu.application.dto.MenuProductDto;
 import kitchenpos.menu_group.application.MenuGroupDto;
 import kitchenpos.menu_group.application.MenuGroupService;
+import kitchenpos.order.application.OrderRepository;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderDto;
 import kitchenpos.order.application.dto.OrderLineItemDto;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductDto;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableDto;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table_group.application.TableGroupService;
 import kitchenpos.table_group.application.dto.OrderTableDtoInTableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +48,9 @@ public abstract class ServiceIntegrationTest {
     protected MenuGroupService menuGroupService;
     @Autowired
     protected OrderService orderService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     protected MenuDto createMenu() {
         final ProductDto savedProduct = productService.create(후라이드_DTO());
@@ -83,5 +90,15 @@ public abstract class ServiceIntegrationTest {
             orderTableDto.getNumberOfGuests(),
             orderTableDto.getEmpty()
         );
+    }
+
+    protected void saveOrderMeal(final OrderTable savedOrderTable) {
+        final Order order = new Order(
+            savedOrderTable.getId(),
+            OrderStatus.MEAL,
+            LocalDateTime.now(),
+            List.of()
+        );
+        orderRepository.save(order);
     }
 }

@@ -15,13 +15,10 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.order.application.OrderRepository;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.support.ServiceIntegrationTest;
 import kitchenpos.table.application.TableService;
@@ -172,16 +169,6 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
                 .map(OrderTableDto::from)
                 .map(ServiceIntegrationTest::map)
                 .collect(Collectors.toList());
-        }
-
-        private void saveOrderMeal(final OrderTable savedOrderTable) {
-            final Order order = new Order(
-                savedOrderTable.getId(),
-                OrderStatus.MEAL,
-                LocalDateTime.now(),
-                Map.of()
-            );
-            orderRepository.save(order);
         }
     }
 

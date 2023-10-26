@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.order.application.OrderRepository;
@@ -56,15 +55,5 @@ class TableGroupOrderValidatorTest extends ServiceIntegrationTest {
             .map(OrderTableDto::from)
             .map(ServiceIntegrationTest::map)
             .collect(Collectors.toList());
-    }
-
-    private void saveOrderMeal(final OrderTable savedOrderTable) {
-        final Order order = new Order(
-            savedOrderTable.getId(),
-            OrderStatus.MEAL,
-            LocalDateTime.now(),
-            Map.of()
-        );
-        orderRepository.save(order);
     }
 }

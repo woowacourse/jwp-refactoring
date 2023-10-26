@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.List;
 import kitchenpos.order.domain.exception.OrderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,7 +24,7 @@ class OrderTest {
         @Test
         @DisplayName("성공적으로 바꾼다.")
         void success() {
-            final Order order = new Order(1L, OrderStatus.MEAL, LocalDateTime.now(), Map.of());
+            final Order order = new Order(1L, OrderStatus.MEAL, LocalDateTime.now(), List.of());
 
             order.changeOrderStatus(COMPLETION);
 
@@ -35,7 +35,7 @@ class OrderTest {
         @Test
         @DisplayName("order의 상태가 이미 completion인데, 바꿀 수 없다.")
         void throwExceptionOrderIsAlreadyCompletion() {
-            final Order order = new Order(1L, COMPLETION, LocalDateTime.now(), Map.of());
+            final Order order = new Order(1L, COMPLETION, LocalDateTime.now(), List.of());
 
             assertThatThrownBy(() -> order.changeOrderStatus(COMPLETION))
                 .isInstanceOf(OrderException.class)
@@ -50,7 +50,7 @@ class OrderTest {
         @Test
         @DisplayName("이미 종료된 경우")
         void trueCase() {
-            final Order order = new Order(1L, COMPLETION, LocalDateTime.now(), Map.of());
+            final Order order = new Order(1L, COMPLETION, LocalDateTime.now(), List.of());
 
             assertTrue(order.isAlreadyCompletion());
         }
@@ -58,7 +58,7 @@ class OrderTest {
         @Test
         @DisplayName("이미 종료되지 않은 경우 경우")
         void falseCase() {
-            final Order order = new Order(1L, MEAL, LocalDateTime.now(), Map.of());
+            final Order order = new Order(1L, MEAL, LocalDateTime.now(), List.of());
 
             assertFalse(order.isAlreadyCompletion());
         }
@@ -71,7 +71,7 @@ class OrderTest {
         @Test
         @DisplayName("이미 종료되지 않은 경우 경우")
         void trueCase() {
-            final Order order = new Order(1L, MEAL, LocalDateTime.now(), Map.of());
+            final Order order = new Order(1L, MEAL, LocalDateTime.now(), List.of());
 
             assertTrue(order.isNotAlreadyCompletion());
         }
@@ -79,7 +79,7 @@ class OrderTest {
         @Test
         @DisplayName("이미 종료된 경우")
         void falseCase() {
-            final Order order = new Order(1L, COMPLETION, LocalDateTime.now(), Map.of());
+            final Order order = new Order(1L, COMPLETION, LocalDateTime.now(), List.of());
 
             assertFalse(order.isNotAlreadyCompletion());
         }
