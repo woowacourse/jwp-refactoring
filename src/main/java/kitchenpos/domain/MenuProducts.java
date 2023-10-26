@@ -4,19 +4,21 @@ import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts;
 
     protected MenuProducts() {
     }
 
     public MenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
-        menuProducts.forEach(menuProduct -> menuProduct.joinMenu(menu));
+//        menuProducts.forEach(menuProduct -> menuProduct.joinMenu(menu.getId()));
         this.menuProducts = menuProducts;
     }
 

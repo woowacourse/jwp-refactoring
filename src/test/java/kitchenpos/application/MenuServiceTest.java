@@ -57,12 +57,13 @@ class MenuServiceTest {
         given(menuGroupRepository.getById(any()))
             .willReturn(new MenuGroup(1L, "메뉴그룹"));
 
+        final Long menuId = 1L;
         final MenuProduct menuProduct1 = new MenuProduct(1L, product1, 1L);
         final MenuProduct menuProduct2 = new MenuProduct(2L, product2, 2L);
         given(productRepository.getById(any()))
             .willReturn(product1, product2);
 
-        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2), 1L);
+        final Menu menu = new Menu(menuId, "메뉴", List.of(menuProduct1, menuProduct2), 1L);
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
 

@@ -39,7 +39,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = makeOrderLineItems(request.getOrderLineItems());
         final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
         validateEmptyOrderTable(orderTable);
-        final Order order = Order.forSave(OrderStatus.COOKING, orderLineItems, orderTable);
+        final Order order = Order.forSave(OrderStatus.COOKING, orderLineItems, orderTable.getId());
 
         return OrderResponse.from(orderRepository.save(order));
     }

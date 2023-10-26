@@ -48,8 +48,8 @@ public class Order {
     }
 
     public static Order forSave(final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems,
-                                final OrderTable orderTable) {
-        return new Order(null, orderStatus, orderLineItems, orderTable.getId());
+                                final Long orderTableId) {
+        return new Order(null, orderStatus, orderLineItems, orderTableId);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
