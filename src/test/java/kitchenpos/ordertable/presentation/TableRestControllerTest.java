@@ -1,14 +1,14 @@
 package kitchenpos.ordertable.presentation;
 
 import io.restassured.RestAssured;
-import kitchenpos.ordertable.application.TableService;
 import kitchenpos.common.controller.ControllerTest;
+import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.ordertable.presentation.dto.EmptyChangeRequest;
 import kitchenpos.ordertable.presentation.dto.GuestChangeRequest;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

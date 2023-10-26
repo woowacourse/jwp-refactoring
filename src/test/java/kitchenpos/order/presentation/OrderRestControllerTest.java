@@ -1,20 +1,20 @@
 package kitchenpos.order.presentation;
 
 import io.restassured.RestAssured;
-import kitchenpos.menu.domain.MenuPrice;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.common.controller.ControllerTest;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.presentation.dto.OrderCreateRequest;
 import kitchenpos.order.presentation.dto.OrderStatusChangeRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

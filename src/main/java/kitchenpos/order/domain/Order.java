@@ -1,7 +1,5 @@
 package kitchenpos.order.domain;
 
-import org.aspectj.weaver.ast.Or;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

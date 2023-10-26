@@ -2,12 +2,12 @@ package kitchenpos.menu.presentation;
 
 import io.restassured.RestAssured;
 import kitchenpos.common.controller.ControllerTest;
+import kitchenpos.menu.presentation.dto.MenuCreateRequest;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductPrice;
 import kitchenpos.product.domain.repository.ProductRepository;
-import kitchenpos.menu.presentation.dto.MenuCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
