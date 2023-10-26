@@ -1,7 +1,7 @@
 package kitchenpos.tablegroup.application;
 
 import kitchenpos.ordertable.application.dto.CreateOrderTableIdDto;
-import kitchenpos.ordertable.domain.OrderTables;
+import kitchenpos.tablegroup.domain.OrderTables;
 import kitchenpos.tablegroup.application.dto.CreateTableGroupDto;
 import kitchenpos.tablegroup.application.dto.TableGroupDto;
 import kitchenpos.ordertable.domain.OrderTable;

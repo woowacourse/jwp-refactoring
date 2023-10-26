@@ -2,6 +2,7 @@ package kitchenpos.ordertable.domain;
 
 import kitchenpos.BaseTest;
 import kitchenpos.ordertable.exception.TableGroupException;
+import kitchenpos.tablegroup.domain.OrderTables;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
