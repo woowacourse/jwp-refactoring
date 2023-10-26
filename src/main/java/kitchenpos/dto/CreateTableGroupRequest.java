@@ -21,6 +21,7 @@ public class CreateTableGroupRequest {
     public List<Long> getOrderTableIds() {
         return orderTables.stream()
                           .map(CreateTableGroupOrderTableRequest::getId)
+                          .distinct()
                           .collect(Collectors.toList());
     }
 }

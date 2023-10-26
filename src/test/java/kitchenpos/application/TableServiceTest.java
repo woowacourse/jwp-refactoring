@@ -122,8 +122,9 @@ class TableServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
-        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+        final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
+        세명_테이블.groupBy(세명_네명_테이블_그룹);
+        네명_테이블.groupBy(세명_네명_테이블_그룹);
 
         em.flush();
         em.clear();

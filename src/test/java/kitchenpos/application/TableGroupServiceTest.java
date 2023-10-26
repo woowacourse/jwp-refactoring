@@ -144,8 +144,9 @@ class TableGroupServiceTest {
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
-        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+        final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
+        세명_테이블.groupBy(세명_네명_테이블_그룹);
+        네명_테이블.groupBy(세명_네명_테이블_그룹);
 
         em.flush();
         em.clear();
@@ -166,14 +167,15 @@ class TableGroupServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
-        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+        final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
+        세명_테이블.groupBy(세명_네명_테이블_그룹);
+        네명_테이블.groupBy(세명_네명_테이블_그룹);
 
         em.flush();
         em.clear();
 
         // when
-        tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId());
+        tableGroupService.ungroup(세명_네명_테이블_그룹.getId());
 
         // then
         final List<OrderTable> actual = orderTableRepository.findAllByIdIn(List.of(세명_테이블.getId(), 네명_테이블.getId()));
@@ -193,8 +195,9 @@ class TableGroupServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
-        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+        final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
+        세명_테이블.groupBy(세명_네명_테이블_그룹);
+        네명_테이블.groupBy(세명_네명_테이블_그룹);
 
         orderRepository.save(new Order(세명_테이블, orderStatus));
         orderRepository.save(new Order(네명_테이블, orderStatus));
@@ -203,7 +206,7 @@ class TableGroupServiceTest {
         em.clear();
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(세명_네명_테이블_그룹.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블 그룹을 해제하려면 그룹화된 테이블의 모든 주문이 완료 상태이어야 합니다.");
     }

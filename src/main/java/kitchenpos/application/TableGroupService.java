@@ -31,12 +31,19 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final CreateTableGroupRequest request) {
-        final List<Long> orderTableIds = request.getOrderTableIds();
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        final List<Long> orderTableIdRequests = request.getOrderTableIds();
+        validateTableCount(orderTableIdRequests);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIdRequests);
 
-        validateTableIdAllExists(orderTableIds, savedOrderTables);
+        validateTableIdAllExists(orderTableIdRequests, savedOrderTables);
 
         return saveTableGroup(savedOrderTables);
+    }
+
+    private void validateTableCount(final List<Long> orderTableIds) {
+        if (orderTableIds.isEmpty() || orderTableIds.size() < 2) {
+            throw new IllegalArgumentException("그룹화하려는 테이블은 2개 이상이어야 합니다.");
+        }
     }
 
     private void validateTableIdAllExists(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
@@ -46,11 +53,13 @@ public class TableGroupService {
     }
 
     private TableGroup saveTableGroup(final List<OrderTable> savedOrderTables) {
-        final TableGroup tableGroup = new TableGroup();
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        savedTableGroup.initOrderTables(savedOrderTables);
+        final TableGroup newTableGroup = tableGroupRepository.save(new TableGroup());
 
-        return savedTableGroup;
+        for (final OrderTable orderTable : savedOrderTables) {
+            orderTable.groupBy(newTableGroup);
+        }
+
+        return newTableGroup;
     }
 
     @Transactional

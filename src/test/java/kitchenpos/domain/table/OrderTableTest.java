@@ -3,8 +3,6 @@ package kitchenpos.domain.table;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -81,8 +79,9 @@ class OrderTableTest {
         // given
         final OrderTable 두명_테이블 = new OrderTable(2, true);
         final OrderTable 세명_테이블 = new OrderTable(3, true);
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.initOrderTables(List.of(두명_테이블, 세명_테이블));
+        final TableGroup 두명_세명_테이블_그룹 = new TableGroup();
+        두명_테이블.groupBy(두명_세명_테이블_그룹);
+        세명_테이블.groupBy(두명_세명_테이블_그룹);
 
         // when & then
         assertThatThrownBy(() -> 두명_테이블.changeEmpty(true))
