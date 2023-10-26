@@ -6,13 +6,12 @@ import kitchenpos.dto.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderCreateRequest;
 import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderResponse;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,18 +20,18 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
     public OrderService(
-            MenuRepository menuRepository,
             OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository
+            OrderTableRepository orderTableRepository,
+            OrderValidator orderValidator
     ) {
-        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -50,33 +49,30 @@ public class OrderService {
             throw new IllegalArgumentException("EMPTY 상태인 테이블에 주문할 수 없습니다.");
         }
 
+        List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderCreateRequest.getOrderLineItems());
+
         Order order = Order.builder()
                 .orderTable(orderTable)
+                .orderLineItems(orderLineItems)
                 .orderStatus(OrderStatus.COOKING)
                 .build();
+        orderValidator.validate(order);
 
-        List<OrderLineItem> orderLineItems = orderLineItemDtos.stream()
-                .map(orderLineItemDto -> getOrderLineItem(orderLineItemDto, order))
-                .collect(Collectors.toList());
-
-        order.addOrderLineItems(orderLineItems);
         Order savedOrder = orderRepository.save(order);
-
         return OrderResponse.from(savedOrder);
     }
 
-    private OrderLineItem getOrderLineItem(OrderLineItemDto orderLineItemDto, Order order) {
-        Menu menu = findMenuById(orderLineItemDto.getMenuId());
-        return OrderLineItem.builder()
-                .order(order)
-                .menu(menu)
-                .quantity(orderLineItemDto.getQuantity())
-                .build();
+    private List<OrderLineItem> convertToOrderLineItems(List<OrderLineItemDto> orderLineItemDtos) {
+        return orderLineItemDtos.stream()
+                .map(this::createOrderLineItem)
+                .collect(Collectors.toList());
     }
 
-    private Menu findMenuById(Long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("일치하는 메뉴를 찾을 수 없습니다."));
+    private OrderLineItem createOrderLineItem(OrderLineItemDto orderLineItemDto) {
+        return OrderLineItem.builder()
+                .menuId(orderLineItemDto.getMenuId())
+                .quantity(orderLineItemDto.getQuantity())
+                .build();
     }
 
     @Transactional(readOnly = true)

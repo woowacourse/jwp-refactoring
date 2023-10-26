@@ -35,17 +35,19 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "order_id", updatable = false, nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
     }
 
-    private Order(OrderTable orderTable, OrderStatus orderStatus) {
+    private Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
         this.orderTable = orderTable;
         orderTable.addOrder(this);
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
+        this.orderLineItems = orderLineItems;
     }
 
     public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
@@ -85,8 +87,10 @@ public class Order {
     }
 
     public static class OrderBuilder {
+
         private OrderTable orderTable;
         private OrderStatus orderStatus;
+        private List<OrderLineItem> orderLineItems;
 
         public OrderBuilder orderTable(OrderTable orderTable) {
             this.orderTable = orderTable;
@@ -98,8 +102,13 @@ public class Order {
             return this;
         }
 
+        public OrderBuilder orderLineItems(List<OrderLineItem> orderLineItems) {
+            this.orderLineItems = orderLineItems;
+            return this;
+        }
+
         public Order build() {
-            return new Order(orderTable, orderStatus);
+            return new Order(orderTable, orderStatus, orderLineItems);
         }
     }
 }

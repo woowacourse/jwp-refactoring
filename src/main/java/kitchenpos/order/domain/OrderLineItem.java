@@ -3,15 +3,11 @@ package kitchenpos.order.domain;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.dto.vo.Quantity;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 @Table(name = "order_line_item")
@@ -22,13 +18,8 @@ public class OrderLineItem {
     @Column(name = "seq")
     private Long seq;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @Column(name = "menu_id")
+    private Long menuId;
 
     @Embedded
     private Quantity quantity;
@@ -36,9 +27,8 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    private OrderLineItem(Order order, Menu menu, long quantity) {
-        this.order = order;
-        this.menu = menu;
+    private OrderLineItem(Long menuId, long quantity) {
+        this.menuId = menuId;
         this.quantity = new Quantity(quantity);
     }
 
@@ -46,12 +36,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public Quantity getQuantity() {
@@ -64,17 +50,11 @@ public class OrderLineItem {
 
     public static class OrderLineItemBuilder {
 
-        private Order order;
-        private Menu menu;
+        private Long menuId;
         private long quantity;
 
-        public OrderLineItemBuilder order(Order order) {
-            this.order = order;
-            return this;
-        }
-
-        public OrderLineItemBuilder menu(Menu menu) {
-            this.menu = menu;
+        public OrderLineItemBuilder menuId(Long menuId) {
+            this.menuId = menuId;
             return this;
         }
 
@@ -84,7 +64,7 @@ public class OrderLineItem {
         }
 
         public OrderLineItem build() {
-            return new OrderLineItem(order, menu, quantity);
+            return new OrderLineItem(menuId, quantity);
         }
     }
 }

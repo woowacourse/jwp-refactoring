@@ -16,7 +16,7 @@ public class OrderLineItemDto {
     }
 
     public static OrderLineItemDto from(OrderLineItem orderLineItem) {
-        return new OrderLineItemDto(orderLineItem.getMenu().getId(), orderLineItem.getQuantity().getValue());
+        return new OrderLineItemDto(orderLineItem.getMenuId(), orderLineItem.getQuantity().getValue());
     }
 
     public Long getMenuId() {
