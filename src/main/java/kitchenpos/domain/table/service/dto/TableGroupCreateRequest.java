@@ -1,4 +1,4 @@
-package kitchenpos.domain.order.service.dto;
+package kitchenpos.domain.table.service.dto;
 
 import org.springframework.util.CollectionUtils;
 
