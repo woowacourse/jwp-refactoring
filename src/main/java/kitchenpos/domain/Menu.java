@@ -1,62 +1,77 @@
 package kitchenpos.domain;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
+@Entity
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @Embedded
+    private Name name;
+
+    @Embedded
+    private Price price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private MenuGroup menuGroup;
+
+    @Embedded
+    private MenuProducts menuProducts;
 
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
+    public Menu(
+            final String name,
+            final BigDecimal price,
+            final MenuGroup menuGroup,
+            final MenuProducts menuProducts) {
+        this.name = new Name(name);
+        this.price = new Price(price);
+        this.menuGroup = menuGroup;
+
+        validatePrice(menuProducts);
+        menuProducts.initMenu(this);
         this.menuProducts = menuProducts;
+    }
+
+    private void validatePrice(final MenuProducts menuProducts) {
+        if (price.compareTo(menuProducts.calculateSum()) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
+        return name.getValue();
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+        return menuProducts.getMenuProducts();
     }
 }
