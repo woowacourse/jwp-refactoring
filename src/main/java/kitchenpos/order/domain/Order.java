@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
@@ -10,12 +9,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -32,9 +29,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, updatable = false)
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     private String orderStatus;
 
@@ -49,8 +44,8 @@ public class Order {
     protected Order() {
     }
 
-    private Order(final OrderTable orderTable, final String orderStatus) {
-        this.orderTable = orderTable;
+    private Order(final Long orderTableId, final String orderStatus) {
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
     }
 
@@ -65,8 +60,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -88,22 +83,14 @@ public class Order {
         this.orderStatus = status.name();
     }
 
-    public Long getOrderTableId() {
-        return orderTable.getId();
-    }
-
     public static class OrderFactory {
 
         private static final String DEFAULT_STATUS = OrderStatus.COOKING.name();
 
         private Order order;
 
-        public OrderFactory(final OrderTable orderTable) {
-            if (orderTable.isEmpty()) {
-                throw new IllegalArgumentException();
-            }
-
-            this.order = new Order(orderTable, DEFAULT_STATUS);
+        public OrderFactory(final Long orderTableId) {
+            this.order = new Order(orderTableId, DEFAULT_STATUS);
         }
 
         public OrderFactory addMenu(final Menu menu, final long quantity) {

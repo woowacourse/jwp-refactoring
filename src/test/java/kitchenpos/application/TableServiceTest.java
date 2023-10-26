@@ -168,7 +168,7 @@ class TableServiceTest {
         @DisplayName("완료되지 않은 주문이 있으면 empty상태로 변경할 수 없다.")
         void throwExceptionWithUnCompletedOrder(final String status) {
             // given
-            final Order order = new Order.OrderFactory(notEmptyTable)
+            final Order order = new Order.OrderFactory(notEmptyTable.getId())
                     .addMenu(testMenu, 1L)
                     .create();
             order.changeOrderStatus(OrderStatus.valueOf(status));

@@ -145,7 +145,7 @@ class OrderServiceTest {
 
         @BeforeEach
         void setup() {
-            final Order order = new Order.OrderFactory(notEmptyTable)
+            final Order order = new Order.OrderFactory(notEmptyTable.getId())
                     .addMenu(testMenu, 1L)
                     .create();
             testOrder = orderRepository.save(order);
@@ -191,7 +191,7 @@ class OrderServiceTest {
     @DisplayName("주문들 리스트 조회 테스트")
     void getOrderList() {
         // given
-        final Order order = new Order.OrderFactory(notEmptyTable)
+        final Order order = new Order.OrderFactory(notEmptyTable.getId())
                 .addMenu(testMenu, 1L)
                 .create();
         final Order savedOrder = orderRepository.save(order);

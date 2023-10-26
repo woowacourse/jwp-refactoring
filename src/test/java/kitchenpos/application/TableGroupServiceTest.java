@@ -199,7 +199,7 @@ class TableGroupServiceTest {
         @DisplayName("완료상태가 아닌 주문이 있는경우 그룹해제시 예외가 발생한다.")
         void throwExceptionWithUncompletedOrder(final String statusValue) {
             // given
-            final Order order = new Order.OrderFactory(emptyTable1)
+            final Order order = new Order.OrderFactory(emptyTable1.getId())
                     .addMenu(testMenu, 1L)
                     .create();
             order.changeOrderStatus(OrderStatus.valueOf(statusValue));
