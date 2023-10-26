@@ -13,11 +13,11 @@ public class OrderTableNumberOfGuests {
     }
 
     public OrderTableNumberOfGuests(final int numberOfGuests) {
-        validation(numberOfGuests);
+        validate(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void validation(final int numberOfGuests) {
+    private void validate(final int numberOfGuests) {
         if (numberOfGuests < MIN_VALUE) {
             throw new IllegalArgumentException();
         }
