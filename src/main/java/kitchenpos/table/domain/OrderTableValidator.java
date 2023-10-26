@@ -1,35 +1,31 @@
 package kitchenpos.table.domain;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.common.event.OrderCreationEvent;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.common.event.OrderTableChangeEmptyEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderTableValidator {
 
-    private static final List<OrderStatus> UNCHANGEABLE_STATUS = List.of(OrderStatus.MEAL, OrderStatus.COOKING);
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
 
-    public OrderTableValidator(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public OrderTableValidator(
+            OrderTableRepository orderTableRepository,
+            ApplicationEventPublisher eventPublisher
+    ) {
         this.orderTableRepository = orderTableRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public void validateChangeableEmpty(Long orderTableId) {
-        if (isUnableChangeEmpty(orderTableId)) {
-            throw new IllegalArgumentException("Completion 상태가 아닌 주문 테이블은 주문 가능 여부를 변경할 수 없습니다.");
-        }
-    }
+        eventPublisher.publishEvent(new OrderTableChangeEmptyEvent(orderTableId));
 
-    private boolean isUnableChangeEmpty(Long orderTableId) {
-        return orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, UNCHANGEABLE_STATUS);
     }
 
     @EventListener
