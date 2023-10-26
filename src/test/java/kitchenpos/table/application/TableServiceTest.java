@@ -292,7 +292,7 @@ class TableServiceTest {
     }
 
     private OrderLineItem createOrderLineItem(Menu menu) {
-        return OrderLineItem.create(menu.getId(), 1L);
+        return OrderLineItem.create(menu.getName(), menu.getPrice(),1L);
     }
 
 

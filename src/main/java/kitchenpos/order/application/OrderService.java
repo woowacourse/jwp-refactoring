@@ -3,6 +3,12 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import kitchenpos.common.dto.request.OrderCreationRequest;
+import kitchenpos.common.dto.request.OrderLineItemRequest;
+import kitchenpos.common.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.common.dto.response.OrderLineItemResponse;
+import kitchenpos.common.dto.response.OrderResponse;
+import kitchenpos.common.dto.response.TableResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
@@ -11,14 +17,8 @@ import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.common.dto.request.OrderCreationRequest;
-import kitchenpos.common.dto.request.OrderLineItemRequest;
-import kitchenpos.common.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.common.dto.response.OrderLineItemResponse;
-import kitchenpos.common.dto.response.OrderResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.common.dto.response.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +55,10 @@ public class OrderService {
 
     private OrderLineItems createOrderLineItems(List<OrderLineItemRequest> requests) {
         List<OrderLineItem> orderLineItems = requests.stream()
-                .map(request -> OrderLineItem.create(request.getMenuId(), request.getQuantity()))
+                .map(request -> {
+                    Menu menu = findMenuById(request.getMenuId());
+                    return OrderLineItem.create(menu.getName(), menu.getPrice(), request.getQuantity());
+                })
                 .collect(Collectors.toList());
 
         return OrderLineItems.from(orderLineItems);
@@ -71,14 +74,8 @@ public class OrderService {
     private List<OrderLineItemResponse> mapToOrderLineItemResponses(Order order) {
         return order.getOrderLineItems()
                 .stream()
-                .map(this::mapToOrderLineItemResponse)
+                .map(OrderLineItemResponse::from)
                 .collect(Collectors.toList());
-    }
-
-    private OrderLineItemResponse mapToOrderLineItemResponse(OrderLineItem orderLineItem) {
-        Menu menu = findMenuById(orderLineItem.getMenuId());
-
-        return OrderLineItemResponse.from(orderLineItem, menu);
     }
 
     private TableResponse mapToTableResponse(Order order) {

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,9 @@ class OrderTest {
     @Test
     void createOrderFailTest_ByOrderTableIsNull() {
         //given
-        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
+        OrderLineItems orderLineItems = OrderLineItems.from(
+                List.of(OrderLineItem.create("MenuName", BigDecimal.TEN, 1L))
+        );
 
         //when then
         assertThatThrownBy(() -> Order.create(null, orderLineItems, orderValidator))
@@ -37,7 +40,9 @@ class OrderTest {
     @Test
     void createOrderFailTest_ByOrderTableIsEmpty() {
         //given
-        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
+        OrderLineItems orderLineItems = OrderLineItems.from(
+                List.of(OrderLineItem.create("MenuName", BigDecimal.TEN, 1L))
+        );
         doThrow(new IllegalArgumentException("주문할 수 없는 상태의 테이블이 존재합니다."))
                 .when(orderValidator).validate(any(),any());
 
@@ -51,7 +56,9 @@ class OrderTest {
     @Test
     void createOrderSuccessTest_HavingCookingStatus() {
         //given
-        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
+        OrderLineItems orderLineItems = OrderLineItems.from(
+                List.of(OrderLineItem.create("MenuName", BigDecimal.TEN, 1L))
+        );
 
         //when
         Order order = Order.create(1L, orderLineItems, orderValidator);
@@ -64,7 +71,9 @@ class OrderTest {
     @Test
     void changeOrderStatusFailTest_ByOrderStatusIsCompletion() {
         //given
-        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
+        OrderLineItems orderLineItems = OrderLineItems.from(
+                List.of(OrderLineItem.create("MenuName", BigDecimal.TEN, 1L))
+        );
         Order order = Order.create(1L, orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
@@ -78,7 +87,9 @@ class OrderTest {
     @EnumSource(mode = Mode.INCLUDE, names = {"MEAL", "COOKING"})
     void changeOrderStatusSuccessTest_ByOrderStatusIsNotCompletion(OrderStatus orderStatus) {
         //given
-        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
+        OrderLineItems orderLineItems = OrderLineItems.from(
+                List.of(OrderLineItem.create("MenuName", BigDecimal.TEN, 1L))
+        );
 
         Order order = Order.create(1L, orderLineItems, orderValidator);
         order.changeOrderStatus(orderStatus);

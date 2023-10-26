@@ -9,6 +9,10 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import kitchenpos.common.dto.request.OrderCreationRequest;
+import kitchenpos.common.dto.request.OrderLineItemRequest;
+import kitchenpos.common.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.common.dto.response.OrderResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
@@ -22,10 +26,6 @@ import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.common.dto.request.OrderCreationRequest;
-import kitchenpos.common.dto.request.OrderLineItemRequest;
-import kitchenpos.common.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.common.dto.response.OrderResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
@@ -183,7 +183,7 @@ class OrderServiceTest {
         OrderResponse response = orderService.create(request);
 
         //when
-        OrderLineItem expectedOrderLineItem = OrderLineItem.create(menu.getId(), 1L);
+        OrderLineItem expectedOrderLineItem = OrderLineItem.create(menu.getName(), menu.getPrice(), 1L);
 
         List<OrderLineItem> orderLineItems =
                 em.createQuery("SELECT o FROM OrderLineItem o", OrderLineItem.class)
@@ -284,7 +284,7 @@ class OrderServiceTest {
     }
 
     private OrderLineItem createOrderLineItem(Menu menu) {
-        return OrderLineItem.create(menu.getId(), 1L);
+        return OrderLineItem.create(menu.getName(),menu.getPrice(), 1L);
     }
 
 }
