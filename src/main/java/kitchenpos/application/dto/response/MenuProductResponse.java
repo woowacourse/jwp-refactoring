@@ -16,10 +16,10 @@ public class MenuProductResponse {
         this.quantity = quantity;
     }
 
-    public static MenuProductResponse toResponse(final MenuProduct menuProduct) {
+    public static MenuProductResponse toResponse(final MenuProduct menuProduct, final Long menuId) {
         return new MenuProductResponse(
                 menuProduct.getSeq(),
-                menuProduct.getMenu().getId(),
+                menuId,
                 menuProduct.getProduct().getId(),
                 menuProduct.getQuantity()
         );

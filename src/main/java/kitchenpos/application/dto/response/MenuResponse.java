@@ -24,7 +24,7 @@ public class MenuResponse {
 
     public static MenuResponse toResponse(final Menu menu) {
         final var menuProductResponses = menu.getMenuProducts().stream()
-                .map(MenuProductResponse::toResponse)
+                .map(menuProduct -> MenuProductResponse.toResponse(menuProduct, menu.getId()))
                 .collect(Collectors.toList());
         return new MenuResponse(
                 menu.getId(),

@@ -95,7 +95,7 @@
   graph LR
     Menu -.-> MenuGroup
   ```
-- [ ] Menu <-> MenuProduct
+- [X] Menu <-> MenuProduct
   - AS-IS : 양방향 직접 참조
   ```mermaid
   graph LR

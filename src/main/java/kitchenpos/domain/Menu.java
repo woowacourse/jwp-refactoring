@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -22,7 +23,8 @@ public class Menu {
     private BigDecimal price;
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu", cascade = PERSIST)
+    @OneToMany(cascade = PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -67,9 +69,6 @@ public class Menu {
 
     public void addMenuProduct(final MenuProduct menuProduct) {
         this.menuProducts.add(menuProduct);
-        if (menuProduct.getMenu() != this) {
-            menuProduct.setMenu(this);
-        }
     }
 
     public Long getId() {
