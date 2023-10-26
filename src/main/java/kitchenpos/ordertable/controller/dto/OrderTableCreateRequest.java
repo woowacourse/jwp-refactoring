@@ -2,20 +2,14 @@ package kitchenpos.ordertable.controller.dto;
 
 public class OrderTableCreateRequest {
     
-    private final Long tableGroupId;
-    
     private final int numberOfGuests;
     
     private final boolean empty;
     
-    public OrderTableCreateRequest(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this.tableGroupId = tableGroupId;
+    public OrderTableCreateRequest(final int numberOfGuests,
+                                   final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-    
-    public Long getTableGroupId() {
-        return tableGroupId;
     }
     
     public int getNumberOfGuests() {

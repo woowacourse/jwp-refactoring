@@ -65,7 +65,7 @@ class OrderTableServiceTest {
     void 주문_테이블을_정상적으로_생성한다() {
         //given
         final OrderTable orderTable = ORDER_TABLE(false, 1);
-        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(1L, 1, false);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest( 1, false);
         
         //when
         final OrderTable savedOrderTable = orderTableService.create(orderTableCreateRequest);
@@ -73,7 +73,7 @@ class OrderTableServiceTest {
         //then
         assertSoftly(softly -> {
                     softly.assertThat(savedOrderTable.getId()).isNotNull();
-                    softly.assertThat(savedOrderTable.getTableGroup()).isNull();
+                    softly.assertThat(savedOrderTable.getTableGroupId()).isNull();
                 }
         );
     }
@@ -106,8 +106,8 @@ class OrderTableServiceTest {
         OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
         final TableGroup tableGroup = TABLE_GROUP(List.of(savedOrderTable1, savedOrderTable2));
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        savedOrderTable1.setTableGroup(savedTableGroup);
-        savedOrderTable2.setTableGroup(savedTableGroup);
+        savedOrderTable1.setTableGroup(savedTableGroup.getId());
+        savedOrderTable2.setTableGroup(savedTableGroup.getId());
         
         //when & then
         OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(true);
