@@ -5,6 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.domain.Price;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTables;
+import kitchenpos.table_group.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +21,20 @@ class OrderTablesTest {
     @Test
     void registerTableGroup_failNotEmptyTable() {
         // given
-        final OrderTable orderTable1 = new OrderTable(1L, 1, false, List.of(new Order(), new Order()));
-        final OrderTable orderTable2 = new OrderTable(2L, 1, true, List.of(new Order()));
+        final OrderTable orderTable1 = new OrderTable(1L, 1, false, List.of(new Order(1L, OrderStatus.COMPLETION,
+                                                                                      List.of(new OrderLineItem(1L, 1L,
+                                                                                                                "치킨",
+                                                                                                                new Price(
+                                                                                                                    BigDecimal.TEN),
+                                                                                                                null)),
+                                                                                      1L)));
+        final OrderTable orderTable2 = new OrderTable(2L, 1, true, List.of(new Order(2L, OrderStatus.COMPLETION,
+                                                                                     List.of(new OrderLineItem(1L, 1L,
+                                                                                                               "치킨",
+                                                                                                               new Price(
+                                                                                                                   BigDecimal.TEN),
+                                                                                                               null)),
+                                                                                     2L)));
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
         final TableGroup tableGroup = new TableGroup(1L);
 

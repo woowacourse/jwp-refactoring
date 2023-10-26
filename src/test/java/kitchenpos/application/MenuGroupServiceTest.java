@@ -5,10 +5,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.application.dto.MenuGroupCreateRequest;
-import kitchenpos.application.dto.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.menu_group.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menu_group.application.dto.MenuGroupResponse;
+import kitchenpos.menu_group.application.MenuGroupService;
+import kitchenpos.menu_group.domain.MenuGroup;
+import kitchenpos.menu_group.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
