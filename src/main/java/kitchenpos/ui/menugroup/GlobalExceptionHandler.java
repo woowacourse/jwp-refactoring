@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.ui.menugroup;
 
 import kitchenpos.dto.common.ErrorResponse;
 import kitchenpos.exception.common.BadRequestException;

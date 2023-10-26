@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.ui.menu;
 
 import kitchenpos.application.menu.MenuService;
 import kitchenpos.dto.menu.CreateMenuRequest;

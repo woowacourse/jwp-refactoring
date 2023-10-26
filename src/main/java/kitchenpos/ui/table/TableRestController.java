@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.ui.table;
 
 import kitchenpos.application.table.TableService;
 import kitchenpos.dto.table.ChangeNumberOfGuestsRequest;
