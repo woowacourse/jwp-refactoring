@@ -32,7 +32,7 @@ public class CreateMenuRequest {
         return price;
     }
 
-    public long getMenuGroupId() {
+    public Long getMenuGroupId() {
         return menuGroupId;
     }
 

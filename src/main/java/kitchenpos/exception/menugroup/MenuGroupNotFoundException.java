@@ -1,4 +1,4 @@
-package kitchenpos.exception.menu;
+package kitchenpos.exception.menugroup;
 
 import kitchenpos.exception.common.NotFoundException;
 

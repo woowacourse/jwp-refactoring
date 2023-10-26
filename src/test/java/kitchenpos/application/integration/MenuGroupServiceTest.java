@@ -1,8 +1,8 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.dto.menu.CreateMenuGroupRequest;
-import kitchenpos.dto.menu.ListMenuGroupResponse;
-import kitchenpos.dto.menu.MenuGroupResponse;
+import kitchenpos.dto.menugroup.CreateMenuGroupRequest;
+import kitchenpos.dto.menugroup.ListMenuGroupResponse;
+import kitchenpos.dto.menugroup.MenuGroupResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 

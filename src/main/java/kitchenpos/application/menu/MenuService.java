@@ -1,17 +1,17 @@
 package kitchenpos.application.menu;
 
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.menu.CreateMenuRequest;
 import kitchenpos.dto.menu.ListMenuResponse;
 import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.exception.menu.MenuGroupNotFoundException;
+import kitchenpos.exception.menugroup.MenuGroupNotFoundException;
 import kitchenpos.exception.product.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,35 +37,35 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final CreateMenuRequest request) {
-        final MenuGroup menuGroup = convertToMenuGroup(request);
-        final List<Product> products = convertToProducts(request);
-        final List<Long> quantities = convertToQuantities(request);
+        final MenuGroup menuGroup = findMenuGroup(request);
+        final List<Product> products = findProducts(request);
+        final List<Long> quantities = collectQuantities(request);
         final MenuProducts menuProducts = MenuProducts.from(products, quantities);
-        final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup, menuProducts);
+        final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup.getId(), menuProducts);
         menuProducts.setMenu(menu);
 
         return MenuResponse.from(menuRepository.save(menu));
     }
 
-    private MenuGroup convertToMenuGroup(final CreateMenuRequest request) {
+    private MenuGroup findMenuGroup(final CreateMenuRequest request) {
         return menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new MenuGroupNotFoundException(request.getMenuGroupId()));
     }
 
-    private List<Long> convertToQuantities(final CreateMenuRequest request) {
+    private List<Long> collectQuantities(final CreateMenuRequest request) {
         return request.getMenuProducts().stream()
                 .map(MenuProductRequest::getQuantity)
                 .collect(Collectors.toList());
     }
 
-    private List<Product> convertToProducts(final CreateMenuRequest request) {
+    private List<Product> findProducts(final CreateMenuRequest request) {
         return request.getMenuProducts().stream()
                 .map(MenuProductRequest::getProductId)
-                .map(this::checkProductExists)
+                .map(this::findProduct)
                 .collect(Collectors.toList());
     }
 
-    private Product checkProductExists(final Long productId) {
+    private Product findProduct(final Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
     }
