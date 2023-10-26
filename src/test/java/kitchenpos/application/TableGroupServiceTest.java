@@ -126,8 +126,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 테이블1 = orderTableRepository.save(빈테이블());

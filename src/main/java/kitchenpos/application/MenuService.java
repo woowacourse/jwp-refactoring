@@ -39,10 +39,7 @@ public class MenuService {
     private Menu getMenu(final MenuCreateDto request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        final Menu menu = new Menu(request.getName(), new Price(request.getPrice()), menuGroup);
-        menu.addMenuProducts(getMenuProducts(request));
-
-        return menu;
+        return new Menu(request.getName(), new Price(request.getPrice()), menuGroup, getMenuProducts(request));
     }
 
     private List<MenuProduct> getMenuProducts(final MenuCreateDto request) {

@@ -20,7 +20,7 @@ public class MenuFixture {
         return new MenuCreateDto(name, BigDecimal.valueOf(price), menuGroupId, menuProductDtos);
     }
 
-    public static Menu 메뉴(String name, int price, MenuGroup menuGroup) {
-        return new Menu(name, new Price(BigDecimal.valueOf(price)), menuGroup);
+    public static Menu 메뉴(final String name, final int price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
+        return new Menu(name, new Price(BigDecimal.valueOf(price)), menuGroup, menuProducts);
     }
 }

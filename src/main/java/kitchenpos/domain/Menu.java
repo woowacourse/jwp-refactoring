@@ -38,15 +38,12 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(final String name, final Price price, final MenuGroup menuGroup) {
+    public Menu(final String name, final Price price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-    }
-
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
         validateMenuProducts(menuProducts);
-        menuProducts.forEach(this::addMenuProduct);
+        this.menuProducts.addAll(menuProducts);
     }
 
     private void validateMenuProducts(final List<MenuProduct> menuProducts) {
@@ -56,10 +53,6 @@ public class Menu {
         if (price.isBiggerThan(sum)) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private void addMenuProduct(final MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
     }
 
     public Long getId() {

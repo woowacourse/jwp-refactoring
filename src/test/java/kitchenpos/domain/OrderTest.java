@@ -32,11 +32,8 @@ class OrderTest {
             final var 후라이드_1개 = 메뉴상품(후라이드, 1);
             final var 양념치킨_1개 = 메뉴상품(양념치킨, 1);
 
-            final var 메뉴1 = 메뉴("후라이드양념", 25000, 두마리메뉴);
-            메뉴1.addMenuProducts(List.of(후라이드_1개, 양념치킨_1개));
-
-            final var 메뉴2 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            메뉴2.addMenuProducts(List.of(후라이드_1개));
+            final var 메뉴1 = 메뉴("후라이드양념", 25000, 두마리메뉴, List.of(후라이드_1개, 양념치킨_1개));
+            final var 메뉴2 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(후라이드_1개));
 
             final var tableId = 1L;
             final var orderItems = List.of(주문상품(메뉴1, 2), 주문상품(메뉴2, 3));
@@ -61,11 +58,8 @@ class OrderTest {
             final var 후라이드_1개 = 메뉴상품(후라이드, 1);
             final var 양념치킨_1개 = 메뉴상품(양념치킨, 1);
 
-            final var 메뉴1 = 메뉴("후라이드양념", 25000, 두마리메뉴);
-            메뉴1.addMenuProducts(List.of(후라이드_1개, 양념치킨_1개));
-
-            final var 메뉴2 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            메뉴2.addMenuProducts(List.of(후라이드_1개));
+            final var 메뉴1 = 메뉴("후라이드양념", 25000, 두마리메뉴, List.of(후라이드_1개, 양념치킨_1개));
+            final var 메뉴2 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(후라이드_1개));
 
             final var tableId = 1L;
             final var orderItems = List.of(주문상품(메뉴1, 2), 주문상품(메뉴2, 3));
