@@ -14,6 +14,9 @@ public class MenuGroup {
     
     private String name;
     
+    public MenuGroup() {
+    }
+    
     public MenuGroup(final String name) {
         this(null, name);
     }

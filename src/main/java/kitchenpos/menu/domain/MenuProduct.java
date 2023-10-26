@@ -22,6 +22,9 @@ public class MenuProduct {
     
     private long quantity;
     
+    public MenuProduct() {
+    }
+    
     public MenuProduct(final Menu menu,
                        final Product product,
                        final long quantity) {

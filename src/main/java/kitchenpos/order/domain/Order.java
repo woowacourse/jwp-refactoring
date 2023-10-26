@@ -3,7 +3,6 @@ package kitchenpos.order.domain;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.order.exception.InvalidOrderChangeException;
 import kitchenpos.order.exception.InvalidOrderException;
-import kitchenpos.menu.domain.Menu;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
@@ -36,6 +35,9 @@ public class Order {
     
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
+    
+    public Order() {
+    }
     
     public static Order of(final OrderTable orderTable,
                            final OrderStatus orderStatus,
@@ -84,12 +86,11 @@ public class Order {
     }
     
     private void validateIfDuplicatedMenuInOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        List<Long> menuIds = orderLineItems.stream()
-                                           .map(OrderLineItem::getMenu)
-                                           .map(Menu::getId)
-                                           .collect(Collectors.toList());
-        Set<Long> notDuplicatedMenuIds = new HashSet<>(menuIds);
-        if (notDuplicatedMenuIds.size() != menuIds.size()) {
+        List<MenuSnapshot> menuSnapshots = orderLineItems.stream()
+                                                          .map(OrderLineItem::getMenuSnapshot)
+                                                          .collect(Collectors.toList());
+        Set<MenuSnapshot> notDuplicatedMenu = new HashSet<>(menuSnapshots);
+        if (notDuplicatedMenu.size() != menuSnapshots.size()) {
             throw new InvalidOrderException("같은 메뉴에 대한 주문 항목이 있을 수 없습니다");
         }
     }

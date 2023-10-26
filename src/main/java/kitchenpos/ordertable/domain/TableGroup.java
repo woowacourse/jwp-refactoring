@@ -28,6 +28,9 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
     
+    public TableGroup() {
+    }
+    
     public TableGroup(final List<OrderTable> orderTables) {
         this(null, null, orderTables);
     }

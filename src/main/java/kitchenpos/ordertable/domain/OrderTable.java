@@ -22,6 +22,9 @@ public class OrderTable {
     
     private boolean empty;
     
+    public OrderTable() {
+    }
+    
     public OrderTable(final int numberOfGuests,
                       final boolean empty) {
         this(null, null, numberOfGuests, empty);

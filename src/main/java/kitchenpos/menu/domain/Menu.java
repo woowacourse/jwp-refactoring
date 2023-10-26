@@ -28,6 +28,9 @@ public class Menu {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MenuProduct> menuProducts = new ArrayList<>();
     
+    public Menu() {
+    }
+    
     public static Menu of(final String name,
                           final BigDecimal menuPrice,
                           final MenuGroup menuGroup,
