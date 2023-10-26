@@ -31,7 +31,7 @@ public class OrderDto {
     public static OrderDto from(final Order savedOrder) {
         final List<OrderLineItemDto> orderLineItemDtos = savedOrder.getOrderLineItems()
             .stream()
-            .map(OrderLineItemDto::from)
+            .map(orderLineItem -> OrderLineItemDto.of(orderLineItem, savedOrder.getId()))
             .collect(toUnmodifiableList());
 
         return new OrderDto(

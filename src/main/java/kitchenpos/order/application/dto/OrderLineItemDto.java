@@ -33,11 +33,11 @@ public class OrderLineItemDto {
         return quantity;
     }
 
-    public static OrderLineItemDto from(final OrderLineItem orderLineItem) {
+    public static OrderLineItemDto of(final OrderLineItem orderLineItem, final Long orderId) {
         return new OrderLineItemDto(
             orderLineItem.getSeq(),
-            orderLineItem.getOrder().getId(),
-            orderLineItem.getMenuId(),
+            orderId,
+            orderLineItem.getMenuSnapshot().getId(),
             orderLineItem.getQuantity()
         );
     }
