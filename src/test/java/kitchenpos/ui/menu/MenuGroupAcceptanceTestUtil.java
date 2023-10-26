@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.menu.request.MenuGroupCreateRequest;
+import kitchenpos.menu.request.MenuGroupCreateRequest;
 import kitchenpos.ui.ControllerAcceptanceTestHelper;
 import kitchenpos.ui.menu.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayNameGeneration;
