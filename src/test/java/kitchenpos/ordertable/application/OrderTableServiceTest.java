@@ -6,25 +6,23 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
+import kitchenpos.common.domain.ValidResult;
 import kitchenpos.common.exception.KitchenPosException;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableChangeEmptyValidator;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.repository.OrderTableRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -38,8 +36,13 @@ class OrderTableServiceTest {
     @Mock
     OrderTableRepository orderTableRepository;
 
-    @Mock
-    OrderRepository orderRepository;
+    @Spy
+    ArrayList<OrderTableChangeEmptyValidator> validators;
+
+    @AfterEach
+    void tearDown() {
+        validators.clear();
+    }
 
     @Nested
     class create {
@@ -63,25 +66,6 @@ class OrderTableServiceTest {
     @Nested
     class changeEmpty {
 
-        @ParameterizedTest
-        @EnumSource(value = OrderStatus.class, mode = Mode.EXCLUDE, names = {"COMPLETION"})
-        void 테이블의_주문이_계산_완료가_아니면_예외(OrderStatus orderStatus) {
-            // given
-            OrderTable orderTable = new OrderTable(1L, false, 0);
-            given(orderTableRepository.findById(anyLong()))
-                .willReturn(Optional.of(orderTable));
-            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
-
-            Order order = new Order(1L, orderStatus, orderedTime, orderTable);
-            given(orderRepository.findByOrderTableId(anyLong()))
-                .willReturn(Optional.of(order));
-
-            // when & then
-            assertThatThrownBy(() -> orderTableService.changeEmpty(1L, true))
-                .isInstanceOf(KitchenPosException.class)
-                .hasMessage("계산 완료 상태가 아닌 주문이 있는 테이블은 상태를 변경할 수 없습니다. orderTableId=1");
-        }
-
         @Test
         void 주문_테이블_식별자에_대한_주문_테이블이_없으면_예외() {
             // given
@@ -95,31 +79,26 @@ class OrderTableServiceTest {
         }
 
         @Test
-        void 주문_테이블_식별자에_대한_주문이_없으면_예외() {
+        void Validator_검증에_실패하면_예외() {
             // given
             OrderTable orderTable = new OrderTable(1L, false, 0);
             given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-            given(orderRepository.findByOrderTableId(anyLong()))
-                .willReturn(Optional.empty());
+            OrderTableChangeEmptyValidator validator = id -> ValidResult.failure("예외가 발생했습니다.");
+            validators.add(validator);
 
             // when & then
             assertThatThrownBy(() -> orderTableService.changeEmpty(1L, true))
                 .isInstanceOf(KitchenPosException.class)
-                .hasMessage("해당 주문이 없습니다. orderTableId=1");
+                .hasMessage("예외가 발생했습니다.");
         }
 
         @Test
-        void 테이블의_주문이_계산_완료이면_성공() {
+        void 성공() {
             // given
             OrderTable orderTable = new OrderTable(1L, false, 0);
             given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
-
-            Order order = new Order(1L, OrderStatus.COMPLETION, orderedTime, orderTable);
-            given(orderRepository.findByOrderTableId(anyLong()))
-                .willReturn(Optional.of(order));
 
             // when
             orderTableService.changeEmpty(1L, true);

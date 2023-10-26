@@ -3,10 +3,10 @@ package kitchenpos.ordertable.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
+import kitchenpos.common.domain.ValidResult;
 import kitchenpos.common.exception.KitchenPosException;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableChangeEmptyValidator;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.dto.OrderTableResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
@@ -18,11 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderTableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final List<OrderTableChangeEmptyValidator> validators;
 
-    public OrderTableService(OrderTableRepository orderTableRepository, OrderRepository orderRepository) {
+    public OrderTableService(
+        OrderTableRepository orderTableRepository,
+        List<OrderTableChangeEmptyValidator> validators
+    ) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.validators = validators;
     }
 
     public OrderTableResponse create(OrderTableCreateRequest request) {
@@ -43,10 +46,10 @@ public class OrderTableService {
 
     public OrderTableResponse changeEmpty(Long orderTableId, boolean empty) {
         OrderTable orderTable = findOrderTable(orderTableId);
-        Order order = findOrderByOrderTableId(orderTableId);
-        if (!order.isCompletion()) {
-            throw new KitchenPosException("계산 완료 상태가 아닌 주문이 있는 테이블은 상태를 변경할 수 없습니다. orderTableId=" + orderTableId);
-        }
+        validators.forEach(validator -> {
+            ValidResult result = validator.validate(orderTableId);
+            result.throwIfFailure(KitchenPosException::new);
+        });
         orderTable.changeEmpty(empty);
         return OrderTableResponse.from(orderTable);
     }
@@ -54,11 +57,6 @@ public class OrderTableService {
     private OrderTable findOrderTable(Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new KitchenPosException("해당 주문 테이블이 없습니다. orderTableId=" + orderTableId));
-    }
-
-    private Order findOrderByOrderTableId(Long orderTableId) {
-        return orderRepository.findByOrderTableId(orderTableId)
-            .orElseThrow(() -> new KitchenPosException("해당 주문이 없습니다. orderTableId=" + orderTableId));
     }
 
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
