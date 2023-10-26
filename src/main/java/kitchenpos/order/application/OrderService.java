@@ -1,11 +1,10 @@
 package kitchenpos.order.application;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
+import kitchenpos.order.domain.MenuSnapshot;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -17,16 +16,17 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    private final MenuRepository menuRepository;
+
+    private final MenuSnapshotService menuSnapshotService;
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
 
     public OrderService(
-            final MenuRepository menuRepository,
+            final MenuSnapshotService menuSnapshotService,
             final OrderRepository orderRepository,
             final OrderValidator orderValidator
     ) {
-        this.menuRepository = menuRepository;
+        this.menuSnapshotService = menuSnapshotService;
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
     }
@@ -40,9 +40,8 @@ public class OrderService {
 
         final Order.OrderFactory orderFactory = new Order.OrderFactory(orderTableId);
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(IllegalArgumentException::new);
-            orderFactory.addMenu(menu, orderLineItemRequest.getQuantity());
+            final MenuSnapshot menuSnapshot = menuSnapshotService.getMenuSnapshotFor(orderLineItemRequest.getMenuId());
+            orderFactory.addMenu(menuSnapshot, orderLineItemRequest.getQuantity());
         }
         final Order order = orderFactory.create();
 

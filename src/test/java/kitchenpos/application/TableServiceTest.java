@@ -4,6 +4,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.application.MenuSnapshotService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -62,6 +63,9 @@ class TableServiceTest {
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuSnapshotService menuSnapshotService;
 
     private OrderTable emptyTable;
     private OrderTable notEmptyTable;
@@ -169,7 +173,7 @@ class TableServiceTest {
         void throwExceptionWithUnCompletedOrder(final String status) {
             // given
             final Order order = new Order.OrderFactory(notEmptyTable.getId())
-                    .addMenu(testMenu, 1L)
+                    .addMenu(menuSnapshotService.getMenuSnapshotFor(testMenu.getId()), 1L)
                     .create();
             order.changeOrderStatus(OrderStatus.valueOf(status));
             orderRepository.save(order);

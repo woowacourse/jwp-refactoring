@@ -1,6 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.menu.domain.Menu;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
@@ -93,8 +92,8 @@ public class Order {
             this.order = new Order(orderTableId, DEFAULT_STATUS);
         }
 
-        public OrderFactory addMenu(final Menu menu, final long quantity) {
-            order.addOrderLineItem(new OrderLineItem(menu, quantity));
+        public OrderFactory addMenu(final MenuSnapshot menuSnapshot, final Long quantity) {
+            order.addOrderLineItem(new OrderLineItem(menuSnapshot, quantity));
             return this;
         }
 

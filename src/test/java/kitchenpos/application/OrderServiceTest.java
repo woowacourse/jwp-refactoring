@@ -1,22 +1,23 @@
 package kitchenpos.application;
 
+import kitchenpos.common.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.application.MenuSnapshotService;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.common.domain.Price;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menu.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repoisotory.OrderTableRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.order.application.OrderService;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,9 @@ class OrderServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private MenuSnapshotService menuSnapshotService;
 
     private OrderTable notEmptyTable;
     private Menu testMenu;
@@ -146,7 +150,7 @@ class OrderServiceTest {
         @BeforeEach
         void setup() {
             final Order order = new Order.OrderFactory(notEmptyTable.getId())
-                    .addMenu(testMenu, 1L)
+                    .addMenu(menuSnapshotService.getMenuSnapshotFor(testMenu.getId()), 1L)
                     .create();
             testOrder = orderRepository.save(order);
         }
@@ -192,7 +196,7 @@ class OrderServiceTest {
     void getOrderList() {
         // given
         final Order order = new Order.OrderFactory(notEmptyTable.getId())
-                .addMenu(testMenu, 1L)
+                .addMenu(menuSnapshotService.getMenuSnapshotFor(testMenu.getId()), 1L)
                 .create();
         final Order savedOrder = orderRepository.save(order);
 

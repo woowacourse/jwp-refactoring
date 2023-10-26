@@ -2,10 +2,14 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.common.domain.Price;
 import kitchenpos.product.domain.Product;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,11 +17,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Menu {
 
     @Id
@@ -36,6 +42,10 @@ public class Menu {
     @OneToMany(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "menu_id", updatable = false, nullable = false)
     private List<MenuProduct> menuProducts;
+
+    @Column(nullable = false)
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     protected Menu() {
     }
@@ -83,6 +93,14 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public String getMenuGroupName() {
+        return menuGroup.getName();
     }
 
     public static class MenuFactory {
