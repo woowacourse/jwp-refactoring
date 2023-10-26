@@ -15,7 +15,7 @@ PUT {{host}}/api/tables/1/orderable
 Content-Type: application/json
 
 {
-  "orderable": false
+  "orderable": true
 }
 
 ###

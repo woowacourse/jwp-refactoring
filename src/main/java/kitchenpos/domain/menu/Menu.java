@@ -27,6 +27,7 @@ public class Menu {
     private Money price;
     @NotNull
     private Long menuGroupId;
+    @NotNull
     @Embedded
     private MenuProducts menuProducts;
 

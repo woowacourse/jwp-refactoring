@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "orders")
 public class Order {
     public static final String CHANGE_COMPLETED_ORDER_STATUS_ERROR_MESSAGE = "이미 완료된 주문은 변경할 수 없습니다.";
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

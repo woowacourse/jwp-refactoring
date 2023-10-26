@@ -17,11 +17,13 @@ public class TableGroup {
     public static final String ORDER_TABLE_SIZE_IS_BELOW_TWO_ERROR_MESSAGE = "테이블 그룹은 2개 이상의 테이블로 구성되어야 합니다.";
     public static final String TABLE_IS_IN_TABLE_GROUP_ERROR_MESSAGE = "이미 테이블 그룹에 속해있는 테이블입니다.";
     public static final String ORDERABLE_TABLE_IS_NOT_ALLOWED_ERROR_MESSAGE = "주문 불가능한 테이블만 그룹 지정이 가능합니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
     private LocalDateTime createdDate;
+    @NotNull
     @OneToMany
     @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;

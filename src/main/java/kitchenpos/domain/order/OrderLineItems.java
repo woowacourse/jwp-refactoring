@@ -16,6 +16,7 @@ import java.util.stream.IntStream;
 public class OrderLineItems {
     public static final String ORDER_LINE_ITEMS_IS_EMPTY_ERROR_MESSAGE = "주문 항목이 존재하지 않습니다.";
     public static final String MENU_AND_QUANTITY_SIZE_NOT_MATCH_ERROR_MESSAGE = "메뉴와 수량의 개수가 일치하지 않습니다.";
+    
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", nullable = true)
