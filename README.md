@@ -87,6 +87,35 @@
 - [x] Service의 비즈니스 로직 제거
 - [x] 참조 관계 개선
 
+## 의존성
+
+- 도메인 간 의존성
+
+```mermaid
+classDiagram
+    Order --> OrderLineItems
+    OrderLineItems --> OrderLineItem
+    OrderLineItem ..> Menu
+    Menu --> MenuProduct
+    MenuProduct --> Product
+    Menu ..> MenuGroup
+    Order ..> OrderTable
+    OrderTables --> OrderTable
+    OrderTable --> NumberOfGuests
+    OrderTable ..> TableGroup
+```
+
+- 패키지 간 의존성
+
+```mermaid
+classDiagram
+    order --> table
+    table --> table_group
+    order --> menu
+    menu --> menu_group
+    menu --> product
+```
+
 ## 용어 사전
 
 | 한글명      | 영문명              | 설명                            |
