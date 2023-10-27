@@ -1,8 +1,8 @@
 package kitchenpos.order.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -38,7 +38,7 @@ public class OrderService {
 
     @Transactional
     public Order create(final CreateOrderRequest createOrderRequest) {
-        validateMenuIds(createOrderRequest);
+        validateMenuIds(createOrderRequest.getMenuIds());
 
         final OrderTable orderTable = orderTableRepository.findById(createOrderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -50,15 +50,13 @@ public class OrderService {
 
     private void saveOrderLineItems(final CreateOrderRequest createOrderRequest, final Long orderId) {
         for (final OrderLineItemRequest orderLineItemRequest : createOrderRequest.getOrderLineItems()) {
-            final OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
+            final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId()).orElseThrow();
+            final OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity(), menu.getName(), menu.getPrice());
             orderLineItemRepository.save(orderLineItem);
         }
     }
 
-    private void validateMenuIds(final CreateOrderRequest createOrderRequest) {
-        final List<Long> menuIds = createOrderRequest.getOrderLineItems().stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
+    private void validateMenuIds(final List<Long> menuIds) {
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
