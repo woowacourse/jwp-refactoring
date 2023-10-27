@@ -26,7 +26,7 @@ class TableGroupIntegrationTest extends InitIntegrationTest {
     void testCreateSuccess() {
         //given
         final OrderTableResponse orderTableResponse1 = createDefaultOrderTable();
-        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, true));
+        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, false));
         final List<TableGroupCreateOrderTableRequest> tableGroupCreateOrderTableRequests = List.of(
                 new TableGroupCreateOrderTableRequest(orderTableResponse1.getId()),
                 new TableGroupCreateOrderTableRequest(orderTableResponse2.getId())
@@ -49,7 +49,7 @@ class TableGroupIntegrationTest extends InitIntegrationTest {
     void testUngroupSuccess() {
         //given
         final OrderTableResponse orderTableResponse1 = createDefaultOrderTable();
-        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, true));
+        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, false));
         final List<TableGroupCreateOrderTableRequest> tableGroupCreateOrderTableRequests = List.of(
                 new TableGroupCreateOrderTableRequest(orderTableResponse1.getId()),
                 new TableGroupCreateOrderTableRequest(orderTableResponse2.getId())

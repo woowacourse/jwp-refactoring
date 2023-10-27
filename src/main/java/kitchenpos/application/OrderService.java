@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.mapper.OrderMapper;
@@ -48,12 +47,13 @@ public class OrderService {
     private List<OrderLineItem> makeOrderLineItems(final OrderCreateRequest orderCreateRequest) {
         return orderCreateRequest.getOrderLineItems()
                 .stream()
-                .map(it -> new OrderLineItem(findMenuById(it), it.getQuantity()))
+                .map(it -> new OrderLineItem(findMenuById(it.getMenuId()), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 
-    private Menu findMenuById(final OrderLineItemRequest it) {
-        return menuRepository.findById(it.getMenuId()).orElseThrow(IllegalArgumentException::new);
+    private Menu findMenuById(final Long menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<OrderResponse> list() {

@@ -77,17 +77,10 @@ class TableIntegrationTest extends InitIntegrationTest {
         final MenuGroupResponse menuGroupResponse = createDefaultMenuGroup();
         final MenuResponse menuResponse = createDefaultMenu(productResponse.getId(), productResponse.getPrice(), menuGroupResponse.getId());
 
-        final OrderTableResponse orderTableResponse1 = createDefaultOrderTable();
-        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, true));
-        final List<TableGroupCreateOrderTableRequest> tableGroupCreateOrderTableRequests = List.of(
-                new TableGroupCreateOrderTableRequest(orderTableResponse1.getId()),
-                new TableGroupCreateOrderTableRequest(orderTableResponse2.getId())
-        );
-        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(tableGroupCreateOrderTableRequests);
-        createTableGroupAndReturnResponse(tableGroupCreateRequest);
+        final OrderTableResponse orderTableResponse = createDefaultOrderTable();
 
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuResponse.getMenuGroupId(), 2L);
-        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableResponse1.getId(), List.of(orderLineItemRequest));
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableResponse.getId(), List.of(orderLineItemRequest));
         final OrderResponse orderCreateResponse = createOrderAndReturnResponse(orderCreateRequest);
 
         final OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
@@ -96,11 +89,11 @@ class TableIntegrationTest extends InitIntegrationTest {
         final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(true);
 
         //when
-        final OrderTableResponse response = changeOrderEmpty(orderTableResponse1.getId(), orderTableChangeEmptyRequest);
+        final OrderTableResponse response = changeOrderEmpty(orderTableResponse.getId(), orderTableChangeEmptyRequest);
 
         //then
         assertAll(
-                () -> assertThat(response.getId()).isEqualTo(orderTableResponse1.getId()),
+                () -> assertThat(response.getId()).isEqualTo(orderTableResponse.getId()),
                 () -> assertThat(response.getNumberOfGuests()).isEqualTo(DEFAULT_ORDER_TABLE_NUMBER_OF_GUESTS),
                 () -> assertThat(response.isEmpty()).isEqualTo(orderTableChangeEmptyRequest.isEmpty())
         );
@@ -115,7 +108,7 @@ class TableIntegrationTest extends InitIntegrationTest {
         final MenuResponse menuResponse = createDefaultMenu(productResponse.getId(), productResponse.getPrice(), menuGroupResponse.getId());
 
         final OrderTableResponse orderTableResponse1 = createDefaultOrderTable();
-        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, true));
+        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, false));
         final List<TableGroupCreateOrderTableRequest> tableGroupCreateOrderTableRequests = List.of(
                 new TableGroupCreateOrderTableRequest(orderTableResponse1.getId()),
                 new TableGroupCreateOrderTableRequest(orderTableResponse2.getId())

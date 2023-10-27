@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.request.TableGroupCreateOrderTableRequest;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.application.mapper.TableGroupMapper;
@@ -32,26 +31,25 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
-        final TableGroup tableGroup = mapToTableGroup(tableGroupCreateRequest);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        if (savedTableGroup.containEmptyOrderTable()) {
+        final OrderTables orderTables = findOrderTables(tableGroupCreateRequest);
+        if (orderTables.containEmptyOrderTable()) {
             throw new IllegalArgumentException();
         }
-        return TableGroupMapper.mapToResponse(savedTableGroup);
-    }
-
-    private TableGroup mapToTableGroup(final TableGroupCreateRequest tableGroupCreateRequest) {
-        final OrderTables orderTables = new OrderTables(tableGroupCreateRequest.getOrderTables()
-                .stream()
-                .map(this::findOrderTableById)
-                .collect(Collectors.toList()));
-        final TableGroup tableGroup = new TableGroup(orderTables);
+        final TableGroup tableGroup = new TableGroup();
         orderTables.groupAll(tableGroup);
-        return tableGroup;
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        return TableGroupMapper.mapToResponse(savedTableGroup, orderTables);
     }
 
-    private OrderTable findOrderTableById(final TableGroupCreateOrderTableRequest it) {
-        return orderTableRepository.findById(it.getId())
+    private OrderTables findOrderTables(final TableGroupCreateRequest tableGroupCreateRequest) {
+        return new OrderTables(tableGroupCreateRequest.getOrderTables()
+                .stream()
+                .map(it -> findOrderTableById(it.getId()))
+                .collect(Collectors.toList()));
+    }
+
+    private OrderTable findOrderTableById(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 

@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,26 +13,9 @@ public class TableGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime createdDate;
-
-    @Embedded
-    private OrderTables orderTables;
+    private final LocalDateTime createdDate = LocalDateTime.now();
 
     public TableGroup() {
-    }
-
-    public TableGroup(final OrderTables orderTables) {
-        this(null, orderTables);
-    }
-
-    public TableGroup(final Long id, final OrderTables orderTables) {
-        this.id = id;
-        this.createdDate = LocalDateTime.now();
-        this.orderTables = orderTables;
-    }
-
-    public boolean containEmptyOrderTable() {
-        return orderTables.containEmptyOrderTable();
     }
 
     @Override
@@ -55,9 +37,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public OrderTables getOrderTables() {
-        return orderTables;
     }
 }
