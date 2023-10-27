@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -34,7 +35,8 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.COOKING;
 
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @CreatedDate

@@ -26,9 +26,9 @@ public class MenuValidator {
     public void validate(Menu menu) {
         validateMenuGroupExist(menu.getMenuGroup());
         List<MenuProduct> menuProducts = menu.getMenuProducts();
-        List<Product> products = findProducts(menuProducts);
-        validateProductsExist(menuProducts, products);
-        validatePrice(menu, products);
+        List<Product> savedProducts = findProducts(menuProducts);
+        validateProductsExist(menuProducts, savedProducts);
+        validatePrice(menu, savedProducts);
     }
 
     private void validateMenuGroupExist(MenuGroup menuGroup) {
@@ -44,8 +44,8 @@ public class MenuValidator {
         return productRepository.findAllById(productIds);
     }
 
-    private void validateProductsExist(List<MenuProduct> menuProducts, List<Product> products) {
-        if (menuProducts.size() != products.size()) {
+    private void validateProductsExist(List<MenuProduct> menuProducts, List<Product> savedProducts) {
+        if (menuProducts.size() != savedProducts.size()) {
             throw new IllegalArgumentException("존재하지 않는 상품입니다.");
         }
     }

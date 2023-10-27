@@ -45,7 +45,7 @@ public class OrderService {
             .collect(Collectors.toMap(Menu::getId, menu -> menu));
 
         return orderLineItemRequests.stream()
-            .map(orderLineItem -> new OrderLineItem(order, menuIdToMenu.get(orderLineItem.getMenuId()),
+            .map(orderLineItem -> new OrderLineItem(menuIdToMenu.get(orderLineItem.getMenuId()),
                 orderLineItem.getQuantity()))
             .collect(Collectors.toList());
     }

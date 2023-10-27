@@ -16,10 +16,10 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse from(OrderLineItem orderLineItem) {
+    public static OrderLineItemResponse of(Long orderId, OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(
             orderLineItem.getSeq(),
-            orderLineItem.getOrder().getId(),
+            orderId,
             orderLineItem.getMenu().getId(),
             orderLineItem.getQuantity()
         );

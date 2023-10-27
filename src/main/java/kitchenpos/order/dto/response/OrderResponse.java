@@ -29,7 +29,7 @@ public class OrderResponse {
             order.getOrderStatus().toString(),
             order.getOrderedTime(),
             order.getOrderLineItems().stream()
-                .map(OrderLineItemResponse::from)
+                .map(orderLineItem -> OrderLineItemResponse.of(order.getId(), orderLineItem))
                 .collect(Collectors.toList())
         );
     }
