@@ -1,10 +1,10 @@
 package kitchenpos.common.event;
 
-public class UpdateUngroupOrderTableEvent {
+public class TableGroupDeleteEvent {
 
     private final Long tableGroupId;
 
-    public UpdateUngroupOrderTableEvent(final Long tableGroupId) {
+    public TableGroupDeleteEvent(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 

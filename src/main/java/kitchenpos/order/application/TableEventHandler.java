@@ -3,17 +3,16 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.common.event.TableGroupCreateEvent;
+import kitchenpos.common.event.TableGroupDeleteEvent;
+import kitchenpos.common.event.ValidateSameSizeOrderTableEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.common.event.UpdateGroupOrderTableEvent;
-import kitchenpos.common.event.UpdateUngroupOrderTableEvent;
-import kitchenpos.common.event.ValidateAppendOrderTableInTableGroupEvent;
-import kitchenpos.common.event.ValidateOrderIsNotCompletionInOrderTableEvent;
-import kitchenpos.common.event.ValidateSameSizeOrderTableEvent;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.CollectionUtils;
 
 @Component
@@ -40,11 +39,13 @@ public class TableEventHandler {
     }
 
     @EventListener
-    public void validateAppendOrderTableInTableGroup(final ValidateAppendOrderTableInTableGroupEvent dto) {
+    public void createTableGroupEvent(final TableGroupCreateEvent dto) {
+        final Long tableGroupId = dto.getTableGroupId();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(dto.getOrderTableIds());
 
         validateSizeOrderTables(orderTables);
         validateEmptyOrderTables(orderTables);
+        updateTableGroupInOrderTable(tableGroupId, orderTables);
     }
 
     private void validateSizeOrderTables(final List<OrderTable> orderTables) {
@@ -70,19 +71,20 @@ public class TableEventHandler {
         }
     }
 
-    @EventListener
-    public void updateTableGroupInOrderTable(final UpdateGroupOrderTableEvent dto) {
-        final Long tableGroupId = dto.getTableGroupId();
-        final List<Long> orderTableIds = dto.getOrderTableIds();
-
-        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        orderTables.forEach(orderTable -> orderTable.group(tableGroupId));
+    private void updateTableGroupInOrderTable(final Long tableGroupId, final List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.group(tableGroupId);
+        }
     }
 
-
     @EventListener
-    public void validateOrderIsNotCompletionInOrderTable(final ValidateOrderIsNotCompletionInOrderTableEvent dto) {
-        final Long tableGroupId = dto.getTableGroupId();
+    public void deleteTableGroup(final TableGroupDeleteEvent event) {
+        final Long tableGroupId = event.getTableGroupId();
+        validateOrderIsNotCompletionInOrderTable(tableGroupId);
+        updateUngroupOrderTableDto(tableGroupId);
+    }
+
+    private void validateOrderIsNotCompletionInOrderTable(final Long tableGroupId) {
         final List<Long> orderTableIds = orderTableRepository.findAllByTableGroupId(tableGroupId).stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -96,9 +98,7 @@ public class TableEventHandler {
         }
     }
 
-    @EventListener
-    public void updateUngroupOrderTableDto(final UpdateUngroupOrderTableEvent dto) {
-        final Long tableGroupId = dto.getTableGroupId();
+    private void updateUngroupOrderTableDto(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         orderTables.forEach(OrderTable::ungroup);
     }

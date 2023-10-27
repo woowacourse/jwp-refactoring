@@ -2,12 +2,10 @@ package kitchenpos.tablegroup.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.dto.OrderTableInTableGroupDto;
-import kitchenpos.common.event.UpdateGroupOrderTableEvent;
-import kitchenpos.common.event.UpdateUngroupOrderTableEvent;
-import kitchenpos.common.event.ValidateAppendOrderTableInTableGroupEvent;
-import kitchenpos.common.event.ValidateOrderIsNotCompletionInOrderTableEvent;
+import kitchenpos.common.event.TableGroupCreateEvent;
+import kitchenpos.common.event.TableGroupDeleteEvent;
 import kitchenpos.common.event.ValidateSameSizeOrderTableEvent;
+import kitchenpos.order.dto.OrderTableInTableGroupDto;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.dto.TableGroupResponse;
@@ -41,14 +39,12 @@ public class TableGroupService {
         final TableGroup tableGroup = TableGroup.create();
         tableGroupRepository.save(tableGroup);
 
-        publisher.publishEvent(new ValidateAppendOrderTableInTableGroupEvent(orderTableIds));
-        publisher.publishEvent(new UpdateGroupOrderTableEvent(tableGroup.getId(), orderTableIds));
+        publisher.publishEvent(new TableGroupCreateEvent(tableGroup.getId(), orderTableIds));
 
         return TableGroupResponse.from(tableGroup);
     }
 
     public void ungroup(final Long tableGroupId) {
-        publisher.publishEvent(new ValidateOrderIsNotCompletionInOrderTableEvent(tableGroupId));
-        publisher.publishEvent(new UpdateUngroupOrderTableEvent(tableGroupId));
+        publisher.publishEvent(new TableGroupDeleteEvent(tableGroupId));
     }
 }
