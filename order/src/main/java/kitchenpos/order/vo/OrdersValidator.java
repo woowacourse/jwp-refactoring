@@ -3,11 +3,11 @@ package kitchenpos.order.vo;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 
-public class TableOrders {
+public class OrdersValidator {
 
     private final List<Order> orders;
 
-    public TableOrders(List<Order> orders) {
+    public OrdersValidator(List<Order> orders) {
         this.orders = orders;
     }
 
