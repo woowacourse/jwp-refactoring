@@ -16,8 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ class OrderServiceTest extends ServiceTest {
 
         @DisplayName("주문 도중 메뉴의 정보가 바뀌면 실패한다.")
         @Test
-        void orderCreateFailWhenChangeMenuInformation() throws IllegalAccessException, NoSuchFieldException {
+        void orderCreateFailWhenChangeMenuInformation() {
             //given
             final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                     menus.stream()
@@ -99,9 +99,7 @@ class OrderServiceTest extends ServiceTest {
                             .collect(Collectors.toList()));
 
             final Menu menu = menus.get(0);
-            Field nameField = menu.getClass().getDeclaredField("name");
-            nameField.setAccessible(true);
-            nameField.set(menu, "change menu name");
+            ReflectionTestUtils.setField(menu, "name", "change menu name");
             testFixtureBuilder.buildMenu(menu);
 
             // when & then
@@ -208,7 +206,7 @@ class OrderServiceTest extends ServiceTest {
 
         @DisplayName("주문을 생성후 메뉴 정보를 바꿔도 주문 항목의 메뉴 이름과 가격은 유지된다.")
         @Test
-        void orderCreate() throws NoSuchFieldException, IllegalAccessException {
+        void orderCreate() {
             //given
             final Menu menu = menus.get(0);
             final String beforeMenuName = menu.getName();
@@ -229,14 +227,9 @@ class OrderServiceTest extends ServiceTest {
             //when
             final List<OrderResponse> actual = orderService.list();
 
-            final Field nameField = menu.getClass().getDeclaredField("name");
-            nameField.setAccessible(true);
-            nameField.set(menu, "change menu name");
-
-            final Field priceField = menu.getClass().getDeclaredField("price");
-            priceField.setAccessible(true);
+            ReflectionTestUtils.setField(menu, "name", "change menu name");
             final Price afterPrice = new Price(menu.getPrice().add(new BigDecimal(10000)));
-            priceField.set(menu, afterPrice);
+            ReflectionTestUtils.setField(menu, "price", afterPrice);
             final Menu afterMenu = testFixtureBuilder.buildMenu(menu);
 
             //then
