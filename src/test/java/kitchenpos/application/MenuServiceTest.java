@@ -1,15 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.application.request.MenuCreateRequest;
-import kitchenpos.application.request.MenuProductCreateRequest;
-import kitchenpos.application.response.MenuResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.menu.application.request.MenuCreateRequest;
+import kitchenpos.menu.application.request.MenuProductCreateRequest;
+import kitchenpos.menu.application.response.MenuResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
