@@ -9,33 +9,33 @@
 ## 리팩토링 전 의존관계
 - Order 
   - -> OrderLineItems
-  - <-> OrderTable
-  - <-> OrderLineItem
+  - [ ] <-> OrderTable
+  - [ ] <-> OrderLineItem
   - -> OrderStatus
 
 - OrderTables
   - -> OrderTable
-  - <-> TableGroup
+  - [ ] <-> TableGroup
 
 - OrderLineItems
   - -> OrderLineItem
 
 - OrderTable
-  - <-> Order
-  - <-> TableGroup
+  - [ ] <-> Order
+  - [ ] <-> TableGroup
   - -> NumberOfGuests
 
 - OrderLineItem
-  - <-> Order
+  - [ ] <-> Order
   - -> Menu
 
 - TableGroup
-  - <-> OrderTables
-  - <-> OrderTable
+  - [ ] <-> OrderTables
+  - [ ] <-> OrderTable
 
 - Menu
   - -> MenuProducts
-  - <-> MenuProduct
+  - [ ] <-> MenuProduct
   - -> MenuGroup
   - -> Price
 
@@ -44,7 +44,7 @@
   - -> Price
 
 - MenuProduct
-  - <-> Menu
+  - [ ] <-> Menu
   - -> Product
   - -> Price
 
