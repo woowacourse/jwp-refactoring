@@ -11,6 +11,7 @@ import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
 import kitchenpos.infrastructure.persistence.JpaTableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -26,7 +27,6 @@ public class TableGroupServiceFixture {
     private JpaOrderRepository orderRepository;
 
     protected CreateTableGroupRequest 생성할_테이블그룹_요청_dto;
-    protected TableGroup 생성한_테이블그룹;
     protected TableGroup 삭제할_테이블_그룹;
     protected CreateTableGroupRequest 주문_테이블이_없는_테이블그룹_요청_dto;
     protected CreateTableGroupRequest 주문_테이블이_1개인_테이블그룹_요청_dto;
@@ -81,7 +81,7 @@ public class TableGroupServiceFixture {
         final Order 주문_2 = new Order(삭제할_주문_테이블_2.getId(), OrderStatus.COOKING);
         orderRepository.saveAll(List.of(주문_1, 주문_2));
 
-        삭제할_테이블_그룹 = new TableGroup(삭제할_주문테이블에_포함된_주문_테이블_리스트);
+        삭제할_테이블_그룹 = new TableGroup(LocalDateTime.now());
         tableGroupRepository.save(삭제할_테이블_그룹);
     }
 
@@ -94,6 +94,6 @@ public class TableGroupServiceFixture {
         final Order 주문_2 = new Order(주문_테이블2.getId(), OrderStatus.MEAL);
         orderRepository.saveAll(List.of(주문_1, 주문_2));
 
-        식사중인_단체_테이블 = new TableGroup(List.of(주문_테이블1, 주문_테이블2));
+        식사중인_단체_테이블 = new TableGroup(LocalDateTime.now());
     }
 }

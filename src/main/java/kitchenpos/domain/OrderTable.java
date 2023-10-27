@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
@@ -18,6 +19,7 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
     @Embedded
@@ -51,6 +53,9 @@ public class OrderTable {
     }
 
     public void group(final TableGroup tableGroup) {
+        if (isEmpty() || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException();
+        }
         this.empty = false;
         this.tableGroup = tableGroup;
     }

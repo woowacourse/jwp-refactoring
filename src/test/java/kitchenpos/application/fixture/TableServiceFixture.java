@@ -11,6 +11,7 @@ import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
 import kitchenpos.infrastructure.persistence.JpaTableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -60,7 +61,7 @@ public class TableServiceFixture {
         그룹테이블에_포함된_주문_테이블_1 = new OrderTable(3, false);
         final OrderTable 주문_테이블_2 = new OrderTable(3, false);
 
-        final TableGroup 테이블_그룹 = new TableGroup(List.of(그룹테이블에_포함된_주문_테이블_1, 주문_테이블_2));
+        final TableGroup 테이블_그룹 = new TableGroup(LocalDateTime.now());
         tableGroupRepository.save(테이블_그룹);
 
         그룹테이블에_포함된_주문_테이블_1.setTableGroup(테이블_그룹);

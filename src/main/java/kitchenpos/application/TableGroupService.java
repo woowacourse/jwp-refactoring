@@ -11,6 +11,7 @@ import kitchenpos.dto.request.OrderTableDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,8 +35,11 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final CreateTableGroupRequest orderTableRequests) {
         final List<OrderTable> savedOrderTables = findOrderTables(orderTableRequests);
-        final TableGroup tableGroup = new TableGroup(savedOrderTables);
-        return tableGroupRepository.save(tableGroup);
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        for (final OrderTable orderTable : savedOrderTables) {
+            orderTable.group(tableGroup);
+        }
+        return tableGroup;
     }
 
     private List<OrderTable> findOrderTables(final CreateTableGroupRequest orderTableRequest) {
