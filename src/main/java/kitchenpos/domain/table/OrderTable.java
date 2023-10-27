@@ -71,7 +71,6 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
         checkNumberOfGuestsSameOrGraterThanZero(numberOfGuests);
-
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -81,10 +80,12 @@ public class OrderTable {
 
     public void registerGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
+        empty = false;
     }
 
     public void leaveGroup() {
         tableGroup = null;
+        empty = false;
     }
 
     public Long getId() {
