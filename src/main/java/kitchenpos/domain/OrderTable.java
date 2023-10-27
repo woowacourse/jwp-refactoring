@@ -39,6 +39,9 @@ public class OrderTable extends BaseDate {
     }
 
     public void changeEmpty(final Boolean empty) {
+        if (tableGroupId != null && empty) {
+            throw new IllegalArgumentException("[ERROR] 테이블 그룹이 존재하는 경우에 혼자 테이블을 비울 수 없습니다.");
+        }
         if (orders.stream().anyMatch(OrderTable::canUngroupOrChangeEmpty)) {
             throw new IllegalArgumentException("[ERROR] 조리중이거나, 식사중인 테이블을 비울 수 없습니다.");
         }
