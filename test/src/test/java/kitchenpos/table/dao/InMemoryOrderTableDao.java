@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import ordertable.domain.OrderTable;
-import ordertable.repository.OrderTableDao;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableDao;
 
 public class InMemoryOrderTableDao implements OrderTableDao {
 

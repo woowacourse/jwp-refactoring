@@ -3,8 +3,8 @@ package kitchenpos.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import domain.ProductName;
 import exception.InvalidNameException;
+import kitchenpos.domain.ProductName;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

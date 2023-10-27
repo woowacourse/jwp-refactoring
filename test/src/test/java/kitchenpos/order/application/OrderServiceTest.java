@@ -4,34 +4,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import application.OrderService;
-import domain.MenuGroup;
-import domain.Order;
-import domain.OrderLineItem;
-import domain.OrderStatus;
 import exception.EntityNotFoundException;
 import exception.InvalidOrderException;
 import exception.InvalidOrderStatusException;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.OrderService;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.menu.MenuFactory;
 import kitchenpos.menu.dao.InMemoryMenuDao;
 import kitchenpos.order.dao.InMemoryOrderDao;
+import kitchenpos.ordertable.repository.OrderTableDao;
+import kitchenpos.repository.MenuDao;
+import kitchenpos.repository.OrderDao;
 import kitchenpos.table.OrderTableFactory;
 import kitchenpos.table.dao.InMemoryOrderTableDao;
-import ordertable.repository.OrderTableDao;
+import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.OrderLineItemCreateRequest;
+import kitchenpos.ui.request.OrderStatusChangeRequest;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import repository.MenuDao;
-import repository.OrderDao;
-import ui.request.OrderCreateRequest;
-import ui.request.OrderLineItemCreateRequest;
-import ui.request.OrderStatusChangeRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest {

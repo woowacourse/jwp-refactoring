@@ -3,8 +3,8 @@ package kitchenpos.tablegroup.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import tablegroup.domain.TableGroup;
-import tablegroup.repository.TableGroupDao;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.repository.TableGroupDao;
 
 public class InMemoryTableGroupDao implements TableGroupDao {
 

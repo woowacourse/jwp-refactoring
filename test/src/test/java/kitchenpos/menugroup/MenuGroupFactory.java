@@ -1,6 +1,6 @@
 package kitchenpos.menugroup;
 
-import domain.MenuGroup;
+import kitchenpos.domain.MenuGroup;
 
 public final class MenuGroupFactory {
 

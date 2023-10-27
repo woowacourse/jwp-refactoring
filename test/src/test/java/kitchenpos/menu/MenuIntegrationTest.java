@@ -3,11 +3,15 @@ package kitchenpos.menu;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import domain.MenuGroup;
-import domain.Product;
 import java.math.BigDecimal;
 import kitchenpos.common.ui.IntegrationTest;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Product;
 import kitchenpos.product.ProductFactory;
+import kitchenpos.repository.MenuGroupDao;
+import kitchenpos.repository.ProductDao;
+import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.ui.response.MenuResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,10 +19,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import repository.MenuGroupDao;
-import repository.ProductDao;
-import ui.request.MenuProductCreateRequest;
-import ui.response.MenuResponse;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuIntegrationTest extends IntegrationTest {

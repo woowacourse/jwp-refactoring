@@ -1,10 +1,10 @@
 package kitchenpos.menugroup;
 
-import domain.MenuGroup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import repository.MenuGroupDao;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupDao;
 
 public class InMemoryMenuGroupDao implements MenuGroupDao {
 

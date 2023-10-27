@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import kitchenpos.common.ui.IntegrationTest;
+import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,8 +16,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
-import ui.request.ProductCreateRequest;
-import ui.response.ProductResponse;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductIntegrationTest extends IntegrationTest {

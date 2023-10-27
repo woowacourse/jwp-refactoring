@@ -1,10 +1,10 @@
 package kitchenpos.order.dao;
 
-import domain.Order;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import repository.OrderDao;
+import kitchenpos.domain.Order;
+import kitchenpos.repository.OrderDao;
 
 public class InMemoryOrderDao implements OrderDao {
 

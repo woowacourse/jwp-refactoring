@@ -3,27 +3,27 @@ package kitchenpos.menu.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import application.MenuService;
 import exception.EntityNotFoundException;
 import exception.InvalidPriceException;
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.MenuService;
 import kitchenpos.menu.dao.InMemoryMenuDao;
 import kitchenpos.menugroup.InMemoryMenuGroupDao;
 import kitchenpos.menugroup.MenuGroupFactory;
 import kitchenpos.menuproduct.InMemoryMenuProductDao;
 import kitchenpos.product.ProductFactory;
 import kitchenpos.product.dao.InMemoryProductDao;
+import kitchenpos.repository.MenuDao;
+import kitchenpos.repository.MenuGroupDao;
+import kitchenpos.repository.MenuProductDao;
+import kitchenpos.repository.ProductDao;
+import kitchenpos.ui.request.MenuCreateRequest;
+import kitchenpos.ui.request.MenuProductCreateRequest;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import repository.MenuDao;
-import repository.MenuGroupDao;
-import repository.MenuProductDao;
-import repository.ProductDao;
-import ui.request.MenuCreateRequest;
-import ui.request.MenuProductCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest {

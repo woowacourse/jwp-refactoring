@@ -6,19 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import exception.EntityNotFoundException;
 import java.util.List;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableDao;
 import kitchenpos.table.OrderTableFactory;
 import kitchenpos.table.dao.InMemoryOrderTableDao;
 import kitchenpos.tablegroup.dao.InMemoryTableGroupDao;
-import ordertable.domain.OrderTable;
-import ordertable.repository.OrderTableDao;
+import kitchenpos.tablegroup.repository.TableGroupDao;
+import kitchenpos.tablegroup.ui.request.SimpleIdRequest;
+import kitchenpos.tablegroup.ui.request.TableGroupCreateRequest;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import tablegroup.application.TableGroupService;
-import tablegroup.repository.TableGroupDao;
-import tablegroup.ui.request.SimpleIdRequest;
-import tablegroup.ui.request.TableGroupCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest {

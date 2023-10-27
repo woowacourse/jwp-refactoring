@@ -1,10 +1,10 @@
 package kitchenpos.product.dao;
 
-import domain.Product;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import repository.ProductDao;
+import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductDao;
 
 public class InMemoryProductDao implements ProductDao {
 

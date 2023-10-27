@@ -1,12 +1,12 @@
 package kitchenpos.menu;
 
-import domain.Menu;
-import domain.MenuGroup;
-import domain.MenuProduct;
 import java.math.BigDecimal;
 import java.util.List;
-import ui.request.MenuCreateRequest;
-import ui.request.MenuProductCreateRequest;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.request.MenuCreateRequest;
+import kitchenpos.ui.request.MenuProductCreateRequest;
 
 public final class MenuFactory {
 

@@ -1,6 +1,6 @@
 package kitchenpos.table;
 
-import ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public final class OrderTableFactory {
 

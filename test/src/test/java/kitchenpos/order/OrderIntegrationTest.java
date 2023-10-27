@@ -3,25 +3,25 @@ package kitchenpos.order;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import domain.Menu;
-import domain.MenuGroup;
-import domain.MenuProduct;
-import domain.OrderStatus;
-import domain.Product;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.common.ui.IntegrationTest;
-import ordertable.domain.OrderTable;
-import ordertable.repository.OrderTableDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Product;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableDao;
+import kitchenpos.repository.MenuDao;
+import kitchenpos.repository.MenuGroupDao;
+import kitchenpos.repository.ProductDao;
+import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.OrderLineItemCreateRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import repository.MenuDao;
-import repository.MenuGroupDao;
-import repository.ProductDao;
-import ui.request.OrderCreateRequest;
-import ui.request.OrderLineItemCreateRequest;
-import ui.response.OrderResponse;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderIntegrationTest extends IntegrationTest {

@@ -2,8 +2,8 @@ package kitchenpos.menuproduct;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import domain.MenuProductQuantity;
 import exception.InvalidQuantityException;
+import kitchenpos.domain.MenuProductQuantity;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

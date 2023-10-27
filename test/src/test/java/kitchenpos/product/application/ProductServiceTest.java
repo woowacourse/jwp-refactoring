@@ -4,17 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import application.ProductService;
 import java.math.BigDecimal;
+import kitchenpos.application.ProductService;
 import kitchenpos.product.ProductFactory;
 import kitchenpos.product.dao.InMemoryProductDao;
+import kitchenpos.repository.ProductDao;
+import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
-import repository.ProductDao;
-import ui.request.ProductCreateRequest;
-import ui.response.ProductResponse;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest {

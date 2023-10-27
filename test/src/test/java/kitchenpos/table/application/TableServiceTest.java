@@ -4,31 +4,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import domain.MenuGroup;
-import domain.OrderLineItem;
-import domain.OrderStatus;
 import exception.CannotChangeEmptyException;
 import exception.InvalidGuestNumberException;
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.menu.MenuFactory;
 import kitchenpos.menu.dao.InMemoryMenuDao;
 import kitchenpos.order.dao.InMemoryOrderDao;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.repository.OrderTableDao;
+import kitchenpos.ordertable.ui.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ordertable.ui.request.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.ordertable.ui.request.OrderTableCreateRequest;
+import kitchenpos.repository.MenuDao;
+import kitchenpos.repository.OrderDao;
 import kitchenpos.table.OrderTableFactory;
 import kitchenpos.table.dao.InMemoryOrderTableDao;
-import ordertable.application.TableService;
-import ordertable.repository.OrderTableDao;
-import ordertable.ui.request.OrderTableChangeEmptyRequest;
-import ordertable.ui.request.OrderTableChangeNumberOfGuestsRequest;
-import ordertable.ui.request.OrderTableCreateRequest;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import repository.MenuDao;
-import repository.OrderDao;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest {
