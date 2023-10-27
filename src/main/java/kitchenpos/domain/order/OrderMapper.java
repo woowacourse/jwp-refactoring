@@ -28,6 +28,6 @@ public class OrderMapper {
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
         final Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(IllegalArgumentException::new);
-        return new OrderLineItem(menu.getId(), request.getQuantity());
+        return new OrderLineItem(request.getMenuId(), request.getQuantity(), menu.getName(), menu.getPrice());
     }
 }
