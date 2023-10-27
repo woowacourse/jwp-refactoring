@@ -40,9 +40,9 @@ public class MenuValidator {
 
     private void validateMenuPrice(
             final Price price,
-            final Price calculatedPrice
+            final Price sumByMenuProducts
     ) {
-        if (price.isGreaterThan(calculatedPrice)) {
+        if (price.isGreaterThan(sumByMenuProducts)) {
             throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다.");
         }
     }
