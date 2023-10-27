@@ -9,4 +9,6 @@ dependencies {
     testImplementation testFixtures(project(':menu'))
     testImplementation testFixtures(project(':table'))
     testFixturesImplementation(project(":core"))
+    testFixturesImplementation(project(":menu"))
+    testFixturesImplementation(project(":table"))
 }

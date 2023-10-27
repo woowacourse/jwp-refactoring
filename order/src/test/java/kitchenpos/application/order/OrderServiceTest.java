@@ -1,5 +1,8 @@
 package kitchenpos.application.order;
 
+import static fixture.OrderFixture.주문;
+import static fixture.OrderFixture.주문_생성_요청;
+import static fixture.OrderLineItemFixture.주문_항목;
 import static java.lang.Long.MAX_VALUE;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
@@ -7,9 +10,6 @@ import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
-import static kitchenpos.fixture.OrderFixture.주문;
-import static kitchenpos.fixture.OrderFixture.주문_생성_요청;
-import static kitchenpos.fixture.OrderLineItemFixture.주문_항목;
 import static kitchenpos.fixture.OrderTableFixture.테이블;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
