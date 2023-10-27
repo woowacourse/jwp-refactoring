@@ -3,7 +3,7 @@ package kitchenpos.application.menu;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuMapper;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.dto.request.MenuCreateRequest;
@@ -16,18 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuValidator menuValidator;
+    private final MenuMapper menuMapper;
 
-    public MenuService(final MenuRepository menuRepository, final MenuValidator menuValidator) {
+    public MenuService(final MenuRepository menuRepository, final MenuValidator menuValidator, final MenuMapper menuMapper) {
         this.menuRepository = menuRepository;
         this.menuValidator = menuValidator;
+        this.menuMapper = menuMapper;
     }
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
-                .collect(Collectors.toList());
-        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+        final Menu menu = menuMapper.toMenu(request);
         menuValidator.validate(menu);
 
         return MenuResponse.toResponse(menuRepository.save(menu));

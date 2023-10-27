@@ -1,15 +1,13 @@
 package kitchenpos.application.order;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderMapper;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
@@ -20,20 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
+    private final OrderMapper orderMapper;
 
-    public OrderService(final OrderRepository orderRepository, final OrderValidator orderValidator) {
+    public OrderService(final OrderRepository orderRepository, final OrderValidator orderValidator,
+                        final OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
-        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
-                .collect(Collectors.toList());
-
-        final Order order = new Order(request.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        final Order order = orderMapper.toOrder(request);
         orderValidator.validate(order);
         return OrderResponse.toResponse(orderRepository.save(order));
     }

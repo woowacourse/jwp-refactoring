@@ -3,6 +3,7 @@ package kitchenpos.application.table;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableMapper;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.OrderTableValidator;
 import kitchenpos.dto.request.TableCreateRequest;
@@ -17,17 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
     private final OrderTableRepository orderTableRepository;
     private final OrderTableValidator orderTableValidator;
+    private final OrderTableMapper orderTableMapper;
 
     public TableService(final OrderTableRepository orderTableRepository,
-                        final OrderTableValidator orderTableValidator
-    ) {
+                        final OrderTableValidator orderTableValidator,
+                        final OrderTableMapper orderTableMapper) {
         this.orderTableRepository = orderTableRepository;
         this.orderTableValidator = orderTableValidator;
+        this.orderTableMapper = orderTableMapper;
     }
 
     @Transactional
     public OrderTableResponse create(final TableCreateRequest request) {
-        final var orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        final var orderTable = orderTableMapper.toOrderTable(request);
         return OrderTableResponse.toResponse(orderTableRepository.save(orderTable));
     }
 

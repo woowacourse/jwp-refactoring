@@ -3,6 +3,7 @@ package kitchenpos.application.product;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductMapper;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
@@ -14,14 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
-    public ProductService(final ProductRepository productRepository) {
+    public ProductService(final ProductRepository productRepository, final ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
-        final Product product = new Product(request.getName(), request.getPrice());
+        final Product product = productMapper.toProduct(request);
         return ProductResponse.toResponse(productRepository.save(product));
     }
 
