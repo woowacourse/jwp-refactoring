@@ -44,6 +44,7 @@ public class OrderTable {
 
     public void updateNumberOfGuests(final int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
+        validateIsEmpty();
         this.numberOfGuests = numberOfGuests;
     }
 

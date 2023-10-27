@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class TableService {
+public class OrderTableService {
     private final OrderTableRepository orderTableRepository;
     private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderTableValidator orderTableValidator, final OrderTableRepository orderTableRepository) {
+    public OrderTableService(final OrderTableValidator orderTableValidator, final OrderTableRepository orderTableRepository) {
         this.orderTableValidator = orderTableValidator;
         this.orderTableRepository = orderTableRepository;
     }
@@ -42,8 +42,6 @@ public class TableService {
 
     public void changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable orderTable = orderTableRepository.getById(orderTableId);
-        orderTable.validateNumberOfGuests();
-        orderTable.validateIsEmpty();
         orderTable.updateNumberOfGuests(numberOfGuests);
     }
 }

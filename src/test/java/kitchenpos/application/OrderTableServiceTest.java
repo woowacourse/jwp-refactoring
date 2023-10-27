@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.application.OrderTableService;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
@@ -16,16 +16,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
-class TableServiceTest {
+class OrderTableServiceTest {
 
     @Autowired
-    private TableService tableService;
+    private OrderTableService orderTableService;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("테이블을 생성한다.")
@@ -34,7 +31,7 @@ class TableServiceTest {
         OrderTableCreateRequest request = new OrderTableCreateRequest(4, true);
 
         //when
-        Long createdTableId = tableService.create(request);
+        Long createdTableId = orderTableService.create(request);
         OrderTable savedTable = orderTableRepository.findById(createdTableId).get();
 
         //then
@@ -49,11 +46,11 @@ class TableServiceTest {
     void changeNumberOfGuests_InvalidRequest_ShouldThrowException() {
         //given
         OrderTableCreateRequest request = new OrderTableCreateRequest(4, true);
-        Long tableId = tableService.create(request);
+        Long tableId = orderTableService.create(request);
 
         //when
         //then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, -1))
+        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(tableId, -1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
