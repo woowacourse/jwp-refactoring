@@ -31,7 +31,9 @@ class OrderTableTest {
             final var table = new OrderTable(tableGroupId, 3, true);
 
             // when & then
-            assertThatThrownBy(() -> table.changeEmpty(true));
+            assertThatThrownBy(() -> table.changeEmpty(true))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블 그룹에 포함된 테이블은 empty 상태를 변경할 수 없습니다.");
         }
     }
 
@@ -56,7 +58,9 @@ class OrderTableTest {
             final var table = new OrderTable(3, false);
 
             // when & then
-            assertThatThrownBy(() -> table.changeNumberOfGuests(-1));
+            assertThatThrownBy(() -> table.changeNumberOfGuests(-1))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("바꾸려는 손님 수는 0명 이상이어야 합니다.");
         }
 
         @Test
@@ -65,7 +69,9 @@ class OrderTableTest {
             final var table = new OrderTable(3, true);
 
             // when & then
-            assertThatThrownBy(() -> table.changeNumberOfGuests(5));
+            assertThatThrownBy(() -> table.changeNumberOfGuests(5))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 테이블은 손님 수를 바꿀 수 없습니다.");
         }
     }
 
@@ -93,7 +99,9 @@ class OrderTableTest {
             final var tableGroupId = 1L;
 
             // when & then
-            assertThatThrownBy(() -> table.group(tableGroupId));
+            assertThatThrownBy(() -> table.group(tableGroupId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 테이블만 그룹화 할 수 있습니다.");
         }
 
         @Test
@@ -105,7 +113,9 @@ class OrderTableTest {
             final var tableGroupId2 = 2L;
 
             // when & then
-            assertThatThrownBy(() -> table.group(tableGroupId2));
+            assertThatThrownBy(() -> table.group(tableGroupId2))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 테이블 그룹에 포함된 테이블입니다.");
         }
     }
 

@@ -51,7 +51,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블이 포함되어 있습니다.");
         }
 
         @Test
@@ -63,7 +64,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("묶으려는 테이블은 2개 이상이어야 합니다.");
         }
 
         @Test
@@ -76,7 +78,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 테이블만 그룹화 할 수 있습니다.");
         }
 
         @Test
@@ -94,7 +97,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 테이블 그룹에 포함된 테이블입니다.");
         }
     }
 
@@ -142,7 +146,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(테이블그룹.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("완료되지 않은 주문입니다.");
         }
     }
 }

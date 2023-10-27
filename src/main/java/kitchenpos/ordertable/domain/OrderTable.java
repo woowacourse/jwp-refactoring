@@ -34,17 +34,17 @@ public class OrderTable {
 
     public void changeEmpty(boolean empty) {
         if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블 그룹에 포함된 테이블은 empty 상태를 변경할 수 없습니다.");
         }
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("바꾸려는 손님 수는 0명 이상이어야 합니다.");
         }
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블은 손님 수를 바꿀 수 없습니다.");
         }
         this.numberOfGuests = numberOfGuests;
     }
@@ -56,8 +56,11 @@ public class OrderTable {
     }
 
     private void validateTableToGroup() {
-        if (!empty || Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("이미 테이블 그룹에 포함된 테이블입니다.");
+        }
+        if (!empty) {
+            throw new IllegalArgumentException("빈 테이블만 그룹화 할 수 있습니다.");
         }
     }
 

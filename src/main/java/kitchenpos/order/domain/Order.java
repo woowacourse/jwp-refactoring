@@ -44,7 +44,7 @@ public class Order {
 
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 완료된 주문입니다.");
         }
         this.orderStatus = orderStatus;
     }

@@ -45,7 +45,7 @@ public class OrderService {
         return request.getOrderLineItems().stream()
                 .map(orderLineItemDto -> {
                     Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
-                            .orElseThrow(IllegalArgumentException::new);
+                            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
                     return new OrderLineItem(menu.getId(), MenuSnapShot.make(menu), orderLineItemDto.getQuantity());
                 })
                 .collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class OrderService {
     @Transactional
     public OrderDto changeOrderStatus(final Long orderId, final OrderChangeDto request) {
         final Order order = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
         order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
         return OrderDto.toDto(order);

@@ -48,6 +48,8 @@ class MenuTest {
         final var 양념치킨_1개 = 메뉴상품(양념치킨, 1);
 
         // when & then
-        assertThatThrownBy(() -> new Menu("후라이드양념", new Price(BigDecimal.valueOf(35000)), 두마리메뉴, List.of(후라이드_1개, 양념치킨_1개)));
+        assertThatThrownBy(() -> new Menu("후라이드양념", new Price(BigDecimal.valueOf(35000)), 두마리메뉴, List.of(후라이드_1개, 양념치킨_1개)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴의 가격은 상품가격 * 수량의 합보다 작거나 같아야한다");
     }
 }

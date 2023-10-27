@@ -18,7 +18,7 @@ public class OrderStatusValidator implements TableOrderStatusValidator {
     public void validateOrderIsCompleted(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료되지 않은 주문입니다.");
         }
     }
 }

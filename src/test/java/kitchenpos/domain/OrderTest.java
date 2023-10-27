@@ -50,7 +50,7 @@ class OrderTest {
 
         @ParameterizedTest
         @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
-        void 주문상태가_완료인_경우_변경할_수_있다(OrderStatus orderStatus) {
+        void 주문상태가_완료인_경우_변경할_수_없다(OrderStatus orderStatus) {
             // given
             final var 두마리메뉴 = 메뉴그룹_두마리메뉴;
 
@@ -69,7 +69,9 @@ class OrderTest {
             order.changeOrderStatus(OrderStatus.COMPLETION);
 
             // when & then
-            assertThatThrownBy(() -> order.changeOrderStatus(orderStatus));
+            assertThatThrownBy(() -> order.changeOrderStatus(orderStatus))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 완료된 주문입니다.");
         }
     }
 }

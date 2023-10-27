@@ -52,6 +52,27 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Test
+        void 존재하지_않는_메뉴면_주문할_수_없다() {
+            // given
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
+
+            final var 후라이드 = productRepository.save(후라이드_16000);
+
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
+            final var wrongMenuId = 999L;
+
+            final var 테이블 = orderTableRepository.save(비지않은_테이블());
+            final var 주문상품 = 주문상품(wrongMenuId, 후라이드메뉴, 3);
+
+            final var request = 주문_생성_요청(테이블.getId(), List.of(주문상품));
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 메뉴입니다.");
+        }
+
+        @Test
         void 주문상품이_없으면_주문할_수_없다() {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
@@ -67,7 +88,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 상품이 존재하지 않습니다.");
         }
 
         @Test
@@ -87,7 +109,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블입니다.");
         }
 
         @Test
@@ -107,7 +130,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 테이블입니다.");
         }
     }
 
@@ -153,7 +177,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 주문입니다.");
         }
 
         @Test
@@ -176,7 +201,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 완료된 주문입니다.");
         }
     }
 

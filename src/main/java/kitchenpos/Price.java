@@ -22,8 +22,11 @@ public class Price {
     }
 
     private void validate(BigDecimal value) {
-        if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+        if (Objects.isNull(value)) {
+            throw new IllegalArgumentException("가격은 존재해야 합니다.");
+        }
+        if (value.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 0이상이어야 합니다.");
         }
     }
 

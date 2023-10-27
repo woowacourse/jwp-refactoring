@@ -43,7 +43,7 @@ public class TableService {
         tableOrderStatusValidator.validateOrderIsCompleted(orderTableId);
 
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
         orderTable.changeEmpty(request.isEmpty());
 
         return TableDto.toDto(orderTable);
@@ -52,7 +52,7 @@ public class TableService {
     @Transactional
     public TableDto changeNumberOfGuests(final Long orderTableId, final TableChangeNumberOfGuestsDto request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
         return TableDto.toDto(orderTable);

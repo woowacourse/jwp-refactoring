@@ -53,7 +53,7 @@ public class Menu {
                 .map(MenuProduct::calculatePrice)
                 .reduce(ZERO_PRICE, Price::add);
         if (price.isBiggerThan(sum)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴의 가격은 상품가격 * 수량의 합보다 작거나 같아야한다");
         }
     }
 

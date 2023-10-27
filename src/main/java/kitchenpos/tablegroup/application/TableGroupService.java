@@ -54,10 +54,10 @@ public class TableGroupService {
 
     private void validateOrderTables(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
         if (orderTableIds.size() != orderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 테이블이 포함되어 있습니다.");
         }
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("묶으려는 테이블은 2개 이상이어야 합니다.");
         }
     }
 
@@ -75,7 +75,7 @@ public class TableGroupService {
                 .collect(Collectors.toList());
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.MEAL, OrderStatus.COOKING))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료되지 않은 주문입니다.");
         }
     }
 }

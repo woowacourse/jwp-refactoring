@@ -38,7 +38,7 @@ public class MenuService {
 
     private Menu getMenu(final MenuCreateDto request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴그룹입니다."));
         return new Menu(request.getName(), new Price(request.getPrice()), menuGroup, getMenuProducts(request));
     }
 
@@ -46,7 +46,7 @@ public class MenuService {
         return request.getMenuProducts().stream()
                 .map(menuProductDto -> {
                     Product product = productRepository.findById(menuProductDto.getProductId())
-                            .orElseThrow(IllegalArgumentException::new);
+                            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
                     return new MenuProduct(product, menuProductDto.getQuantity());
                 })
                 .collect(Collectors.toList());

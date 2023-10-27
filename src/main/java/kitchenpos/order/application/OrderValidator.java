@@ -24,15 +24,15 @@ public class OrderValidator {
 
     private void validateTable(final Long orderTableId) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블입니다.");
         }
     }
 
     private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상품이 존재하지 않습니다.");
         }
     }
 }

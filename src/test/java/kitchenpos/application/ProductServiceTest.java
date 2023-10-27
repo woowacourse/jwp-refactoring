@@ -34,7 +34,8 @@ class ProductServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0이상이어야 합니다.");
     }
 
     @Test

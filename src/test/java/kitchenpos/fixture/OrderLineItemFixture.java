@@ -9,4 +9,8 @@ public class OrderLineItemFixture {
     public static OrderLineItem 주문상품(Menu menu, long quantity) {
         return new OrderLineItem(menu.getId(), MenuSnapShot.make(menu), quantity);
     }
+
+    public static OrderLineItem 주문상품(final Long menuId, final Menu menu, final long quantity) {
+        return new OrderLineItem(menuId, MenuSnapShot.make(menu), quantity);
+    }
 }

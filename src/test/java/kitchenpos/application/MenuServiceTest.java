@@ -54,7 +54,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0이상이어야 합니다.");
     }
 
     @Test
@@ -72,7 +73,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 메뉴그룹입니다.");
     }
 
     @Test
@@ -90,7 +92,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 상품입니다.");
     }
 
     @Test
@@ -108,7 +111,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴의 가격은 상품가격 * 수량의 합보다 작거나 같아야한다");
     }
 
     @Test
