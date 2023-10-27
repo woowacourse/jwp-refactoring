@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.presentation;
+package kitchenpos.presentation;
 
 import java.net.URI;
 import kitchenpos.tablegroup.application.dto.TableGroupDto;

@@ -1,4 +1,4 @@
-package kitchenpos.product.presentation;
+package kitchenpos.presentation;
 
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductCreateDto;
