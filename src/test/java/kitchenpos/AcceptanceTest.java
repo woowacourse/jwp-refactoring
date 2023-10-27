@@ -8,19 +8,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.request.ChangeEmptyTableRequest;
-import kitchenpos.dto.request.ChangeOrderStatusRequest;
-import kitchenpos.dto.request.ChangeTableGuestRequest;
-import kitchenpos.dto.request.CreateMenuGroupRequest;
-import kitchenpos.dto.request.CreateMenuRequest;
-import kitchenpos.dto.request.CreateOrderRequest;
-import kitchenpos.dto.request.CreateOrderTableRequest;
-import kitchenpos.dto.request.CreateProductRequest;
-import kitchenpos.dto.request.CreateTableGroupRequest;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.menugroup.dto.request.CreateMenuGroupRequest;
+import kitchenpos.menu.dto.request.CreateMenuRequest;
+import kitchenpos.menu.dto.request.MenuProductRequest;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
+import kitchenpos.order.dto.request.CreateOrderRequest;
+import kitchenpos.order.dto.request.OrderLineItemRequest;
+import kitchenpos.product.dto.request.CreateProductRequest;
+import kitchenpos.table.dto.request.ChangeEmptyTableRequest;
+import kitchenpos.table.dto.request.ChangeTableGuestRequest;
+import kitchenpos.table.dto.request.CreateOrderTableRequest;
+import kitchenpos.tablegroup.dto.request.CreateTableGroupRequest;
+import kitchenpos.table.dto.request.OrderTableRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -52,8 +52,10 @@ public class AcceptanceTest {
 
         Long 테이블_아이디1 = 테이블_생성();
         Long 테이블_아이디2 = 테이블_생성();
+        Long 테이블_아이디3 = 테이블_생성();
+
+        빈_테이블을_주문_테이블로_변경(테이블_아이디3);
         Long 테이블_그룹_아이디 = 테이블_그룹_생성(테이블_아이디1, 테이블_아이디2);
-        빈_테이블을_주문_테이블로_변경(테이블_아이디1);
 
         Long 주문_아이디 = 주문(메뉴_아이디, 테이블_아이디1);
         주문_테이블_손님_수_설정(테이블_아이디1);

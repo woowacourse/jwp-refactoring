@@ -1,11 +1,10 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.OrderTable;
 
 public class OrderTableFixture {
 
-    public static OrderTable of(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        return new OrderTable(tableGroup, numberOfGuests, empty);
+    public static OrderTable of(Long tableGroupId, int numberOfGuests, boolean empty) {
+        return new OrderTable(tableGroupId, numberOfGuests, empty);
     }
 }

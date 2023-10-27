@@ -1,14 +1,12 @@
 package kitchenpos.fixture;
 
 import java.time.LocalDateTime;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 
 public class OrderFixture {
 
-    public static Order of(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        return new Order(orderTable, orderStatus, orderedTime);
+    public static Order of(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        return new Order(orderTableId, orderStatus, orderedTime);
     }
-
 }

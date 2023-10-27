@@ -1,12 +1,11 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.domain.Menu;
 
 public class MenuFixture {
 
-    public static Menu of(String name, BigDecimal price, MenuGroup menuGroup) {
-        return new Menu(name, price, menuGroup);
+    public static Menu of(Long menuGroupId, String name, BigDecimal price) {
+        return new Menu(menuGroupId, name, price);
     }
 }
