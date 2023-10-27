@@ -1,7 +1,7 @@
-package kitchenpos.dao;
+package kitchenpos.tablegroup.repository;
 
 import java.util.List;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

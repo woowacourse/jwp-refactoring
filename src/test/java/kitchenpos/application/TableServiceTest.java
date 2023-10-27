@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.dto.request.TableUpdateEmptyRequest;
 import kitchenpos.table.dto.request.TableUpdateGuestRequest;
 import kitchenpos.table.dto.request.TableCreateRequest;
