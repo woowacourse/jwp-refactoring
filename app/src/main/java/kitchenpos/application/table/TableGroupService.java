@@ -11,7 +11,7 @@ import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
-import kitchenpos.domain.table.TableUngroupedEvent;
+import kitchenpos.event.TableUngroupedEvent;
 import kitchenpos.exception.table.TableGroupException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

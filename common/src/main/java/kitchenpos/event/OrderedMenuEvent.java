@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package kitchenpos.event;
 
 import java.util.List;
 

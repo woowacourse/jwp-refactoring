@@ -1,10 +1,10 @@
-package kitchenpos.domain.order;
+package kitchenpos.event;
 
-public class OrderedEvent {
+public class TableEmptyChangedEvent {
 
     private final Long orderTableId;
 
-    public OrderedEvent(Long orderTableId) {
+    public TableEmptyChangedEvent(Long orderTableId) {
         this.orderTableId = orderTableId;
     }
 

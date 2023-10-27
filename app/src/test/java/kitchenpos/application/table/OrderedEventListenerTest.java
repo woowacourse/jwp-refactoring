@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.domain.order.OrderedEvent;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.event.OrderedEvent;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Test;

@@ -5,7 +5,7 @@ import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_
 import java.util.List;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.table.TableEmptyChangedEvent;
+import kitchenpos.event.TableEmptyChangedEvent;
 import kitchenpos.exception.table.OrderTableException;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

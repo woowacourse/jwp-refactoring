@@ -11,7 +11,7 @@ import kitchenpos.application.table.dto.CreateOrderTableResponse;
 import kitchenpos.application.table.dto.SearchOrderTableResponse;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.domain.table.TableEmptyChangedEvent;
+import kitchenpos.event.TableEmptyChangedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

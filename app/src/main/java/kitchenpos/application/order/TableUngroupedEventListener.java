@@ -5,7 +5,7 @@ import static kitchenpos.exception.table.TableGroupExceptionType.CAN_NOT_UNGROUP
 import java.util.List;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.table.TableUngroupedEvent;
+import kitchenpos.event.TableUngroupedEvent;
 import kitchenpos.exception.table.TableGroupException;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

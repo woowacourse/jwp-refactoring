@@ -4,7 +4,7 @@ import static kitchenpos.exception.menu.MenuExceptionType.MENU_NOT_FOUND;
 
 import java.util.List;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.order.OrderedMenuEvent;
+import kitchenpos.event.OrderedMenuEvent;
 import kitchenpos.exception.menu.MenuException;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

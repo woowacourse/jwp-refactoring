@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import kitchenpos.application.IntegrationTest;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableEmptyChangedEvent;
+import kitchenpos.event.TableEmptyChangedEvent;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Test;
