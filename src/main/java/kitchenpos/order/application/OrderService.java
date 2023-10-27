@@ -39,9 +39,6 @@ public class OrderService {
 
     public Order create(final OrderCreateRequest request) {
         final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
-        if(orderTable.isEmpty()){
-            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
-        }
         final Order order = new Order(orderTable);
         final Order savedOrder = orderRepository.save(order);
 
@@ -52,22 +49,24 @@ public class OrderService {
     private void saveOrderListItem(final OrderCreateRequest request,
                                    final Order savedOrder) {
         final List<OrderLineItemCreateRequest> orderLineItemRequests = request.getOrderLineItems();
-        if (orderLineItemRequests.isEmpty()) {
-            throw new IllegalArgumentException("주문할 항목은 최소 1개 이상이어야 합니다.");
-        }
 
         validateMenuToOrder(orderLineItemRequests);
 
+        final List<OrderLineItem> orderLineItems = getOrderLineItems(savedOrder, orderLineItemRequests);
+        for (final OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItemRepository.save(orderLineItem);
+        }
+    }
+
+    private List<OrderLineItem> getOrderLineItems(final Order savedOrder,
+                                                  final List<OrderLineItemCreateRequest> orderLineItemRequests) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemCreateRequest orderLineItemRequest : orderLineItemRequests) {
             final Menu menu = menuRepository.getById(orderLineItemRequest.getMenuId());
             final OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemRequest.getQuantity());
             orderLineItems.add(orderLineItem);
         }
-
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItemRepository.save(orderLineItem);
-        }
+        return orderLineItems;
     }
 
     private void validateMenuToOrder(final List<OrderLineItemCreateRequest> orderLineItems) {

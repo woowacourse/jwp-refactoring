@@ -37,6 +37,7 @@ public class MenuService {
 
     public Menu create(final MenuCreateRequest request) {
         final List<MenuProductCreateRequest> menuProductCreateRequestList = request.getMenuProducts();
+
         validateSaveMenu(Price.from(request.getPrice()),menuProductCreateRequestList);
 
         final Menu menu = new Menu(

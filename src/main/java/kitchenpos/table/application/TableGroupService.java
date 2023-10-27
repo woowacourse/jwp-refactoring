@@ -34,10 +34,6 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        if (request.getOrderTables().size() < 2) {
-            throw new IllegalArgumentException("두개 이상의 테이블만 그룹화가 가능합니다.");
-        }
-
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
