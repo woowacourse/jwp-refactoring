@@ -18,9 +18,9 @@ public class OrderTableRestController {
         this.orderTableService = orderTableService;
     }
 
-    @PostMapping("/api/tables/{tableGroupId}")
-    public ResponseEntity<Long> create(@PathVariable final Long tableGroupId, @RequestBody final OrderTableCreateRequest request) {
-        Long orderTableId = orderTableService.create(tableGroupId, request.getNumberOfGuests(), request.isEmpty());
+    @PostMapping("/api/tables")
+    public ResponseEntity<Long> create(@RequestBody final OrderTableCreateRequest request) {
+        Long orderTableId = orderTableService.create(request.getNumberOfGuests(), request.isEmpty());
         final URI uri = URI.create("/api/orders/" + orderTableId);
         return ResponseEntity.created(uri).build();
     }

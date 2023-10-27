@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +16,15 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 @Service
 public class OrderTableService {
 
-    private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderTableService(TableGroupRepository tableGroupRepository, OrderTableRepository orderTableRepository) {
-        this.tableGroupRepository = tableGroupRepository;
+    public OrderTableService(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public Long create(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        OrderTableGroup orderTableGroup = tableGroupRepository.getById(tableGroupId);
-        OrderTable orderTable = new OrderTable(orderTableGroup, numberOfGuests, empty);
+    public Long create(final int numberOfGuests, final boolean empty) {
+        OrderTable orderTable = new OrderTable(numberOfGuests, empty);
         return orderTableRepository.save(orderTable).getId();
     }
 

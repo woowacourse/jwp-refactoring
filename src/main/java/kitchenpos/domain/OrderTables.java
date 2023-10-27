@@ -7,6 +7,7 @@ import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REMOVE;
 
 @Embeddable
@@ -14,7 +15,7 @@ public class OrderTables {
 
     private static final int MIN_TABLE_GROUP_SIZE = 2;
 
-    @OneToMany(mappedBy = "orderTableGroup", cascade = REMOVE)
+    @OneToMany(mappedBy = "orderTableGroup", cascade = {PERSIST, REMOVE})
     private List<OrderTable> values;
 
     protected OrderTables() {
@@ -53,5 +54,10 @@ public class OrderTables {
         }
     }
 
+    public void updateTableGroupIds(final OrderTableGroup savedTableGroup) {
+        for (OrderTable orderTable : values) {
+            orderTable.updateTableGroup(savedTableGroup);
+        }
+    }
 }
 

@@ -45,6 +45,7 @@ public class OrderTableGroupService {
         validateSavedOrderIsEmpty(savedOrderTables);
 
         OrderTableGroup orderTableGroup = new OrderTableGroup(orderTables, LocalDateTime.now());
+        orderTables.updateTableGroupIds(orderTableGroup);
         return tableGroupRepository.save(orderTableGroup).getId();
     }
 

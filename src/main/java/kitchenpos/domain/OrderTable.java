@@ -20,13 +20,11 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(OrderTableGroup orderTableGroup, int numberOfGuests) {
-        this.orderTableGroup = orderTableGroup;
+    public OrderTable(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public OrderTable(OrderTableGroup orderTableGroup, int numberOfGuests, boolean empty) {
-        this.orderTableGroup = orderTableGroup;
+    public OrderTable(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
