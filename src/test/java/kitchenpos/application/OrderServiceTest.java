@@ -59,7 +59,7 @@ class OrderServiceTest {
     void create() {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
-        final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, false);
+        final OrderTable orderTable = new OrderTable(1000L, tableGroup.getId(), 2, false);
         final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
         final Menu menu2 = new Menu(11L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
@@ -153,7 +153,7 @@ class OrderServiceTest {
                 .willReturn(2L);
 
         final TableGroup tableGroup = new TableGroup(10L);
-        final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, true);
+        final OrderTable orderTable = new OrderTable(1000L, tableGroup.getId(), 2, true);
 
         final Order udpatedOrder = new Order(
                 order.getId(),

@@ -48,7 +48,7 @@ class TableServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
         final TableCreateRequest tableCreateRequest = new TableCreateRequest(2, true);
 
-        final OrderTable orderTable = new OrderTable(tableGroup, 2, true);
+        final OrderTable orderTable = new OrderTable(tableGroup.getId(), 2, true);
         given(orderTableRepository.save(any()))
                 .willReturn(orderTable);
 
@@ -61,8 +61,8 @@ class TableServiceTest {
     void list() {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
-        final OrderTable orderTable1 = new OrderTable(tableGroup, 2, true);
-        final OrderTable orderTable2 = new OrderTable(tableGroup, 3, true);
+        final OrderTable orderTable1 = new OrderTable(tableGroup.getId(), 2, true);
+        final OrderTable orderTable2 = new OrderTable(tableGroup.getId(), 3, true);
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
         final List<TableResponse> responses = orderTables.stream()
@@ -104,7 +104,7 @@ class TableServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
         final TableUpdateEmptyRequest updateRequest = new TableUpdateEmptyRequest(true);
-        final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, true);
+        final OrderTable orderTable = new OrderTable(1L, tableGroup.getId(), 2, true);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, updateRequest))
@@ -118,7 +118,7 @@ class TableServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
         final TableUpdateEmptyRequest updateRequest = new TableUpdateEmptyRequest(true);
-        final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, true);
+        final OrderTable orderTable = new OrderTable(1L, tableGroup.getId(), 2, true);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
@@ -136,8 +136,8 @@ class TableServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
 
         final TableUpdateGuestRequest updateRequest = new TableUpdateGuestRequest(8);
-        final OrderTable beforeTable = new OrderTable(1L, tableGroup, 1, false);
-        final OrderTable afterTable = new OrderTable(1L, tableGroup, 8, false);
+        final OrderTable beforeTable = new OrderTable(1L, tableGroup.getId(), 1, false);
+        final OrderTable afterTable = new OrderTable(1L, tableGroup.getId(), 8, false);
 
         final TableResponse tableResponse = TableResponse.from(afterTable);
 
@@ -161,7 +161,7 @@ class TableServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
 
         final TableUpdateGuestRequest updateRequest = new TableUpdateGuestRequest(8);
-        final OrderTable orderTable = new OrderTable(1L, tableGroup, 5, true);
+        final OrderTable orderTable = new OrderTable(1L, tableGroup.getId(), 5, true);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.empty());
@@ -179,8 +179,8 @@ class TableServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
 
         final TableUpdateGuestRequest updateRequest = new TableUpdateGuestRequest(8);
-        final OrderTable beforeTable = new OrderTable(1L, tableGroup, 1, false);
-        final OrderTable afterTable = new OrderTable(1L, tableGroup, 8, true);
+        final OrderTable beforeTable = new OrderTable(1L, tableGroup.getId(), 1, false);
+        final OrderTable afterTable = new OrderTable(1L, tableGroup.getId(), 8, true);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(afterTable));

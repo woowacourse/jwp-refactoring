@@ -1,16 +1,11 @@
 package kitchenpos.table.domain;
 
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -19,9 +14,8 @@ public class OrderTable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long groupId;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -37,13 +31,13 @@ public class OrderTable {
         this(null, numberOfGuests, empty);
     }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long groupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.groupId = groupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -56,7 +50,7 @@ public class OrderTable {
     }
 
     public void checkTableGroupsEmpty() {
-        if (Objects.nonNull(this.tableGroup)) {
+        if (!(this.groupId == null)) {
             throw new IllegalArgumentException("할당된 그룹이 존재합니다.");
         }
     }
@@ -67,13 +61,13 @@ public class OrderTable {
         }
     }
 
-    public void addGroup(final TableGroup group) {
+    public void addGroup(final Long groupId) {
         checkTableGroupsEmpty();
-        this.tableGroup = group;
+        this.groupId = groupId;
     }
 
     public void unGroup() {
-        this.tableGroup = null;
+        this.groupId = null;
     }
 
     public void changeNumberOfGuests(final int number) {
@@ -84,12 +78,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public Long getGroupId() {
+        return groupId;
     }
 
     public int getNumberOfGuests() {

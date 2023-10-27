@@ -20,7 +20,7 @@ public class TableResponse {
     }
 
     public static TableResponse from(final OrderTable table) {
-        if (table.getTableGroup() == null) {
+        if (table.getGroupId() == null) {
             return new TableResponse(
                     table.getId(),
                     null,
@@ -31,7 +31,7 @@ public class TableResponse {
 
         return new TableResponse(
                 table.getId(),
-                table.getTableGroup().getId(),
+                table.getGroupId(),
                 table.getNumberOfGuests(),
                 table.isEmpty()
         );

@@ -50,8 +50,6 @@ class TableGroupServiceTest {
 
         final OrderTable orderTable1 = new OrderTable(10L, null, 2, true);
         final OrderTable orderTable2 = new OrderTable(11L, null, 3, true);
-        tableGroup.addOrderTable(orderTable1);
-        tableGroup.addOrderTable(orderTable2);
 
         given(orderTableRepository.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId())))
                 .willReturn(List.of(orderTable1, orderTable2));
@@ -73,10 +71,8 @@ class TableGroupServiceTest {
         // given
         final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(10L, 11L));
         final TableGroup tableGroup = new TableGroup(1L);
-        final OrderTable orderTable1 = new OrderTable(10L, tableGroup, 2, false);
-        final OrderTable orderTable2 = new OrderTable(11L, tableGroup, 3, true);
-        tableGroup.addOrderTable(orderTable1);
-        tableGroup.addOrderTable(orderTable2);
+        final OrderTable orderTable1 = new OrderTable(10L, tableGroup.getId(), 2, false);
+        final OrderTable orderTable2 = new OrderTable(11L, tableGroup.getId(), 3, true);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
@@ -90,13 +86,11 @@ class TableGroupServiceTest {
         // given
         final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(10L, 11L));
         final TableGroup tableGroup = new TableGroup(1L);
-        final OrderTable orderTable1 = new OrderTable(10L, tableGroup, 2, false);
-        final OrderTable orderTable2 = new OrderTable(11L, tableGroup, 3, true);
-        tableGroup.addOrderTable(orderTable1);
-        tableGroup.addOrderTable(orderTable2);
+        final OrderTable orderTable1 = new OrderTable(10L, tableGroup.getId(), 2, false);
+        final OrderTable orderTable2 = new OrderTable(11L, tableGroup.getId(), 3, true);
 
         given(orderTableRepository.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId())))
-                .willReturn(tableGroup.getOrderTables().getTables());
+                .willReturn(List.of(orderTable1, orderTable2));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
@@ -110,12 +104,12 @@ class TableGroupServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(1L);
 
-        final OrderTable orderTable1 = new OrderTable(10L, tableGroup, 3, true);
-        final OrderTable orderTable2 = new OrderTable(11L, tableGroup, 3, true);
+        final OrderTable orderTable1 = new OrderTable(10L, tableGroup.getId(), 3, true);
+        final OrderTable orderTable2 = new OrderTable(11L, tableGroup.getId(), 3, true);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
-        given(orderTableRepository.findAllByTableGroupId(tableGroup.getId()))
+        given(orderTableRepository.findAllByGroupId(tableGroup.getId()))
                 .willReturn(orderTables);
 
         given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
@@ -127,7 +121,7 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(1L);
 
         // then
-        then(orderTableRepository).should(times(1)).findAllByTableGroupId(1L);
+        then(orderTableRepository).should(times(1)).findAllByGroupId(1L);
         then(orderRepository).should(times(1)).existsByOrderTableIdInAndOrderStatusIn(anyList(), any());
         then(orderTableRepository).should(times(2)).save(any());
     }
@@ -138,12 +132,12 @@ class TableGroupServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(1L);
 
-        final OrderTable orderTable1 = new OrderTable(10L, tableGroup, 2, true);
-        final OrderTable orderTable2 = new OrderTable(11L, tableGroup, 3, true);
+        final OrderTable orderTable1 = new OrderTable(10L, tableGroup.getId(), 2, true);
+        final OrderTable orderTable2 = new OrderTable(11L, tableGroup.getId(), 3, true);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
-        given(orderTableRepository.findAllByTableGroupId(1L))
+        given(orderTableRepository.findAllByGroupId(1L))
                 .willReturn(orderTables);
 
         given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
