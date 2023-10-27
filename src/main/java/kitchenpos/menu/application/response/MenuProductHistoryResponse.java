@@ -1,4 +1,4 @@
-package kitchenpos.dto;
+package kitchenpos.menu.application.response;
 
 import kitchenpos.menu.domain.MenuProductHistories;
 import kitchenpos.menu.domain.MenuProductHistory;

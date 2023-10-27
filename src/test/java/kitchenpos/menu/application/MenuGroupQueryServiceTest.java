@@ -3,7 +3,7 @@ package kitchenpos.menu.application;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.common.vo.Name;
-import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.menu.application.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

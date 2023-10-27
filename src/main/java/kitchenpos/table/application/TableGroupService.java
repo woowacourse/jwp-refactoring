@@ -1,7 +1,7 @@
 package kitchenpos.table.application;
 
-import kitchenpos.dto.TableGroupCreateRequest;
-import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.table.application.request.TableGroupCreateRequest;
+import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTables;

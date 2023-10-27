@@ -1,8 +1,8 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.dto.ProductCreateRequest;
-import kitchenpos.dto.ProductResponse;
+import kitchenpos.menu.application.request.ProductCreateRequest;
+import kitchenpos.menu.application.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

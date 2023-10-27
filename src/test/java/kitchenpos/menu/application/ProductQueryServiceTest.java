@@ -4,7 +4,7 @@ import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.common.vo.Name;
 import kitchenpos.common.vo.Price;
-import kitchenpos.dto.ProductResponse;
+import kitchenpos.menu.application.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,6 @@
-package kitchenpos.dto;
+package kitchenpos.order.application.response;
 
+import kitchenpos.menu.application.response.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;

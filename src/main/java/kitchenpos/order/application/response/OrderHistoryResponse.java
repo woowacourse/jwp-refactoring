@@ -1,6 +1,7 @@
-package kitchenpos.dto;
+package kitchenpos.order.application.response;
 
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.menu.domain.MenuHistory;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
@@ -8,19 +9,19 @@ import kitchenpos.table.domain.OrderTable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class OrderResponse {
+public class OrderHistoryResponse {
 
     private long id;
     private OrderTableResponse orderTable;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItemResponse> orderLineItems;
+    private List<OrderLineItemHistoryResponse> orderLineItems;
 
-    public OrderResponse(final long id,
-                         final OrderTableResponse orderTable,
-                         final OrderStatus orderStatus,
-                         final LocalDateTime orderedTime,
-                         final List<OrderLineItemResponse> orderLineItems
+    public OrderHistoryResponse(final long id,
+                                final OrderTableResponse orderTable,
+                                final OrderStatus orderStatus,
+                                final LocalDateTime orderedTime,
+                                final List<OrderLineItemHistoryResponse> orderLineItems
     ) {
         this.id = id;
         this.orderTable = orderTable;
@@ -29,13 +30,13 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse from(final Order order, final OrderTable orderTable, final List<Menu> menus) {
-        return new OrderResponse(
+    public static OrderHistoryResponse from(final Order order, final OrderTable orderTable, final List<MenuHistory> menuHistories) {
+        return new OrderHistoryResponse(
                 order.getId(),
                 OrderTableResponse.from(orderTable),
                 order.getOrderStatus(),
                 order.getOrderedTime(),
-                OrderLineItemResponse.from(order.getOrderLineItems(), menus)
+                OrderLineItemHistoryResponse.from(order.getOrderLineItems().getOrderLineItems(), menuHistories)
         );
     }
 
@@ -55,7 +56,7 @@ public class OrderResponse {
         return orderedTime;
     }
 
-    public List<OrderLineItemResponse> getOrderLineItems() {
+    public List<OrderLineItemHistoryResponse> getOrderLineItems() {
         return orderLineItems;
     }
 }

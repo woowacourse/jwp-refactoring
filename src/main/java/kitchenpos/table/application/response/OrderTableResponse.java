@@ -1,4 +1,4 @@
-package kitchenpos.dto;
+package kitchenpos.table.application.response;
 
 import io.micrometer.core.lang.Nullable;
 import kitchenpos.table.domain.OrderTable;

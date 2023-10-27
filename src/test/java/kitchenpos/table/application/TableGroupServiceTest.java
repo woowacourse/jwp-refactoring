@@ -1,9 +1,9 @@
 package kitchenpos.table.application;
 
 import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.dto.OrderTableResponse;
-import kitchenpos.dto.TableGroupCreateRequest;
-import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.application.request.TableGroupCreateRequest;
+import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;

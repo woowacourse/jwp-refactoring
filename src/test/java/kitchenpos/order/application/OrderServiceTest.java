@@ -1,7 +1,7 @@
 package kitchenpos.order.application;
 
-import kitchenpos.dto.OrderHistoryResponse;
-import kitchenpos.dto.OrderResponse;
+import kitchenpos.order.application.response.OrderHistoryResponse;
+import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;

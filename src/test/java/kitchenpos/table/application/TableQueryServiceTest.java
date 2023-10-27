@@ -1,8 +1,8 @@
 package kitchenpos.table.application;
 
 import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.dto.OrderTableCreateRequest;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.table.application.request.OrderTableCreateRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
