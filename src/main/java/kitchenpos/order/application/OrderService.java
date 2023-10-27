@@ -48,7 +48,7 @@ public class OrderService {
         final OrderTable orderTable = findOrderTableBy(request.getOrderTableId());
         orderTable.validateEmptyTable();
 
-        final Order newOrder = new Order(orderLineItems, orderTable, OrderStatus.COOKING);
+        final Order newOrder = new Order(orderLineItems, orderTable.getId(), OrderStatus.COOKING);
         return orderRepository.save(newOrder);
     }
 
@@ -64,8 +64,11 @@ public class OrderService {
     ) {
         return savedMenus.stream()
                 .flatMap(savedMenu -> orderLineItemRequests.stream()
-                        .map(orderLineItemRequest ->
-                                new OrderLineItem(null, savedMenu, orderLineItemRequest.getQuantity())))
+                        .map(orderLineItemRequest -> new OrderLineItem(
+                                null,
+                                savedMenu.getName(),
+                                savedMenu.getPrice(),
+                                orderLineItemRequest.getQuantity())))
                 .collect(Collectors.toList());
     }
 

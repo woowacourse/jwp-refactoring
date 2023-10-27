@@ -1,7 +1,9 @@
 package kitchenpos.order.domain;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.common.Price;
 
 @Entity
 public class OrderLineItem {
@@ -22,9 +24,11 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
+    @Column(nullable = false)
+    private String name;
+
+    @Embedded
+    private Price price;
 
     @Column(nullable = false)
     private long quantity;
@@ -34,11 +38,13 @@ public class OrderLineItem {
 
     public OrderLineItem(
             final Order order,
-            final Menu menu,
+            final String name,
+            final BigDecimal price,
             final long quantity
     ) {
         this.order = order;
-        this.menu = menu;
+        this.name = name;
+        this.price = new Price(price);
         this.quantity = quantity;
     }
 
