@@ -1,52 +1,63 @@
 package kitchenpos.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.ChangeEmptyOrderTableDto;
+import kitchenpos.application.dto.ChangeNumberOfGuestsOrderTableDto;
+import kitchenpos.application.dto.CreateOrderTableDto;
+import kitchenpos.application.dto.ReadOrderTableDto;
 import kitchenpos.application.exception.OrderTableNotFoundException;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.ordertable.ChangeOrderTableStateService;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableNumberOfGuestsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
+@Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final ChangeOrderTableStateService changeOrderTableStateService;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(
+            final ChangeOrderTableStateService changeOrderTableStateService,
+            final OrderTableRepository orderTableRepository
+    ) {
+        this.changeOrderTableStateService = changeOrderTableStateService;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public OrderTable create(final CreateOrderTableRequest request) {
+    public CreateOrderTableDto create(final CreateOrderTableRequest request) {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        final OrderTable persistOrderTable = orderTableRepository.save(orderTable);
 
-        return orderTableRepository.save(orderTable);
+        return new CreateOrderTableDto(persistOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<ReadOrderTableDto> list() {
+        return orderTableRepository.findAll()
+                                   .stream()
+                                   .map(ReadOrderTableDto::new)
+                                   .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final UpdateOrderTableEmptyRequest request) {
+    public ChangeEmptyOrderTableDto changeEmpty(final Long orderTableId, final UpdateOrderTableEmptyRequest request) {
         final OrderTable persistOrderTable = orderTableRepository.findById(orderTableId)
                                                                  .orElseThrow(OrderTableNotFoundException::new);
-        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        persistOrderTable.changeEmptyStatus(orders, request.isEmpty());
 
-        return persistOrderTable;
+        changeOrderTableStateService.changeEmpty(persistOrderTable, request.isEmpty());
+
+        return new ChangeEmptyOrderTableDto(persistOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(
+    public ChangeNumberOfGuestsOrderTableDto changeNumberOfGuests(
             final Long orderTableId,
             final UpdateOrderTableNumberOfGuestsRequest request
     ) {
@@ -55,6 +66,6 @@ public class TableService {
 
         persistOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        return persistOrderTable;
+        return new ChangeNumberOfGuestsOrderTableDto(persistOrderTable);
     }
 }

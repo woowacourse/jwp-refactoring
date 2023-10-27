@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.CreateMenuGroupDto;
 import kitchenpos.ui.dto.request.CreateMenuGroupRequest;
 import kitchenpos.ui.dto.response.CreateMenuGroupResponse;
 import kitchenpos.ui.dto.response.ReadMenuGroupResponse;
@@ -25,9 +25,9 @@ public class MenuGroupRestController {
 
     @PostMapping("/api/menu-groups")
     public ResponseEntity<CreateMenuGroupResponse> create(@RequestBody final CreateMenuGroupRequest request) {
-        final MenuGroup created = menuGroupService.create(request);
-        final URI uri = URI.create("/api/menu-groups/" + created.getId());
-        final CreateMenuGroupResponse response = new CreateMenuGroupResponse(created);
+        final CreateMenuGroupDto createMenuGroupDto = menuGroupService.create(request);
+        final URI uri = URI.create("/api/menu-groups/" + createMenuGroupDto.getId());
+        final CreateMenuGroupResponse response = new CreateMenuGroupResponse(createMenuGroupDto);
 
         return ResponseEntity.created(uri)
                              .body(response);

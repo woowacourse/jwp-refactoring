@@ -26,6 +26,10 @@ public class Quantity {
         }
     }
 
+    public long value() {
+        return value;
+    }
+
     public long getValue() {
         return value;
     }

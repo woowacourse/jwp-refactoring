@@ -3,7 +3,7 @@ package kitchenpos.ui.dto.response;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.CreateMenuDto;
 
 public class CreateMenuResponse {
 
@@ -13,19 +13,21 @@ public class CreateMenuResponse {
     private final Long menuGroupId;
     private final List<CreateMenuProductResponse> menuProducts;
 
-    public CreateMenuResponse(final Menu menu) {
-        this.id = menu.getId();
-        this.name = menu.getName();
-        this.price = menu.getPrice();
-        this.menuGroupId = menu.getMenuGroup().getId();
-        this.menuProducts = convertCreateMenuProductResponses(menu);
+    public CreateMenuResponse(final CreateMenuDto dto) {
+        this.id = dto.getId();
+        this.name = dto.getName();
+        this.price = dto.getPrice();
+        this.menuGroupId = dto.getMenuGroupId();
+        this.menuProducts = convertCreateMenuProductResponses(dto);
     }
 
-    private List<CreateMenuProductResponse> convertCreateMenuProductResponses(final Menu menu) {
-        return menu.getMenuProducts()
-                   .stream()
-                   .map(menuProduct -> new CreateMenuProductResponse(menu, menuProduct))
-                   .collect(Collectors.toList());
+    private List<CreateMenuProductResponse> convertCreateMenuProductResponses(final CreateMenuDto createMenuDto) {
+        return createMenuDto.getMenuProducts()
+                            .stream()
+                            .map(createMenuProductDto ->
+                                    new CreateMenuProductResponse(createMenuDto, createMenuProductDto)
+                            )
+                            .collect(Collectors.toList());
     }
 
     public Long getId() {

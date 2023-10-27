@@ -4,7 +4,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.application.dto.ChangeOrderDto;
+import kitchenpos.application.dto.CreateOrderDto;
 import kitchenpos.ui.dto.request.CreateOrderRequest;
 import kitchenpos.ui.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.ui.dto.response.CreateOrderResponse;
@@ -29,9 +30,9 @@ public class OrderRestController {
 
     @PostMapping("/api/orders")
     public ResponseEntity<CreateOrderResponse> create(@RequestBody final CreateOrderRequest request) {
-        final Order created = orderService.create(request);
-        final URI uri = URI.create("/api/orders/" + created.getId());
-        final CreateOrderResponse response = new CreateOrderResponse(created);
+        final CreateOrderDto createOrderDto = orderService.create(request);
+        final URI uri = URI.create("/api/orders/" + createOrderDto.getId());
+        final CreateOrderResponse response = new CreateOrderResponse(createOrderDto);
 
         return ResponseEntity.created(uri)
                              .body(response);
@@ -53,8 +54,8 @@ public class OrderRestController {
             @PathVariable final Long orderId,
             @RequestBody final UpdateOrderStatusRequest request
     ) {
-        final Order updated = orderService.changeOrderStatus(orderId, request);
-        final UpdateOrderResponse response = new UpdateOrderResponse(updated);
+        final ChangeOrderDto changeOrderDto = orderService.changeOrderStatus(orderId, request);
+        final UpdateOrderResponse response = new UpdateOrderResponse(changeOrderDto);
 
         return ResponseEntity.ok(response);
     }

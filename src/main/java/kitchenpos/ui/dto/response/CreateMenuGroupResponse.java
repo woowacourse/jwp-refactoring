@@ -1,15 +1,15 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.CreateMenuGroupDto;
 
 public class CreateMenuGroupResponse {
 
     private final Long id;
     private final String name;
 
-    public CreateMenuGroupResponse(final MenuGroup menuGroup) {
-        this.id = menuGroup.getId();
-        this.name = menuGroup.getName();
+    public CreateMenuGroupResponse(final CreateMenuGroupDto dto) {
+        this.id = dto.getId();
+        this.name = dto.getName();
     }
 
     public Long getId() {

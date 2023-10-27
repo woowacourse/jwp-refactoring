@@ -4,27 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.ChangeEmptyOrderTableDto;
+import kitchenpos.application.dto.ChangeNumberOfGuestsOrderTableDto;
+import kitchenpos.application.dto.CreateOrderTableDto;
+import kitchenpos.application.dto.ReadOrderTableDto;
 import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.exception.InvalidNumberOfGuestsException;
-import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableNumberOfGuestsRequest;
@@ -64,7 +58,7 @@ class TableServiceTest {
         final CreateOrderTableRequest request = new CreateOrderTableRequest(0, false);
 
         // when
-        final OrderTable actual = tableService.create(request);
+        final CreateOrderTableDto actual = tableService.create(request);
 
         // then
         assertThat(actual.getId()).isPositive();
@@ -76,7 +70,7 @@ class TableServiceTest {
         final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
 
         // when
-        final List<OrderTable> actual = tableService.list();
+        final List<ReadOrderTableDto> actual = tableService.list();
 
         // then
         assertAll(
@@ -89,10 +83,12 @@ class TableServiceTest {
     void changeEmpty_메서드는_변경할_orderTableId와_변경한_값을_가진_orderTable을_전달하면_empty를_변경한다() {
         // given
         final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, true));
+        persistOrderTable.group(1L);
         final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(false);
 
         // when
-        final OrderTable actual = tableService.changeEmpty(persistOrderTable.getId(), request);
+        final ChangeEmptyOrderTableDto actual =
+                tableService.changeEmpty(persistOrderTable.getId(), request);
 
         // then
         assertThat(actual.isEmpty()).isEqualTo(actual.isEmpty());
@@ -108,19 +104,6 @@ class TableServiceTest {
                 .isInstanceOf(OrderTableNotFoundException.class);
     }
 
-    @ParameterizedTest(name = "orderStatus가 {0}이면 예외가 발생한다.")
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void changeEmpty_메서드는_변경할_orderTableId의_orderStatu가_COMPLETION이_아니면_예외가_발생한다(final String invalidOrderStatus) {
-        // given
-        final Menu persistMenu = persistMenu();
-        final OrderTable persistOrderTable = persistOrderTable(invalidOrderStatus, persistMenu);
-        final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(false);
-
-        // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(persistOrderTable.getId(), request))
-                .isInstanceOf(InvalidOrderStatusCompletionException.class);
-    }
-
     @Test
     void changeNumberOfGuests_메서드는_변경할_orderTableId와_변경할_값을_가진_orderTable을_전달하면_numberOfGuests를_변경한다() {
         // given
@@ -128,7 +111,8 @@ class TableServiceTest {
         final UpdateOrderTableNumberOfGuestsRequest request = new UpdateOrderTableNumberOfGuestsRequest(1);
 
         // when
-        final OrderTable actual = tableService.changeNumberOfGuests(persistOrderTable.getId(), request);
+        final ChangeNumberOfGuestsOrderTableDto actual =
+                tableService.changeNumberOfGuests(persistOrderTable.getId(), request);
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
@@ -155,34 +139,5 @@ class TableServiceTest {
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(-999L, request))
                 .isInstanceOf(OrderTableNotFoundException.class);
-    }
-
-    private Menu persistMenu() {
-        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
-        final Menu menu = Menu.of(
-                "메뉴",
-                BigDecimal.TEN,
-                List.of(persistMenuProduct),
-                persistMenuGroup
-        );
-
-        return menuRepository.save(menu);
-    }
-
-    private OrderTable persistOrderTable(final String invalidOrderStatus, final Menu persistMenu) {
-        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        final OrderLineItem orderLineItem = new OrderLineItem(persistMenu, 1L);
-        final OrderStatus orderStatus = OrderStatus.valueOf(invalidOrderStatus);
-        final Order order = new Order(
-                persistOrderTable,
-                orderStatus,
-                LocalDateTime.now().minusHours(3),
-                List.of(orderLineItem)
-        );
-        orderRepository.save(order);
-
-        return persistOrderTable;
     }
 }

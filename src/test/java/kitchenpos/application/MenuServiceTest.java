@@ -6,16 +6,20 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.CreateMenuDto;
+import kitchenpos.application.dto.ReadMenuDto;
 import kitchenpos.application.exception.MenuGroupNotFoundException;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.exception.InvalidPriceException;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.ui.dto.request.CreateMenuProductRequest;
 import kitchenpos.ui.dto.request.CreateMenuRequest;
 import org.junit.jupiter.api.Test;
@@ -51,7 +55,7 @@ class MenuServiceTest {
                 List.of(new CreateMenuProductRequest(persistProduct.getId(), 1L)));
 
         // when
-        final Menu actual = menuService.create(request);
+        final CreateMenuDto actual = menuService.create(request);
 
         assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
@@ -110,20 +114,32 @@ class MenuServiceTest {
     @Test
     void list_메서드는_등록한_모든_menu를_반환한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct menuProduct = new MenuProduct(persistProduct, 1);
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), persistMenuGroup);
-        final Menu expected = menuRepository.save(menu);
+        final Menu expected = persistMenu();
 
         // when
-        final List<Menu> actual = menuService.list();
+        final List<ReadMenuDto> actual = menuService.list();
 
         // then
         assertAll(
                 () -> assertThat(actual).hasSize(1),
                 () -> assertThat(actual.get(0).getId()).isEqualTo(expected.getId()),
                 () -> assertThat(actual.get(0).getName()).isEqualTo(expected.getName())
+        );
+    }
+
+    private Menu persistMenu() {
+        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
+        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
+
+        return menuRepository.save(
+                new Menu(
+                        "메뉴",
+                        BigDecimal.TEN,
+                        persistMenuGroup.getId(),
+                        MenuProducts.of(price, price, List.of(persistMenuProduct))
+                )
         );
     }
 }

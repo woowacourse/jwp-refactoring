@@ -1,7 +1,6 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.ReadOrderTableDto;
 
 public class ReadOrderTableResponse {
 
@@ -10,21 +9,11 @@ public class ReadOrderTableResponse {
     private int numberOfGuests;
     private boolean empty;
 
-    public ReadOrderTableResponse(final OrderTable orderTable) {
-        this.id = orderTable.getId();
-        this.tableGroupId = convertTableGroupId(orderTable);
-        this.numberOfGuests = orderTable.getNumberOfGuests();
-        this.empty = orderTable.isEmpty();
-    }
-
-    private Long convertTableGroupId(final OrderTable orderTable) {
-        final TableGroup tableGroup = orderTable.getTableGroup();
-
-        if (tableGroup == null) {
-            return null;
-        }
-
-        return tableGroup.getId();
+    public ReadOrderTableResponse(final ReadOrderTableDto dto) {
+        this.id = dto.getId();
+        this.tableGroupId = dto.getTableGroupId();
+        this.numberOfGuests = dto.getNumberOfGuests();
+        this.empty = dto.isEmpty();
     }
 
     public Long getId() {

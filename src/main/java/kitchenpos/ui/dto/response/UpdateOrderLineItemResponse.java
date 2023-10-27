@@ -1,6 +1,7 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.application.dto.ChangeOrderDto;
+import kitchenpos.application.dto.ChangeOrderLineItemDto;
 
 public class UpdateOrderLineItemResponse {
 
@@ -9,11 +10,14 @@ public class UpdateOrderLineItemResponse {
     private final Long menuId;
     private final long quantity;
 
-    public UpdateOrderLineItemResponse(final OrderLineItem orderLineItem) {
-        this.seq = orderLineItem.getSeq();
-        this.orderId = orderLineItem.getOrder().getId();
-        this.menuId = orderLineItem.getMenu().getId();
-        this.quantity = orderLineItem.getQuantity();
+    public UpdateOrderLineItemResponse(
+            final ChangeOrderDto changeOrderDto,
+            final ChangeOrderLineItemDto changeOrderLineItemDto
+    ) {
+        this.seq = changeOrderLineItemDto.getSeq();
+        this.orderId = changeOrderDto.getId();
+        this.menuId = changeOrderLineItemDto.getMenuId();
+        this.quantity = changeOrderLineItemDto.getQuantity();
     }
 
     public Long getSeq() {

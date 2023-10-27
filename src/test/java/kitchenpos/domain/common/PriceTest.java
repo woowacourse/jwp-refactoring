@@ -54,4 +54,30 @@ class PriceTest {
         // then
         assertThat(actual.getValue()).isEqualTo(BigDecimal.valueOf(30L));
     }
+
+    @Test
+    void isGreatherThan은_전달한_Price보다_값이_크면_true를_반환한다() {
+        // given
+        final Price targetPrice = new Price(BigDecimal.TEN);
+        final Price otherPrice = new Price(BigDecimal.ZERO);
+
+        // when
+        final boolean actual = targetPrice.isGreaterThan(otherPrice);
+
+        // then
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void isGreatherThan은_전달한_Price보다_값이_작으면_false를_반환한다() {
+        // given
+        final Price targetPrice = new Price(BigDecimal.ZERO);
+        final Price otherPrice = new Price(BigDecimal.TEN);
+
+        // when
+        final boolean actual = targetPrice.isGreaterThan(otherPrice);
+
+        // then
+        assertThat(actual).isFalse();
+    }
 }

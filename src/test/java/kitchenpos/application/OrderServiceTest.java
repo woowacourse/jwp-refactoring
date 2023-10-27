@@ -8,24 +8,29 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.ChangeOrderDto;
+import kitchenpos.application.dto.CreateOrderDto;
+import kitchenpos.application.dto.ReadOrderDto;
 import kitchenpos.application.exception.MenuNotFoundException;
 import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.exception.InvalidOrderLineItemException;
 import kitchenpos.domain.exception.InvalidOrderStatusException;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.ui.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.ui.dto.request.CreateOrderRequest;
 import kitchenpos.ui.dto.request.UpdateOrderStatusRequest;
@@ -65,7 +70,7 @@ class OrderServiceTest {
         final CreateOrderRequest request = new CreateOrderRequest(persistOrderTable.getId(), List.of(createOrderLineItemRequest));
 
         // when
-        final Order actual = orderService.create(request);
+        final CreateOrderDto actual = orderService.create(request);
 
         // then
         assertAll(
@@ -116,7 +121,7 @@ class OrderServiceTest {
         final Order expected = persistOrder(persistMenu, OrderStatus.COOKING);
 
         // when
-        final List<Order> actual = orderService.list();
+        final List<ReadOrderDto> actual = orderService.list();
 
         // then
         assertAll(
@@ -134,7 +139,7 @@ class OrderServiceTest {
         final UpdateOrderStatusRequest request = new UpdateOrderStatusRequest(orderStatus);
 
         // when
-        final Order actual = orderService.changeOrderStatus(persistOrder.getId(), request);
+        final ChangeOrderDto actual = orderService.changeOrderStatus(persistOrder.getId(), request);
 
         // then
         assertThat(actual.getOrderStatus().name()).isEqualTo(orderStatus);
@@ -156,22 +161,30 @@ class OrderServiceTest {
     private Menu persistMenu() {
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
+        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct.getId(), 1L);
+        final Price price = new Price(BigDecimal.TEN);
 
-        return menuRepository.save(Menu.of(
-                "메뉴",
-                BigDecimal.TEN,
-                List.of(persistMenuProduct),
-                persistMenuGroup)
+        return menuRepository.save(
+                new Menu(
+                        "메뉴",
+                        BigDecimal.TEN,
+                        persistMenuGroup.getId(),
+                        MenuProducts.of(price, price, List.of(persistMenuProduct))
+                )
         );
     }
 
     private Order persistOrder(final Menu persistMenu, final OrderStatus orderStatus) {
         final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        final OrderLineItem persistOrderLineItem = new OrderLineItem(persistMenu, 1L);
+        final OrderLineItem persistOrderLineItem = new OrderLineItem(
+                persistMenu.getId(),
+                persistMenu.name(),
+                persistMenu.price(),
+                1L
+        );
 
         return orderRepository.save(
-                new Order(persistOrderTable, orderStatus, LocalDateTime.now(), List.of(persistOrderLineItem))
+                new Order(persistOrderTable.getId(), orderStatus, LocalDateTime.now(), List.of(persistOrderLineItem))
         );
     }
 }
