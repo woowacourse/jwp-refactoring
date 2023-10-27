@@ -1,8 +1,6 @@
 package kitchenpos.domain.table.service;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.repository.OrderRepository;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableValidator;
 import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.repository.OrderTableRepository;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 
@@ -21,14 +18,14 @@ import static java.time.LocalDateTime.now;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository, final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -43,18 +40,9 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final OrderTables orderTables = OrderTables.from(orderTableRepository.findAllByTableGroupId(tableGroupId));
+        orderTables.validate(orderTableValidator);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-        final List<Order> savedOrders = orderRepository.findAllByOrderTableIds(orderTableIds);
-
-        final boolean cannotUngroup = savedOrders.stream().anyMatch(Order::isProceeding);
-        if (cannotUngroup) {
-            throw new IllegalArgumentException("주문 상태가 식사중이거나 요리중이면 그룹을 해제할 수 없습니다.");
-        }
-
-        orderTables.forEach(OrderTable::ungroup);
+        orderTables.ungroupAll();
     }
 }

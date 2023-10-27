@@ -33,6 +33,14 @@ public class OrderTables {
         orderTables.forEach(orderTable -> orderTable.changeGroup(tableGroup));
     }
 
+    public void ungroupAll() {
+        orderTables.forEach(OrderTable::ungroup);
+    }
+
+    public void validate(final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validate(this);
+    }
+
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
