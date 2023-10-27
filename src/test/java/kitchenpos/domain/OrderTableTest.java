@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ class OrderTableTest {
     void updateEmpty_fail() {
         // given
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(TableGroup.saved(1L, LocalDateTime.now()));
+        orderTable.groupBy(1L);
 
         // when, then
         assertThatThrownBy(() -> orderTable.updateEmpty(false))
@@ -43,7 +42,7 @@ class OrderTableTest {
     void ungroup() {
         // given
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(new TableGroup(LocalDateTime.now()));
+        orderTable.groupBy(1L);
 
         // when1
         orderTable.ungroup();
@@ -59,7 +58,7 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(3, true);
 
         // when
-        orderTable.groupBy(TableGroup.saved(1L, LocalDateTime.now()));
+        orderTable.groupBy(1L);
 
         // then
         assertThat(orderTable.getTableGroupId()).isNotNull();
@@ -86,7 +85,7 @@ class OrderTableTest {
 
     private static OrderTable createGroupedOrderTable() {
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(TableGroup.saved(1L, LocalDateTime.now()));
+        orderTable.groupBy(1L);
 
         return orderTable;
     }

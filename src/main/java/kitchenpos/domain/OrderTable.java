@@ -42,8 +42,8 @@ public class OrderTable {
         this.empty = false;
     }
 
-    public void groupBy(final TableGroup tableGroup) {
-        this.tableGroupId = tableGroup.getId();
+    public void groupBy(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public boolean isUnableToBeGrouped() {

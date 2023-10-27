@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.repository.OrderRepository;
@@ -28,8 +27,19 @@ public class TableGroupManager {
         validateTableGroupAvailability(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.groupBy(tableGroup);
+            orderTable.groupBy(tableGroup.getId());
         }
+    }
+
+    private List<OrderTable> convertToOrderTables(final List<Long> tableIds) {
+        return tableIds.stream()
+            .map(this::getOrderTable)
+            .collect(Collectors.toList());
+    }
+
+    private OrderTable getOrderTable(final Long id) {
+        return orderTableRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }
 
     private void validateTableGroupAvailability(final List<OrderTable> tables) {
@@ -47,24 +57,12 @@ public class TableGroupManager {
         }
     }
 
-    private List<OrderTable> convertToOrderTables(final List<Long> tableIds) {
-        return tableIds.stream()
-            .map(this::getOrderTable)
-            .collect(Collectors.toList());
-    }
-
-    private OrderTable getOrderTable(final Long id) {
-        return orderTableRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-    }
-
     @Transactional
     public void ungroup(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
         final List<Long> orderTableIds = convertToOrderTableIds(orderTables);
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
-            Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("종료된 주문이 아니라면 테이블 그룹을 해제할 수 없습니다.");
         }
         for (final OrderTable orderTable : orderTables) {

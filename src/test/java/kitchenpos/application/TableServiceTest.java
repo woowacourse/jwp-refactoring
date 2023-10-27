@@ -121,7 +121,7 @@ class TableServiceTest extends DataDependentIntegrationTest {
         // given
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(tableGroup);
+        orderTable.groupBy(tableGroup.getId());
         orderTableRepository.save(orderTable);
         final Long groupedOrderTableId = orderTable.getId();
 

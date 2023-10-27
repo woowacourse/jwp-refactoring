@@ -19,17 +19,8 @@ public class TableGroup {
 
     protected TableGroup() {}
 
-    private TableGroup(final Long id, final LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
-    }
-
     public TableGroup(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public static TableGroup saved(final Long id, final LocalDateTime createdDate) {
-        return new TableGroup(id, createdDate);
     }
 
     public Long getId() {
