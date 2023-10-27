@@ -56,11 +56,15 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId).
-                orElseThrow(() -> new IllegalArgumentException("단체 지정 내역을 찾을 수 없습니다."));
+        final TableGroup tableGroup = findTableGroupById(tableGroupId);
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.ungroupBy(tableGroup.getId(), orderTableValidator);
         }
+    }
+
+    private TableGroup findTableGroupById(final Long tableGroupId) {
+        return tableGroupRepository.findById(tableGroupId).
+                orElseThrow(() -> new IllegalArgumentException("단체 지정 내역을 찾을 수 없습니다."));
     }
 }
