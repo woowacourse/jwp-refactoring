@@ -74,8 +74,8 @@ class OrderServiceTest {
     @DisplayName("주문를 조회한다.")
     void testFindAllOrders() {
         // given
-        Order order1 = new Order();
-        Order order2 = new Order();
+        Order order1 = mock(Order.class);
+        Order order2 = mock(Order.class);
         given(orderRepository.findAll()).willReturn(Arrays.asList(order1, order2));
 
         // when

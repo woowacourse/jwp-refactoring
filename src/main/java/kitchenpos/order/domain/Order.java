@@ -28,7 +28,7 @@ public class Order {
     @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
     private Order(
@@ -44,7 +44,7 @@ public class Order {
     }
 
     public static Order ofCooking(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, COOKING, LocalDateTime.now(),orderLineItems);
+        return new Order(orderTableId, COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
