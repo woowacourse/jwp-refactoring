@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.ui.request.MenuProductRequest;
-import kitchenpos.ui.request.MenuRequest;
-import kitchenpos.ui.response.MenuResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.ui.request.MenuProductRequest;
+import kitchenpos.menu.ui.request.MenuRequest;
+import kitchenpos.menu.ui.response.MenuResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

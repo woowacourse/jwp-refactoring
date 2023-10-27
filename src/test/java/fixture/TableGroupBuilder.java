@@ -1,7 +1,7 @@
 package fixture;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
