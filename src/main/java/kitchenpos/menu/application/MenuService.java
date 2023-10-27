@@ -55,11 +55,11 @@ public class MenuService {
     }
 
     private void validateMenuPrice(Menu menu, List<MenuProduct> menuProducts) {
-        Price reduce = menuProducts.stream()
+        Price price = menuProducts.stream()
                 .map(this::calculateMenuProductPrice)
                 .reduce(Price.ZERO, Price::add);
 
-        menu.validatePrice(reduce);
+        menu.validatePrice(price);
     }
 
     private Price calculateMenuProductPrice(MenuProduct menuProduct) {
