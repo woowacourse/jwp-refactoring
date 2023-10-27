@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

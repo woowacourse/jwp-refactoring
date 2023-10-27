@@ -1,4 +1,4 @@
-package kitchenpos.domain.table;
+package kitchenpos.domain.tablegroup;
 
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
