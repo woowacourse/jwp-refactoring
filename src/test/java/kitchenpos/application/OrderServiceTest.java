@@ -7,22 +7,22 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.dto.order.MenuQuantityDto;
-import kitchenpos.application.dto.order.OrderRequest;
-import kitchenpos.application.dto.order.OrderResponse;
-import kitchenpos.application.dto.order.OrderStatusChangeRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.order.application.dto.MenuQuantityDto;
+import kitchenpos.order.application.dto.OrderRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.dto.OrderStatusChangeRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.vo.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.support.DataDependentIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,14 +47,12 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-
     private Menu createMenu() {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
-        final Menu menu = menuRepository.save(new Menu("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup));
-        menuProductRepository.save(new MenuProduct(menu, product, 2));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 1));
+        final Menu menu = Menu.of("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup.getId(), menuProducts);
+        menuRepository.save(menu);
 
         return menu;
     }

@@ -3,8 +3,8 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.stream.Stream;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,7 +30,7 @@ class OrderTableTest {
     void updateEmpty_fail() {
         // given
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(new TableGroup(LocalDateTime.now()));
+        orderTable.groupBy(1L);
 
         // when, then
         assertThatThrownBy(() -> orderTable.updateEmpty(false))
@@ -43,13 +43,13 @@ class OrderTableTest {
     void ungroup() {
         // given
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(new TableGroup(LocalDateTime.now()));
+        orderTable.groupBy(1L);
 
-        // when
+        // when1
         orderTable.ungroup();
 
         // then
-        assertThat(orderTable.getTableGroup()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
     }
 
     @DisplayName("주문 테이블을 그룹으로 묶는다.")
@@ -59,10 +59,10 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(3, true);
 
         // when
-        orderTable.groupBy(new TableGroup(LocalDateTime.now()));
+        orderTable.groupBy(1L);
 
         // then
-        assertThat(orderTable.getTableGroup()).isNotNull();
+        assertThat(orderTable.getTableGroupId()).isNotNull();
     }
 
     @DisplayName("그룹으로 묶을 수 없는 테이블이면 true 가 반환된다.")
@@ -86,7 +86,7 @@ class OrderTableTest {
 
     private static OrderTable createGroupedOrderTable() {
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(new TableGroup(LocalDateTime.now()));
+        orderTable.groupBy(1L);
 
         return orderTable;
     }
