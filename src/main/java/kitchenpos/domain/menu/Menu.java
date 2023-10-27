@@ -4,12 +4,9 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -26,9 +23,7 @@ public class Menu {
     @AttributeOverride(name = "value", column = @Column(name = "price"))
     private Price price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "menu_menu_group"))
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     @Embedded
     private final MenuProducts menuProducts = new MenuProducts();
@@ -36,10 +31,10 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
         this.name = name;
         this.price = new Price(price);
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
     }
 
     public void addMenuProducts(final MenuProducts menuProducts) {

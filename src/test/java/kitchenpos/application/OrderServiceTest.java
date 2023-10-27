@@ -67,7 +67,7 @@ class OrderServiceTest {
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2L);
-        후라이드_2개_메뉴 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴));
+        후라이드_2개_메뉴 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId()));
         후라이드_2개_메뉴.addMenuProducts(new MenuProducts(List.of(후라이드_2개)));
 
         em.flush();

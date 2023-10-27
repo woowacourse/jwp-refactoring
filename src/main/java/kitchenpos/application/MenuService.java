@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.Product;
@@ -35,15 +34,16 @@ public class MenuService {
 
     @Transactional
     public Menu create(final CreateMenuRequest request) {
-        final MenuGroup savedMenuGroup =
-                menuGroupRepository.findById(request.getMenuGroupId())
-                                   .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
+        final Long menuGroupId = request.getMenuGroupId();
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
+        }
 
-        return saveMenu(request, savedMenuGroup);
+        return saveMenu(request, menuGroupId);
     }
 
-    private Menu saveMenu(final CreateMenuRequest request, final MenuGroup savedMenuGroup) {
-        final Menu menu = new Menu(request.getName(), request.getPrice(), savedMenuGroup);
+    private Menu saveMenu(final CreateMenuRequest request, final Long menuGroupId) {
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroupId);
         final MenuProducts menuProducts = getMenuProducts(request);
         menu.addMenuProducts(menuProducts);
 

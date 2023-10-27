@@ -176,10 +176,10 @@ class MenuServiceTest {
         final MenuProduct 후라이드_1개 = new MenuProduct(후라이드, 1L);
         final MenuProduct 양념치킨_1개 = new MenuProduct(양념치킨, 1L);
 
-        final Menu 후라이드_후라이드 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴));
+        final Menu 후라이드_후라이드 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId()));
 
         후라이드_후라이드.addMenuProducts(new MenuProducts(List.of(후라이드_2개)));
-        final Menu 후라이드_양념치킨 = menuRepository.save(new Menu("후라이드+양념치킨", BigDecimal.valueOf(33000), 두마리메뉴));
+        final Menu 후라이드_양념치킨 = menuRepository.save(new Menu("후라이드+양념치킨", BigDecimal.valueOf(33000), 두마리메뉴.getId()));
         후라이드_양념치킨.addMenuProducts(new MenuProducts(List.of(후라이드_1개, 양념치킨_1개)));
 
         em.flush();

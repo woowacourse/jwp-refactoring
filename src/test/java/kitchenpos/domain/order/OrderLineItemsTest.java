@@ -31,8 +31,8 @@ class OrderLineItemsTest {
     void orderLineItems_duplicateMenu() {
         // given
         final MenuGroup 두마리_메뉴 = new MenuGroup("두마리 메뉴");
-        final Menu 후라이드_후라이드 = new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리_메뉴);
-        final Menu 후라이드_양념치킨 = new Menu("후라이드+양념치킨", BigDecimal.valueOf(32000), 두마리_메뉴);
+        final Menu 후라이드_후라이드 = new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리_메뉴.getId());
+        final Menu 후라이드_양념치킨 = new Menu("후라이드+양념치킨", BigDecimal.valueOf(32000), 두마리_메뉴.getId());
         final OrderLineItem 후라이드_후라이드_1개 = new OrderLineItem(후라이드_후라이드.getId(), 1);
         final OrderLineItem 후라이드_후라이드_2개 = new OrderLineItem(후라이드_후라이드.getId(), 2);
         final OrderLineItem 후라이드_양념치킨_1개 = new OrderLineItem(후라이드_양념치킨.getId(), 1);
