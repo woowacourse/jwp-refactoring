@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.ordertable.TableGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TableGroupRepository extends JpaRepository<TableGroup, Long> {

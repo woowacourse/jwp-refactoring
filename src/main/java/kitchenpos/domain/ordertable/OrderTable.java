@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.ordertable;
 
 import kitchenpos.common.BaseDate;
 import kitchenpos.domain.order.Order;
