@@ -66,7 +66,6 @@ public class TableService {
         final OrderTable orderTable = findOrderTableById(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-
         return OrderTableMapper.mapToOrderTableResponseBy(savedOrderTable);
     }
 }

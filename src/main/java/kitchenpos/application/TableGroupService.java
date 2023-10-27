@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.application.mapper.TableGroupMapper;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTables;
@@ -40,11 +41,7 @@ public class TableGroupService {
         final OrderTables orderTables = new OrderTables(savedOrderTables);
         orderTables.joinGroup(savedTableGroup);
 
-        return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
-                orderTables.getOrderTables()
-                        .stream()
-                        .map(orderTable -> new OrderTableResponse(orderTable.getId(), savedTableGroup.getId(), orderTable.getNumberOfGuests(), orderTable.isEmpty()))
-                        .collect(Collectors.toList()));
+        return TableGroupMapper.mapToTableGroupResponse(savedTableGroup, orderTables);
     }
 
     private static void checkRequestOrderTableSize(final List<OrderTableDto> request) {

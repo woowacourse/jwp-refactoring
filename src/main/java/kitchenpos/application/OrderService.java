@@ -3,8 +3,8 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.response.OrderLineItemResponse;
 import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -50,11 +50,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(new Order(orderTable));
         final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, savedOrder);
 
-        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTable().getId(), savedOrder.getOrderStatus().name(), savedOrder.getOrderedTime(),
-                savedOrderLineItems.stream()
-                        .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
-                                orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                        .collect(Collectors.toList()));
+        return OrderMapper.mapToOrderResponseBy(savedOrder, savedOrderLineItems);
     }
 
     private void checkValidOrderLineItems(final List<OrderLineItemDto> orderLineItems) {
@@ -98,11 +94,7 @@ public class OrderService {
         return orders.stream()
                 .map(order -> {
                     final List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
-                    return new OrderResponse(order.getId(), order.getOrderTable().getId(), order.getOrderStatus().name(), order.getOrderedTime(),
-                            savedOrderLineItems.stream()
-                                    .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
-                                            orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                                    .collect(Collectors.toList()));
+                    return OrderMapper.mapToOrderResponseBy(order, savedOrderLineItems);
                 })
                 .collect(Collectors.toList());
     }
@@ -114,11 +106,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(order);
         final List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
 
-        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTable().getId(), savedOrder.getOrderStatus().name(), savedOrder.getOrderedTime(),
-                savedOrderLineItems.stream()
-                        .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
-                                orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                        .collect(Collectors.toList()));
+        return OrderMapper.mapToOrderResponseBy(savedOrder, savedOrderLineItems);
     }
 
     private Order findOrderById(final Long orderId) {

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.application.mapper.ProductMapper;
 import kitchenpos.domain.common.Price;
 import kitchenpos.domain.product.Product;
 import kitchenpos.persistence.ProductRepository;
@@ -24,13 +25,13 @@ public class ProductService {
         final Product product = new Product(request.getName(), new Price(request.getPrice()));
         final Product savedProduct = productRepository.save(product);
 
-        return new ProductResponse(savedProduct.getId(), savedProduct.getName(), savedProduct.getPrice().getValue());
+        return ProductMapper.mapToProductResponse(savedProduct);
     }
 
     public List<ProductResponse> list() {
         return productRepository.findAll()
                 .stream()
-                .map(product -> new ProductResponse(product.getId(), product.getName(), product.getPrice().getValue()))
+                .map(ProductMapper::mapToProductResponse)
                 .collect(Collectors.toList());
     }
 }
