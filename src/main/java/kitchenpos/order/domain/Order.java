@@ -8,7 +8,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.common.OrderStatus;
 
 @Entity(name = "orders")
 public class Order {

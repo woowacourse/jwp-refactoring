@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.common.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.request.TableCreateRequest;
 import kitchenpos.table.dto.request.TableUpdateEmptyRequest;

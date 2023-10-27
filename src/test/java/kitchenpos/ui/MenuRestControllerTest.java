@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.domain.Price;
+import kitchenpos.common.Price;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.response.MenuResponse;

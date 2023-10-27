@@ -13,7 +13,7 @@ import java.util.List;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.common.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;

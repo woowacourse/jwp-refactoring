@@ -20,7 +20,7 @@ import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.domain.Price;
+import kitchenpos.common.Price;
 import kitchenpos.product.doamin.Product;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
