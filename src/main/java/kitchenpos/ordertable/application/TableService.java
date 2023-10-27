@@ -1,30 +1,29 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.application.dto.ChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.ChangeNumberOfGuestsRequest;
 import kitchenpos.ordertable.application.dto.OrderTableRequest;
-import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableChangeEmptyEvent;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -44,9 +43,7 @@ public class TableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리 중이거나 식사 중인 주문의 상태를 변경할 수 없습니다.");
-        }
+        applicationEventPublisher.publishEvent(new OrderTableChangeEmptyEvent(orderTableId));
 
         savedOrderTable.changeEmptyStatus(changeEmptyRequest.isEmpty());
 
