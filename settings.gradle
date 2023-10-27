@@ -6,4 +6,5 @@ include 'application'
 include 'common'
 include 'order_table'
 include 'menu_group'
+include 'test_fixture'
 

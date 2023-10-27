@@ -49,7 +49,7 @@ public class OrderTableGroupService {
         return tableGroupRepository.save(orderTableGroup).getId();
     }
 
-    private static void validateSavedOrderIsEmpty(List<OrderTable> savedOrderTables) {
+    private void validateSavedOrderIsEmpty(List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
