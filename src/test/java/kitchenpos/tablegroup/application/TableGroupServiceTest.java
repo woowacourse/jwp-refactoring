@@ -97,8 +97,8 @@ class TableGroupServiceTest extends ServiceTest {
         void 모든_테이블_주문이_완료할_수_있다() {
             // given
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
-            orderTableRepository.save(new OrderTable(tableGroup, 3, false));
-            orderTableRepository.save(new OrderTable(tableGroup, 4, false));
+            orderTableRepository.save(new OrderTable(1L, 3, false));
+            orderTableRepository.save(new OrderTable(1L, 4, false));
 
             // when
             tableGroupService.ungroup(1L);
@@ -107,9 +107,9 @@ class TableGroupServiceTest extends ServiceTest {
 
             // then
             SoftAssertions.assertSoftly(soft -> {
-                soft.assertThat(actual1.getTableGroup()).isNull();
+                soft.assertThat(actual1.getTableGroupId()).isNull();
                 soft.assertThat(actual1.isEmpty()).isFalse();
-                soft.assertThat(actual2.getTableGroup()).isNull();
+                soft.assertThat(actual2.getTableGroupId()).isNull();
                 soft.assertThat(actual2.isEmpty()).isFalse();
             });
         }
@@ -122,7 +122,7 @@ class TableGroupServiceTest extends ServiceTest {
         void 아직_완료되지_않은_테이블_주문이_존재하면_에러를_반환한다() {
             // given
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
-            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 5, false));
+            final var orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menu = menuRepository.save(
                     new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));

@@ -6,10 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 @Table(name = "order_table")
@@ -19,9 +16,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -33,12 +29,12 @@ public class OrderTable {
     }
 
     public OrderTable(
-            final TableGroup tableGroup,
+            final Long tableGroupId,
             final int numberOfGuests,
             final boolean empty
     ) {
         validateNumberOfGuests(numberOfGuests);
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -65,29 +61,29 @@ public class OrderTable {
         }
     }
 
-    public void group(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void group(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         this.empty = false;
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
     public Long findTableGroupId() {
-        if (Objects.isNull(this.tableGroup)) {
+        if (Objects.isNull(this.tableGroupId)) {
             return null;
         }
-        return this.tableGroup.getId();
+        return this.tableGroupId;
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

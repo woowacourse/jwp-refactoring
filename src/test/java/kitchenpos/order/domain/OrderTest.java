@@ -28,7 +28,7 @@ public class OrderTest {
         @Test
         void 주문_테이블이_비어있는_경우_예러를_반환한다() {
             // given
-            final var orderTable = new OrderTable(TableGroup.create(), 3, true);
+            final var orderTable = new OrderTable(1L, 3, true);
 
             // when & then
             assertThatThrownBy(() -> new Order(orderTable, OrderStatus.COOKING, List.of()))
@@ -39,7 +39,7 @@ public class OrderTest {
         @Test
         void 주문_항목이_비어있는_경우_예러를_반환한다() {
             // given
-            final var orderTable = new OrderTable(TableGroup.create(), 3, false);
+            final var orderTable = new OrderTable(1L, 3, false);
 
             // when & then
             assertThatThrownBy(() -> new Order(orderTable, OrderStatus.COOKING, List.of()))

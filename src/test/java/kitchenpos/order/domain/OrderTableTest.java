@@ -27,7 +27,7 @@ public class OrderTableTest {
         @Test
         void 손님의_수가_0보다_작으면_에러를_반환한다() {
             // given & when & then
-            assertThatThrownBy(() -> new OrderTable(TableGroup.create(), -3, true))
+            assertThatThrownBy(() -> new OrderTable(1L, -3, true))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 손님의 수가 음수입니다.");
         }
@@ -39,7 +39,7 @@ public class OrderTableTest {
         @Test
         void 주문_테이블을_빈테이블로_변경할_수_있다() {
             // given
-            final var orderTable = new OrderTable(TableGroup.create(), 3, false);
+            final var orderTable = new OrderTable(1L, 3, false);
 
             // when
             orderTable.changeEmpty(true);
@@ -51,7 +51,7 @@ public class OrderTableTest {
         @Test
         void 주문_테이블을_비어있지_않은_테이블로_변경할_수_있다() {
             // given
-            final var orderTable = new OrderTable(TableGroup.create(), 3, true);
+            final var orderTable = new OrderTable(1L, 3, true);
 
             // when
             orderTable.changeEmpty(false);
@@ -72,7 +72,7 @@ public class OrderTableTest {
         @ValueSource(ints = {0, 5})
         void 손님의_수는_0명_이상으로_변경할_수_있다(final int numberOfGuests) {
             // given
-            final var orderTable = new OrderTable(TableGroup.create(), 3, false);
+            final var orderTable = new OrderTable(1L, 3, false);
 
             // when
             orderTable.updateNumberOfGuests(numberOfGuests);
@@ -88,7 +88,7 @@ public class OrderTableTest {
         @Test
         void 손님의_수가_0보다_작으면_에러를_반환한다() {
             // given
-            final var orderTable = new OrderTable(TableGroup.create(), 3, false);
+            final var orderTable = new OrderTable(1L, 3, false);
 
             // when & then
             assertThatThrownBy(() -> orderTable.updateNumberOfGuests(-3))
@@ -99,7 +99,7 @@ public class OrderTableTest {
         @Test
         void 주문_테이블이_비어_있으면_에러를_반환한다() {
             // given
-            final var orderTable = new OrderTable(TableGroup.create(), 3, true);
+            final var orderTable = new OrderTable(1L, 3, true);
 
             // when & then
             assertThatThrownBy(() -> orderTable.updateNumberOfGuests(4))
@@ -115,13 +115,13 @@ public class OrderTableTest {
         void 주문_테이블_그룹화를_할_수_있다() {
             // given
             final var orderTable = new OrderTable(null, 3, true);
-            final var tableGroup = TableGroup.create();
+            final var tableGroupId = 1L;
 
             // when
-            orderTable.group(tableGroup);
+            orderTable.group(tableGroupId);
 
             // then
-            assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup);
+            assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroupId);
         }
     }
 
@@ -135,14 +135,14 @@ public class OrderTableTest {
         @Test
         void 주문_테이블의_그룹화를_해제할_수_있다() {
             // given
-            final var orderTable = new OrderTable(TableGroup.create(), 3, true);
+            final var orderTable = new OrderTable(1L, 3, true);
 
             // when
             orderTable.ungroup();
 
             // then
             assertSoftly(soft -> {
-                soft.assertThat(orderTable.getTableGroup()).isNull();
+                soft.assertThat(orderTable.getTableGroupId()).isNull();
                 soft.assertThat(orderTable.isEmpty()).isFalse();
             });
         }
@@ -158,7 +158,7 @@ public class OrderTableTest {
         @Test
         void 단체_테이블이_존재하면_해당_ID를_반환한다() {
             // given
-            final var orderTable = new OrderTable(new TableGroup(1L), 3, true);
+            final var orderTable = new OrderTable(1L, 3, true);
 
             // when
             final var actual = orderTable.findTableGroupId();

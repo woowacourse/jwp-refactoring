@@ -85,7 +85,7 @@ class TableServiceTest extends ServiceTest {
         void 주문이_하나_이상_존재하면_주문_목록을_반환한다() {
             // given
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
-            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+            final var orderTable = orderTableRepository.save(new OrderTable(1L, 3, false));
 
             final var expected = List.of(OrderTableResponse.from(orderTable));
 
@@ -109,7 +109,7 @@ class TableServiceTest extends ServiceTest {
         void 주문_테이블을_빈_테이블로_만들_수_있다() {
             // given
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
-            orderTableRepository.save(new OrderTable(tableGroup, 3, true));
+            orderTableRepository.save(new OrderTable(1L, 3, true));
             final var request = new OrderTableChangeEmptyRequest(true);
 
             // when
@@ -138,7 +138,7 @@ class TableServiceTest extends ServiceTest {
         void 주문_테이블에_이미_주문_상태가_존재하면_예외를_반환한다() {
             // given
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
-            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+            final var orderTable = orderTableRepository.save(new OrderTable(1L, 3, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menu = menuRepository.save(
                     new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
@@ -160,7 +160,7 @@ class TableServiceTest extends ServiceTest {
         void 손님의_수를_변경할_수_있다() {
             // given
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
-            orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+            orderTableRepository.save(new OrderTable(1L, 3, false));
             final var request = new OrderTableChangeNumberRequest(1L, 2, false);
 
             // when
