@@ -10,7 +10,7 @@ import kitchenpos.ordertable.domain.OrderValidator;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.ordertable.exception.TableGroupException;
+import kitchenpos.tablegroup.exception.TableGroupException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

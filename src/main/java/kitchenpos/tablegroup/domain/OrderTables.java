@@ -1,7 +1,7 @@
 package kitchenpos.tablegroup.domain;
 
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.exception.TableGroupException;
+import kitchenpos.tablegroup.exception.TableGroupException;
 
 import java.util.List;
 import java.util.Objects;

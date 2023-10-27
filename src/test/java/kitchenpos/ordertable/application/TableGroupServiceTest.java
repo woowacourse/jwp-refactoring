@@ -7,7 +7,7 @@ import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.domain.OrderValidator;
 import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.ordertable.exception.TableGroupException;
+import kitchenpos.tablegroup.exception.TableGroupException;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.application.dto.CreateTableGroupDto;
 import kitchenpos.tablegroup.application.dto.TableGroupDto;

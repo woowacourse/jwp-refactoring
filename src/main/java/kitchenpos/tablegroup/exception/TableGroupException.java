@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.exception;
+package kitchenpos.tablegroup.exception;
 
 public class TableGroupException extends RuntimeException {
 
