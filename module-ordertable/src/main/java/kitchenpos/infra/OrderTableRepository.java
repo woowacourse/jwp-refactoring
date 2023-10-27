@@ -1,8 +1,8 @@
-package kitchenpos.ordertable.infra;
+package kitchenpos.infra;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.domain.OrderTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {

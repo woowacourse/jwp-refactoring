@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.domain;
+package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -7,7 +7,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.vo.NumberOfGuests;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
