@@ -3,16 +3,17 @@ package kitchenpos.table.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.table.application.dto.event.TableGroupCreateEvent;
+import kitchenpos.table.application.dto.event.TableGroupUnGroupEvent;
 import kitchenpos.table.application.dto.request.OrderTableRequest;
 import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.table.application.dto.response.TableGroupResponse;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,24 +23,21 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public TableGroupService(final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository, final OrderRepository orderRepository) {
+                             final TableGroupRepository tableGroupRepository,
+                             final ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.orderRepository = orderRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-
         final List<OrderTable> orderTables = findAllOrderTableByIdIn(extractOrderTableIds(request.getOrderTables()));
-        for (OrderTable orderTable : orderTables) {
-            final List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
-            validateComplete(orders);
-        }
+        applicationEventPublisher.publishEvent(new TableGroupCreateEvent(orderTables));
         OrderTables.from(orderTables)
                 .group(tableGroup);
         return TableGroupResponse.of(tableGroupRepository.save(tableGroup), orderTables);
@@ -63,23 +61,13 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = findTableGroupById(tableGroupId);
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-
-        for (OrderTable orderTable : orderTables) {
-            final List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
-            validateComplete(orders);
-            orderTable.unGroup();
-        }
+        applicationEventPublisher.publishEvent(new TableGroupUnGroupEvent(orderTables));
+        orderTables.forEach(OrderTable::unGroup);
         tableGroupRepository.save(tableGroup);
     }
 
     private TableGroup findTableGroupById(final Long tableGroupId) {
         return tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 단체 지정 번호입니다."));
-    }
-
-    private void validateComplete(List<Order> orders) {
-        if (!orders.stream().allMatch(Order::isCompleted)) {
-            throw new IllegalArgumentException("조리, 식사 상태일 때는 빈 테이블로 변경할 수 없습니다.");
-        }
     }
 }

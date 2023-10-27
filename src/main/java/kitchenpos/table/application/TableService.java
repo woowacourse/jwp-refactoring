@@ -1,14 +1,14 @@
 package kitchenpos.table.application;
 
 import java.util.List;
+import kitchenpos.table.application.dto.event.OrderTableChangeEmptyEvent;
 import kitchenpos.table.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.table.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.response.OrderTableResponse;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -36,17 +37,10 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
-        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-        validateComplete(orders);
+        applicationEventPublisher.publishEvent(new OrderTableChangeEmptyEvent(orderTableId));
         final OrderTable orderTable = findOrderTableById(orderTableId);
         orderTable.updateEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
-    }
-
-    private void validateComplete(final List<Order> orders) {
-        if (!orders.stream().allMatch(Order::isCompleted)) {
-            throw new IllegalArgumentException("조리, 식사 상태일 때는 빈 테이블로 변경할 수 없습니다.");
-        }
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {
