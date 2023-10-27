@@ -1,20 +1,11 @@
 package kitchenpos.menu.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.service.dto.MenuProductRequest;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.service.dto.MenuRequest;
 import kitchenpos.menu.service.dto.MenuResponse;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,53 +13,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
-    private final ProductRepository productRepository;
+    private final MenuValidator menuValidator;
 
-    public MenuService(final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository,
-                       final MenuProductRepository menuProductRepository, final ProductRepository productRepository) {
+    public MenuService(final MenuRepository menuRepository, final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
-        this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        final Menu menu = new Menu(
-                request.getName(),
-                request.getPrice(),
-                findMenuGroupById(request.getMenuGroupId()).getId()
-        );
-        menu.addMenuProducts(extractMenuProduct(request.getMenuProducts()));
-
+        final Menu menu = MenuMapper.toMenu(request);
+        menu.place(menuValidator);
         menuRepository.save(menu);
-        menuProductRepository.saveAll(menu.getMenuProducts());
         return MenuResponse.from(menu);
-    }
-
-    private MenuGroup findMenuGroupById(final long id) {
-        return menuGroupRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
-    }
-
-    private List<MenuProduct> extractMenuProduct(final List<MenuProductRequest> request) {
-        final Map<Product, Long> productsAndQuantities = findByProductId(request);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (Map.Entry<Product, Long> entry : productsAndQuantities.entrySet()) {
-            menuProducts.add(new MenuProduct(entry.getKey(), entry.getValue()));
-        }
-        return menuProducts;
-    }
-
-    private Map<Product, Long> findByProductId(final List<MenuProductRequest> menuProducts) {
-        return menuProducts.stream()
-                .collect(Collectors.toMap(
-                        each -> productRepository.findById(each.getProductId())
-                                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품이 포함되어 있습니다.")),
-                        MenuProductRequest::getQuantity)
-                );
     }
 
     @Transactional(readOnly = true)

@@ -1,18 +1,11 @@
 package kitchenpos.menu.domain;
 
-import static java.util.Objects.nonNull;
-
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.common.vo.Price;
-import kitchenpos.product.domain.Product;
 
 @Entity
 public class MenuProduct {
@@ -20,20 +13,16 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Menu menu;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
     @Column(nullable = false)
     private long quantity;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Product product, final long quantity) {
-        this.product = product;
+    public MenuProduct(final Long productId, final long quantity) {
+        this.productId = productId;
         this.quantity = quantity;
     }
 
@@ -41,27 +30,12 @@ public class MenuProduct {
         return seq;
     }
 
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public Price getTotalPrice() {
-        return product.getPrice().multiply(quantity);
-    }
-
-    public void updateMenu(final Menu menu) {
-        if(nonNull(this.menu)){
-            throw new IllegalStateException("이미 메뉴가 지정되어 있어 변경할 수 없습니다.");
-        }
-        this.menu = menu;
     }
 
     @Override

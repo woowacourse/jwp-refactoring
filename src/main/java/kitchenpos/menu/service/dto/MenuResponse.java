@@ -28,7 +28,7 @@ public class MenuResponse {
                 menu.getName(),
                 menu.getPrice().value(),
                 menu.getMenuGroupId(),
-                MenuProductResponse.from(menu.getMenuProducts())
+                MenuProductResponse.from(menu.getMenuProducts(), menu.getId())
         );
     }
 
