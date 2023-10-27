@@ -13,10 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import org.springframework.util.CollectionUtils;
 
 @Table(name = "orders")
 @Entity
@@ -28,8 +26,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -43,29 +41,18 @@ public class Order {
 
     protected Order() {}
 
-    public Order(final OrderTable orderTable,
+    public Order(final Long orderTableId,
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> items) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = items;
     }
 
-    public static Order createDefault(final OrderTable orderTable, final LocalDateTime orderedTime, final List<OrderLineItem> items) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문하려는 테이블은 비어있을 수 없습니다.");
-        }
-        validateOrderLineItemsToAdd(items);
-
-        return new Order(orderTable, INITIAL_ORDER_STATUS, orderedTime, items);
-    }
-
-    private static void validateOrderLineItemsToAdd(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 메뉴가 비어있을 수 없습니다.");
-        }
+    public static Order createDefault(final Long orderTableId, final LocalDateTime orderedTime, final List<OrderLineItem> items) {
+        return new Order(orderTableId, INITIAL_ORDER_STATUS, orderedTime, items);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
@@ -84,7 +71,7 @@ public class Order {
     }
 
     public Long getOrderTableId() {
-        return orderTable.getId();
+        return orderTableId;
     }
 
     public String getOrderStatus() {

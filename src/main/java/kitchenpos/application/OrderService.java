@@ -10,65 +10,36 @@ import kitchenpos.application.dto.order.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.domain.OrderValidator;
 import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(
-        final MenuRepository menuRepository,
-        final OrderRepository orderRepository,
-        final OrderLineItemRepository orderLineItemRepository,
-        final OrderTableRepository orderTableRepository
-    ) {
-        this.menuRepository = menuRepository;
+    public OrderService(final OrderRepository orderRepository, final OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
-
-        final List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderRequest.getOrderLineItems());
-        final Order order = Order.createDefault(orderTable, LocalDateTime.now(), orderLineItems);
+        final Order order = Order.createDefault(orderRequest.getOrderTableId(), LocalDateTime.now(), convertToOrderLineItems(orderRequest.getOrderLineItems()));
+        orderValidator.validate(order);
         orderRepository.save(order);
 
         return OrderResponse.from(order);
     }
 
     private List<OrderLineItem> convertToOrderLineItems(final List<MenuQuantityDto> menuQuantities) {
-        validateAllMenusAvailable(menuQuantities);
-
         return menuQuantities
             .stream()
-            .map(menuIdWithQuantity ->
-                new OrderLineItem(menuIdWithQuantity.getMenuId(), menuIdWithQuantity.getQuantity())
-            )
+            .map(menuIdWithQuantity -> new OrderLineItem(menuIdWithQuantity.getMenuId(), menuIdWithQuantity.getQuantity()))
             .collect(Collectors.toList());
-    }
-
-    private void validateAllMenusAvailable(final List<MenuQuantityDto> menuQuantities) {
-        final List<Long> menuIds = menuQuantities.stream()
-            .map(MenuQuantityDto::getMenuId)
-            .collect(Collectors.toList());
-
-        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("잘못된 메뉴가 주문에 포함되었습니다.");
-        }
     }
 
     @Transactional(readOnly = true)

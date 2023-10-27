@@ -163,7 +163,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(request);
         final Long tableGroupId = tableGroupResponse.getId();
 
-        orderRepository.save(new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1))));
+        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1))));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

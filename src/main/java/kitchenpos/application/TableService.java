@@ -46,7 +46,7 @@ public class TableService {
     public TableResponse changeEmpty(final Long orderTableId, final TableEmptyChangeRequest request) {
         final OrderTable orderTable = findById(orderTableId);
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(orderTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
         orderTable.updateEmpty(request.isEmpty());

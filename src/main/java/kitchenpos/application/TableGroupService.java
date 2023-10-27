@@ -61,8 +61,11 @@ public class TableGroupService {
             .orElseThrow(IllegalArgumentException::new);
 
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        final List<Long> orderTableIds = orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
         for (final OrderTable orderTable : orderTables) {

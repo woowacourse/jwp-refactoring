@@ -54,12 +54,12 @@ class OrderRepositoryTest extends DataDependentIntegrationTest {
         final OrderTable orderTable2 = new OrderTable(2, false);
         orderTableRepository.saveAll(List.of(orderTable1, orderTable2));
 
-        final Order order1 = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1)));
-        final Order order2 = new Order(orderTable2, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1)));
+        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1)));
+        final Order order2 = new Order(orderTable2.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1)));
         orderRepository.saveAll(List.of(order1, order2));
 
         // when
-        final boolean exists = orderRepository.existsByOrderTableInAndOrderStatusIn(List.of(orderTable1), List.of(OrderStatus.COOKING));
+        final boolean exists = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTable1.getId()), List.of(OrderStatus.COOKING));
 
         // then
         assertThat(exists).isTrue();
@@ -72,11 +72,11 @@ class OrderRepositoryTest extends DataDependentIntegrationTest {
         final OrderTable orderTable1 = new OrderTable(3, false);
         orderTableRepository.save(orderTable1);
 
-        final Order order1 = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1)));
+        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1)));
         orderRepository.save(order1);
 
         // when
-        final boolean exists = orderRepository.existsByOrderTableAndOrderStatusIn(orderTable1, List.of(OrderStatus.COOKING));
+        final boolean exists = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(), List.of(OrderStatus.COOKING));
 
         // then
         assertThat(exists).isTrue();

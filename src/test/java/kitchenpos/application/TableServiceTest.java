@@ -139,7 +139,7 @@ class TableServiceTest extends DataDependentIntegrationTest {
         final TableRequest tableRequest = new TableRequest(3, false);
         final TableResponse savedOrderTable = tableService.create(tableRequest);
         final OrderTable orderTable = orderTableRepository.findById(savedOrderTable.getId()).get();
-        orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1))));
+        orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1))));
         final Long orderTableId = orderTable.getId();
 
         final TableEmptyChangeRequest request = new TableEmptyChangeRequest(true);
