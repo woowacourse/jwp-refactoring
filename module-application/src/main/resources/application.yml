@@ -1,5 +1,26 @@
-logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
-spring.h2.console.enabled=true
-spring.jpa.properties.hibernate.format_sql=true
-spring.jpa.show-sql=true
-spring.jpa.hibernate.ddl-auto=validate
+spring:
+  datasource:
+    url: jdbc:h2:~/kitchenpos
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    url: jdbc:h2:~/kitchenpos
+    user: sa
+    password:
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
