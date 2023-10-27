@@ -3,10 +3,12 @@ package kitchenpos.application;
 import kitchenpos.domain.dto.OrderRequest;
 import kitchenpos.domain.dto.OrderRequest.OrderLineItemRequest;
 import kitchenpos.domain.dto.OrderResponse;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
@@ -35,13 +37,18 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
     @Autowired
     private OrderTableRepository orderTableRepository;
+    @Autowired
+    private MenuRepository menuRepository;
 
     private OrderLineItems orderLineItems;
 
     @BeforeEach
     void setUp() {
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2L);
+        final Menu menu1 = menuRepository.findById(1L).get();
+        final Menu menu2 = menuRepository.findById(2L).get();
+
+        final OrderLineItem orderLineItem1 = new OrderLineItem(menu1.getId(), 1L, menu1.getName(), menu1.getPrice());
+        final OrderLineItem orderLineItem2 = new OrderLineItem(menu2.getId(), 2L, menu2.getName(), menu2.getPrice());
 
         orderLineItems = new OrderLineItems(List.of(orderLineItem1, orderLineItem2));
     }

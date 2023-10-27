@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.dto.OrderRequest;
 import kitchenpos.domain.dto.OrderResponse;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
@@ -61,10 +62,17 @@ public class OrderService {
         final List<OrderRequest.OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
 
         final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> new OrderLineItem(
-                        orderLineItemRequest.getMenuId(),
-                        orderLineItemRequest.getQuantity()
-                ))
+                .map(orderLineItemRequest -> {
+                    final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                            .orElseThrow(IllegalArgumentException::new);
+
+                    return new OrderLineItem(
+                            menu.getId(),
+                            orderLineItemRequest.getQuantity(),
+                            menu.getName(),
+                            menu.getPrice()
+                    );
+                })
                 .collect(Collectors.toList());
 
         return new OrderLineItems(orderLineItems);
