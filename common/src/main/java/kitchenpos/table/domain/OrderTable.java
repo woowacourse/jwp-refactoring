@@ -9,9 +9,10 @@ import javax.persistence.Id;
 import kitchenpos.table.exception.CannotChangeEmptyTableNumberOfGuestsException;
 import kitchenpos.table.exception.CannotChangeGroupedTableEmptyException;
 import kitchenpos.table.exception.OrderTableCannotBeGroupedException;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-public class OrderTable {
+public class OrderTable extends AbstractAggregateRoot<OrderTable> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,6 +64,7 @@ public class OrderTable {
         if (Objects.nonNull(tableGroupId)) {
             throw new CannotChangeGroupedTableEmptyException();
         }
+        registerEvent(new OrderTableChangeEmptyEvent(id, empty));
         this.empty = empty;
     }
 

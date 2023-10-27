@@ -1,4 +1,4 @@
-package kitchenpos.table.exception;
+package kitchenpos.exception;
 
 public class UnCompletedOrderExistsException extends RuntimeException {
 

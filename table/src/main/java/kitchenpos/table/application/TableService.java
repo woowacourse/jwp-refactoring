@@ -3,7 +3,6 @@ package kitchenpos.table.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.OrderTableChangeNumberOfGuestsRequest;
@@ -11,8 +10,6 @@ import kitchenpos.table.dto.OrderTableCreateRequest;
 import kitchenpos.table.dto.OrderTableResponse;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import kitchenpos.table.exception.RequestOrderTableCountNotEnoughException;
-import kitchenpos.table.exception.UnCompletedOrderExistsException;
-import kitchenpos.table.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -48,21 +42,9 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-
-        validateDoesEveryOrderCompleted(orders);
-
         orderTable.changeEmpty(request.getEmpty());
 
         return OrderTableResponse.from(orderTable);
-    }
-
-    private void validateDoesEveryOrderCompleted(List<Order> orders) {
-        boolean isStatusNotChangeable = orders.stream()
-                .anyMatch(Order::isOrderUnCompleted);
-        if (isStatusNotChangeable) {
-            throw new UnCompletedOrderExistsException();
-        }
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
