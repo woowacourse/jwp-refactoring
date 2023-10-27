@@ -2,7 +2,7 @@ package kitchenpos.application.order;
 
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_COOKING_OR_MEAL;
+import static kitchenpos.exception.order.OrderExceptionType.ORDER_STATUS_IS_COOKING_OR_MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +30,7 @@ class TableEmptyChangedEventListenerTest extends IntegrationTest {
         ).exceptionType();
 
         // then
-        assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_EMPTY_COOKING_OR_MEAL);
+        assertThat(exceptionType).isEqualTo(ORDER_STATUS_IS_COOKING_OR_MEAL);
     }
 
     @Test

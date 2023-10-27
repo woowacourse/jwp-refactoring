@@ -1,7 +1,7 @@
 package kitchenpos.application.table;
 
 import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_COOKING_OR_MEAL;
+import static kitchenpos.exception.order.OrderExceptionType.ORDER_STATUS_IS_COOKING_OR_MEAL;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE;
@@ -103,7 +103,7 @@ class TableServiceTest extends IntegrationTest {
             ).exceptionType();
 
             // then
-            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_EMPTY_COOKING_OR_MEAL);
+            assertThat(exceptionType).isEqualTo(ORDER_STATUS_IS_COOKING_OR_MEAL);
         }
 
         @Test
