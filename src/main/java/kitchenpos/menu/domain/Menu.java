@@ -1,12 +1,11 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.validator.MenuValidator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class Menu {
@@ -15,10 +14,8 @@ public class Menu {
     private Long id;
     private String name;
     private BigDecimal price;
-    @JoinColumn(name = "menu_group_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private MenuGroup menuGroup;
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    private Long menuGroupId;
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -26,28 +23,28 @@ public class Menu {
 
     private Menu(final String name,
                  final BigDecimal price,
-                 final MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
+                 final Long menuGroupId) {
+        this(null, name, price, menuGroupId);
     }
 
     private Menu(final Long id,
                  final String name,
                  final BigDecimal price,
-                 final MenuGroup menuGroup) {
+                 final Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
     }
 
     public static Menu create(final String name,
                               final BigDecimal price,
-                              final MenuGroup menuGroup,
-                              final List<MenuProduct> menuProducts) {
-        final Menu menu = new Menu(name, price, menuGroup);
+                              final Long menuGroupId,
+                              final List<MenuProduct> menuProducts,
+                              final MenuValidator menuValidator) {
+        final Menu menu = new Menu(name, price, menuGroupId);
         menu.addMenuProducts(menuProducts);
-        menu.validatePriceOverZero();
-        menu.validateTotalPrice();
+        menuValidator.validateCreate(price, menuGroupId, menuProducts);
         return menu;
     }
 
@@ -62,25 +59,6 @@ public class Menu {
         this.menuProducts.add(menuProduct);
     }
 
-    private void validatePriceOverZero() {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateTotalPrice() {
-        final BigDecimal totalPrice = calculateAllProductPrice();
-        if (price.compareTo(totalPrice) > 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private BigDecimal calculateAllProductPrice() {
-        return menuProducts.stream()
-                .map(MenuProduct::calculateTotalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
     public Long getId() {
         return id;
     }
@@ -93,8 +71,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

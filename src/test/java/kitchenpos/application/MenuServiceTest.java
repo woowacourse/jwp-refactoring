@@ -62,7 +62,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    void 존재하지_않는_메뉴_상품을_가지고_있으면_예외를_발생한다() {
+    void 존재하지_않는_상품을_가지고_있으면_예외를_발생한다() {
         final MenuRequest menu = new MenuRequest(
                 "메뉴",
                 BigDecimal.valueOf(10000),
