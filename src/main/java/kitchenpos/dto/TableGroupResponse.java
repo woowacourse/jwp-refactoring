@@ -1,6 +1,6 @@
 package kitchenpos.dto;
 
-import kitchenpos.domain.tableGroup.TableGroup;
+import kitchenpos.domain.table_group.TableGroup;
 
 import java.time.LocalDateTime;
 

@@ -1,6 +1,6 @@
 package kitchenpos.domain.repository;
 
-import kitchenpos.domain.orderTable.OrderTable;
+import kitchenpos.domain.order_table.OrderTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

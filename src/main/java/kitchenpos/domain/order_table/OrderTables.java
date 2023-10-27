@@ -1,4 +1,4 @@
-package kitchenpos.domain.orderTable;
+package kitchenpos.domain.order_table;
 
 import org.springframework.util.CollectionUtils;
 

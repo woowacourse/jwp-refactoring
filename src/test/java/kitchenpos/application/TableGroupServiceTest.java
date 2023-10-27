@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.orderTable.OrderTable;
+import kitchenpos.domain.order_table.OrderTable;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableId;
