@@ -11,6 +11,7 @@ import kitchenpos.table.request.TableGroupCreateRequest;
 import kitchenpos.ui.ControllerAcceptanceTestHelper;
 import kitchenpos.ui.order.response.TableResponse;
 import kitchenpos.ui.table.response.TableGroupResponse;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class TableGroupAcceptanceTestUtil extends ControllerAcceptanceTestHelper
     protected void 테이블이_그룹화됨(TableGroupCreateRequest 요청, ExtractableResponse<Response> 응답) {
         TableGroupResponse response = 응답.as(TableGroupResponse.class);
 
-        assertSoftly(softly -> {
+        SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(응답.statusCode()).isEqualTo(201);
             softly.assertThat(response.getId()).isNotNull();
             softly.assertThat(response.getOrderTables()).isNotNull();
@@ -80,7 +81,7 @@ public class TableGroupAcceptanceTestUtil extends ControllerAcceptanceTestHelper
     }
 
     protected void 테이블이_비그룹화됨(ExtractableResponse<Response> 응답) {
-        assertSoftly(softly -> {
+        SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(응답.statusCode()).isEqualTo(204);
         });
     }

@@ -7,6 +7,7 @@ import io.restassured.response.Response;
 import kitchenpos.menugroup.request.MenuGroupCreateRequest;
 import kitchenpos.ui.ControllerAcceptanceTestHelper;
 import kitchenpos.ui.menu.response.MenuGroupResponse;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 
@@ -33,7 +34,7 @@ public abstract class MenuGroupAcceptanceTestUtil extends ControllerAcceptanceTe
     protected void 메뉴그룹이_생성됨(MenuGroupCreateRequest 요청, ExtractableResponse<Response> 응답) {
         MenuGroupResponse response = 응답.as(MenuGroupResponse.class);
 
-        assertSoftly(softly -> {
+        SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(응답.statusCode()).isEqualTo(201);
             softly.assertThat(response.getId()).isNotNull();
             softly.assertThat(response.getName()).isEqualTo(요청.getName());
@@ -50,7 +51,7 @@ public abstract class MenuGroupAcceptanceTestUtil extends ControllerAcceptanceTe
     protected void 메뉴그룹_목록이_조회됨(ExtractableResponse<Response> 응답) {
         List<MenuGroupResponse> responses = 응답.jsonPath().getList("", MenuGroupResponse.class);
 
-        assertSoftly(softly -> {
+        SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(응답.statusCode()).isEqualTo(200);
             softly.assertThat(responses).hasSize(1);
         });

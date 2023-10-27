@@ -39,7 +39,7 @@ public abstract class TableAcceptanceTestUtil extends ControllerAcceptanceTestHe
     protected void 테이블이_생성됨(TableCreateRequest 요청, ExtractableResponse<Response> 응답) {
         TableResponse response = 응답.as(TableResponse.class);
 
-        assertSoftly(softly -> {
+        SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(응답.statusCode()).isEqualTo(201);
             softly.assertThat(response.getTableGroupId()).isNull();
             softly.assertThat(response.getNumberOfGuests()).isEqualTo(요청.getNumberOfGuests());
@@ -83,7 +83,7 @@ public abstract class TableAcceptanceTestUtil extends ControllerAcceptanceTestHe
     protected void 테이블이_비워짐(TableUpdateRequest 비움_요청, ExtractableResponse<Response> 비움_응답) {
         TableResponse response = 비움_응답.as(TableResponse.class);
 
-        assertSoftly(softly -> {
+        SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(비움_응답.statusCode()).isEqualTo(200);
             softly.assertThat(response.isEmpty()).isEqualTo(비움_요청.isEmpty());
         });
@@ -104,7 +104,7 @@ public abstract class TableAcceptanceTestUtil extends ControllerAcceptanceTestHe
     protected void 테이블_손님수가_변경됨(TableUpdateRequest 손님수_변경_요청, ExtractableResponse<Response> 손님수_변경_응답) {
         TableResponse response = 손님수_변경_응답.as(TableResponse.class);
 
-        assertSoftly(softly -> {
+        SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(손님수_변경_응답.statusCode()).isEqualTo(200);
             softly.assertThat(response.getNumberOfGuests()).isEqualTo(손님수_변경_요청.getNumberOfGuests());
         });
