@@ -14,13 +14,7 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    public MenuProduct() {
-    }
-
-    private MenuProduct(final Long seq, final Long productId, final long quantity) {
-        this.seq = seq;
-        this.productId = productId;
-        this.quantity = quantity;
+    protected MenuProduct() {
     }
 
     private MenuProduct(final Long productId, final long quantity) {
@@ -30,10 +24,6 @@ public class MenuProduct {
 
     public static MenuProduct of(final Long productId, final long quantity) {
         return new MenuProduct(productId, quantity);
-    }
-
-    public Long getSeq() {
-        return seq;
     }
 
     public Long getProductId() {
