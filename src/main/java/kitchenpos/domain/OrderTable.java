@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
@@ -28,9 +25,6 @@ public class OrderTable {
     private NumberOfGuests numberOfGuests;
 
     private boolean empty;
-
-    @OneToMany(mappedBy = "orderTable")
-    private final List<Order> orders = new ArrayList<>();
 
     public OrderTable() {
     }
@@ -65,7 +59,6 @@ public class OrderTable {
 
     public void updateEmpty(final boolean empty) {
         validateTableGroup();
-        validateOrdersCompleted();
         this.empty = empty;
     }
 
@@ -75,28 +68,11 @@ public class OrderTable {
         }
     }
 
-    private void validateOrdersCompleted() {
-        if (isCompleted()) {
-            return;
-        }
-        throw new IllegalArgumentException("조리, 식사 상태일 때는 빈 테이블로 변경할 수 없습니다.");
-    }
-
-    public boolean isCompleted() {
-        return orders.stream()
-                .allMatch(Order::isCompleted);
-    }
-
     public int getNumberOfGuestsValue() {
         return numberOfGuests.getValue();
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
     public void unGroup() {
-        validateOrdersCompleted();
         tableGroup = null;
         this.empty = false;
     }

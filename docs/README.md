@@ -9,7 +9,7 @@
 ## 리팩토링 전 의존관계
 - Order 
   - -> OrderLineItems
-  - [ ] <-> OrderTable
+  - -> OrderTable
   - [ ] <-> OrderLineItem
   - -> OrderStatus
 
@@ -21,7 +21,6 @@
   - -> OrderLineItem
 
 - OrderTable
-  - [ ] <-> Order
   - -> TableGroup
   - -> NumberOfGuests
 

@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embeddable;
@@ -46,13 +45,5 @@ public class OrderTables {
             orderTable.updateEmpty(false);
             orderTable.updateTableGroup(tableGroup);
         }
-    }
-
-    public void ungroup() {
-        items.forEach(OrderTable::unGroup);
-    }
-
-    public List<OrderTable> getItems() {
-        return Collections.unmodifiableList(items);
     }
 }
