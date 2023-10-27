@@ -4,11 +4,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.PutOrderTableEmptyRequest;
+import kitchenpos.dto.request.PutOrderTableGuestsNumberRequest;
 import kitchenpos.infrastructure.persistence.JpaOrderRepository;
 import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
 import kitchenpos.infrastructure.persistence.JpaTableGroupRepository;
-import kitchenpos.dto.request.PutOrderTableEmptyRequest;
-import kitchenpos.dto.request.PutOrderTableGuestsNumberRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -66,7 +66,7 @@ public class TableServiceFixture {
         그룹테이블에_포함된_주문_테이블_1.setTableGroup(테이블_그룹);
         orderTableRepository.saveAll(List.of(그룹테이블에_포함된_주문_테이블_1, 주문_테이블_2));
 
-        final Order 주문 = new Order(그룹테이블에_포함된_주문_테이블_1, OrderStatus.COMPLETION);
+        final Order 주문 = new Order(그룹테이블에_포함된_주문_테이블_1.getId(), OrderStatus.COMPLETION);
         orderRepository.save(주문);
 
         상태_변경_요청_dto = new PutOrderTableEmptyRequest(false);
@@ -76,7 +76,7 @@ public class TableServiceFixture {
         주문_상태가_COMPLETION인_주문_테이블 = new OrderTable(3, false);
         orderTableRepository.save(주문_상태가_COMPLETION인_주문_테이블);
 
-        final Order 주문 = new Order(주문_상태가_COMPLETION인_주문_테이블, OrderStatus.COOKING);
+        final Order 주문 = new Order(주문_상태가_COMPLETION인_주문_테이블.getId(), OrderStatus.COOKING);
         orderRepository.save(주문);
 
         상태_변경_요청_dto = new PutOrderTableEmptyRequest(false);

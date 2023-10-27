@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,11 +15,6 @@ public class OrderLineItem {
     private Long seq;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    @JsonIgnore
-    private Order order;
-
-    @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
@@ -35,16 +28,8 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public void setOrder(final Order order) {
-        this.order = order;
-    }
-
     public Long getSeq() {
         return seq;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public Menu getMenu() {

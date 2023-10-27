@@ -37,13 +37,21 @@ public class OrderService {
 
     @Transactional
     public Order create(final CreateOrderRequest orderRequest) {
-        final Long orderTableId = orderRequest.getOrderTableId();
-        if (Objects.isNull(orderTableId) || !orderTableRepository.existsById(orderTableId)) {
+        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
+                                                          .orElseThrow(IllegalArgumentException::new);
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        final Order order = new Order(orderTableId, OrderStatus.COOKING);
+        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
 
+        final List<OrderLineItem> orderLineItems = createOrderLineItems(orderRequest);
+        savedOrder.addOrderItems(orderLineItems);
+
+        return savedOrder;
+    }
+
+    private List<OrderLineItem> createOrderLineItems(final CreateOrderRequest orderRequest) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final List<Menu> menus = new ArrayList<>();
         for (final OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
@@ -53,10 +61,8 @@ public class OrderService {
             orderLineItems.add(orderLineItem);
             menus.add(menu);
         }
-        savedOrder.setOrderLineItems(orderLineItems);
         validateMenuIds(orderLineItems.size(), menus);
-
-        return savedOrder;
+        return orderLineItems;
     }
 
     private void validateMenuIds(final int orderLineItemSize, final List<Menu> menus) {

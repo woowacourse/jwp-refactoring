@@ -47,21 +47,24 @@ class OrderServiceTest extends OrderServiceFixture {
         void 주문_항목에서_입력받은_메뉴가_올바른_메뉴가_아니라면_예외가_발생한다() {
             주문_항목에서_입력받은_메뉴가_올바른_메뉴가_아니라면_예외가_발생한다_픽스처_생성();
 
-            assertThatThrownBy(() -> orderService.create(주문항목이_2개인_주문_생성_요청_dto));
+            assertThatThrownBy(() -> orderService.create(주문항목이_2개인_주문_생성_요청_dto))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 유효하지_않은_주문_테이블_아이디라면_예외가_발생한다() {
             유효하지_않은_주문_테이블_아이디라면_예외가_발생한다_픽스처_생성();
 
-            assertThatThrownBy(() -> orderService.create(유효하지_않은_주문_테이블_아이디를_갖는_주문_생성_요청_dto));
+            assertThatThrownBy(() -> orderService.create(유효하지_않은_주문_테이블_아이디를_갖는_주문_생성_요청_dto))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블_아이디에_해당하는_주문_테이블이_empty_table이라면_예외가_발생한다() {
             주문_테이블_아이디에_해당하는_주문_테이블이_empty_table이라면_예외가_발생한다_픽스처_생성();
 
-            assertThatThrownBy(() -> orderService.create(주문_불가능_상태의_주문_테이블_생성_요청_dto));
+            assertThatThrownBy(() -> orderService.create(주문_불가능_상태의_주문_테이블_생성_요청_dto))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

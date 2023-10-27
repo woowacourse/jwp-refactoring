@@ -8,14 +8,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "orders")
 public class Order {
+
+    private static final int MINIMUM_ORDER_LINE_ITEM_SIZE = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +26,9 @@ public class Order {
     @Column(name = "order_table_id", nullable = false)
     private long orderTableId;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
+    private List<OrderLineItem> orderLineItems;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -49,12 +52,23 @@ public class Order {
                                       .orElseThrow(() -> new IllegalArgumentException("잘못된 상태입니다."));
     }
 
+    public void addOrderItems(final List<OrderLineItem> savedOrderLineItems) {
+        if (savedOrderLineItems.size() < MINIMUM_ORDER_LINE_ITEM_SIZE) {
+            throw new IllegalArgumentException();
+        }
+        this.orderLineItems = savedOrderLineItems;
+    }
+
     public Long getId() {
         return id;
     }
 
     public long getOrderTableId() {
         return orderTableId;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 
     public String getOrderStatus() {
@@ -76,12 +90,5 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> savedOrderLineItems) {
-        for (final OrderLineItem orderLineItem : savedOrderLineItems) {
-            this.orderLineItems.add(orderLineItem);
-            orderLineItem.setOrder(this);
-        }
     }
 }

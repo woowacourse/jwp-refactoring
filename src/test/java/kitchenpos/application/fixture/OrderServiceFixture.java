@@ -6,13 +6,13 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.dto.request.CreateOrderRequest;
+import kitchenpos.dto.request.OrderLineItemDto;
+import kitchenpos.dto.request.PutOrderStatusRequest;
 import kitchenpos.infrastructure.persistence.JpaMenuGroupRepository;
 import kitchenpos.infrastructure.persistence.JpaMenuRepository;
 import kitchenpos.infrastructure.persistence.JpaOrderRepository;
 import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
-import kitchenpos.dto.request.CreateOrderRequest;
-import kitchenpos.dto.request.OrderLineItemDto;
-import kitchenpos.dto.request.PutOrderStatusRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -117,8 +117,8 @@ public class OrderServiceFixture {
         final OrderTable 주문_테이블_2 = new OrderTable(2, true);
         orderTableRepository.saveAll(List.of(주문_테이블_1, 주문_테이블_2));
 
-        조회할_주문_1 = new Order(주문_테이블_1, OrderStatus.COOKING);
-        조회할_주문_2 = new Order(주문_테이블_2, OrderStatus.COOKING);
+        조회할_주문_1 = new Order(주문_테이블_1.getId(), OrderStatus.COOKING);
+        조회할_주문_2 = new Order(주문_테이블_2.getId(), OrderStatus.COOKING);
         orderRepository.saveAll(List.of(조회할_주문_1, 조회할_주문_2));
     }
 
@@ -126,7 +126,7 @@ public class OrderServiceFixture {
         final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
         orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
-        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블, OrderStatus.MEAL);
+        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블.getId(), OrderStatus.MEAL);
         orderRepository.save(식사중에서_완료로_상태를_변경할_주문);
 
         주문_상태_변경_요청_dto = new PutOrderStatusRequest(OrderStatus.COMPLETION.name());
@@ -136,7 +136,7 @@ public class OrderServiceFixture {
         final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
         orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
-        COMPLETION_상태의_주문 = new Order(주문_상태를_변경할_주문_테이블, OrderStatus.COMPLETION);
+        COMPLETION_상태의_주문 = new Order(주문_상태를_변경할_주문_테이블.getId(), OrderStatus.COMPLETION);
         orderRepository.save(COMPLETION_상태의_주문);
 
         주문_상태_변경_요청_dto = new PutOrderStatusRequest(OrderStatus.COMPLETION.name());
@@ -146,7 +146,7 @@ public class OrderServiceFixture {
         final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
         orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
-        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블, OrderStatus.MEAL);
+        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블.getId(), OrderStatus.MEAL);
         orderRepository.save(식사중에서_완료로_상태를_변경할_주문);
 
         완료_상태인_주문_변경_요청_dto = new PutOrderStatusRequest(OrderStatus.COMPLETION.name());
@@ -156,7 +156,7 @@ public class OrderServiceFixture {
         final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
         orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
-        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블, OrderStatus.MEAL);
+        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블.getId(), OrderStatus.MEAL);
         orderRepository.save(식사중에서_완료로_상태를_변경할_주문);
 
         잘못된_상태로_수정하고자_하는_주문_변경_요청_dto = new PutOrderStatusRequest("INVALID");

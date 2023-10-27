@@ -4,11 +4,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.CreateTableGroupRequest;
+import kitchenpos.dto.request.OrderTableDto;
 import kitchenpos.infrastructure.persistence.JpaOrderRepository;
 import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
 import kitchenpos.infrastructure.persistence.JpaTableGroupRepository;
-import kitchenpos.dto.request.CreateTableGroupRequest;
-import kitchenpos.dto.request.OrderTableDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -77,8 +77,8 @@ public class TableGroupServiceFixture {
         삭제할_주문테이블에_포함된_주문_테이블_리스트 = List.of(삭제할_주문_테이블_1, 삭제할_주문_테이블_2);
         orderTableRepository.saveAll(삭제할_주문테이블에_포함된_주문_테이블_리스트);
 
-        final Order 주문_1 = new Order(삭제할_주문_테이블_1, OrderStatus.COOKING);
-        final Order 주문_2 = new Order(삭제할_주문_테이블_2, OrderStatus.COOKING);
+        final Order 주문_1 = new Order(삭제할_주문_테이블_1.getId(), OrderStatus.COOKING);
+        final Order 주문_2 = new Order(삭제할_주문_테이블_2.getId(), OrderStatus.COOKING);
         orderRepository.saveAll(List.of(주문_1, 주문_2));
 
         삭제할_테이블_그룹 = new TableGroup(삭제할_주문테이블에_포함된_주문_테이블_리스트);
@@ -90,8 +90,8 @@ public class TableGroupServiceFixture {
         final OrderTable 주문_테이블2 = new OrderTable(null, 2, false);
         orderTableRepository.saveAll(List.of(주문_테이블1, 주문_테이블2));
 
-        final Order 주문_1 = new Order(주문_테이블1, OrderStatus.COOKING);
-        final Order 주문_2 = new Order(주문_테이블2, OrderStatus.MEAL);
+        final Order 주문_1 = new Order(주문_테이블1.getId(), OrderStatus.COOKING);
+        final Order 주문_2 = new Order(주문_테이블2.getId(), OrderStatus.MEAL);
         orderRepository.saveAll(List.of(주문_1, 주문_2));
 
         식사중인_단체_테이블 = new TableGroup(List.of(주문_테이블1, 주문_테이블2));
