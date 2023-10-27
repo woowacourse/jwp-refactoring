@@ -2,8 +2,7 @@ package kitchenpos.product.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.ServiceTest;
-import kitchenpos.ServiceTestDeprecate;
+import kitchenpos.common.ServiceTest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.Nested;

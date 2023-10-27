@@ -1,4 +1,4 @@
-package kitchenpos;
+package kitchenpos.common;
 
 import kitchenpos.common.Money;
 import org.junit.jupiter.api.Test;

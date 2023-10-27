@@ -1,7 +1,7 @@
 package kitchenpos.ordertable.application;
 
 import java.util.List;
-import kitchenpos.ServiceTest;
+import kitchenpos.common.ServiceTest;
 import kitchenpos.table.application.ChangeNumberOfGuestsCommand;
 import kitchenpos.table.application.ChangeTableEmptyCommand;
 import kitchenpos.table.application.CreateTableCommand;

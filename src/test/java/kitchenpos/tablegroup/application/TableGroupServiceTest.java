@@ -1,7 +1,7 @@
 package kitchenpos.tablegroup.application;
 
 import java.util.List;
-import kitchenpos.ServiceTest;
+import kitchenpos.common.ServiceTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;

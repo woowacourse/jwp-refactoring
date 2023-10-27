@@ -1,7 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.util.List;
-import kitchenpos.ServiceTest;
+import kitchenpos.common.ServiceTest;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;

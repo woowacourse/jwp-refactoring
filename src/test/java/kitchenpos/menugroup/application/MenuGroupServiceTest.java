@@ -2,8 +2,7 @@ package kitchenpos.menugroup.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.ServiceTest;
-import kitchenpos.ServiceTestDeprecate;
+import kitchenpos.common.ServiceTest;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
