@@ -1,26 +1,24 @@
 package kitchenpos.table;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.JpaOrderRepository;
-import kitchenpos.order.OrderStatus;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final JpaOrderRepository jpaOrderRepository;
     private final JpaOrderTableRepository jpaOrderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public TableService(
-            final JpaOrderRepository jpaOrderRepository,
-            final JpaOrderTableRepository jpaOrderTableRepository
+            JpaOrderTableRepository jpaOrderTableRepository,
+            ApplicationEventPublisher applicationEventPublisher
     ) {
-        this.jpaOrderRepository = jpaOrderRepository;
         this.jpaOrderTableRepository = jpaOrderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -43,15 +41,12 @@ public class TableService {
         final OrderTable savedOrderTable = jpaOrderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (jpaOrderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        applicationEventPublisher.publishEvent(new OrderTableEvent(savedOrderTable.getId()));
 
         savedOrderTable.changeEmpty(orderTableRequest.isEmpty());
-
         return new OrderTableResponse(savedOrderTable);
     }
+
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {

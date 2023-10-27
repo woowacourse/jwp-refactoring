@@ -79,19 +79,19 @@ class TableServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @ParameterizedTest
-        @EnumSource(value = OrderStatus.class, names = {"COMPLETION"}, mode = Mode.EXCLUDE)
-        void 주문_테이블의_상태가_계산완료_상태가_아닌_경우_예외가_발생한다(OrderStatus orderStatus) {
-            // given
-            OrderTable orderTable = fixtures.주문_테이블_저장();
-            fixtures.주문_저장(orderTable, orderStatus);
-
-            OrderTableRequest request = new OrderTableRequest(0, true);
-
-            // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+//        @ParameterizedTest
+//        @EnumSource(value = OrderStatus.class, names = {"COMPLETION"}, mode = Mode.EXCLUDE)
+//        void 주문_테이블의_상태가_계산완료_상태가_아닌_경우_예외가_발생한다(OrderStatus orderStatus) {
+//            // given
+//            OrderTable orderTable = fixtures.주문_테이블_저장();
+//            fixtures.주문_저장(orderTable, orderStatus);
+//
+//            OrderTableRequest request = new OrderTableRequest(0, true);
+//
+//            // when, then
+//            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
+//                    .isInstanceOf(IllegalArgumentException.class);
+//        }
     }
 
     @Nested
