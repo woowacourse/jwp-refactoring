@@ -1,4 +1,4 @@
-package kitchenpos.domain.menugroup;
+package kitchenpos.domain.menu;
 
 import kitchenpos.common.BaseDate;
 

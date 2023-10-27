@@ -4,7 +4,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.MenuValidator;
-import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.response.MenuResponse;
