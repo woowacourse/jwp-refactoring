@@ -13,8 +13,8 @@ public class OrderValidator {
         this.orderTableRepository = orderTableRepository;  
     }  
   
-    public void validate(final Long orderTableId) {  
-        final OrderTable orderTable = orderTableRepository.findById(orderTableId)  
+    public void validate(final Order order) {
+        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
                                                           .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));  
   
         if (orderTable.isEmpty()) {  

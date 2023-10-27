@@ -16,6 +16,8 @@ import java.util.Objects;
 @Table(name = "orders")
 public class Order extends BaseCreateTimeEntity {
 
+    private static final OrderStatus INITIAL_ORDER_STATUS = OrderStatus.COOKING;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,14 +32,10 @@ public class Order extends BaseCreateTimeEntity {
 
     protected Order() {
     }
-    public Order(final Long orderTableId, final OrderStatus orderStatus) {
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-    }
 
-    public static Order createNewOrder(final Long orderTableId, final OrderValidator orderValidator) {
-        orderValidator.validate(orderTableId);
-        return new Order(orderTableId, OrderStatus.COOKING);
+    public Order(final Long orderTableId) {
+        this.orderTableId = orderTableId;
+        this.orderStatus = INITIAL_ORDER_STATUS;
     }
 
     public void addOrderLineItems(final OrderLineItems orderLineItems) {
@@ -61,6 +59,10 @@ public class Order extends BaseCreateTimeEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

@@ -17,7 +17,8 @@ class OrderTest {
     void isNotComplete_true(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order order = new Order(orderTable.getId(), orderStatus);
+        final Order order = new Order(orderTable.getId());
+        order.changeOrderStatus(orderStatus);
 
         // when
         final boolean actual = order.isNotComplete();
@@ -31,10 +32,11 @@ class OrderTest {
     void isNotComplete_false() {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION);
+        final Order completeOrder = new Order(orderTable.getId());
+        completeOrder.changeOrderStatus(OrderStatus.COMPLETION);
 
         // when
-        final boolean actual = order.isNotComplete();
+        final boolean actual = completeOrder.isNotComplete();
 
         // then
         assertThat(actual).isFalse();
@@ -45,7 +47,8 @@ class OrderTest {
     void changeOrderStatus_completeOrder() {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order completeOrder = new Order(orderTable.getId(), OrderStatus.COMPLETION);
+        final Order completeOrder = new Order(orderTable.getId());
+        completeOrder.changeOrderStatus(OrderStatus.COMPLETION);
 
         // when
         assertThatThrownBy(() -> completeOrder.changeOrderStatus(OrderStatus.COOKING))

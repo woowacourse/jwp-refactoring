@@ -33,12 +33,13 @@ class OrderValidatorTest {
     void validate() {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
+        final Order order = new Order(orderTable.getId());
 
         em.flush();
         em.clear();
 
         // when & then
-        assertThatCode(() -> orderValidator.validate(orderTable.getId()))
+        assertThatCode(() -> orderValidator.validate(order))
                 .doesNotThrowAnyException();
     }
 
@@ -47,9 +48,10 @@ class OrderValidatorTest {
     void validate_invalidOrderTable() {
         // given
         final long invalidOrderTableId = -999L;
+        final Order invalidOrder = new Order(invalidOrderTableId);
 
         // when & then
-        assertThatThrownBy(() -> orderValidator.validate(invalidOrderTableId))
+        assertThatThrownBy(() -> orderValidator.validate(invalidOrder))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
@@ -59,12 +61,13 @@ class OrderValidatorTest {
     void validate_emptyTable() {
         // given
         final OrderTable 비어있는_테이블 = orderTableRepository.save(new OrderTable(3, true));
+        final Order invalidOrder = new Order(비어있는_테이블.getId());
 
         em.flush();
         em.clear();
 
         // when & then
-        assertThatThrownBy(() -> orderValidator.validate(비어있는_테이블.getId()))
+        assertThatThrownBy(() -> orderValidator.validate(invalidOrder))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("빈 테이블에는 주문을 생성할 수 없습니다.");
     }

@@ -16,10 +16,11 @@ class OrdersTest {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
 
-        final OrderStatus notComplete = OrderStatus.COOKING;
-        final Order notCompleteOrder = new Order(orderTable.getId(), notComplete);
-        final Order completeOrder1 = new Order(orderTable.getId(), OrderStatus.COMPLETION);
-        final Order completeOrder2 = new Order(orderTable.getId(), OrderStatus.COMPLETION);
+        final Order notCompleteOrder = new Order(orderTable.getId());
+        final Order completeOrder1 = new Order(orderTable.getId());
+        completeOrder1.changeOrderStatus(OrderStatus.COMPLETION);
+        final Order completeOrder2 = new Order(orderTable.getId());
+        completeOrder2.changeOrderStatus(OrderStatus.COMPLETION);
 
         final Orders orders = new Orders(List.of(notCompleteOrder, completeOrder1, completeOrder2));
 
@@ -36,9 +37,12 @@ class OrdersTest {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
 
-        final Order completeOrder1 = new Order(orderTable.getId(), OrderStatus.COMPLETION);
-        final Order completeOrder2 = new Order(orderTable.getId(), OrderStatus.COMPLETION);
-        final Order completeOrder3 = new Order(orderTable.getId(), OrderStatus.COMPLETION);
+        final Order completeOrder1 = new Order(orderTable.getId());
+        completeOrder1.changeOrderStatus(OrderStatus.COMPLETION);
+        final Order completeOrder2 = new Order(orderTable.getId());
+        completeOrder2.changeOrderStatus(OrderStatus.COMPLETION);
+        final Order completeOrder3 = new Order(orderTable.getId());
+        completeOrder3.changeOrderStatus(OrderStatus.COMPLETION);
 
         final Orders orders = new Orders(List.of(completeOrder1, completeOrder2, completeOrder3));
 

@@ -200,8 +200,9 @@ class TableGroupServiceTest {
         세명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
         네명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
 
-        orderRepository.save(new Order(세명_테이블.getId(), orderStatus));
-        orderRepository.save(new Order(네명_테이블.getId(), orderStatus));
+        orderRepository.save(new Order(세명_테이블.getId()));
+        final Order 네명_테이블_미완료_주문 = orderRepository.save(new Order(네명_테이블.getId()));
+        네명_테이블_미완료_주문.changeOrderStatus(orderStatus);
 
         em.flush();
         em.clear();
