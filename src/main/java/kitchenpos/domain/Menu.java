@@ -39,9 +39,6 @@ public class Menu {
     }
 
     public void updateMenuProducts(final List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenu(this);
-        }
         this.menuProducts = MenuProducts.of(menuProducts, price);
     }
 

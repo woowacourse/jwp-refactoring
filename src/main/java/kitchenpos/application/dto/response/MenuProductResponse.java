@@ -21,18 +21,18 @@ public class MenuProductResponse {
         this.quantity = quantity;
     }
 
-    public static MenuProductResponse from(MenuProduct menuProduct) {
+    public static MenuProductResponse from(MenuProduct menuProduct, Long menuId) {
         return new MenuProductResponse(
                 menuProduct.getSeq(),
-                menuProduct.getMenu().getId(),
+                menuId,
                 menuProduct.getProduct().getId(),
                 menuProduct.getQuantity()
         );
     }
 
-    public static List<MenuProductResponse> from(List<MenuProduct> menuProducts) {
+    public static List<MenuProductResponse> from(List<MenuProduct> menuProducts, Long menuId) {
         return menuProducts.stream()
-                .map(MenuProductResponse::from)
+                .map(it -> from(it, menuId))
                 .collect(Collectors.toList());
     }
 
