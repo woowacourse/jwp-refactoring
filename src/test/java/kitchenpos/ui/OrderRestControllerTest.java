@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 import java.util.List;
 import kitchenpos.application.dto.request.OrderCreateRequest;
@@ -17,10 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
+@Sql(value = "/truncate_insert_data.sql")
 class OrderRestControllerTest {
 
     @Autowired
@@ -107,7 +106,8 @@ class OrderRestControllerTest {
         final OrderStatusChangeRequest request = RequestFixture.orderStatusChangeRequest_MEAL();
 
         //when
-        final ResponseEntity<OrderResponse> response = orderRestController.changeOrderStatus(orderResponse.getId(), request);
+        final ResponseEntity<OrderResponse> response = orderRestController.changeOrderStatus(orderResponse.getId(),
+                request);
 
         //then
         assertThat(response.getBody().getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -121,7 +121,8 @@ class OrderRestControllerTest {
         final OrderStatusChangeRequest request = RequestFixture.orderStatusChangeRequest_COMPLETION();
 
         //when
-        final ResponseEntity<OrderResponse> response = orderRestController.changeOrderStatus(orderResponse.getId(), request);
+        final ResponseEntity<OrderResponse> response = orderRestController.changeOrderStatus(orderResponse.getId(),
+                request);
 
         //then
         assertThat(response.getBody().getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
