@@ -6,14 +6,10 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Price;
 
 @Entity
@@ -28,9 +24,7 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @JoinColumn(name = "menu_group_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts;
@@ -40,20 +34,20 @@ public class Menu {
 
     public Menu(final String name,
                 final Price price,
-                final MenuGroup menuGroup,
+                final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
     public Menu(final Long id,
                 final String name,
                 final Price price,
-                final MenuGroup menuGroup,
+                final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
@@ -84,8 +78,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
@@ -115,7 +109,7 @@ public class Menu {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
-                ", menuGroupId=" + menuGroup.getId() +
+                ", menuGroupId=" + menuGroupId +
                 ", menuProducts=" + menuProducts +
                 '}';
     }

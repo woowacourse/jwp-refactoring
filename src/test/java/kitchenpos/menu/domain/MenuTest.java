@@ -22,7 +22,7 @@ class MenuTest {
         // given
         final Menu menu = new Menu("name",
                                    Price.from(menuPrice),
-                                   new MenuGroup("name"),
+                                   new MenuGroup("name").getId(),
                                    null);
 
         // when

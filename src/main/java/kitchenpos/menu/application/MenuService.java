@@ -40,7 +40,7 @@ public class MenuService {
                                                        .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
         final Menu menu = new Menu(request.getName(),
                                    price,
-                                   menuGroup,
+                                   menuGroup.getId(),
                                    new ArrayList<>());
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                                                       .map(menuProductRequest -> convertToMenuProduct(menuProductRequest, menu))

@@ -57,7 +57,7 @@ public class TestSupporter {
     public Menu createMenu() {
         final Menu menu = new Menu("name",
                                    Price.from(50_000),
-                                   createMenuGroup(),
+                                   createMenuGroup().getId(),
                                    null);
         final List<MenuProduct> menuProducts = List.of(new MenuProduct(5,
                                                                        menu,
