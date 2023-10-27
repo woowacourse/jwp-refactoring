@@ -11,16 +11,7 @@ public class OrderTables {
     private List<OrderTable> orderTables;
 
     public OrderTables(final List<OrderTable> orderTables) {
-        validate(orderTables);
         this.orderTables = orderTables;
-    }
-
-    private void validate(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.canBeGroup()) {
-                throw new IllegalArgumentException();
-            }
-        }
     }
 
     public List<Long> getOrderTableIds() {
@@ -29,10 +20,19 @@ public class OrderTables {
                 .collect(Collectors.toList());
     }
 
-    public void joinGroup(final Long tableGroupId) {
+    public void joinGroup(final TableGroup tableGroup) {
+        validate(orderTables);
         for (final OrderTable orderTable : orderTables) {
             orderTable.changeEmpty(false);
-            orderTable.registerGroup(tableGroupId);
+            orderTable.registerGroup(tableGroup);
+        }
+    }
+
+    private void validate(final List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.canBeGroup()) {
+                throw new IllegalArgumentException();
+            }
         }
     }
 

@@ -116,7 +116,7 @@ class TableGroupServiceTest {
         void 테이블_그룹을_생성할_때_전달된_주문_테이블이_다른_테이블_그룹에_속해_있다면_실패한다() {
             // given
             final TableGroup tableGroup = new TableGroup(1L);
-            final OrderTable savedOrderTable1 = new OrderTable(null, tableGroup.getId(), 0, true);
+            final OrderTable savedOrderTable1 = new OrderTable(null, tableGroup, 0, true);
             final OrderTable savedOrderTable2 = new OrderTable(null, null, 0, true);
 
             when(orderTableRepository.findAllByIdIn(any()))

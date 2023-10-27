@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.request.OrderTableUpdateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.mapper.OrderTableMapper;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.persistence.OrderRepository;
@@ -29,14 +30,13 @@ public class TableService {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.getEmtpy());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        return new OrderTableResponse(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
-                savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
+        return OrderTableMapper.mapToOrderTableResponseBy(savedOrderTable);
     }
 
     public List<OrderTableResponse> list() {
         return orderTableRepository.findAll()
                 .stream()
-                .map(orderTable -> new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty()))
+                .map(OrderTableMapper::mapToOrderTableResponseBy)
                 .collect(Collectors.toList());
     }
 
@@ -46,8 +46,7 @@ public class TableService {
         checkOrderStatusInTableGroup(orderTable);
         orderTable.changeEmpty(request.getEmpty());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        return new OrderTableResponse(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
-                savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
+        return OrderTableMapper.mapToOrderTableResponseBy(savedOrderTable);
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {
@@ -68,7 +67,6 @@ public class TableService {
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        return new OrderTableResponse(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
-                savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
+        return OrderTableMapper.mapToOrderTableResponseBy(savedOrderTable);
     }
 }

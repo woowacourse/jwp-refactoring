@@ -58,7 +58,7 @@ class OrderTableTest {
     void OrderTable의_빈_상태_변경시_OrderTable이_다른_테이블_그룹에_속해있다면_예외가_발생한다() {
         // given
         final TableGroup tableGroup = new TableGroup(1L);
-        final OrderTable orderTable = new OrderTable(1L, tableGroup.getId(), 0, false);
+        final OrderTable orderTable = new OrderTable(1L, tableGroup, 0, false);
 
         // when, then
         assertThatThrownBy(() -> orderTable.changeEmpty(Boolean.TRUE))

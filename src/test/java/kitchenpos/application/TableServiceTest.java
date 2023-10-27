@@ -95,7 +95,7 @@ class TableServiceTest {
         void 주문_테이블의_빈_상태를_변경할_때_주문_테이블이_어떤_테이블_그룹에_속해_있을_때_실패한다() {
             // given
             final TableGroup tableGroup = new TableGroup(1L);
-            final OrderTable savedOrderTable = new OrderTable(1L, tableGroup.getId(), 0, true);
+            final OrderTable savedOrderTable = new OrderTable(1L, tableGroup, 0, true);
 
             when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));

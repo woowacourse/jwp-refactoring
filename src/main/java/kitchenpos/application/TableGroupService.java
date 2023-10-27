@@ -38,7 +38,7 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
         final OrderTables orderTables = new OrderTables(savedOrderTables);
-        orderTables.joinGroup(savedTableGroup.getId());
+        orderTables.joinGroup(savedTableGroup);
 
         return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
                 orderTables.getOrderTables()
