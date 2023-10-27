@@ -35,10 +35,11 @@ public class TableGroupService {
         validateInvalidOrderTable(orderTableIds, savedOrderTables);
 
         final TableGroup tableGroup = new TableGroup(orderTableIds.size());
+        tableGroupRepository.save(tableGroup);
         for (OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.groupBy(tableGroup);
+            savedOrderTable.groupBy(tableGroup.getId());
         }
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup), savedOrderTables);
+        return TableGroupResponse.from(tableGroup, savedOrderTables);
     }
 
     private List<Long> convertToLong(List<TableIdRequest> requests) {
@@ -57,9 +58,9 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId).
                 orElseThrow(() -> new IllegalArgumentException("단체 지정 내역을 찾을 수 없습니다."));
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByTableGroup_Id(tableGroupId);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.ungroupBy(tableGroup, orderTableValidator);
+            savedOrderTable.ungroupBy(tableGroup.getId(), orderTableValidator);
         }
     }
 }

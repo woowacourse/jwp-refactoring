@@ -24,7 +24,6 @@ public class TableService {
     @Transactional
     public TableResponse create(final TableRequest request) {
         final OrderTable orderTable = new OrderTable(
-                null,
                 request.getNumberOfGuests(),
                 request.isEmpty()
         );

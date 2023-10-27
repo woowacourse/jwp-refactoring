@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -18,9 +19,7 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     @Column(nullable = false)
     private int numberOfGuests;
     @Column(nullable = false)
@@ -29,8 +28,7 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -39,15 +37,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
     public Long getTableGroupId() {
-        if(isNull(tableGroup)) {
-            return null;
-        }
-        return tableGroup.getId();
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -58,10 +49,6 @@ public class OrderTable {
         return empty;
     }
 
-    public boolean isTableGroupEmpty() {
-        return isNull(tableGroup);
-    }
-
     public void updateEmptyIfNoConstraints(final boolean empty, final OrderTableValidator orderTableValidator) {
         validateTableGroupEmpty();
         orderTableValidator.validateOrderStatus(this);
@@ -69,7 +56,7 @@ public class OrderTable {
     }
 
     private void validateTableGroupEmpty() {
-        if (Objects.nonNull(tableGroup)) {
+        if (nonNull(tableGroupId)) {
             throw new IllegalArgumentException("단체 지정이 되어있습니다.");
         }
     }
@@ -84,27 +71,27 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void groupBy(final TableGroup tableGroup) {
+    public void groupBy(final long tableGroupId) {
         validateTableStatus();
         this.empty = false;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     private void validateTableStatus() {
-        if (!isEmpty() || !isTableGroupEmpty()) {
+        if (!isEmpty() || nonNull(tableGroupId)) {
             throw new IllegalArgumentException("단체 지정이 불가능한 테이블이 포함되어 있습니다.");
         }
     }
 
-    public void ungroupBy(final TableGroup tableGroup, final OrderTableValidator orderTableValidator) {
+    public void ungroupBy(final long tableGroupId, final OrderTableValidator orderTableValidator) {
         orderTableValidator.validateUngrouping(this);
-        validateRightTableGroup(tableGroup);
+        validateRightTableGroup(tableGroupId);
         this.empty = false;
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
-    private void validateRightTableGroup(final TableGroup tableGroup) {
-        if(!this.tableGroup.equals(tableGroup)) {
+    private void validateRightTableGroup(final long tableGroupId) {
+        if(this.tableGroupId != tableGroupId) {
             throw new IllegalArgumentException("해당 단체에 지정되어 있지 않아 단체 지정 해제가 불가능합니다.");
         }
     }
