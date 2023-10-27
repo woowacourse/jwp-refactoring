@@ -1,12 +1,13 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuGroupValidator;
 import kitchenpos.menu.MenuName;
 import kitchenpos.menu.MenuPrice;
+import kitchenpos.menu.MenuProductValidator;
 import kitchenpos.menu.MenuRepository;
 import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menugroup.MenuGroupRepository;
-import kitchenpos.menuproduct.MenuProductRepository;
 import kitchenpos.menuproduct.request.MenuProductRequest;
 import kitchenpos.product.Product;
 import kitchenpos.product.ProductName;
@@ -24,14 +25,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,9 +45,11 @@ class MenuServiceTest {
     @Mock
     private MenuGroupRepository menuGroupRepository;
     @Mock
-    private MenuProductRepository menuProductRepository;
-    @Mock
     private ProductRepository productRepository;
+    @Mock
+    private MenuGroupValidator menuGroupValidator;
+    @Mock
+    private MenuProductValidator menuProductValidator;
 
     @Nested
     class CreateTest {
@@ -85,13 +87,13 @@ class MenuServiceTest {
         void menuGroupNotExist() {
             // given
             final MenuRequest request = mock(MenuRequest.class);
+            doThrow(IllegalArgumentException.class).when(menuGroupValidator).validate(any());
+
             given(request.getMenuGroupId()).willReturn(1L);
-            given(menuGroupRepository.existsById(anyLong())).willReturn(false);
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("메뉴 그룹이 존재하지 않습니다.");
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -99,12 +101,7 @@ class MenuServiceTest {
         void comparePriceAndSum() {
             // given
             final MenuRequest request = mock(MenuRequest.class);
-            given(request.getPrice()).willReturn(BigDecimal.valueOf(700));
-            given(request.getMenuProducts()).willReturn(menuProductRequests);
-            given(menuGroupRepository.existsById(anyLong())).willReturn(true);
-            given(productRepository.findById(1L)).willReturn(Optional.of(product1));
-            given(productRepository.findById(2L)).willReturn(Optional.of(product2));
-            given(productRepository.findById(3L)).willReturn(Optional.of(product3));
+            doThrow(IllegalArgumentException.class).when(menuProductValidator).validate(any(), any());
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
@@ -118,10 +115,6 @@ class MenuServiceTest {
 
             final Menu menu = new Menu(new MenuName(request.getName()), new MenuPrice(request.getPrice()), request.getMenuGroupId(), Collections.emptyList());
 
-            given(menuGroupRepository.existsById(anyLong())).willReturn(true);
-            given(productRepository.findById(1L)).willReturn(Optional.of(product1));
-            given(productRepository.findById(2L)).willReturn(Optional.of(product2));
-            given(productRepository.findById(3L)).willReturn(Optional.of(product3));
             given(menuRepository.save(any())).willReturn(menu);
 
             // when
