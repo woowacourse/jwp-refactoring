@@ -34,5 +34,13 @@ public class OrderValidator {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 상품이 존재하지 않습니다.");
         }
+
+        long menuCount = orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .distinct()
+                .count();
+        if (menuCount != orderLineItems.size()) {
+            throw new IllegalArgumentException("주문 상품 속 메뉴는 중복되면 안됩니다");
+        }
     }
 }
