@@ -12,7 +12,7 @@ import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Component
@@ -29,6 +29,7 @@ public class TableEventHandler {
     }
 
     @EventListener
+    @Transactional
     public void validateSameSizeOrderTable(final ValidateSameSizeOrderTableEvent dto) {
         final List<Long> orderTableIds = dto.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
@@ -39,6 +40,7 @@ public class TableEventHandler {
     }
 
     @EventListener
+    @Transactional
     public void createTableGroupEvent(final TableGroupCreateEvent dto) {
         final Long tableGroupId = dto.getTableGroupId();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(dto.getOrderTableIds());
@@ -78,6 +80,7 @@ public class TableEventHandler {
     }
 
     @EventListener
+    @Transactional
     public void deleteTableGroup(final TableGroupDeleteEvent event) {
         final Long tableGroupId = event.getTableGroupId();
         validateOrderIsNotCompletionInOrderTable(tableGroupId);

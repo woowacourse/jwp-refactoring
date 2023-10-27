@@ -4,6 +4,7 @@ import kitchenpos.common.event.ValidateExistMenuEvent;
 import kitchenpos.menu.repository.MenuRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class MenuEventHandler {
@@ -15,6 +16,7 @@ public class MenuEventHandler {
     }
 
     @EventListener
+    @Transactional
     public void validateExistMenu(final ValidateExistMenuEvent dto) {
         menuRepository.findById(dto.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 메뉴입니다."));

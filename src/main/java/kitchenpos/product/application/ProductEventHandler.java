@@ -7,6 +7,7 @@ import kitchenpos.common.event.ValidateSamePriceWithMenuEvent;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ProductEventHandler {
@@ -18,12 +19,14 @@ public class ProductEventHandler {
     }
 
     @EventListener
+    @Transactional
     public void validateExistProduct(final ValidateExistProductEvent dto) {
         productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다."));
     }
 
     @EventListener
+    @Transactional
     public void validateSamePriceWithMenu(final ValidateSamePriceWithMenuEvent validateSamePriceWithMenuEvent) {
         final Price menuPrice = Price.from(validateSamePriceWithMenuEvent.getMenuPrice());
         final Price sum = validateSamePriceWithMenuEvent.getProductQuantityDtos().stream()
