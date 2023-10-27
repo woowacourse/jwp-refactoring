@@ -1,0 +1,14 @@
+dependencies {
+    implementation project(':kitchenpos-common')
+    implementation project(':kitchenpos-menu')
+    implementation project(':kitchenpos-menugroup')
+    implementation project(':kitchenpos-order')
+    implementation project(':kitchenpos-ordertable')
+    implementation project(':kitchenpos-product')
+    implementation project(':kitchenpos-tablegroup')
+    testImplementation 'io.rest-assured:rest-assured:4.4.0'
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'com.h2database:h2'
+}
+
+bootJar { enabled = true }
