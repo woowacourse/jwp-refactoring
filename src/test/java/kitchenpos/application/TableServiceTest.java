@@ -3,39 +3,40 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.common.event.OrderCheckEvent;
+import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.table.dto.request.TableCreateRequest;
 import kitchenpos.table.dto.request.TableUpdateEmptyRequest;
 import kitchenpos.table.dto.request.TableUpdateGuestRequest;
-import kitchenpos.table.dto.request.TableCreateRequest;
 import kitchenpos.table.dto.response.TableResponse;
-import kitchenpos.table.application.TableService;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
 
     @Mock
-    private OrderRepository orderRepository;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private ApplicationEventPublisher publisher;
 
     @InjectMocks
     private TableService tableService;
@@ -87,6 +88,7 @@ class TableServiceTest {
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
+        doNothing().when(publisher).publishEvent(any(OrderCheckEvent.class));
         given(orderTableRepository.save(orderTable))
                 .willReturn(orderTable);
 
@@ -127,25 +129,6 @@ class TableServiceTest {
                 .hasMessage("할당된 그룹이 존재합니다.");
     }
 
-    @DisplayName("테이블에 할당된 주문의 상태가 조리 또는 식사이면 변경할 수 없다.")
-    @Test
-    void changeEmpty_FailWhenOrderStatusIsNotCompletion() {
-        // given
-        final TableUpdateEmptyRequest updateRequest = new TableUpdateEmptyRequest(true);
-        final OrderTable orderTable = new OrderTable(1L, null, 3, true);
-
-        given(orderTableRepository.findById(1L))
-                .willReturn(Optional.of(orderTable));
-
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
-                .willReturn(true);
-
-        // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, updateRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문이 아직 완료상태가 아닙니다.");
-    }
-
     @DisplayName("테이블에 할당된 손님의 수를 조정할 수 있다.")
     @Test
     void changeNumberOfGuests() {
@@ -165,7 +148,8 @@ class TableServiceTest {
                 .willReturn(afterTable);
 
         // when & then
-        assertThat(tableService.changeNumberOfGuests(1L, updateRequest)).usingRecursiveComparison().isEqualTo(tableResponse);
+        assertThat(tableService.changeNumberOfGuests(1L, updateRequest)).usingRecursiveComparison()
+                .isEqualTo(tableResponse);
         then(orderTableRepository).should(times(1)).findById(1L);
         then(orderTableRepository).should(times(1)).save(any());
     }

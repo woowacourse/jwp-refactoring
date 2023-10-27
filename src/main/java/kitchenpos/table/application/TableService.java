@@ -1,27 +1,28 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.common.OrderStatus;
+import kitchenpos.common.event.OrderCheckEvent;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.request.TableCreateRequest;
 import kitchenpos.table.dto.request.TableUpdateEmptyRequest;
 import kitchenpos.table.dto.request.TableUpdateGuestRequest;
 import kitchenpos.table.dto.response.TableResponse;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.repository.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    private final ApplicationEventPublisher publisher;
+
+
+    public TableService(final OrderTableRepository orderTableRepository, final ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -45,10 +46,7 @@ public class TableService {
 
         orderTable.checkTableGroupsEmpty();
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("주문이 아직 완료상태가 아닙니다.");
-        }
+        publisher.publishEvent(new OrderCheckEvent(orderTableId));
 
         orderTable.changeEmpty(request.isEmpty());
         final OrderTable updatedTable = orderTableRepository.save(orderTable);
