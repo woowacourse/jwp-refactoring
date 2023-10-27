@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import java.util.List;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.support.RequestFixture;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

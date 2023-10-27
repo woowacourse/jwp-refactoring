@@ -8,7 +8,6 @@ import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.application.support.RequestFixture;
 import kitchenpos.domain.OrderStatus;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
