@@ -3,7 +3,7 @@ package kitchenpos.menu.application;
 import kitchenpos.menu.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.menu.application.dto.response.MenuGroupResponse;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

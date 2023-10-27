@@ -5,7 +5,7 @@ import kitchenpos.menu.application.dto.request.ProductCreateRequest;
 import kitchenpos.menu.application.dto.response.ProductResponse;
 import kitchenpos.menu.domain.Price;
 import kitchenpos.menu.domain.Product;
-import kitchenpos.menu.repository.ProductRepository;
+import kitchenpos.menu.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

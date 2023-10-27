@@ -7,7 +7,7 @@ import kitchenpos.table.application.dto.request.OrderTableChangeNumberOfGuestsRe
 import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.response.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

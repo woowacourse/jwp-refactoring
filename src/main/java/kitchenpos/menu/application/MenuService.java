@@ -12,9 +12,9 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.Price;
 import kitchenpos.menu.domain.Product;
-import kitchenpos.menu.repository.MenuGroupRepository;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.menu.repository.ProductRepository;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

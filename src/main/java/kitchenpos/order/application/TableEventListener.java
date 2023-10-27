@@ -1,6 +1,6 @@
 package kitchenpos.order.application;
 
-import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.order.domain.service.OrderValidator;
 import kitchenpos.table.application.dto.event.OrderTableChangeEmptyEvent;
 import kitchenpos.table.application.dto.event.TableGroupCreateEvent;
 import kitchenpos.table.application.dto.event.TableGroupUnGroupEvent;
