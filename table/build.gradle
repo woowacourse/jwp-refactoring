@@ -8,5 +8,6 @@ tasks.named('jar') {
 
 dependencies {
     testImplementation project(':tablegroup')
+    testImplementation project(':order')
     testImplementation project(':test-app')
 }

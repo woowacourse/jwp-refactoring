@@ -1,5 +1,7 @@
 package kitchenpos.table.application;
 
+import static kitchenpos.order.domain.OrderFixture.주문;
+import static kitchenpos.order.domain.OrderLineItemFixture.주문_항목;
 import static kitchenpos.table.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_빈_상태로_변경_요청;
 import static kitchenpos.table.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_생성_요청;
 import static kitchenpos.table.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_손님_수_변경_요청;
@@ -12,9 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
-import kitchenpos.table.domain.OrderStatusValidateEvent;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.vo.MenuSpecification;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableFixture;
 import kitchenpos.table.domain.OrderTableRepository;
@@ -54,6 +58,9 @@ class TableServiceTest {
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private ApplicationEvents applicationEvents;
@@ -116,23 +123,6 @@ class TableServiceTest {
         }
 
         @Test
-        void 이벤트가_하나_발행된다() {
-            // given
-            Long filledOrderTableId = tableService.create(주문_테이블_생성_요청()).getId();
-
-            // when
-            tableService.changeIsEmpty(filledOrderTableId, 주문_테이블_빈_상태로_변경_요청());
-
-            // then
-            long publishedEventCounts = applicationEvents.stream(OrderStatusValidateEvent.class)
-                    .filter(event -> Objects.equals(event.getOrderTableId(), filledOrderTableId))
-                    .count();
-
-            Assertions.assertThat(publishedEventCounts).isOne();
-            applicationEvents.clear();
-        }
-
-        @Test
         void 존재하지_않는_주문_테이블을_변경하려고_하면_예외를_던진다() {
             // given
             Long invalidOrderTableId = Long.MIN_VALUE;
@@ -151,6 +141,25 @@ class TableServiceTest {
 
             // expect
             assertThatThrownBy(() -> tableService.changeIsEmpty(groupedOrderTable.getId(), 주문_테이블_채워진_상태로_변경_요청()))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"COOKING", "MEAL"})
+        @Sql("/init_for_change_is_empty_test.sql")
+        void 주문_테이블에_조리_혹은_식사_중인_주문이_있다면_예외를_던진다(String orderStatus) {
+            // given
+            Long orderTableId = tableService.create(주문_테이블_생성_요청()).getId();
+
+            Long menuId = 1L;
+            orderRepository.save(주문(
+                    orderTableId,
+                    OrderStatus.valueOf(orderStatus),
+                    List.of(주문_항목(menuId, new MenuSpecification("메뉴", BigDecimal.valueOf(10000))))
+            ));
+
+            // expect
+            assertThatThrownBy(() -> tableService.changeIsEmpty(orderTableId, 주문_테이블_채워진_상태로_변경_요청()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -4,22 +4,21 @@ import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.vo.OrdersValidator;
-import kitchenpos.table.domain.OrderStatusValidateEvent;
-import org.springframework.context.event.EventListener;
+import kitchenpos.table.domain.OrderStatusValidator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderStatusValidateEventHandler {
+public class OrderCookingOrMealStatusValidator implements OrderStatusValidator {
 
     private final OrderRepository orderRepository;
 
-    public OrderStatusValidateEventHandler(OrderRepository orderRepository) {
+    public OrderCookingOrMealStatusValidator(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
-    @EventListener
-    public void validateTableHasCookingOrMealOrder(OrderStatusValidateEvent event) {
-        List<Order> orders = orderRepository.findAllByOrderTableId(event.getOrderTableId());
+    @Override
+    public void validate(Long orderTableId) {
+        List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
         OrdersValidator ordersValidator = new OrdersValidator(orders);
 
         ordersValidator.validateHasCookingOrMealOrder();

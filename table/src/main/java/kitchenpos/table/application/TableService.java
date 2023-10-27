@@ -2,14 +2,13 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.domain.OrderStatusValidateEvent;
+import kitchenpos.table.domain.OrderStatusValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.dto.OrderTableCreateRequest;
 import kitchenpos.table.dto.OrderTableIsEmptyUpdateRequest;
 import kitchenpos.table.dto.OrderTableNumberOfGuestsUpdateRequest;
 import kitchenpos.table.dto.OrderTableResponse;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final ApplicationEventPublisher publisher;
+    private final OrderStatusValidator orderStatusValidator;
 
     public TableService(
             final OrderTableRepository orderTableRepository,
-            final ApplicationEventPublisher publisher
+            final OrderStatusValidator orderStatusValidator
     ) {
         this.orderTableRepository = orderTableRepository;
-        this.publisher = publisher;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     public OrderTableResponse create(final OrderTableCreateRequest request) {
@@ -44,8 +43,7 @@ public class TableService {
     public OrderTableResponse changeIsEmpty(Long orderTableId, OrderTableIsEmptyUpdateRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        publisher.publishEvent(new OrderStatusValidateEvent(orderTable.getId()));
+        orderStatusValidator.validate(orderTable.getId());
 
         orderTable.changeIsEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTable);
