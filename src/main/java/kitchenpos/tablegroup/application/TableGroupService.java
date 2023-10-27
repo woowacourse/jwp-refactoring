@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.ordertable.domain.UnGroupEvent;
+import kitchenpos.ordertable.domain.UngroupEvent;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.dto.TableGroupRequest;
@@ -50,7 +50,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 그룹입니다."));
-        publisher.publishEvent(new UnGroupEvent(tableGroup.getGroupedTables()));
+        publisher.publishEvent(new UngroupEvent(tableGroup.getGroupedTables()));
         tableGroupRepository.save(tableGroup);
     }
 }

@@ -1,9 +1,9 @@
 package kitchenpos.ordertable.domain;
 
-public class UnGroupEvent {
+public class UngroupEvent {
     private final OrderTables orderTables;
 
-    public UnGroupEvent(final OrderTables orderTables) {
+    public UngroupEvent(final OrderTables orderTables) {
         this.orderTables = orderTables;
     }
 
