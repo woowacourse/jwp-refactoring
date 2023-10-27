@@ -1,32 +1,31 @@
 package kitchenpos.tablegroup;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.order.JpaOrderRepository;
-import kitchenpos.order.OrderStatus;
 import kitchenpos.ordertable.JpaOrderTableRepository;
 import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.OrderTableEvent;
 import kitchenpos.tablegroup.dto.TableGroupRequest;
 import kitchenpos.tablegroup.dto.TableGroupResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
-    private final JpaOrderRepository jpaOrderRepository;
     private final JpaOrderTableRepository jpaOrderTableRepository;
     private final JpaTableGroupRepository jpaTableGroupRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public TableGroupService(
-            final JpaOrderRepository jpaOrderRepository,
-            final JpaOrderTableRepository jpaOrderTableRepository,
-            final JpaTableGroupRepository jpaTableGroupRepository
+            JpaOrderTableRepository jpaOrderTableRepository,
+            JpaTableGroupRepository jpaTableGroupRepository,
+            ApplicationEventPublisher applicationEventPublisher
     ) {
-        this.jpaOrderRepository = jpaOrderRepository;
         this.jpaOrderTableRepository = jpaOrderTableRepository;
         this.jpaTableGroupRepository = jpaTableGroupRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -57,9 +56,8 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (jpaOrderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+        for (Long orderTableId : orderTableIds) {
+            applicationEventPublisher.publishEvent(new OrderTableEvent(orderTableId));
         }
 
         tableGroup.ungroup();

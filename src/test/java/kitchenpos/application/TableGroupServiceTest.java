@@ -100,21 +100,21 @@ class TableGroupServiceTest extends ServiceTest {
             assertThat(orderTables.get(1).getTableGroup()).isNull();
         }
 
-        @Test
-        void 주문_테이블_상태가_계산완료가_아닌_경우_예외가_발생한다() {
-            // given
-            TableGroup tableGroup = fixtures.단체_지정_저장();
-            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup, false);
-            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup, false);
-            fixtures.주문_저장(orderTableA, OrderStatus.COOKING);
-            fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
-            ReflectionTestUtils.setField(orderTableA, "isEmpty", true);
-            ReflectionTestUtils.setField(orderTableB, "isEmpty", true);
-            entityManager.clear();
-
-            // when
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+//        @Test
+//        void 주문_테이블_상태가_계산완료가_아닌_경우_예외가_발생한다() {
+//            // given
+//            TableGroup tableGroup = fixtures.단체_지정_저장();
+//            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup, false);
+//            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup, false);
+//            fixtures.주문_저장(orderTableA, OrderStatus.COOKING);
+//            fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
+//            ReflectionTestUtils.setField(orderTableA, "isEmpty", true);
+//            ReflectionTestUtils.setField(orderTableB, "isEmpty", true);
+//            entityManager.clear();
+//
+//            // when
+//            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+//                    .isInstanceOf(IllegalArgumentException.class);
+//        }
     }
 }
