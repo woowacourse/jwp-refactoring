@@ -1,5 +1,6 @@
 package kitchenpos.product.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import org.springframework.util.StringUtils;
@@ -9,6 +10,7 @@ public class ProductName {
 
     private static final int MAX_NAME_LENGTH = 255;
 
+    @Column
     @NotNull
     private String name;
 
