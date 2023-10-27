@@ -16,7 +16,6 @@ public class ProductService {
 
     @Transactional
     public Product create(final Product product) {
-
         return productRepository.save(product);
     }
 
