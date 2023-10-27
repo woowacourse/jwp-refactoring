@@ -49,10 +49,14 @@ public class TableGroupService {
                                                           .map(OrderTableDto::getId)
                                                           .collect(Collectors.toUnmodifiableList());
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdsIn(orderTableIds);
+        validateOrderTableSize(orderTableIds, orderTables);
+        return orderTables;
+    }
+
+    private static void validateOrderTableSize(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
         if (orderTableIds.size() != orderTables.size() || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
-        return orderTables;
     }
 
     @Transactional

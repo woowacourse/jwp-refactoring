@@ -40,16 +40,18 @@ public class OrderService {
     public Order create(final CreateOrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                                                           .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTableSize(orderTable.isEmpty());
         final Order order = new Order(orderTable.getId(), OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
-
         final List<OrderLineItem> orderLineItems = createOrderLineItems(orderRequest);
         savedOrder.addOrderItems(orderLineItems);
-
         return savedOrder;
+    }
+
+    private static void validateOrderTableSize(final boolean orderTable) {
+        if (orderTable) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private List<OrderLineItem> createOrderLineItems(final CreateOrderRequest orderRequest) {
@@ -75,9 +77,7 @@ public class OrderService {
         final List<Long> menuIds = menus.stream()
                                         .map(Menu::getId)
                                         .collect(Collectors.toUnmodifiableList());
-        if (orderLineItemSize != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTableSize(orderLineItemSize != menuRepository.countByIdIn(menuIds));
     }
 
     @Transactional(readOnly = true)

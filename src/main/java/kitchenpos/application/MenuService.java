@@ -44,8 +44,12 @@ public class MenuService {
                                                        ));
         final Menu menu = Menu.of(menuGroup, menuRequest.getName(), menuRequest.getPrice());
         final Menu savedMenu = menuRepository.save(menu);
-
         final Products products = findProducts(menuRequest);
+        createMenuProducts(menuRequest, savedMenu, products);
+        return savedMenu;
+    }
+
+    private void createMenuProducts(final CreateMenuRequest menuRequest, final Menu savedMenu, final Products products) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
             final Product product = products.findProductById(menuProductDto.getProductId());
@@ -53,7 +57,6 @@ public class MenuService {
             menuProducts.add(menuProduct);
         }
         menuProductRepository.saveAll(menuProducts);
-        return savedMenu;
     }
 
     private Products findProducts(final CreateMenuRequest menuRequest) {
