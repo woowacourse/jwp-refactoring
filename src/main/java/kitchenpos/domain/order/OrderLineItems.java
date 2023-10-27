@@ -1,16 +1,18 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.List;
 
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(cascade = CascadeType.PERSIST,mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     public OrderLineItems() {
@@ -19,12 +21,6 @@ public class OrderLineItems {
     public OrderLineItems(List<OrderLineItem> orderLineItems) {
         validateEmpty(orderLineItems);
         this.orderLineItems = orderLineItems;
-    }
-
-    public void changeOrder(Order order){
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.changeOrder(order);
-        }
     }
 
     private void validateEmpty(List<OrderLineItem> orderLineItems) {

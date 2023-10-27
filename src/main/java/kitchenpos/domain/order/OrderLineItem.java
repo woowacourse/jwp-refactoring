@@ -1,13 +1,12 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "order_line_item")
@@ -17,36 +16,45 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq")
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @Column(name = "menu_id")
+    private Long menuId;
 
-    @ManyToOne
-    private Order order;
     @Column(name = "quantity")
     private long quantity;
+
+    @Column(name = "menu_name")
+    private String menuName;
+
+    @Column(name = "menu_price")
+    private BigDecimal menuPrice;
 
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Menu menu, long quantity) {
-        this.menu = menu;
+    public OrderLineItem(Long menuId, long quantity, String menuName, BigDecimal menuPrice) {
+        this.menuId = menuId;
         this.quantity = quantity;
-    }
-
-    public void changeOrder(Order order) {
-        this.order = order;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
     }
 }

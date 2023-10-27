@@ -1,9 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.orderTable;
 
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 public class OrderTables {
 
@@ -14,7 +13,7 @@ public class OrderTables {
         this.orderTables = orderTables;
     }
 
-    public static OrderTables from(List<OrderTable> orderTables, int idSize){
+    public static OrderTables from(List<OrderTable> orderTables, int idSize) {
         validateIdSize(orderTables, idSize);
         validateHasTableGroupOrEmpty(orderTables);
         return new OrderTables(orderTables);
@@ -22,7 +21,7 @@ public class OrderTables {
 
     private static void validateHasTableGroupOrEmpty(List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            if (!orderTable.isEmpty() || orderTable.hasTableGroup()) {
                 throw new IllegalArgumentException();
             }
         }

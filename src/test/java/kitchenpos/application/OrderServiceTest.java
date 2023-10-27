@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.dto.OrderChangeRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemCreateRequest;
@@ -8,6 +10,7 @@ import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -16,6 +19,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OrderServiceTest extends ServiceTest {
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     private OrderCreateRequest orderCreateRequest;
     private OrderChangeRequest orderChangeRequest;
@@ -28,14 +34,18 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성한다() {
-        tableService.changeEmpty(1L,new OrderTableChangeEmptyRequest(false));
+        tableService.changeEmpty(1L, new OrderTableChangeEmptyRequest(false));
 
         OrderResponse saved = orderService.create(orderCreateRequest);
 
+        Menu menu = menuRepository.findById(1L).get();
+
         assertAll(
-                () -> assertThat(saved.getOrderTableResponse().getId()).isEqualTo(orderCreateRequest.getOrderTableId()),
+                () -> assertThat(saved.getOrderTableId()).isEqualTo(orderCreateRequest.getOrderTableId()),
                 () -> assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.toString()),
-                () -> assertThat(saved.getOrderLineItems().size()).isEqualTo(1L)
+                () -> assertThat(saved.getOrderLineItems().size()).isEqualTo(1L),
+                () -> assertThat(saved.getOrderLineItems().get(0).getMenuName()).isEqualTo(menu.getName()),
+                () -> assertThat(saved.getOrderLineItems().get(0).getMenuPrice()).isEqualTo(menu.getPrice())
         );
     }
 
@@ -64,7 +74,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 전체_주문을_조회한다() {
-        tableService.changeEmpty(1L,new OrderTableChangeEmptyRequest(false));
+        tableService.changeEmpty(1L, new OrderTableChangeEmptyRequest(false));
         orderService.create(orderCreateRequest);
         orderService.create(orderCreateRequest);
         List<OrderResponse> responses = orderService.list();
@@ -73,7 +83,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경한다() {
-        tableService.changeEmpty(1L,new OrderTableChangeEmptyRequest(false));
+        tableService.changeEmpty(1L, new OrderTableChangeEmptyRequest(false));
         OrderResponse orderResponse = orderService.create(orderCreateRequest);
         OrderResponse response = orderService.changeOrderStatus(orderResponse.getId(), orderChangeRequest);
         assertThat(response.getOrderStatus().toString()).isEqualTo(orderChangeRequest.getOrderStatus());
