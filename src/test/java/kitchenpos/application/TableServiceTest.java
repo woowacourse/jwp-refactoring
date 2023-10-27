@@ -6,7 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.order.service.dto.OrderStatusRequest;
-import kitchenpos.tablegroup.service.dto.TableGroupRequest;
+import kitchenpos.table.service.dto.TableGroupRequest;
 import kitchenpos.table.service.dto.TableRequest;
 import kitchenpos.menugroup.service.dto.MenuGroupResponse;
 import kitchenpos.menu.service.dto.MenuResponse;
@@ -25,7 +25,7 @@ import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
 import kitchenpos.supports.TableGroupFixture;
 import kitchenpos.table.service.TableService;
-import kitchenpos.tablegroup.service.TableGroupService;
+import kitchenpos.table.service.TableGroupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,15 +1,15 @@
-package kitchenpos.tablegroup.service;
+package kitchenpos.table.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.tablegroup.service.dto.OrderTableIdRequest;
-import kitchenpos.tablegroup.service.dto.TableGroupRequest;
-import kitchenpos.tablegroup.service.dto.TableGroupResponse;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.repository.TableGroupRepository;
+import kitchenpos.table.service.dto.TableIdRequest;
+import kitchenpos.table.service.dto.TableGroupRequest;
+import kitchenpos.table.service.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,9 +35,9 @@ public class TableGroupService {
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
-    private List<Long> convertToLong(List<OrderTableIdRequest> requests) {
+    private List<Long> convertToLong(List<TableIdRequest> requests) {
         return requests.stream()
-                .map(OrderTableIdRequest::getId)
+                .map(TableIdRequest::getId)
                 .collect(Collectors.toList());
     }
 
