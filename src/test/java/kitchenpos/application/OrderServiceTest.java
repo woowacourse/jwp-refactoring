@@ -141,6 +141,7 @@ class OrderServiceTest extends ServiceTest {
         OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
         OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
         Order savedOrder = orderService.create(request);
+        orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.COMPLETION);
 
         // when, then
