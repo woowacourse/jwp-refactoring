@@ -73,7 +73,6 @@ class OrderServiceTest {
     class 주문_생성_실패 {
 
         @Test
-        @Disabled
         void 주문_항목이_비어있다면_예외가_발생한다() {
             // given
             final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, true));

@@ -18,7 +18,6 @@ class OrderTableTest {
     @ValueSource(ints = {-1, Integer.MIN_VALUE})
     void 변경하려는_게스트_수가_0보다_작다면_예외가_발생한다(final int numberOfGuests) {
         // given
-
         final OrderTable orderTable = new OrderTable(new TableGroup(), 3, false);
 
         // expect
