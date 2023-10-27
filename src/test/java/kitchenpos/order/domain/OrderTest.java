@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.table.domain.OrderTable;
@@ -27,14 +26,14 @@ class OrderTest {
     void 주문_생성() {
         final OrderTable orderTable = new OrderTable(null, 10, false);
         assertDoesNotThrow(
-                () -> new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems)
+                () -> new Order(orderTable.getId(), orderLineItems)
         );
     }
 
     @Test
     void 주문_상태_변경() {
         final OrderTable orderTable = new OrderTable(null, 10, false);
-        final Order order = new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(orderTable.getId(), orderLineItems);
 
         order.updateOrderStatus("COMPLETION");
 
@@ -44,7 +43,7 @@ class OrderTest {
     @Test
     void COMPLETION인_주문_상태_변경_예외_발생() {
         final OrderTable orderTable = new OrderTable(null, 10, false);
-        final Order order = new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(orderTable.getId(), orderLineItems);
         order.updateOrderStatus("COMPLETION");
 
         assertThatThrownBy(

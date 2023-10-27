@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
@@ -223,6 +222,6 @@ class TableServiceTest extends ServiceTest {
     private Order createOrder(final OrderTable orderTable) {
         final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L),
                 new OrderLineItem(menu.getId(), 1L));
-        return new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems);
+        return new Order(orderTable.getId(), orderLineItems);
     }
 }

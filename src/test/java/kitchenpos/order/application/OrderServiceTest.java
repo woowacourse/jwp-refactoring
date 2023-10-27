@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -185,7 +184,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문이_상태가_COMPLETION이면_예외_발생() {
             // given
-            Order order = new Order(orderTable.getId(), LocalDateTime.now(), orderLineItems);
+            Order order = new Order(orderTable.getId(), orderLineItems);
             Order savedOrder = orderRepository.save(order);
             savedOrder.updateOrderStatus(COMPLETION.name());
 

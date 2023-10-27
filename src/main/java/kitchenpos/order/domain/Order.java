@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -14,9 +15,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "orders")
+@EntityListeners(AuditingEntityListener.class)
 public class Order {
 
     @Id
@@ -30,6 +34,7 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus orderStatus;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
@@ -44,22 +49,19 @@ public class Order {
             final Long id,
             final Long orderTableId,
             final OrderStatus orderStatus,
-            final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
     public Order(
             final Long orderTableId,
-            final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        this(null, orderTableId, OrderStatus.COOKING, orderedTime, orderLineItems);
+        this(null, orderTableId, OrderStatus.COOKING, orderLineItems);
     }
 
     public void updateOrderStatus(final String orderStatus) {

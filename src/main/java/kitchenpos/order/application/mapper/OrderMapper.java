@@ -1,6 +1,5 @@
 package kitchenpos.order.application.mapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
@@ -15,11 +14,9 @@ public class OrderMapper {
 
     public static Order toOrder(
             final Long orderTableId,
-            final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems) {
         return new Order(
                 orderTableId,
-                orderedTime,
                 orderLineItems
         );
     }

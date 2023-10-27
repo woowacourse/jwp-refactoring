@@ -1,6 +1,5 @@
 package kitchenpos.order.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -31,7 +30,7 @@ public class OrderService {
 
     public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItem> orderLineItems = convertToOrderLineItems(request.getOrderLineItems());
-        final Order order = OrderMapper.toOrder(request.getOrderTableId(), LocalDateTime.now(), orderLineItems);
+        final Order order = OrderMapper.toOrder(request.getOrderTableId(), orderLineItems);
         orderValidator.validate(order);
         orderRepository.save(order);
 
