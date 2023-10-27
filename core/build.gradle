@@ -1,0 +1,4 @@
+dependencies { // common 모듈에서만 사용할 디팬던시 적용, compile 안됨
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'com.h2database:h2'
+}
