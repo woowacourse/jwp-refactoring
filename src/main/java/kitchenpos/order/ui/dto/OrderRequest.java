@@ -3,7 +3,6 @@ package kitchenpos.order.ui.dto;
 import kitchenpos.order.domain.Order;
 import kitchenpos.common.vo.OrderStatus;
 import kitchenpos.order.domain.OrderLineItems;
-import kitchenpos.ordertable.domain.OrderTable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,12 +25,7 @@ public class OrderRequest {
         return orderLineItems;
     }
 
-    public Order toEntity(
-            final OrderTable orderTable,
-            final OrderStatus orderStatus,
-            final LocalDateTime now,
-            final OrderLineItems orderLineItems
-    ) {
-        return Order.of(orderTable, OrderStatus.valueOf(orderStatus.name()), now, orderLineItems);
+    public Order toEntity(final OrderStatus orderStatus, final LocalDateTime now, final OrderLineItems orderLineItems) {
+        return Order.of(orderTableId, OrderStatus.valueOf(orderStatus.name()), now, orderLineItems);
     }
 }

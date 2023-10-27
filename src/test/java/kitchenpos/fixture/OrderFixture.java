@@ -42,9 +42,9 @@ public class OrderFixture {
     }
 
     private static Order 주문_생성(final OrderTable orderTable, final Menu menu, final OrderStatus orderStatus) {
-        final OrderLineItem 주문_항목 = new OrderLineItem(menu, DEFAULT_QUANTITY);
+        final OrderLineItem 주문_항목 = new OrderLineItem(menu.getId(), DEFAULT_QUANTITY);
         final OrderLineItems orderLineItems = new OrderLineItems(List.of(주문_항목));
-        final Order 주문 = Order.of(orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+        final Order 주문 = Order.of(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
 
         return 주문;
     }

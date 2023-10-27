@@ -1,9 +1,7 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.common.vo.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.exception.InvalidOrderStatusToChangeException;
-import kitchenpos.exception.InvalidOrderTableToOrder;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -11,13 +9,9 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -29,9 +23,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_order_table"))
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -45,44 +37,37 @@ public class Order {
     protected Order() {}
 
     private Order(
-            final OrderTable orderTable,
+            final Long orderTableId,
             final OrderStatus orderStatus,
             final LocalDateTime now,
             final OrderLineItems orderLineItems
     ) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = now;
         this.orderLineItems = orderLineItems;
     }
 
     public static Order of(
-            final OrderTable orderTable,
+            final Long orderTableId,
             final OrderStatus orderStatus,
             final LocalDateTime now,
             final OrderLineItems orderLineItems
     ) {
-        validateOrderTable(orderTable);
         orderLineItems.validateOrderLineItems();
 
-        final Order order = new Order(orderTable, orderStatus, now, orderLineItems);
+        final Order order = new Order(orderTableId, orderStatus, now, orderLineItems);
         orderLineItems.addOrderLineItems(order);
 
         return order;
-    }
-
-    private static void validateOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new InvalidOrderTableToOrder("주문 테이블이 비어 있어 주문이 불가능합니다.");
-        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

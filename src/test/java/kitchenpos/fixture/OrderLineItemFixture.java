@@ -13,7 +13,7 @@ public class OrderLineItemFixture {
     private static final long DEFAULT_QUANTITY = 1L;
 
     public static OrderLineItem 주문_상품_생성(final Menu menu) {
-        return new OrderLineItem(menu, DEFAULT_QUANTITY);
+        return new OrderLineItem(menu.getId(), DEFAULT_QUANTITY);
     }
 
     public static OrderLineItems 주문_상품들_생성(final List<Menu> menus) {

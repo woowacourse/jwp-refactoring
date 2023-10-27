@@ -68,7 +68,9 @@ class OrderLineItemRepositoryTest {
     void 주문_아이디를_통해_모든_주문_항목을_조회한다() {
         // given
         final OrderLineItems orderLineItems = OrderLineItemFixture.주문_상품들_생성(menus);
-        final Order order = orderRepository.save(Order.of(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
+        final Order order = orderRepository.save(
+                Order.of(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)
+        );
 
         // when
         final List<OrderLineItem> actual = orderLineItemRepository.findAllByOrderId(order.getId());
