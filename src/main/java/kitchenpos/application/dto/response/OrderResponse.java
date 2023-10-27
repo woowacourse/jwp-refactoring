@@ -29,7 +29,7 @@ public class OrderResponse {
                 order.getOrderTable().getId(),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
-                OrderLineItemResponse.from(order.getOrderLineItemsValue())
+                OrderLineItemResponse.from(order.getOrderLineItemsValue(), order.getId())
         );
     }
 

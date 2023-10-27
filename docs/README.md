@@ -10,7 +10,7 @@
 - Order 
   - -> OrderLineItems
   - -> OrderTable
-  - [ ] <-> OrderLineItem
+  - -> OrderLineItem
   - -> OrderStatus
 
 - OrderTables
@@ -25,7 +25,6 @@
   - -> NumberOfGuests
 
 - OrderLineItem
-  - [ ] <-> Order
   - -> Menu
 
 - Menu

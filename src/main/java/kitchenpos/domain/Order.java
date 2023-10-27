@@ -65,9 +65,6 @@ public class Order {
     }
 
     public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.updateOrder(this);
-        }
         this.orderLineItems = OrderLineItems.from(orderLineItems);
     }
 
