@@ -3,6 +3,7 @@ package kitchenpos.order.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTableValidator;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import kitchenpos.order.domain.repository.TableGroupRepository;
@@ -17,11 +18,14 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderTableValidator orderTableValidator;
 
     public TableGroupService(final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
+                             final TableGroupRepository tableGroupRepository,
+                             final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -55,7 +59,7 @@ public class TableGroupService {
                 orElseThrow(() -> new IllegalArgumentException("단체 지정 내역을 찾을 수 없습니다."));
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByTableGroup_Id(tableGroupId);
         for (OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.ungroupBy(tableGroup);
+            savedOrderTable.ungroupBy(tableGroup, orderTableValidator);
         }
     }
 }

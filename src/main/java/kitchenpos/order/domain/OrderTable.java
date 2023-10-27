@@ -2,7 +2,6 @@ package kitchenpos.order.domain;
 
 import static java.util.Objects.isNull;
 
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
@@ -27,8 +25,6 @@ public class OrderTable {
     private int numberOfGuests;
     @Column(nullable = false)
     private boolean empty;
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders;
 
     protected OrderTable() {
     }
@@ -58,10 +54,6 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
     public boolean isEmpty() {
         return empty;
     }
@@ -70,9 +62,9 @@ public class OrderTable {
         return isNull(tableGroup);
     }
 
-    public void updateEmptyIfNoConstraints(final boolean empty) {
+    public void updateEmptyIfNoConstraints(final boolean empty, final OrderTableValidator orderTableValidator) {
         validateTableGroupEmpty();
-        validateOrderStatus();
+        orderTableValidator.validateOrderStatus(this);
         this.empty = empty;
     }
 
@@ -80,21 +72,6 @@ public class OrderTable {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("단체 지정이 되어있습니다.");
         }
-    }
-
-    private void validateOrderStatus() {
-        if(!isOrderCompleted()) {
-            throw new IllegalArgumentException("계산이 완료되지 않아 테이블의 상태를 바꿀 수 없습니다.");
-        }
-    }
-
-    private boolean isOrderCompleted() {
-        for (Order order : orders) {
-            if (!order.isCompleted()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
@@ -108,20 +85,20 @@ public class OrderTable {
     }
 
     public void groupBy(final TableGroup tableGroup) {
-        validateGroupAvailable();
+        validateTableStatus();
         this.empty = false;
         this.tableGroup = tableGroup;
     }
 
-    private void validateGroupAvailable() {
+    private void validateTableStatus() {
         if (!isEmpty() || !isTableGroupEmpty()) {
             throw new IllegalArgumentException("단체 지정이 불가능한 테이블이 포함되어 있습니다.");
         }
     }
 
-    public void ungroupBy(final TableGroup tableGroup) {
+    public void ungroupBy(final TableGroup tableGroup, final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateUngrouping(this);
         validateRightTableGroup(tableGroup);
-        validateUngroupAvailable();
         this.empty = false;
         this.tableGroup = null;
     }
@@ -129,12 +106,6 @@ public class OrderTable {
     private void validateRightTableGroup(final TableGroup tableGroup) {
         if(!this.tableGroup.equals(tableGroup)) {
             throw new IllegalArgumentException("해당 단체에 지정되어 있지 않아 단체 지정 해제가 불가능합니다.");
-        }
-    }
-
-    private void validateUngroupAvailable() {
-        if(!isOrderCompleted()) {
-            throw new IllegalArgumentException("계산 완료되지 않은 테이블이 남아있어 단체 지정 해제가 불가능합니다.");
         }
     }
 
