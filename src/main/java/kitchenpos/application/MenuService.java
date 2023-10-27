@@ -88,7 +88,7 @@ public class MenuService {
 
         return savedMenu.stream()
                 .map(menu -> {
-                    final List<MenuProduct> savedMenuProducts = menuProductRepository.findAllByMenu(menu);
+                    final List<MenuProduct> savedMenuProducts = menuProductRepository.findAllByMenuId(menu.getId());
                     return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(),
                             savedMenuProducts.stream()
                                     .map(menuProduct -> new MenuProductResponse(menuProduct.getSeq(), menuProduct.getMenu().getId(),

@@ -63,16 +63,17 @@ class MenuIntegrationTest extends IntegrationTest {
         final Product pizza = createProduct("pizza", 500);
         final MenuGroup menuGroup = createMenuGroup("외식류");
 
-        final MenuCreateRequest menuRequest = new MenuCreateRequest("치킨 + 피자", BigDecimal.valueOf(1000), menuGroup.getId(),
+        final MenuCreateRequest menuRequest = new MenuCreateRequest("치킨 + 피자", BigDecimal.valueOf(900), menuGroup.getId(),
                 List.of(new MenuProductDto(chicken.getId(), 1L), new MenuProductDto(pizza.getId(), 1L)));
         final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menuRequest);
 
-        testRestTemplate.postForEntity("/api/menus", request, Menu.class);
+        testRestTemplate.postForEntity("/api/menus", request, MenuResponse.class);
 
         // when
-        final ResponseEntity<Menu[]> response = testRestTemplate
-                .exchange("/api/menus", HttpMethod.GET, null, Menu[].class);
-        final List<Menu> menus = Arrays.asList(response.getBody());
+        final ResponseEntity<MenuResponse[]> response = testRestTemplate
+                .getForEntity("/api/menus", MenuResponse[].class);
+        final MenuResponse[] menuResponse = response.getBody();
+        final List<MenuResponse> menus = Arrays.asList(menuResponse);
 
         // then
         assertAll(

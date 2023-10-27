@@ -3,6 +3,8 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.response.OrderLineItemResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -40,14 +42,19 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItemDto> orderLineItems = request.getOrderLineItems();
         checkValidOrderLineItems(orderLineItems);
 
         final OrderTable orderTable = findOrderTableById(request.getOrderTableId());
         final Order savedOrder = orderRepository.save(new Order(orderTable));
-        saveOrderLineItems(orderLineItems, savedOrder);
-        return savedOrder;
+        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, savedOrder);
+
+        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTable().getId(), savedOrder.getOrderStatus().name(), savedOrder.getOrderedTime(),
+                savedOrderLineItems.stream()
+                        .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
+                                orderLineItem.getMenu().getId(), orderLineItem.getQuantity()))
+                        .collect(Collectors.toList()));
     }
 
     private void checkValidOrderLineItems(final List<OrderLineItemDto> orderLineItems) {
@@ -76,31 +83,42 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void saveOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos, final Order order) {
+    private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos, final Order order) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
             final Menu savedMenu = menuRepository.findById(orderLineItemDto.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
             orderLineItems.add(new OrderLineItem(order, savedMenu, orderLineItemDto.getQuantity()));
         }
-        orderLineItemRepository.saveAll(orderLineItems);
+        return orderLineItemRepository.saveAll(orderLineItems);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
-
-        //for (final Order order : orders) {
-        //    order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        //}
-
-        return orders;
+        return orders.stream()
+                .map(order -> {
+                    final List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
+                    return new OrderResponse(order.getId(), order.getOrderTable().getId(), order.getOrderStatus().name(), order.getOrderedTime(),
+                            savedOrderLineItems.stream()
+                                    .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
+                                            orderLineItem.getMenu().getId(), orderLineItem.getQuantity()))
+                                    .collect(Collectors.toList()));
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusDto status) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusDto status) {
         final Order order = findOrderById(orderId);
         order.changeStatus(OrderStatus.valueOf(status.getOrderStatus()));
-        return orderRepository.save(order);
+        final Order savedOrder = orderRepository.save(order);
+        final List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
+
+        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTable().getId(), savedOrder.getOrderStatus().name(), savedOrder.getOrderedTime(),
+                savedOrderLineItems.stream()
+                        .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
+                                orderLineItem.getMenu().getId(), orderLineItem.getQuantity()))
+                        .collect(Collectors.toList()));
     }
 
     private Order findOrderById(final Long orderId) {

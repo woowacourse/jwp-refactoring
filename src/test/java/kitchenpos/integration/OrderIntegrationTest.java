@@ -10,6 +10,7 @@ import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Menu;
@@ -45,15 +46,15 @@ class OrderIntegrationTest extends IntegrationTest {
         final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
         // when
-        final ResponseEntity<Order> response = testRestTemplate
-                .postForEntity("/api/orders", request, Order.class);
-        final Order createdOrder = response.getBody();
+        final ResponseEntity<OrderResponse> response = testRestTemplate
+                .postForEntity("/api/orders", request, OrderResponse.class);
+        final OrderResponse orderResponse = response.getBody();
 
         // then
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                 () -> assertThat(response.getHeaders().get("Location"))
-                        .contains("/api/orders/" + createdOrder.getId())
+                        .contains("/api/orders/" + orderResponse.getId())
         );
     }
 
@@ -67,12 +68,12 @@ class OrderIntegrationTest extends IntegrationTest {
                 List.of(new OrderLineItemDto(menu.getId(), 1L)));
         final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
-        testRestTemplate.postForEntity("/api/orders", request, Order.class);
+        testRestTemplate.postForEntity("/api/orders", request, OrderResponse.class);
 
         // when
-        final ResponseEntity<Order[]> response = testRestTemplate
-                .getForEntity("/api/orders", Order[].class);
-        final List<Order> orders = Arrays.asList(response.getBody());
+        final ResponseEntity<OrderResponse[]> response = testRestTemplate
+                .getForEntity("/api/orders", OrderResponse[].class);
+        final List<OrderResponse> orders = Arrays.asList(response.getBody());
 
         // then
         assertAll(
@@ -93,7 +94,7 @@ class OrderIntegrationTest extends IntegrationTest {
         final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
         final Long orderId = testRestTemplate
-                .postForEntity("/api/orders", request, Order.class)
+                .postForEntity("/api/orders", request, OrderResponse.class)
                 .getBody()
                 .getId();
 
@@ -102,14 +103,14 @@ class OrderIntegrationTest extends IntegrationTest {
         final HttpEntity<OrderStatusDto> updateRequest = new HttpEntity<>(statusRequest);
 
         // when
-        final ResponseEntity<Order> response = testRestTemplate
-                .exchange("/api/orders/" + orderId + "/order-status", HttpMethod.PUT, updateRequest, Order.class);
-        final Order updatedOrder = response.getBody();
+        final ResponseEntity<OrderResponse> response = testRestTemplate
+                .exchange("/api/orders/" + orderId + "/order-status", HttpMethod.PUT, updateRequest, OrderResponse.class);
+        final OrderResponse orderResponse = response.getBody();
 
         // then
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
-                () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
+                () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
         );
     }
 
