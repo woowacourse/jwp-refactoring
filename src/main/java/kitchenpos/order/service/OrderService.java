@@ -45,7 +45,7 @@ public class OrderService {
 
     private List<OrderLineItem> extractOrderLineItems(final OrderRequest request) {
         return request.getOrderLineItems().stream()
-                .map(each -> new OrderLineItem(findMenuById(each.getMenuId()), each.getQuantity()))
+                .map(each -> new OrderLineItem(findMenuById(each.getMenuId()).getId(), each.getQuantity()))
                 .collect(Collectors.toList());
     }
 
