@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +46,8 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        dummyTables = List.of(orderTableRepository.save(new OrderTable()), orderTableRepository.save(new OrderTable()));
+        dummyTables = new ArrayList<>();
+        dummyTables.addAll(List.of(orderTableRepository.save(new OrderTable()), orderTableRepository.save(new OrderTable())));
         dummyTableRequests = dummyTables.stream()
                 .map(dummyTable -> new TableRequest(dummyTable.getId()))
                 .collect(Collectors.toList());

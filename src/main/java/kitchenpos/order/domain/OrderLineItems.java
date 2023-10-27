@@ -11,7 +11,7 @@ import javax.persistence.OneToMany;
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, cascade = PERSIST)
     @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 

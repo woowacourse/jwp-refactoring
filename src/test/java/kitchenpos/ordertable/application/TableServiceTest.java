@@ -9,18 +9,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.ServiceTest;
+import kitchenpos.exception.OrderTableUpdateException;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.ordertable.dto.OrderTableEmptyChangeRequest;
 import kitchenpos.ordertable.dto.OrderTableNumberOfGuestsChangeRequest;
 import kitchenpos.ordertable.dto.OrderTableRequest;
-import kitchenpos.exception.OrderTableUpdateException;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
+import kitchenpos.tablegroup.dto.TableGroupRequest;
+import kitchenpos.tablegroup.dto.TableRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,8 @@ class TableServiceTest {
     void list_메서드는_모든_주문_테이블을_조회한다() {
         // given
         final OrderTable orderTable = orderTableRepository.save(EMPTY_TABLE);
+        final OrderTable orderTable2 = orderTableRepository.save(EMPTY_TABLE);
+        tableGroupRepository.save(new TableGroup(List.of(orderTable, orderTable2)));
 
         // when
         final List<OrderTable> tables = tableService.list();
@@ -95,10 +99,11 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_그룹에_속해있으면_예외가_발생한다() {
             // given
-            final OrderTable orderTable1 = orderTableRepository.save(EMPTY_TABLE);
-            final OrderTable orderTable2 = orderTableRepository.save(EMPTY_TABLE);
+            final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+            final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
             tableGroupRepository.save(tableGroup);
+            tableGroup.bindTablesToGroup();
 
             final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
