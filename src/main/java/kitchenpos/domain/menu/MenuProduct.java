@@ -1,7 +1,7 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.common.BaseDate;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

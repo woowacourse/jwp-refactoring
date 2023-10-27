@@ -3,7 +3,7 @@ package kitchenpos.step;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
 import kitchenpos.ui.response.ProductResponse;
 
