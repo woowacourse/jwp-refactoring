@@ -1,7 +1,7 @@
 package kitchenpos.table.application;
 
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyStatusUpdateRequest;
@@ -9,22 +9,18 @@ import kitchenpos.table.dto.TableNumberOfGuestsUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
-
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 @Transactional
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     public OrderTable create(final TableCreateRequest request) {
@@ -40,11 +36,7 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final TableEmptyStatusUpdateRequest request) {
         final OrderTable orderTable = getOrderTable(orderTableId);
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(COOKING, MEAL))) {
-            throw new IllegalArgumentException("조리중 또는 식사중인 주문 테이블은 빈 테이블로 변경할 수 없습니다.");
-        }
-
-        orderTable.changeEmpty(request.isEmpty());
+        orderTable.changeEmpty(request.isEmpty(), orderTableValidator);
         return orderTableRepository.save(orderTable);
     }
 

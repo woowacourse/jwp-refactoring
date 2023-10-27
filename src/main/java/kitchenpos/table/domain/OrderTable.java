@@ -92,10 +92,8 @@ public class OrderTable {
         return empty;
     }
 
-    public void changeEmpty(final boolean empty) {
-        if (Objects.nonNull(this.tableGroup)) {
-            throw new IllegalArgumentException("그룹 지정된 테이블은 빈 테이블로 변경할 수 없습니다.");
-        }
+    public void changeEmpty(final boolean empty, final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateChangeEmpty(this.id, this.tableGroup);
         this.empty = empty;
     }
 

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.order.domain.OrderTableValidatorImpl;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemsCreateRequest;
 import kitchenpos.order.dto.request.OrderStatusUpdateRequest;
@@ -16,6 +17,7 @@ import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import(OrderService.class)
+@Import({OrderService.class, OrderTableValidatorImpl.class})
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
@@ -55,6 +57,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private OrderTableValidator orderTableValidator;
 
     private Menu 후1양1_메뉴;
     private Menu 간1양1_메뉴;
@@ -155,7 +160,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_FailWithEmptyOrderTable() {
         // given
-        주문테이블.changeEmpty(true);
+        주문테이블.changeEmpty(true, orderTableValidator);
         OrderTable 비어있는_주문테이블 = orderTableRepository.save(주문테이블);
 
         OrderCreateRequest request = new OrderCreateRequest(비어있는_주문테이블.getId(), List.of(후1양1_수량1, 간1양1_수량1));
