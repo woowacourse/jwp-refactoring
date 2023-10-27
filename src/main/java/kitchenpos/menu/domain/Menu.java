@@ -2,7 +2,12 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.menu.exception.MenuException;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -19,7 +24,7 @@ public class Menu {
     @Embedded
     private MenuPrice price;
 
-    @Column(name = "menuGroupId")
+    @Column(name = "menu_group_id")
     private Long menuGroupId;
 
     @Embedded
