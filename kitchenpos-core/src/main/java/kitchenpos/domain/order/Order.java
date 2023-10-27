@@ -58,7 +58,7 @@ public class Order {
 
     private void validateChangeableStatus() {
         if (orderStatus.equals(OrderStatus.COMPLETION)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료된 주문의 상태는 변경할 수 없습니다.");
         }
     }
 

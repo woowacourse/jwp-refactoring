@@ -28,7 +28,7 @@ public class OrderTable {
 
     private void validateGuests(final int numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(MIN_NUMBER_OF_GUESTS + "이상의 손님 수를 입력해 주세요.");
         }
     }
 
@@ -51,7 +51,7 @@ public class OrderTable {
 
     private void validateIsEmpty() {
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
         }
     }
 
@@ -65,7 +65,7 @@ public class OrderTable {
 
     public void validateGroupable() {
         if (!empty || Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("그룹화된 테이블이 존재합니다.");
         }
     }
 

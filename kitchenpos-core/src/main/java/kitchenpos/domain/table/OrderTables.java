@@ -36,7 +36,7 @@ public class OrderTables {
 
     private void validateMinGroupableSize() {
         if (values.isEmpty() || values.size() < MIN_TABLE_GROUP_SIZE) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(MIN_TABLE_GROUP_SIZE + "이상의 테이블을 지정해 주세요.");
         }
     }
 
@@ -52,5 +52,9 @@ public class OrderTables {
         return values.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+    }
+
+    public boolean isSameSize(final int size) {
+        return values.size() == size;
     }
 }

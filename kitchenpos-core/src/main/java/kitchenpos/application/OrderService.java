@@ -41,7 +41,7 @@ public class OrderService {
         validateOrderLineItems(orderRequest);
 
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         validateOrderTableOrderable(orderTable);
 
@@ -54,7 +54,7 @@ public class OrderService {
 
     private void validateOrderTableOrderable(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블이 비어있는 상태입니다.");
         }
     }
 
@@ -64,7 +64,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
                 .map(orderLineItemRequest -> {
                     final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                            .orElseThrow(IllegalArgumentException::new);
+                            .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
 
                     return new OrderLineItem(
                             menu.getId(),
@@ -80,13 +80,13 @@ public class OrderService {
 
     private void validateOrderTable(final OrderRequest orderRequest) {
         if (Objects.isNull(orderRequest.getOrderTableId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블의 ID가 존재하지 않습니다.");
         }
     }
 
     private void validateOrderLineItems(final OrderRequest orderRequest) {
         if (orderRequest.getOrderLineItems().isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상품이 비어있습니다.");
         }
 
         final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
@@ -94,7 +94,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 메뉴가 존재합니다.");
         }
     }
 
@@ -111,7 +111,7 @@ public class OrderService {
         validateOrderId(orderId);
 
         final Order order = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 
         order.updateOrderStatus(orderRequest.getOrderStatus());
 
@@ -122,7 +122,7 @@ public class OrderService {
 
     private void validateOrderId(final Long orderId) {
         if (Objects.isNull(orderId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 ID가 존재하지 않습니다.");
         }
     }
 }

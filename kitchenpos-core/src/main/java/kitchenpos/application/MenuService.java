@@ -36,7 +36,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
 
         final MenuProducts menuProducts = convertMenuProducts(request);
 
@@ -52,7 +52,7 @@ public class MenuService {
 
         final List<MenuProduct> menuProducts = menuProductRequests.stream()
                 .map(menuProduct -> new MenuProduct(productRepository.findById(menuProduct.getProductId())
-                        .orElseThrow(IllegalArgumentException::new),
+                        .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다.")),
                         menuProduct.getQuantity()))
                 .collect(Collectors.toList());
 

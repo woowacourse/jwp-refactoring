@@ -47,7 +47,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         orderTable.updateEmpty(request.isEmpty());
 
@@ -61,7 +61,7 @@ public class TableService {
     private void validateChangeableOrderStatus(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문이 완료되지 않은 테이블이 존재합니다.");
         }
     }
 
@@ -70,7 +70,7 @@ public class TableService {
         validateOrderTableId(orderTableId);
 
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         orderTable.setNumberOfGuests(request.getNumberOfGuests());
 
@@ -81,7 +81,7 @@ public class TableService {
 
     private void validateOrderTableId(final Long orderTableId) {
         if (Objects.isNull(orderTableId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블의 ID가 존재하지 않습니다.");
         }
     }
 }

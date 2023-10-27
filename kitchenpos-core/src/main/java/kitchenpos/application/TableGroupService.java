@@ -46,14 +46,14 @@ public class TableGroupService {
 
     private void validateSavedOrderTable(final TableGroupRequest request, final List<OrderTable> orderTableEntities) {
         if (request.getOrderTableIds().size() != orderTableEntities.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블이 존재하지 않습니다.");
         }
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("테이블 그룹을 찾을 수 없습니다."));
 
         final OrderTables orderTables = tableGroup.getOrderTables();
 
@@ -68,7 +68,7 @@ public class TableGroupService {
     private void validateUngroupableStatus(final List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문이 완료되지 않은 테이블이 존재합니다.");
         }
     }
 }

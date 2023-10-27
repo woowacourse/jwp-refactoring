@@ -36,13 +36,13 @@ public class Menu {
 
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("0 이상의 메뉴 가격을 입력해 주세요.");
         }
     }
 
     private void validateTotalMenuProductPrice(final BigDecimal price, final MenuProducts menuProducts) {
         if (price.compareTo(menuProducts.calculateTotalPrice()) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("전체 상품 가격의 합 이하의 메뉴 가격을 입력해 주세요.");
         }
     }
 
