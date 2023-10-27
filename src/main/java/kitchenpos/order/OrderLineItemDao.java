@@ -1,7 +1,5 @@
 package kitchenpos.order;
 
-import kitchenpos.order.OrderLineItem;
-
 import java.util.List;
 import java.util.Optional;
 

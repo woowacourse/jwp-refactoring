@@ -30,13 +30,13 @@ public final class OrderResponse {
 
     public OrderResponse(Order order, List<OrderLineItem> orderLineItems) {
         this(
-            order.getId(),
-            order.getOrderTable().getId(),
-            order.getOrderStatus().name(),
-            order.getOrderedTime(),
-            orderLineItems.stream()
-                    .map(OrderLineItem::getSeq)
-                    .collect(Collectors.toList())
+                order.getId(),
+                order.getOrderTable().getId(),
+                order.getOrderStatus().name(),
+                order.getOrderedTime(),
+                orderLineItems.stream()
+                        .map(OrderLineItem::getSeq)
+                        .collect(Collectors.toList())
         );
     }
 

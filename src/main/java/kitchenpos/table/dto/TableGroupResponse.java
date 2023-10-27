@@ -24,8 +24,8 @@ public class TableGroupResponse {
 
     public TableGroupResponse(TableGroup tableGroup) {
         this(tableGroup.getId()
-                ,tableGroup.getCreatedDate()
-                ,tableGroup.getOrderTables()
+                , tableGroup.getCreatedDate()
+                , tableGroup.getOrderTables()
                         .stream()
                         .map(OrderTableResponse::new)
                         .collect(Collectors.toList()));

@@ -1,7 +1,5 @@
 package kitchenpos.table;
 
-import kitchenpos.table.TableGroup;
-
 import java.util.List;
 import java.util.Optional;
 

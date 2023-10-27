@@ -1,7 +1,5 @@
 package kitchenpos.menu;
 
-import kitchenpos.menu.MenuProduct;
-
 import java.util.List;
 import java.util.Optional;
 

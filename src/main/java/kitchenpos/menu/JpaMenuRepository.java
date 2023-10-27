@@ -1,7 +1,6 @@
 package kitchenpos.menu;
 
 import java.util.List;
-import kitchenpos.menu.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface JpaMenuRepository extends JpaRepository<Menu, Long> {
