@@ -26,20 +26,6 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(
-            final Long id,
-            final String name,
-            final BigDecimal price,
-            final Long menuGroupId,
-            final List<MenuProduct> menuProducts
-    ) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
-    }
-
     private Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
