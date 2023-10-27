@@ -36,7 +36,7 @@ public class OrderTables {
 
     public void group(final TableGroup tableGroup) {
         validateOrderTableStatus(orderTables);
-        orderTables.forEach(orderTable -> orderTable.registerTableGroup(tableGroup));
+        orderTables.forEach(orderTable -> orderTable.group(tableGroup.getId()));
     }
 
     private void validateOrderTableStatus(final List<OrderTable> orderTables) {
@@ -51,11 +51,6 @@ public class OrderTables {
     }
 
     public void ungroup() {
-        if (orderTables.stream()
-            .anyMatch(OrderTable::hasProceedingOrder)) {
-            throw new IllegalArgumentException("주문이 완료되지 않은 테이블은 테이블 그룹을 해제할 수 없습니다.");
-        }
-
         orderTables.forEach(OrderTable::ungroup);
     }
 

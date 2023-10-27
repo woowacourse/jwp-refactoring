@@ -3,12 +3,14 @@ package kitchenpos.table_group.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.application.dto.OrderTableIdRequest;
-import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
-import kitchenpos.table_group.application.dto.TableGroupResponse;
+import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTables;
-import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
+import kitchenpos.table_group.application.dto.TableGroupResponse;
+import kitchenpos.table_group.domain.TableGroup;
 import kitchenpos.table_group.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +21,13 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderRepository orderRepository;
 
     public TableGroupService(final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
+                             final TableGroupRepository tableGroupRepository, final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -48,8 +52,23 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        final List<OrderTable> orderTableGroupedByTableGroup = orderTableRepository.findByTableGroup(tableGroup);
-        final OrderTables orderTables = new OrderTables(orderTableGroupedByTableGroup);
-        orderTables.ungroup();
+        final List<OrderTable> orderTableGroupedByTableGroup = orderTableRepository.findByTableGroupId(
+            tableGroup.getId());
+        validateProceedingTable(orderTableGroupedByTableGroup);
+
+        orderTableGroupedByTableGroup.forEach(OrderTable::ungroup);
+    }
+
+    private void validateProceedingTable(final List<OrderTable> orderTableGroupedByTableGroup) {
+        if (orderTableGroupedByTableGroup.stream()
+            .anyMatch(this::hasProceedingOrder)) {
+            throw new IllegalArgumentException("주문이 완료되지 않은 테이블은 테이블 그룹을 해제할 수 없습니다.");
+        }
+    }
+
+    public boolean hasProceedingOrder(final OrderTable orderTable) {
+        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
+        return orders.stream()
+            .anyMatch(Order::isProceeding);
     }
 }

@@ -30,10 +30,7 @@ class OrdersTest {
                 new Order(3L, OrderStatus.MEAL,
                           List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
                           null)
-            ), new OrderTable(1L, 2, false, List.of(
-            new Order(4L, OrderStatus.COMPLETION,
-                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
-                      null))));
+            ), new OrderTable(1L, 2, false));
 
         // when
         final boolean hasProceedingOrder = orders.hasProceedingOrder();

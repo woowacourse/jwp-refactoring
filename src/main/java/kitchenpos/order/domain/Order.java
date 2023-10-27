@@ -67,6 +67,10 @@ public class Order {
         }
     }
 
+    public boolean isProceeding() {
+        return orderStatus != OrderStatus.COMPLETION;
+    }
+
     public Long getId() {
         return id;
     }

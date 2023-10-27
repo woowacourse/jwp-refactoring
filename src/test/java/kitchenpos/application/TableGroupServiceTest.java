@@ -14,6 +14,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.table_group.application.TableGroupService;
 import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
@@ -35,6 +36,9 @@ class TableGroupServiceTest {
     @Mock
     private TableGroupRepository tableGroupRepository;
 
+    @Mock
+    private OrderRepository orderRepository;
+
     @InjectMocks
     private TableGroupService tableGroupService;
 
@@ -43,8 +47,8 @@ class TableGroupServiceTest {
     void create() {
         // given
         final List<OrderTable> orderTables = List.of(
-            new OrderTable(1L, 2, false, Collections.emptyList()),
-            new OrderTable(2L, 2, false, Collections.emptyList())
+            new OrderTable(1L, 2, false),
+            new OrderTable(2L, 2, false)
         );
 
         given(orderTableRepository.getAllById(any()))
@@ -74,7 +78,7 @@ class TableGroupServiceTest {
         // given
         given(orderTableRepository.getAllById(any()))
             .willReturn(List.of(
-                new OrderTable(1L, 2, true, Collections.emptyList())
+                new OrderTable(1L, 2, true)
             ));
 
         // when
@@ -90,7 +94,7 @@ class TableGroupServiceTest {
         // given
         given(orderTableRepository.getAllById(any()))
             .willReturn(List.of(
-                new OrderTable(1L, 2, true, Collections.emptyList())
+                new OrderTable(1L, 2, true)
             ));
 
         // when
@@ -106,8 +110,8 @@ class TableGroupServiceTest {
     void create_failNotEmptyTable() {
         // given
         final List<OrderTable> orderTables = List.of(
-            new OrderTable(1L, 2, false, Collections.emptyList()),
-            new OrderTable(2L, 2, true, Collections.emptyList())
+            new OrderTable(1L, 2, false),
+            new OrderTable(2L, 2, true)
         );
 
         given(orderTableRepository.getAllById(any()))
@@ -138,15 +142,19 @@ class TableGroupServiceTest {
     void ungroup() {
         // given
         final List<OrderTable> orderTables = List.of(
-            new OrderTable(1L, 2, true, Collections.emptyList()),
-            new OrderTable(2L, 2, true, Collections.emptyList())
+            new OrderTable(1L, 2, true),
+            new OrderTable(2L, 2, true)
         );
         final TableGroup tableGroup = new TableGroup(1L);
 
         given(tableGroupRepository.getById(any()))
             .willReturn(tableGroup);
-        given(orderTableRepository.findByTableGroup(any()))
+        given(orderTableRepository.findByTableGroupId(any()))
             .willReturn(orderTables);
+        given(orderRepository.findAllByOrderTableId(any()))
+            .willReturn(List.of(
+                new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "상품", new Price(BigDecimal.TEN), null)), 1L)
+            ));
 
         // when
         // then
@@ -158,17 +166,19 @@ class TableGroupServiceTest {
     void ungroup_failNotOrderEnd() {
         // given
         final List<OrderTable> orderTables = List.of(
-            new OrderTable(1L, 2, true, List.of(new Order(1L, OrderStatus.COOKING, List.of(
-                new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null))),
-            new OrderTable(2L, 2, true, List.of(new Order(1L, OrderStatus.COOKING, List.of(
-                new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null)))
+            new OrderTable(1L, 2, true),
+            new OrderTable(2L, 2, true)
         );
         final TableGroup tableGroup = new TableGroup(1L);
 
         given(tableGroupRepository.getById(any()))
             .willReturn(tableGroup);
-        given(orderTableRepository.findByTableGroup(any()))
+        given(orderTableRepository.findByTableGroupId(any()))
             .willReturn(orderTables);
+        given(orderRepository.findAllByOrderTableId(any()))
+            .willReturn(List.of(
+                new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "상품", new Price(BigDecimal.TEN), null)), 1L)
+            ));
 
         // when
         // then

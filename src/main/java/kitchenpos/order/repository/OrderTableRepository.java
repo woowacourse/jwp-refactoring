@@ -2,7 +2,6 @@ package kitchenpos.order.repository;
 
 import java.util.List;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.table_group.domain.TableGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
@@ -22,5 +21,5 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
         return results;
     }
 
-    List<OrderTable> findByTableGroup(final TableGroup tableGroup);
+    List<OrderTable> findByTableGroupId(final Long tableGroupId);
 }

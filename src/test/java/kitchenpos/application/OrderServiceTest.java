@@ -55,7 +55,7 @@ class OrderServiceTest {
             new OrderLineItem(2L, 2L, "피자", new Price(BigDecimal.TEN), menu2.getId()));
 
         final Order order = new Order(1L, OrderStatus.COOKING, orderLineItems, 1L);
-        final OrderTable orderTable = new OrderTable(1L, 10, false, Collections.emptyList());
+        final OrderTable orderTable = new OrderTable(1L, 10, false);
 
         given(menuRepository.countByIds(any()))
             .willReturn(2L);
@@ -85,7 +85,7 @@ class OrderServiceTest {
         given(menuRepository.countByIds(any()))
             .willReturn(0L);
         given(orderTableRepository.getById(any()))
-            .willReturn(new OrderTable(1L, 10, true, Collections.emptyList()));
+            .willReturn(new OrderTable(1L, 10, true));
 
         // when
         // then
@@ -133,7 +133,7 @@ class OrderServiceTest {
     void create_failEmptyOrderTable() {
         // given
         given(orderTableRepository.getById(any()))
-            .willReturn(new OrderTable(1L, 10, true, Collections.emptyList()));
+            .willReturn(new OrderTable(1L, 10, true));
         given(menuRepository.countByIds(any()))
             .willReturn(2L);
         final Menu menu1 = new Menu(1L, "후라이드", Collections.emptyList(), 1L);

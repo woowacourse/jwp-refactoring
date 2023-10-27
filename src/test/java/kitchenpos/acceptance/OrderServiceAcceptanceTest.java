@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.common.domain.Price;
 import kitchenpos.menu.domain.Menu;
@@ -54,7 +53,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
@@ -86,7 +85,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
                                                        MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
-        orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        orderTableRepository.save(OrderTable.forSave(4, false));
         final OrderCreateRequest request = new OrderCreateRequest(1L, List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L),
             new OrderLineItemCreateRequest(Long.MAX_VALUE, 1L)
@@ -109,7 +108,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
                                                        MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
-        orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        orderTableRepository.save(OrderTable.forSave(4, false));
         final OrderCreateRequest request = new OrderCreateRequest(1L, List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L),
             new OrderLineItemCreateRequest(Long.MAX_VALUE, 1L)
@@ -138,7 +137,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     }
 
     private Order createOrder() {
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
@@ -176,7 +175,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     @Test
     void changeOrderStatus_failCompletionOrder() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
