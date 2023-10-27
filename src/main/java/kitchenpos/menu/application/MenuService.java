@@ -1,6 +1,7 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.menu.application.dto.request.MenuCreateRequest;
+import kitchenpos.menu.application.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.application.dto.response.MenuQueryResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
@@ -56,12 +57,14 @@ public class MenuService {
     private List<MenuProduct> createMenuProducts(final MenuCreateRequest request) {
         return request.getMenuProducts()
                 .stream()
-                .map(menuProductCreateRequest -> {
-                    final Product product = productRepository.findById(menuProductCreateRequest.getProductId())
-                            .orElseThrow(IllegalArgumentException::new);
-                    return new MenuProduct(product, menuProductCreateRequest.getQuantity());
-                })
+                .map(this::toMenuProduct)
                 .collect(Collectors.toList());
+    }
+
+    private MenuProduct toMenuProduct(MenuProductCreateRequest menuProductCreateRequest) {
+        final Product product = productRepository.findById(menuProductCreateRequest.getProductId())
+                .orElseThrow(IllegalArgumentException::new);
+        return new MenuProduct(product, menuProductCreateRequest.getQuantity());
     }
 
     public List<MenuQueryResponse> list() {
