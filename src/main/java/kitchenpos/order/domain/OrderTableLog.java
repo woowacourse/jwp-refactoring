@@ -20,10 +20,10 @@ public class OrderTableLog {
     private Order order;
 
     @Column(nullable = false)
-    Long orderTableId;
+    private Long orderTableId;
 
     @Column(nullable = false)
-    int numberOfGuests;
+    private int numberOfGuests;
 
     protected OrderTableLog() {
     }

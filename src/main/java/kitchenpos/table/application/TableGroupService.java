@@ -19,21 +19,15 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final ApplicationEventPublisher publisher;
 
     public TableGroupService(
-            OrderRepository orderRepository,
             OrderTableRepository orderTableRepository,
-            TableGroupRepository tableGroupRepository,
-            ApplicationEventPublisher publisher
+            TableGroupRepository tableGroupRepository
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.publisher = publisher;
     }
 
     @Transactional

@@ -2,32 +2,24 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.dto.request.OrderTableUpdateEmptyRequest;
 import kitchenpos.table.dto.request.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final ApplicationEventPublisher publisher;
 
     public TableService(
-            OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository,
-            ApplicationEventPublisher publisher
+            OrderTableRepository orderTableRepository
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.publisher = publisher;
     }
 
     @Transactional
