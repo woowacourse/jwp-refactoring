@@ -6,8 +6,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.response.OrderTableReseponse;
-import kitchenpos.dto.response.TableGroupDto;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -31,8 +32,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupDto create(final TableGroupDto tableGroupDto) {
-        List<OrderTable> savedOrderTables = getFilledOrderTables(tableGroupDto);
+    public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
+        List<OrderTable> savedOrderTables = getFilledOrderTables(tableGroupRequest);
         TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
 
         final Long tableGroupId = savedTableGroup.getId();
@@ -45,22 +46,22 @@ public class TableGroupService {
         savedTableGroup = new TableGroup(savedTableGroup.getId(),
                 savedTableGroup.getCreatedDate(), savedOrderTables);
 
-        return TableGroupDto.from(savedTableGroup);
+        return TableGroupResponse.from(savedTableGroup);
     }
 
-    private List<OrderTable> getFilledOrderTables(TableGroupDto tableGroupDto) {
-        final List<OrderTableReseponse> orderTableReseponses = tableGroupDto.getOrderTables();
+    private List<OrderTable> getFilledOrderTables(TableGroupRequest tableGroupRequest) {
+        final List<OrderTableRequest> orderTableRequests = tableGroupRequest.getOrderTableRequests();
 
-        if (CollectionUtils.isEmpty(orderTableReseponses) || orderTableReseponses.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTableReseponses.stream()
-                .map(OrderTableReseponse::getId)
+        final List<Long> orderTableIds = orderTableRequests.stream()
+                .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
 
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        if (orderTableReseponses.size() != savedOrderTables.size()) {
+        if (orderTableRequests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 

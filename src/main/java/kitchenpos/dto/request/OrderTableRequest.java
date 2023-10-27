@@ -7,6 +7,10 @@ public class OrderTableRequest {
     private int numberOfGuests;
     private boolean empty;
 
+    public OrderTableRequest(Long id) {
+        this(id, null, 0, false);
+    }
+
     public OrderTableRequest(int numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
