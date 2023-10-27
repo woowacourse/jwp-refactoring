@@ -1,11 +1,11 @@
-package kitchenpos.product.presentation;
+package kitchenpos.presentation;
 
 import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.product.application.ProductService;
-import kitchenpos.product.domain.Product;
 import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
