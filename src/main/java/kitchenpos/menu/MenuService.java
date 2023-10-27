@@ -12,7 +12,7 @@ public class MenuService {
     private final MenuCreateValidator menuCreateValidator;
 
     public MenuService(
-            final MenuRepository menuRepository,
+            MenuRepository menuRepository,
             MenuCreateValidator menuCreateValidator
     ) {
         this.menuRepository = menuRepository;

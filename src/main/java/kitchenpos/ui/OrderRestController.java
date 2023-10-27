@@ -17,16 +17,17 @@ import java.util.List;
 
 @RestController
 public class OrderRestController {
+
     private final OrderService orderService;
 
-    public OrderRestController(final OrderService orderService) {
+    public OrderRestController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @PostMapping("/api/orders")
     public ResponseEntity<Order> create(@RequestBody OrderCreateRequest request) {
-        final Order created = orderService.create(request);
-        final URI uri = URI.create("/api/orders/" + created.getId());
+        Order created = orderService.create(request);
+        URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
@@ -41,8 +42,8 @@ public class OrderRestController {
 
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<Order> changeOrderStatus(
-            @PathVariable final Long orderId,
-            @RequestBody final OrderStatusChangeRequest request
+            @PathVariable Long orderId,
+            @RequestBody OrderStatusChangeRequest request
     ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, request.getOrderStatus()));
     }

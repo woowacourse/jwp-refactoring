@@ -9,7 +9,10 @@ public class MenuCreateValidator {
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductPriceMultiplier menuProductPriceMultiplier;
 
-    public MenuCreateValidator(MenuGroupRepository menuGroupRepository, MenuProductPriceMultiplier menuProductPriceMultiplier) {
+    public MenuCreateValidator(
+            MenuGroupRepository menuGroupRepository,
+            MenuProductPriceMultiplier menuProductPriceMultiplier
+    ) {
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductPriceMultiplier = menuProductPriceMultiplier;
     }
