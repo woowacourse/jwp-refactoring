@@ -1,7 +1,7 @@
 package kitchenpos.domain.table;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.order.Order;
+import kitchenpos.order.OrderStatus;
 
 import java.util.List;
 

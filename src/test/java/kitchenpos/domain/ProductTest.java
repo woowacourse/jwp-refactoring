@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.menu.Product;
+import kitchenpos.product.Product;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -15,7 +15,7 @@ class ProductTest {
         BigDecimal price = BigDecimal.valueOf(-1L);
 
         //when,then
-        assertThatThrownBy(() -> new Product(1L, "name", price))
+        assertThatThrownBy(() -> new Product("name", price))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("상품의 가격은 0원 이상이어야 합니다.");
     }
