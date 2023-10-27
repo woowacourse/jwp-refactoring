@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(path: ':menu')
+    implementation project(path: ':order')
+    implementation project(path: ':product')
+    implementation project(path: ':common')
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}

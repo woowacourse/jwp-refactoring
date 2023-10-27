@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.application.test.ServiceIntegrateTest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.execute.ServiceIntegrateTest;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.dto.request.MenuCreateRequest;
+import kitchenpos.menu.dto.response.MenuResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.domain.fixture.MenuGroupFixture.인기_메뉴_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,7 +39,7 @@ class MenuServiceIntegrateTest extends ServiceIntegrateTest {
         @Test
         void 메뉴를_생성한다() {
             // given
-            MenuGroup menuGroup = menuGroupRepository.save(인기_메뉴_생성());
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.인기_메뉴_생성());
             MenuCreateRequest request = new MenuCreateRequest("치킨", BigDecimal.valueOf(20000), menuGroup.getId());
 
             // when, then
@@ -48,7 +49,7 @@ class MenuServiceIntegrateTest extends ServiceIntegrateTest {
         @Test
         void 메뉴의_가격이_null이면_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupRepository.save(인기_메뉴_생성());
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.인기_메뉴_생성());
             MenuCreateRequest request = new MenuCreateRequest("치킨", null, menuGroup.getId());
 
             // when, then
@@ -58,7 +59,7 @@ class MenuServiceIntegrateTest extends ServiceIntegrateTest {
         @Test
         void 메뉴의_가격이_0보다_작으면_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupRepository.save(인기_메뉴_생성());
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.인기_메뉴_생성());
             MenuCreateRequest request = new MenuCreateRequest("치킨", BigDecimal.valueOf(-100), menuGroup.getId());
 
             // when, then
@@ -81,7 +82,7 @@ class MenuServiceIntegrateTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            MenuGroup menuGroup = menuGroupRepository.save(인기_메뉴_생성());
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.인기_메뉴_생성());
             Menu menu = new Menu("치킨", BigDecimal.valueOf(20000), menuGroup.getId());
             menuRepository.save(menu);
         }

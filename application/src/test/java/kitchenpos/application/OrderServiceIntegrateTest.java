@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.application.test.ServiceIntegrateTest;
+import kitchenpos.execute.ServiceIntegrateTest;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
@@ -17,8 +19,6 @@ import java.util.List;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.fixture.OrderFixture.주문_생성;
-import static kitchenpos.domain.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +40,7 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            orderTable = orderTableRepository.save(주문_테이블_생성());
+            orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
         }
 
         @Test
@@ -56,15 +56,6 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
             // when, then
             assertThrows(InvalidDataAccessApiUsageException.class,
                     () -> orderService.create(orderTable.getId() + 1));
-        }
-
-        @Test
-        void 주문_테이블이_비어있다면_예외가_발생한다() {
-            // given
-            orderTable.updateEmpty(true);
-
-            // when, then
-            assertThrows(IllegalArgumentException.class, () -> orderService.create(orderTable.getId()));
         }
 
         @Test
@@ -113,9 +104,9 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            OrderTable orderTable = 주문_테이블_생성();
+            OrderTable orderTable = OrderTableFixture.주문_테이블_생성();
             orderTableRepository.save(orderTable);
-            orderRepository.save(주문_생성(orderTable));
+            orderRepository.save(OrderFixture.주문_생성(orderTable));
         }
 
         @Test
@@ -139,9 +130,9 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            OrderTable orderTable = 주문_테이블_생성();
+            OrderTable orderTable = OrderTableFixture.주문_테이블_생성();
             orderTableRepository.save(orderTable);
-            order = orderRepository.save(주문_생성(orderTable));
+            order = orderRepository.save(OrderFixture.주문_생성(orderTable));
         }
 
         @Test

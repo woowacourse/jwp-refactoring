@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.application.test.ServiceIntegrateTest;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.ProductRepository;
-import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.execute.ServiceIntegrateTest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.product.dto.request.ProductCreateRequest;
+import kitchenpos.product.dto.response.ProductResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

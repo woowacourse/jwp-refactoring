@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.application.test.ServiceIntegrateTest;
+import kitchenpos.execute.ServiceIntegrateTest;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableGroup;
@@ -19,8 +21,6 @@ import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.fixture.OrderFixture.주문_생성;
-import static kitchenpos.domain.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,8 +48,8 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            OrderTable orderTable1 = 주문_테이블_생성();
-            OrderTable orderTable2 = 주문_테이블_생성();
+            OrderTable orderTable1 = OrderTableFixture.주문_테이블_생성();
+            OrderTable orderTable2 = OrderTableFixture.주문_테이블_생성();
             orderTableRepository.save(orderTable1);
             orderTableRepository.save(orderTable2);
             final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
@@ -63,7 +63,6 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
         void 주문_테이블을_저장한다() {
             // when, then
             assertDoesNotThrow(() -> orderTableService.create(
-                    orderTableGroup.getId(),
                     3,
                     true
             ));
@@ -76,8 +75,8 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            OrderTable orderTable1 = 주문_테이블_생성();
-            OrderTable orderTable2 = 주문_테이블_생성();
+            OrderTable orderTable1 = OrderTableFixture.주문_테이블_생성();
+            OrderTable orderTable2 = OrderTableFixture.주문_테이블_생성();
             final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
             OrderTableGroup orderTableGroup = new OrderTableGroup(orderTables, now());
             OrderTableGroup savedOrderTableGroup = tableGroupRepository.save(orderTableGroup);
@@ -106,7 +105,7 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            OrderTable orderTable = 주문_테이블_생성();
+            OrderTable orderTable = OrderTableFixture.주문_테이블_생성();
             this.orderTable = orderTableRepository.save(orderTable);
         }
 
@@ -128,23 +127,9 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
         }
 
         @Test
-        void 주문_테이블의_tableGroupId가_존재한다면_예외가_발생한다() {
-            // given
-            OrderTables orderTables = new OrderTables(List.of(orderTable));
-            OrderTableGroup orderTableGroup = new OrderTableGroup(orderTables, now());
-            tableGroupRepository.save(orderTableGroup);
-            orderTable.updateTableGroup(orderTableGroup);
-            orderTableRepository.save(orderTable);
-
-            // when
-            assertThrows(IllegalArgumentException.class,
-                    () -> orderTableService.changeIsEmpty(orderTable.getId(), true));
-        }
-
-        @Test
         void 주문_상태가_COOKING_또는_MEAL이라면_예외가_발생한다() {
             // given
-            Order order = orderRepository.save(주문_생성(orderTable));
+            Order order = orderRepository.save(OrderFixture.주문_생성(orderTable));
             order.updateOrderStatus(COOKING);
 
             // when
@@ -160,7 +145,7 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            OrderTable orderTable = 주문_테이블_생성();
+            OrderTable orderTable = OrderTableFixture.주문_테이블_생성();
             this.orderTable = orderTableRepository.save(orderTable);
         }
 

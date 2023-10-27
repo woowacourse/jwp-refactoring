@@ -1,4 +1,4 @@
-package kitchenpos.application.test;
+package kitchenpos.execute;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
