@@ -48,12 +48,6 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void validateNumberOfGuests() {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -64,7 +58,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void validateIsEmpty() {
+    private void validateIsEmpty() {
         if (isEmpty()) {
             throw new IllegalArgumentException();
         }
