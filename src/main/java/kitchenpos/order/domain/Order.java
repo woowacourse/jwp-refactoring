@@ -75,6 +75,10 @@ public class Order {
         }
     }
 
+    public void addOrderLineItem(final OrderLineItem orderLineItem) {
+        orderLineItems.add(orderLineItem);
+    }
+
     public Long getId() {
         return id;
     }

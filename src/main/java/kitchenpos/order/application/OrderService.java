@@ -6,7 +6,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.dto.CreateOrderRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
@@ -19,16 +18,13 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository
+            final OrderRepository orderRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
     }
 
     @Transactional
@@ -36,15 +32,15 @@ public class OrderService {
         validateMenuIds(createOrderRequest.getMenuIds());
 
         final Order order = orderRepository.save(Order.createBy(createOrderRequest.getOrderTableId()));
-        saveOrderLineItems(createOrderRequest, order);
+        addOrderLineItem(createOrderRequest, order);
         return order;
     }
 
-    private void saveOrderLineItems(final CreateOrderRequest createOrderRequest, final Order order) {
+    private void addOrderLineItem(final CreateOrderRequest createOrderRequest, final Order order) {
         for (final OrderLineItemRequest orderLineItemRequest : createOrderRequest.getOrderLineItems()) {
             final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId()).orElseThrow();
             final OrderLineItem orderLineItem = new OrderLineItem(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity(), menu.getName(), menu.getPrice());
-            orderLineItemRepository.save(orderLineItem);
+            order.addOrderLineItem(orderLineItem);
         }
     }
 

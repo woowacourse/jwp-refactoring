@@ -26,6 +26,7 @@ public class OrderLineItem {
     private Long menuId;
 
     private String menuName;
+
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "price", nullable = false))
     private Money price;
