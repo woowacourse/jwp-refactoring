@@ -13,7 +13,6 @@ import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,42 +35,19 @@ public class OrderService {
 
     @Transactional
     public OrderQueryResponse create(final OrderCreateRequest request) {
-        final Order orderRequest = request.toOrder();
-        final OrderLineItems orderLineItemRequests = orderRequest.getOrderLineItems();
+        final OrderLineItems orderLineItems = request.toOrder().getOrderLineItems();
+        validateMenus(orderLineItems);
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        final List<Long> menuIds = orderLineItemRequests.extractMenuIds();
 
-        validateOrderCreateRequest(orderLineItemRequests, menuIds, orderTable);
-
-        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING,
-                LocalDateTime.now(), orderLineItemRequests);
+        final Order order = Order.of(orderTable, orderLineItems);
 
         return OrderQueryResponse.from(orderRepository.save(order));
     }
 
-    private void validateOrderCreateRequest(
-            final OrderLineItems orderLineItems,
-            final List<Long> menuIds, final OrderTable orderTable) {
-        validateOrderLineItemsNotEmpty(orderLineItems);
-        validateMenus(orderLineItems, menuIds);
-        validateOrderTableNotEmpty(orderTable);
-    }
-
-    private void validateOrderLineItemsNotEmpty(final OrderLineItems orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateMenus(final OrderLineItems orderLineItems, final List<Long> menuIds) {
+    private void validateMenus(final OrderLineItems orderLineItems) {
+        final List<Long> menuIds = orderLineItems.extractMenuIds();
         if (orderLineItems.isDifferentSize(menuRepository.countByIdIn(menuIds))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderTableNotEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
@@ -89,16 +65,9 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         final OrderStatus orderStatus = request.getOrderStatus();
-        validateNotCompletion(savedOrder.getOrderStatus());
 
         savedOrder.updateOrderStatus(orderStatus);
 
         return OrderQueryResponse.from(orderRepository.save(savedOrder));
-    }
-
-    private void validateNotCompletion(final OrderStatus orderStatus) {
-        if (OrderStatus.COMPLETION.equals(orderStatus)) {
-            throw new IllegalArgumentException();
-        }
     }
 }

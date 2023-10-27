@@ -31,7 +31,7 @@ public class OrderQueryResponse {
         final List<OrderLineItemQueryResponse> orderLineItemQueryResponses
                 = order.getOrderLineItems().getOrderLineItems()
                 .stream()
-                .map(OrderLineItemQueryResponse::from)
+                .map(orderLineItem -> OrderLineItemQueryResponse.of(order.getId(), orderLineItem))
                 .collect(Collectors.toList());
 
         return new OrderQueryResponse(order.getId(), order.getOrderTableId(),

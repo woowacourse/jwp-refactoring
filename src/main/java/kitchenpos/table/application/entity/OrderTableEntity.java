@@ -32,7 +32,7 @@ public class OrderTableEntity {
     }
 
     public OrderTable toOrderTable() {
-        return new OrderTable(id, tableGroupId, new NumberOfGuests(numberOfGuests), empty);
+        return new OrderTable(id, tableGroupId, NumberOfGuests.from(numberOfGuests), empty);
     }
 
     public Long getId() {

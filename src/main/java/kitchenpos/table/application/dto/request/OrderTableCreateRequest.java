@@ -17,7 +17,7 @@ public class OrderTableCreateRequest {
     }
 
     public OrderTable toOrderTable() {
-        return new OrderTable(new NumberOfGuests(numberOfGuests), empty);
+        return new OrderTable(NumberOfGuests.from(numberOfGuests), empty);
     }
 
     public int getNumberOfGuests() {

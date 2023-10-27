@@ -14,7 +14,7 @@ public class OrderTableQueryResponse {
 
     private int numberOfGuests;
     private boolean empty;
- 
+
     public OrderTableQueryResponse(final Long id, final Long tableGroupId, final int numberOfGuests,
                                    final boolean empty) {
         this.id = id;

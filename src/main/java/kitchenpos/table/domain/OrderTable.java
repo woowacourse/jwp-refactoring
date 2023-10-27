@@ -52,10 +52,24 @@ public class OrderTable {
     }
 
     public void updateNumberOfGuests(final NumberOfGuests numberOfGuests) {
+        validateNotEmpty();
         this.numberOfGuests = numberOfGuests;
     }
 
+    private void validateNotEmpty() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public void updateEmpty(final boolean empty) {
+        validateHasNotTableGroup();
         this.empty = empty;
+    }
+
+    private void validateHasNotTableGroup() {
+        if (hasTableGroup()) {
+            throw new IllegalArgumentException();
+        }
     }
 }

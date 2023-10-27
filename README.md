@@ -80,10 +80,41 @@
     - [x] table
 - [x] Entity와 Domain 분리(Repository 생성)
 - [x] orderTable의 empty, numberOfGuests 변경 api를 patch api로 수정
-- [ ] 도메인에 적절하게 책임 분배(일급컬렉션, 값객체, ...)
-- [ ] test 코드 분리 & 새 테스트 작성
+- [x] 도메인에 적절하게 책임 분배(일급컬렉션, 값객체, ...)
+- [x] test 코드 분리 & 새 테스트 작성
 - [x] 도메인을 menu, order, table로 나누기
 - [x] 생성자 중복 초기화 구문을 this로 리팩토링
+- [x] Service의 비즈니스 로직 제거
+- [x] 참조 관계 개선
+
+## 의존성
+
+- 도메인 간 의존성
+
+```mermaid
+classDiagram
+    Order --> OrderLineItems
+    OrderLineItems --> OrderLineItem
+    OrderLineItem ..> Menu
+    Menu --> MenuProduct
+    MenuProduct --> Product
+    Menu ..> MenuGroup
+    Order ..> OrderTable
+    OrderTables --> OrderTable
+    OrderTable --> NumberOfGuests
+    OrderTable ..> TableGroup
+```
+
+- 패키지 간 의존성
+
+```mermaid
+classDiagram
+    order --> table
+    table --> table_group
+    order --> menu
+    menu --> menu_group
+    menu --> product
+```
 
 ## 용어 사전
 

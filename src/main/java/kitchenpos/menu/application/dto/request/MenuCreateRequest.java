@@ -1,11 +1,11 @@
 package kitchenpos.menu.application.dto.request;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.Price;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuCreateRequest {
 
@@ -25,15 +25,8 @@ public class MenuCreateRequest {
     public MenuCreateRequest() {
     }
 
-    public Menu toMenu() {
-        return new Menu(
-                name,
-                new Price(price),
-                menuGroupId,
-                menuProducts.stream()
-                        .map(MenuProductCreateRequest::toMenuProduct)
-                        .collect(Collectors.toList())
-        );
+    public Menu toMenu(final MenuProducts menuProducts) {
+        return new Menu(name, new Price(price), menuGroupId, menuProducts);
     }
 
     public String getName() {

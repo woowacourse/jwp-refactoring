@@ -6,13 +6,16 @@ public class NumberOfGuests {
     private static final int MIN_NUMBER_OF_GUESTS = 0;
     private final int value;
 
-
-    public NumberOfGuests(final int value) {
+    public static NumberOfGuests from(final int value) {
         validateNumberOfGuests(value);
+        return new NumberOfGuests(value);
+    }
+
+    private NumberOfGuests(final int value) {
         this.value = value;
     }
 
-    private void validateNumberOfGuests(final int numberOfGuests) {
+    private static void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
             throw new IllegalArgumentException();
         }

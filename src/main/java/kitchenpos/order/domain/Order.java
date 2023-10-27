@@ -1,5 +1,7 @@
 package kitchenpos.order.domain;
 
+import kitchenpos.table.domain.OrderTable;
+
 import java.time.LocalDateTime;
 
 public class Order {
@@ -34,6 +36,24 @@ public class Order {
         this(id, orderTableId, orderStatus, orderedTime, new OrderLineItems());
     }
 
+    public static Order of(final OrderTable orderTable, final OrderLineItems orderLineItems) {
+        validateOrderLineItemsNotEmpty(orderLineItems);
+        validateOrderTableNotEmpty(orderTable);
+        return new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    private static void validateOrderLineItemsNotEmpty(final OrderLineItems orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validateOrderTableNotEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -55,6 +75,13 @@ public class Order {
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
+        validateNotCompletion();
         this.orderStatus = orderStatus;
+    }
+
+    private void validateNotCompletion() {
+        if (OrderStatus.COMPLETION.equals(orderStatus)) {
+            throw new IllegalArgumentException();
+        }
     }
 }

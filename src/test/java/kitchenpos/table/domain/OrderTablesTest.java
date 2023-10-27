@@ -72,17 +72,17 @@ class OrderTablesTest {
         //given
         final OrderTables orderTables = new OrderTables(
                 List.of(
-                        new OrderTable(1L, 1L, new NumberOfGuests(2), false),
-                        new OrderTable(3L, 2L, new NumberOfGuests(0), true),
-                        new OrderTable(2L, 1L, new NumberOfGuests(3), true),
-                        new OrderTable(4L, 3L, new NumberOfGuests(4), false)
+                        new OrderTable(1L, 1L, NumberOfGuests.from(2), false),
+                        new OrderTable(3L, 2L, NumberOfGuests.from(0), true),
+                        new OrderTable(2L, 1L, NumberOfGuests.from(3), true),
+                        new OrderTable(4L, 3L, NumberOfGuests.from(4), false)
                 )
         );
         final List<OrderTable> expected = List.of(
-                new OrderTable(1L, null, new NumberOfGuests(2), false),
-                new OrderTable(3L, null, new NumberOfGuests(0), false),
-                new OrderTable(2L, null, new NumberOfGuests(3), false),
-                new OrderTable(4L, null, new NumberOfGuests(4), false)
+                new OrderTable(1L, null, NumberOfGuests.from(2), false),
+                new OrderTable(3L, null, NumberOfGuests.from(0), false),
+                new OrderTable(2L, null, NumberOfGuests.from(3), false),
+                new OrderTable(4L, null, NumberOfGuests.from(4), false)
         );
 
         //when
@@ -104,7 +104,7 @@ class OrderTablesTest {
             final OrderTables orderTables = new OrderTables(
                     List.of(
                             new OrderTable(DEFAULT_NUMBER_OF_GUESTS, true),
-                            new OrderTable(new NumberOfGuests(3), false)
+                            new OrderTable(NumberOfGuests.from(3), false)
                     )
             );
 

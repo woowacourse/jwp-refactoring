@@ -1,17 +1,17 @@
 package kitchenpos.order.persistence;
 
-import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.application.entity.OrderLineItemEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderLineItemDao {
 
-    OrderLineItem save(OrderLineItem entity);
+    OrderLineItemEntity save(OrderLineItemEntity entity);
 
-    Optional<OrderLineItem> findById(Long id);
+    Optional<OrderLineItemEntity> findById(Long id);
 
-    List<OrderLineItem> findAll();
+    List<OrderLineItemEntity> findAll();
 
-    List<OrderLineItem> findAllByOrderId(Long orderId);
+    List<OrderLineItemEntity> findAllByOrderId(Long orderId);
 }

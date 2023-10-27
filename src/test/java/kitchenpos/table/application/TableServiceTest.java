@@ -2,10 +2,15 @@ package kitchenpos.table.application;
 
 import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.table.application.dto.request.*;
+import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.request.OrderTableEmptyModifyRequest;
+import kitchenpos.table.application.dto.request.OrderTableNumberOfGuestModifyRequest;
 import kitchenpos.table.application.dto.response.OrderTableQueryResponse;
 import kitchenpos.table.application.entity.OrderTableEntity;
 import kitchenpos.table.persistence.OrderTableDao;
+import kitchenpos.table_group.application.TableGroupService;
+import kitchenpos.table_group.application.dto.request.OrderTableReferenceRequest;
+import kitchenpos.table_group.application.dto.request.TableGroupCreateRequest;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
