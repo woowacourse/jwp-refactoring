@@ -71,8 +71,8 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
         Long seq = resultSet.getLong(KEY_COLUMN_NAME);
         Long orderId = resultSet.getLong("order_id");
-        Long menuId = resultSet.getLong("menu_id");
+        Long orderedMenuId = resultSet.getLong("ordered_menu_id");
         Long quantity = resultSet.getLong("quantity");
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+        return new OrderLineItem(seq, orderId, orderedMenuId, quantity);
     }
 }

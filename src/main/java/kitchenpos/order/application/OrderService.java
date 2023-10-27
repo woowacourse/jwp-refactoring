@@ -48,7 +48,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         final List<Long> orderedMenuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+                .map(OrderLineItem::getOrderedMenuId)
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != orderedMenuDao.countByIdIn(orderedMenuIds)) {
