@@ -10,7 +10,5 @@ public interface ProductRepository extends Repository<Product, Long> {
 
     List<Product> findAll();
 
-    List<Product> findAllByIdIn(List<Long> productIds);
-
     Product getById(Long productId);
 }
