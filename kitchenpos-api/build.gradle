@@ -1,0 +1,14 @@
+dependencies {
+    implementation project(':kitchenpos-core')
+    implementation project(':kitchenpos-support')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    runtimeOnly 'com.h2database:h2'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}
