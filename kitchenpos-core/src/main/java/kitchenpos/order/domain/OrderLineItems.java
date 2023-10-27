@@ -1,6 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.exception.InvalidOrderLineItemException;
 import org.springframework.util.CollectionUtils;
 

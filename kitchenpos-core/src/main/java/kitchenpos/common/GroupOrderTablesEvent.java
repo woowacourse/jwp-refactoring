@@ -1,7 +1,5 @@
 package kitchenpos.common;
 
-import kitchenpos.table.dto.OrderTableIdRequest;
-
 import java.util.List;
 
 public class GroupOrderTablesEvent {
