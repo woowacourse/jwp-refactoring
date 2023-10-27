@@ -1,11 +1,12 @@
 package kitchenpos.tablegroup.domain;
 
-import kitchenpos.ordertable.domain.OrderTable;
-import org.springframework.util.CollectionUtils;
+import kitchenpos.tablegroup.domain.validator.TableGroupValidator;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,68 +16,30 @@ public class TableGroup {
     @Id
     private Long id;
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
-    private List<OrderTable> orderTables;
 
     protected TableGroup() {
     }
 
     private TableGroup(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-        this.orderTables = new ArrayList<>();
+        this(null, createdDate);
     }
 
-    public TableGroup(final Long id,
-                      final LocalDateTime createdDate,
-                      final List<OrderTable> orderTables) {
+    private TableGroup(final Long id,
+                      final LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
-    public static TableGroup create(final List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        tableGroup.addOrderTables(orderTables);
-        return tableGroup;
+    public static TableGroup create(final List<Long> orderTableIds,
+                                    final TableGroupValidator validator) {
+        validator.validateOrderTable(orderTableIds);
+        return new TableGroup(LocalDateTime.now());
     }
 
-    private static void validateOrderTables(final List<OrderTable> orderTables) {
-        validateNotEmptyOrderTables(orderTables);
-
-        for (final OrderTable orderTable : orderTables) {
-            validateEmptyTable(orderTable);
-        }
-    }
-
-    private static void validateNotEmptyOrderTables(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static void validateEmptyTable(final OrderTable orderTable) {
-        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void addOrderTables(final List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            addOrderTable(orderTable);
-        }
-    }
-
-    private void addOrderTable(final OrderTable orderTable) {
-        orderTable.setTableGroup(this);
-        orderTables.add(orderTable);
-    }
-
-    public void ungroup() {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.detachFromGroup();
-        }
-        orderTables.clear();
+    public void ungroup(final GroupingService groupingService,
+                        final TableGroupValidator validator) {
+        validator.validateCompletedOrderTableInTableGroup(id);
+        groupingService.ungroup(id);
     }
 
     public Long getId() {
@@ -85,10 +48,6 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 
     @Override
@@ -109,7 +68,6 @@ public class TableGroup {
         return "TableGroup{" +
                 "id=" + id +
                 ", createdDate=" + createdDate +
-                ", orderTablesSize=" + orderTables.size() +
                 '}';
     }
 }

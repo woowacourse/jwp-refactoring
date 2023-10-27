@@ -1,45 +1,34 @@
-package fixture;
-
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-public class TableGroupBuilder {
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
-
-    public static TableGroupBuilder init() {
-        final TableGroupBuilder builder = new TableGroupBuilder();
-        builder.id = null;
-        builder.createdDate = LocalDateTime.now();
-        builder.orderTables = new ArrayList<>();
-        return builder;
-    }
-
-    public TableGroupBuilder id(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public TableGroupBuilder createdDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-        return this;
-    }
-
-    public TableGroupBuilder orderTables(List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
-        return this;
-    }
-
-    public TableGroup build() {
-        return new TableGroup(
-                id,
-                createdDate,
-                orderTables
-        );
-    }
-}
+//package fixture;
+//
+//import kitchenpos.tablegroup.domain.TableGroup;
+//
+//import java.time.LocalDateTime;
+//
+//public class TableGroupBuilder {
+//    private Long id;
+//    private LocalDateTime createdDate;
+//
+//    public static TableGroupBuilder init() {
+//        final TableGroupBuilder builder = new TableGroupBuilder();
+//        builder.id = null;
+//        builder.createdDate = LocalDateTime.now();
+//        return builder;
+//    }
+//
+//    public TableGroupBuilder id(Long id) {
+//        this.id = id;
+//        return this;
+//    }
+//
+//    public TableGroupBuilder createdDate(LocalDateTime createdDate) {
+//        this.createdDate = createdDate;
+//        return this;
+//    }
+//
+//    public TableGroup build() {
+//        return new TableGroup(
+//                id,
+//                createdDate
+//        );
+//    }
+//}

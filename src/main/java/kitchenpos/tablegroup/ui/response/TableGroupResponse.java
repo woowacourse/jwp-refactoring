@@ -11,25 +11,17 @@ import java.util.stream.Collectors;
 public class TableGroupResponse {
     private final Long id;
     private final LocalDateTime createdDate;
-    private final List<OrderTableResponse> orderTables;
 
-    public TableGroupResponse(final Long id,
-                              final LocalDateTime createdDate,
-                              final List<OrderTableResponse> orderTables) {
+    private TableGroupResponse(final Long id,
+                               final LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
     public static TableGroupResponse from(final TableGroup tableGroup) {
-        final List<OrderTableResponse> orderTableResponses = tableGroup.getOrderTables()
-                .stream()
-                .map(OrderTableResponse::from)
-                .collect(Collectors.toList());
         return new TableGroupResponse(
                 tableGroup.getId(),
-                tableGroup.getCreatedDate(),
-                orderTableResponses
+                tableGroup.getCreatedDate()
         );
     }
 
@@ -41,23 +33,18 @@ public class TableGroupResponse {
         return createdDate;
     }
 
-    public List<OrderTableResponse> getOrderTables() {
-        return orderTables;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final TableGroupResponse that = (TableGroupResponse) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(createdDate, that.createdDate)
-                && Objects.equals(orderTables, that.orderTables);
+                && Objects.equals(createdDate, that.createdDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createdDate, orderTables);
+        return Objects.hash(id, createdDate);
     }
 
     @Override
@@ -65,7 +52,6 @@ public class TableGroupResponse {
         return "TableGroupResponse{" +
                 "id=" + id +
                 ", createdDate=" + createdDate +
-                ", orderTables=" + orderTables +
                 '}';
     }
 }

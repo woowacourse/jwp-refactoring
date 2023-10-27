@@ -10,9 +10,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @JoinColumn(name = "table_group_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -24,24 +22,24 @@ public class OrderTable {
         this(null, numberOfGuests, empty);
     }
 
-    public OrderTable(final TableGroup tableGroup,
+    public OrderTable(final Long tableGroupId,
                       final int numberOfGuests,
                       final boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable(final Long id,
-                      final TableGroup tableGroup,
+                      final Long tableGroupId,
                       final int numberOfGuests,
                       final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void setTableGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         this.empty = false;
     }
 
@@ -65,7 +63,7 @@ public class OrderTable {
 
     public void detachFromGroup() {
         this.empty = false;
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
     public void setEmpty(final boolean empty) {
@@ -74,7 +72,7 @@ public class OrderTable {
     }
 
     private void validateGrouped() {
-        if (Objects.nonNull(this.tableGroup)) {
+        if (Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }
@@ -83,8 +81,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -112,7 +110,7 @@ public class OrderTable {
     public String toString() {
         return "OrderTable{" +
                 "id=" + id +
-                ", tableGroupId=" + tableGroup.getId() +
+                ", tableGroupId=" + tableGroupId +
                 ", numberOfGuests=" + numberOfGuests +
                 ", empty=" + empty +
                 '}';

@@ -2,15 +2,15 @@ package kitchenpos.application;
 
 import fixture.OrderBuilder;
 import fixture.OrderTableBuilder;
-import fixture.TableGroupBuilder;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.domain.validator.TableGroupValidator;
 import kitchenpos.tablegroup.ui.request.OrderTableIdRequest;
 import kitchenpos.tablegroup.ui.request.TableGroupRequest;
 import kitchenpos.tablegroup.ui.response.TableGroupResponse;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,6 +38,9 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    TableGroupValidator tableGroupValidator;
 
     @Test
     void 테이블_그룹을_생성한다() {
@@ -107,32 +111,6 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블_그룹에_조리중이나_식사중인_테이블이_있다면_언그룹을_못한다() {
-        final OrderTable orderTable1 = OrderTableBuilder.init()
-                .empty(false)
-                .tableGroup(null)
-                .build();
-        final OrderTable orderTable2 = OrderTableBuilder.init()
-                .empty(false)
-                .tableGroup(null)
-                .build();
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(orderTable1);
-        orderTables.add(orderTable2);
-        final TableGroup tableGroup = TableGroupBuilder.init()
-                .orderTables(orderTables)
-                .build();
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        final Order order1 = OrderBuilder.init()
-                .orderTable(orderTable1)
-                .orderStatus(OrderStatus.MEAL)
-                .build();
-        final Order order2 = OrderBuilder.init()
-                .orderTable(orderTable2)
-                .orderStatus(OrderStatus.COMPLETION)
-                .build();
-        orderRepository.save(order1);
-        orderRepository.save(order2);
-
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.ungroup(2L)).isInstanceOf(IllegalArgumentException.class);
     }
 }
