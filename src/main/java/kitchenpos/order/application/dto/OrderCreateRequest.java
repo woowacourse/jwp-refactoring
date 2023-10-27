@@ -17,20 +17,6 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public List<Long> extractMenuIds() {
-        return orderLineItems.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-    }
-
-    public Map<Long, Long> extractMenuIdWithQuantityMap() {
-        return orderLineItems.stream()
-                .collect(Collectors.toMap(
-                        OrderLineItemRequest::getMenuId,
-                        OrderLineItemRequest::getQuantity
-                ));
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
     }

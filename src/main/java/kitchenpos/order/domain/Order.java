@@ -1,22 +1,15 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.ordertable.domain.OrderTable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
@@ -27,43 +20,32 @@ public class Order {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-    }
-
     private Order(
-            final OrderTable orderTable,
+            final Long orderTableId,
             final OrderStatus orderStatus,
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order ofCooking(final OrderTable orderTable, final Map<Menu, Long> menuWithQuantityMap) {
-        orderTable.validateIsEmpty();
-        final Order order = new Order(orderTable, COOKING, LocalDateTime.now());
-        order.orderLineItems = menuWithQuantityMap.keySet().stream()
-                .map(menu -> OrderLineItem.of(order, menu, menuWithQuantityMap.get(menu)))
-                .collect(Collectors.toList());
-        return order;
+    public static Order ofCooking(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        return new Order(orderTableId, COOKING, LocalDateTime.now(),orderLineItems);
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
