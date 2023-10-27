@@ -5,11 +5,11 @@ import java.util.List;
 public class OrderCreateRequest {
 
     private final Long orderTableId;
-    private final List<OrderLineItemRequest> orderLineItemRequests;
+    private final List<OrderLineItemRequest> orderLineItems;
 
-    public OrderCreateRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests) {
+    public OrderCreateRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
-        this.orderLineItemRequests = orderLineItemRequests;
+        this.orderLineItems = orderLineItems;
     }
 
     public Long getOrderTableId() {
@@ -17,6 +17,6 @@ public class OrderCreateRequest {
     }
 
     public List<OrderLineItemRequest> getOrderLineItemRequests() {
-        return orderLineItemRequests;
+        return orderLineItems;
     }
 }

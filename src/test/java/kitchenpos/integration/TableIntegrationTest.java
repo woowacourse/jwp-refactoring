@@ -6,6 +6,7 @@ import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderRepository;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.request.TableIdRequest;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.OrderTableRepository;
 import kitchenpos.table.TableService;
@@ -48,7 +49,7 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable1 = tableService.create(new OrderTable(1, true));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
-            tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
+            tableGroupService.create(TableIdRequest.from(List.of(orderTable1.getId(), orderTable2.getId())));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), true))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -84,7 +85,7 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable = tableService.create(new OrderTable(1, true));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
-            TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
+            TableGroup tableGroup = tableGroupService.create(TableIdRequest.from(List.of(orderTable.getId(), orderTable2.getId())));
 
             List<OrderTable> results = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
@@ -95,7 +96,7 @@ class TableIntegrationTest extends IntegrationTest {
         void 두개_미만의_테이블로_그룹할_수_없다() {
             OrderTable orderTable = tableService.create(new OrderTable(1, true));
 
-            assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId())))
+            assertThatThrownBy(() -> tableGroupService.create(TableIdRequest.from(List.of(orderTable.getId()))))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("테이블 그룹은 2개 이상의 테이블로 구성되어야 합니다.");
         }
@@ -105,7 +106,7 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable = tableService.create(new OrderTable(1, false));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
-            assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId())))
+            assertThatThrownBy(() -> tableGroupService.create(TableIdRequest.from(List.of(orderTable.getId(), orderTable2.getId()))))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("비어있지 않은 테이블은 그룹으로 지정할 수 없습니다.");
         }
@@ -115,9 +116,9 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable = tableService.create(new OrderTable(1, true));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
-            tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
+            tableGroupService.create(TableIdRequest.from(List.of(orderTable.getId(), orderTable2.getId())));
 
-            assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId())))
+            assertThatThrownBy(() -> tableGroupService.create(TableIdRequest.from(List.of(orderTable.getId(), orderTable2.getId()))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -126,7 +127,7 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable = tableService.create(new OrderTable(1, true));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
-            TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
+            TableGroup tableGroup = tableGroupService.create(TableIdRequest.from(List.of(orderTable.getId(), orderTable2.getId())));
 
             List<OrderTable> results = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
@@ -145,7 +146,7 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable = tableService.create(new OrderTable(1, true));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
 
-            TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
+            TableGroup tableGroup = tableGroupService.create(TableIdRequest.from(List.of(orderTable.getId(), orderTable2.getId())));
 
             tableGroupService.ungroup(tableGroup.getId());
 
@@ -160,7 +161,7 @@ class TableIntegrationTest extends IntegrationTest {
             Menu menu = fixtureFactory.메뉴_생성(fixtureFactory.메뉴_그룹_생성().getId(), fixtureFactory.제품_생성());
             OrderTable orderTable = tableService.create(new OrderTable(1, true));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true));
-            TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
+            TableGroup tableGroup = tableGroupService.create(TableIdRequest.from(List.of(orderTable.getId(), orderTable2.getId())));
             Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1, menuHistoryRecorder)), orderTable.getId());
             order.changeOrderStatus(orderStatus);
             orderRepository.save(order);

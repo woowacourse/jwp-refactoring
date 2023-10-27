@@ -1,9 +1,11 @@
 package kitchenpos.tablegroup;
 
+import kitchenpos.request.TableIdRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -20,11 +22,14 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(List<Long> tableIds) {
+    public TableGroup create(List<TableIdRequest> tableIds) {
+        List<Long> ids = tableIds.stream()
+                .map(TableIdRequest::getId)
+                .collect(Collectors.toList());
 
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
 
-        groupManager.group(tableIds, tableGroup.getId());
+        groupManager.group(ids, tableGroup.getId());
 
         return tableGroup;
     }
