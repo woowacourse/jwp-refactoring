@@ -1,6 +1,5 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.application.dto.TableGroupCreateRequest;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTables;
@@ -12,31 +11,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 @Service
 @Transactional
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupValidator tableGroupValidator;
+
 
     public TableGroupService(
-            final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final TableGroupRepository tableGroupRepository,
+            final TableGroupValidator tableGroupValidator
     ) {
-        this.orderRepository = orderRepository;
+        this.tableGroupValidator = tableGroupValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     public Long create(final TableGroupCreateRequest request) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(request.extractIds());
-        validateAllTableGroupFound(request, orderTables);
+        tableGroupValidator.validate(orderTables, request.extractIds());
         final TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), orderTables);
         final TableGroup saveTableGroup = tableGroupRepository.save(tableGroup);
         return saveTableGroup.getId();
@@ -45,22 +41,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
         final OrderTables orderTables = tableGroup.getOrderTables();
-        final List<Long> orderTableIds = orderTables.getOrderTables().stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-        validateOrderTableStatus(orderTableIds);
+        tableGroupValidator.validateOrderTableStatus(orderTables);
         orderTables.reset();
-    }
-
-    private void validateOrderTableStatus(final List<Long> orderTableIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, List.of(COOKING, MEAL))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateAllTableGroupFound(final TableGroupCreateRequest request, final List<OrderTable> savedOrderTables) {
-        if (request.getOrderTables().size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
     }
 }
