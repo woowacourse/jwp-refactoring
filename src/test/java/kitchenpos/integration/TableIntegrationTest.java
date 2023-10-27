@@ -1,5 +1,6 @@
 package kitchenpos.integration;
 
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -22,15 +23,15 @@ class TableIntegrationTest extends IntegrationTest {
         final HttpEntity<OrderTable> request = new HttpEntity<>(orderTable);
 
         // when
-        final ResponseEntity<OrderTable> response = createTable(request);
-        final OrderTable createdOrderTable = response.getBody();
+        final ResponseEntity<OrderTableResponse> response = createTable(request);
+        final OrderTableResponse createdOrderTable = response.getBody();
 
         // then
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                 () -> assertThat(response.getHeaders().get("Location"))
                         .contains("/api/tables/" + createdOrderTable.getId()),
-                () -> assertThat(createdOrderTable.getTableGroup()).isNull()
+                () -> assertThat(createdOrderTable.getTableGroupId()).isNull()
         );
     }
 
@@ -99,8 +100,8 @@ class TableIntegrationTest extends IntegrationTest {
         );
     }
 
-    private ResponseEntity<OrderTable> createTable(HttpEntity<OrderTable> request) {
+    private ResponseEntity<OrderTableResponse> createTable(HttpEntity<OrderTable> request) {
         return testRestTemplate
-                .postForEntity("/api/tables", request, OrderTable.class);
+                .postForEntity("/api/tables", request, OrderTableResponse.class);
     }
 }

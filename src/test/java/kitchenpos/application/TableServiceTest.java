@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.request.OrderTableUpdateRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.persistence.OrderRepository;
@@ -47,12 +48,12 @@ class TableServiceTest {
 
         // when
         final OrderTableCreateRequest request = new OrderTableCreateRequest(0, false);
-        final OrderTable result = tableService.create(request);
+        final OrderTableResponse result = tableService.create(request);
 
         // then
         assertAll(
                 () -> assertThat(result.getId()).isEqualTo(1),
-                () -> assertThat(result.getTableGroup()).isNull()
+                () -> assertThat(result.getTableGroupId()).isNull()
         );
     }
 
@@ -63,7 +64,7 @@ class TableServiceTest {
                 .thenReturn(Collections.emptyList());
 
         // when
-        final List<OrderTable> result = tableService.list();
+        final List<OrderTableResponse> result = tableService.list();
 
         // then
         assertThat(result).isEmpty();
@@ -85,7 +86,7 @@ class TableServiceTest {
 
             // when
             final OrderTableUpdateRequest request = new OrderTableUpdateRequest(null, false);
-            final OrderTable result = tableService.changeEmpty(savedOrderTable.getId(), request);
+            final OrderTableResponse result = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             // then
             assertThat(result.isEmpty()).isFalse();
@@ -141,7 +142,7 @@ class TableServiceTest {
 
             // when
             final OrderTableUpdateRequest request = new OrderTableUpdateRequest(1, null);
-            final OrderTable result = tableService.changeNumberOfGuests(1L, request);
+            final OrderTableResponse result = tableService.changeNumberOfGuests(1L, request);
 
             // then
             assertThat(result.getNumberOfGuests()).isEqualTo(1);
