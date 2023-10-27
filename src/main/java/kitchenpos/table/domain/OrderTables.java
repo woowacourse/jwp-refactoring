@@ -1,7 +1,5 @@
 package kitchenpos.table.domain;
 
-import kitchenpos.tablegroup.domain.TableGroup;
-
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.List;
@@ -9,7 +7,7 @@ import java.util.List;
 @Embeddable
 public class OrderTables {
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(mappedBy = "tableGroupId")
     private List<OrderTable> orderTables;
 
     protected OrderTables() {
@@ -35,10 +33,10 @@ public class OrderTables {
         orderTables.add(orderTable);
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    public void setTableGroup(Long tableGroupId) {
         for (final OrderTable orderTable : orderTables) {
             orderTable.changeEmpty(false);
-            orderTable.setTableGroup(tableGroup);
+            orderTable.setTableGroup(tableGroupId);
         }
     }
 

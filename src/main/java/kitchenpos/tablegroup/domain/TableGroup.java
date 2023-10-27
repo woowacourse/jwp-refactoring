@@ -39,7 +39,6 @@ public class TableGroup {
     public static TableGroup of(LocalDateTime createdDate, OrderTables orderTables) {
         orderTables.validateCanBeGrouped();
         TableGroup tableGroup = new TableGroup(createdDate, orderTables);
-        orderTables.setTableGroup(tableGroup);
         return tableGroup;
     }
 

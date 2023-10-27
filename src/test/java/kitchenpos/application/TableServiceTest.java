@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.request.TableCreateRequest;
 import kitchenpos.table.application.request.TableEmptyUpdateRequest;
 import kitchenpos.table.application.request.TableGuestUpdateRequest;
 import kitchenpos.table.application.response.OrderTableResponse;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -80,7 +80,7 @@ class TableServiceTest {
     void 주문_테이블의_주문_상태가_MEAL_이나_COOKING이면_empty_상태_변경_요청시_예외_발생(OrderStatus status) {
         // given
         OrderTableResponse orderTableResponse = tableService.create(new TableCreateRequest(3, true));
-        OrderTable orderTable = new OrderTable(orderTableResponse.getId(), orderTableResponse.getTableGroup(), orderTableResponse.getNumberOfGuests(), orderTableResponse.isEmpty());
+        OrderTable orderTable = new OrderTable(orderTableResponse.getId(), orderTableResponse.getTableGroupId(), orderTableResponse.getNumberOfGuests(), orderTableResponse.isEmpty());
 
         orderRepository.save(new Order(null, orderTable, status, LocalDateTime.now(), Collections.emptyList()));
 

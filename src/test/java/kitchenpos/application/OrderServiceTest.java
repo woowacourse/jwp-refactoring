@@ -1,19 +1,19 @@
 package kitchenpos.application;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.request.OrderCreateRequest;
 import kitchenpos.order.application.request.OrderLineItemCreateRequest;
 import kitchenpos.order.application.response.OrderResponse;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.domain.OrderedMenu;
 import kitchenpos.product.domain.Product;
-import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.tablegroup.domain.repository.OrderTableRepository;
 import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -92,8 +92,6 @@ public class Order {
     }
 
     public void changeStatus(OrderStatus status) {
-        System.out.println("herehere" + orderStatus);
-
         if (orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException();
         }
