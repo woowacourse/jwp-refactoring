@@ -6,6 +6,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class OrderTableNumberOfGuests {
     private static final int MIN_VALUE = 0;
+
     @Column(nullable = false)
     private int numberOfGuests;
 
