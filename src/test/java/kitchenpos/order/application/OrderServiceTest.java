@@ -1,18 +1,16 @@
 package kitchenpos.order.application;
 
 import kitchenpos.config.ApplicationTestConfig;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.vo.Name;
+import kitchenpos.menu.domain.vo.Price;
+import kitchenpos.menu.domain.vo.Quantity;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.menu.domain.vo.Name;
-import kitchenpos.menu.domain.vo.Price;
-import kitchenpos.menu.domain.vo.Quantity;
-import kitchenpos.dto.OrderCreateOrderLineItemRequest;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +19,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -32,7 +31,7 @@ class OrderServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository, orderValidator, orderMapper);
     }
 
     @DisplayName("새로운 주문 등록")
@@ -44,21 +43,24 @@ class OrderServiceTest extends ApplicationTestConfig {
         void success_create() {
             // given
             final Menu savedMenu = createMenu();
-            final OrderTable savedOrderTable = createOrderTable(5, false);
-            final OrderCreateRequest expected = new OrderCreateRequest(savedOrderTable.getId(), List.of(
-                    new OrderCreateOrderLineItemRequest(savedMenu.getId(), 10)
-            ));
+            final OrderTable savedOrderTable = createOrderTable(5, true);
+            final OrderSheet requestOrderSheet = new OrderSheet(
+                    savedOrderTable.getId(),
+                    List.of(
+                            new OrderSheet.OrderSheetItem(savedMenu.getId(), 10L)
+                    )
+            );
 
             // when
-            final OrderResponse actual = orderService.create(expected);
+            final OrderResponse actual = orderService.create(requestOrderSheet);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getOrderTable().getId()).isEqualTo(expected.getOrderTableId());
+                softly.assertThat(actual.getOrderTable().getId()).isEqualTo(requestOrderSheet.getOrderTableId());
                 softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
                 softly.assertThat(actual.getOrderedTime()).isBefore(LocalDateTime.now());
-                softly.assertThat(actual.getOrderLineItems()).hasSize(expected.getOrderLineItems().size());
+                softly.assertThat(actual.getOrderLineItems()).hasSize(requestOrderSheet.getOrderSheetItems().size());
             });
         }
 
@@ -69,12 +71,13 @@ class OrderServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
             // when
-            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), List.of(
-                    new OrderCreateOrderLineItemRequest(0, 10)
-            ));
+            final OrderSheet requestOrderSheet = new OrderSheet(
+                    savedOrderTable.getId(),
+                    Collections.emptyList()
+            );
 
             // then
-            assertThatThrownBy(() -> orderService.create(request))
+            assertThatThrownBy(() -> orderService.create(requestOrderSheet))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -86,13 +89,16 @@ class OrderServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
             // when
-            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), List.of(
-                    new OrderCreateOrderLineItemRequest(savedMenu.getId(), 10),
-                    new OrderCreateOrderLineItemRequest(-1L, 10)
-            ));
+            final OrderSheet requestOrderSheet = new OrderSheet(
+                    savedOrderTable.getId(),
+                    List.of(
+                            new OrderSheet.OrderSheetItem(savedMenu.getId(), 10L),
+                            new OrderSheet.OrderSheetItem(-1L, 10L)
+                    )
+            );
 
             // then
-            assertThatThrownBy(() -> orderService.create(request))
+            assertThatThrownBy(() -> orderService.create(requestOrderSheet))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -101,16 +107,18 @@ class OrderServiceTest extends ApplicationTestConfig {
         void throwException_create_order_when_orderTableIsNotExists() {
             // given
             final Menu savedMenu = createMenu();
-            final OrderTable savedOrderTable = createOrderTable(10, true);
 
             // when
-            final OrderCreateRequest request = new OrderCreateRequest(0, List.of(
-                    new OrderCreateOrderLineItemRequest(savedMenu.getId(), 10)
-            ));
+            final OrderSheet requestOrderSheet = new OrderSheet(
+                    -1L,
+                    List.of(
+                            new OrderSheet.OrderSheetItem(savedMenu.getId(), 10L)
+                    )
+            );
 
             // then
-            assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(EmptyResultDataAccessException.class);
+            assertThatThrownBy(() -> orderService.create(requestOrderSheet))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -140,11 +148,11 @@ class OrderServiceTest extends ApplicationTestConfig {
             final Menu savedMenu = createMenu();
             final OrderTable savedOrderTable = createOrderTable(5, false);
 
-            final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
-            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10))));
+            final Order order = Order.ofEmptyOrderLineItems(savedOrderTable.getId());
+            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.withoutOrder(savedMenu.getId(), new Quantity(10))));
             order.addOrderLineItems(orderLineItems);
             final Order savedOrder = orderRepository.save(order);
-            final OrderResponse expected = OrderResponse.from(savedOrder);
+            final OrderResponse expected = OrderResponse.from(savedOrder, savedOrderTable, List.of(savedMenu));
 
             // when
             final OrderResponse actual = orderService.changeOrderStatus(expected.getId(), OrderStatus.MEAL.name());
@@ -178,8 +186,8 @@ class OrderServiceTest extends ApplicationTestConfig {
             final Menu savedMenu = createMenu();
             final OrderTable savedOrderTable = createOrderTable(5, false);
 
-            final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
-            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10))));
+            final Order order = Order.ofEmptyOrderLineItems(savedOrderTable.getId());
+            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.withoutOrder(savedMenu.getId(), new Quantity(10))));
             order.addOrderLineItems(orderLineItems);
             final Order savedOrder = orderRepository.save(order);
 

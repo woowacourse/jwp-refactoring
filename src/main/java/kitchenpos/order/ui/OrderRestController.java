@@ -3,6 +3,7 @@ package kitchenpos.order.ui;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
+import kitchenpos.order.application.OrderSheet;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class OrderRestController {
@@ -25,7 +27,17 @@ public class OrderRestController {
 
     @PostMapping("/api/orders")
     public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest request) {
-        final OrderResponse created = orderService.create(request);
+        final OrderSheet requestOrderSheet = new OrderSheet(
+                request.getOrderTableId(),
+                request.getOrderLineItems()
+                        .stream()
+                        .map(orderLineItem -> new OrderSheet.OrderSheetItem(
+                                orderLineItem.getMenuId(),
+                                orderLineItem.getQuantity()
+                        )).collect(Collectors.toList())
+        );
+
+        final OrderResponse created = orderService.create(requestOrderSheet);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);
