@@ -1,7 +1,7 @@
-package kitchenpos.menu.infra;
+package kitchenpos.infra;
 
 import java.util.NoSuchElementException;
-import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.domain.MenuGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {

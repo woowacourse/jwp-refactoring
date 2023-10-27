@@ -1,16 +1,16 @@
-package kitchenpos.menu.service;
+package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.infra.MenuGroupRepository;
-import kitchenpos.menu.infra.MenuProductRepository;
-import kitchenpos.menu.infra.MenuRepository;
-import kitchenpos.menu.service.dto.MenuCreateCommand;
-import kitchenpos.menu.service.dto.MenuProductCreateCommand;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.infra.ProductRepository;
+import kitchenpos.application.dto.MenuCreateCommand;
+import kitchenpos.application.dto.MenuProductCreateCommand;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.infra.MenuGroupRepository;
+import kitchenpos.infra.MenuProductRepository;
+import kitchenpos.infra.MenuRepository;
+import kitchenpos.infra.ProductRepository;
 import kitchenpos.vo.Price;
 import kitchenpos.vo.Quantity;
 import org.springframework.stereotype.Service;
