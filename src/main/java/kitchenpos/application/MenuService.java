@@ -10,6 +10,7 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.ui.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +31,14 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    public Menu create(final MenuCreateRequest menuCreateRequest) {
+    public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
         MenuGroup menuGroup = getMenugroup(menuCreateRequest);
-
         MenuProducts menuProducts = getMenuProducts(menuCreateRequest);
 
         Menu menu = Menu.of(menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuGroup, menuProducts);
+        Menu savedMenu = menuRepository.save(menu);
 
-        return menuRepository.save(menu);
+        return MenuResponse.from(savedMenu);
     }
 
     private MenuGroup getMenugroup(MenuCreateRequest menuCreateRequest) {
@@ -62,7 +63,11 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        List<Menu> menus = menuRepository.findAll();
+
+        return menus.stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 }

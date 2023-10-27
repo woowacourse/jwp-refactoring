@@ -8,6 +8,7 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.request.TableGroupCreateRequest;
+import kitchenpos.ui.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,16 +31,16 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public TableGroup create(final TableGroupCreateRequest tableGroupCreateRequest) {
+    public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         tableGroupCreateRequest.validate();
 
         List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
-
         OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
+        TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), savedOrderTables);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        return tableGroupRepository.save(tableGroup);
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     public void ungroup(final Long tableGroupId) {

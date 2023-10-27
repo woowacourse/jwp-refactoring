@@ -23,16 +23,21 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
-        orderTables.validateCanBeGrouped();
+    private TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
-        orderTables.setTableGroup(this);
     }
 
-    public TableGroup(LocalDateTime createdDate, OrderTables orderTables) {
+    private TableGroup(LocalDateTime createdDate, OrderTables orderTables) {
         this(null, createdDate, orderTables);
+    }
+
+    public static TableGroup of(LocalDateTime createdDate, OrderTables orderTables) {
+        orderTables.validateCanBeGrouped();
+        TableGroup tableGroup = new TableGroup(createdDate, orderTables);
+        orderTables.setTableGroup(tableGroup);
+        return tableGroup;
     }
 
     public Long getId() {

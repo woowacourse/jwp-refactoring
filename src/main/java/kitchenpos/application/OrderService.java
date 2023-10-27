@@ -9,11 +9,13 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -29,7 +31,7 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public Order create(final OrderCreateRequest orderCreateRequest) {
+    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         orderCreateRequest.validate();
 
         OrderTable orderTable = getOrderTable(orderCreateRequest);
@@ -49,7 +51,9 @@ public class OrderService {
             order.addOrderLineItem(new OrderLineItem(order, menu, orderLineItem.getQuantity()));
         }
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        return OrderResponse.from(savedOrder);
     }
 
     private OrderTable getOrderTable(OrderCreateRequest orderCreateRequest) {
@@ -63,16 +67,20 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        List<Order> orders = orderRepository.findAll();
+
+        return orders.stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
-    public Order changeOrderStatus(final Long orderId, Order order) {
+    public OrderResponse changeOrderStatus(final Long orderId, Order order) {
         Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        savedOrder.changeStatus(order);
+        savedOrder.changeStatus(order.getOrderStatus());
 
-        return savedOrder;
+        return OrderResponse.from(savedOrder);
     }
 }

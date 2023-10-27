@@ -9,6 +9,7 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.request.TableGroupCreateRequest;
+import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -49,7 +50,7 @@ class TableGroupServiceTest {
                         new TableGroupCreateRequest.OrderTableId(orderTable2.getId())));
 
         // when
-        TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         // then
         assertThat(tableGroup.getOrderTables()).usingRecursiveComparison()
@@ -70,7 +71,7 @@ class TableGroupServiceTest {
     @Test
     void 테이블_하나라도_다른_테이블에_속해있으면_그룹화할_수_없다() {
         // given
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), new OrderTables(Collections.emptyList())));
+        TableGroup tableGroup = tableGroupRepository.save(TableGroup.of(LocalDateTime.now(), new OrderTables(Collections.emptyList())));
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, tableGroup, 3, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 3, true));
 
@@ -93,7 +94,7 @@ class TableGroupServiceTest {
                 new TableGroupCreateRequest(List.of(new TableGroupCreateRequest.OrderTableId(orderTable1.getId()),
                         new TableGroupCreateRequest.OrderTableId(orderTable2.getId())));
 
-        TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -121,7 +122,7 @@ class TableGroupServiceTest {
                 new TableGroupCreateRequest(List.of(new TableGroupCreateRequest.OrderTableId(orderTable1.getId()),
                         new TableGroupCreateRequest.OrderTableId(orderTable2.getId())));
 
-        TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         orderRepository.save(new Order(orderTable1, status));
 

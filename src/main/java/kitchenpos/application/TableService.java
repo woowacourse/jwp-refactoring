@@ -7,11 +7,13 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.request.TableCreateRequest;
 import kitchenpos.ui.request.TableEmptyUpdateRequest;
 import kitchenpos.ui.request.TableGuestUpdateRequest;
+import kitchenpos.ui.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -25,25 +27,30 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public OrderTable create(final TableCreateRequest tableCreateRequest) {
+    public OrderTableResponse create(final TableCreateRequest tableCreateRequest) {
         OrderTable orderTable = new OrderTable(null, tableCreateRequest.getNumberOfGuests(), tableCreateRequest.getEmpty());
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     @Transactional(readOnly = true)
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        List<OrderTable> orderTables = orderTableRepository.findAll();
+
+        return orderTables.stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
-    public OrderTable changeEmpty(final Long orderTableId, TableEmptyUpdateRequest tableEmptyUpdateRequest) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, TableEmptyUpdateRequest tableEmptyUpdateRequest) {
         OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         checkIfOrderIsNotCompleted(orderTableId);
 
         savedOrderTable.changeEmpty(tableEmptyUpdateRequest.getEmpty());
 
-        return savedOrderTable;
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     private void checkIfOrderIsNotCompleted(Long orderTableId) {
@@ -53,12 +60,12 @@ public class TableService {
         }
     }
 
-    public OrderTable changeNumberOfGuests(final Long orderTableId, TableGuestUpdateRequest tableGuestUpdateRequest) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, TableGuestUpdateRequest tableGuestUpdateRequest) {
         OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         savedOrderTable.changeNumberOfGuest(tableGuestUpdateRequest.getNumberOfGuests());
 
-        return savedOrderTable;
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     private OrderTable getOrderTable(Long orderTableId) {

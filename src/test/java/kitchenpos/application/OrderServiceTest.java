@@ -11,6 +11,7 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,7 +54,7 @@ class OrderServiceTest {
                 List.of(orderLineItemCreateRequest));
 
         // when
-        Order savedOrder = orderService.create(orderCreateRequest);
+        OrderResponse savedOrder = orderService.create(orderCreateRequest);
 
         // then
         assertThat(savedOrder).usingRecursiveComparison().ignoringFields("id", "orderedTime", "orderLineItems.order", "orderLineItems.seq")
@@ -122,10 +123,10 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 List.of(orderLineItemCreateRequest));
 
-        Order savedOrder = orderService.create(orderCreateRequest);
+        OrderResponse savedOrder = orderService.create(orderCreateRequest);
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         // then
         assertThat(orders).usingRecursiveComparison()
@@ -148,10 +149,10 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 List.of(orderLineItemCreateRequest));
 
-        Order savedOrder = orderService.create(orderCreateRequest);
+        OrderResponse savedOrder = orderService.create(orderCreateRequest);
 
         // when
-        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(),
+        OrderResponse changedOrder = orderService.changeOrderStatus(savedOrder.getId(),
                 new Order(orderTable, OrderStatus.MEAL));
 
         // then
@@ -174,8 +175,10 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 List.of(orderLineItemCreateRequest));
 
-        Order savedOrder = orderService.create(orderCreateRequest);
-        savedOrder.changeStatus(new Order(null, null, OrderStatus.COMPLETION, null, null));
+        OrderResponse orderResponse = orderService.create(orderCreateRequest);
+        Order savedOrder = new Order(orderResponse.getId(), orderResponse.getOrderTable(), orderResponse.getOrderStatus(),
+                orderResponse.getOrderedTime(), orderResponse.getOrderLineItems());
+        orderService.changeOrderStatus(savedOrder.getId(), new Order(null, null, OrderStatus.COMPLETION, null, null));
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(),

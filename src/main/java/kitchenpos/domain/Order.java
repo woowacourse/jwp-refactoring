@@ -89,12 +89,14 @@ public class Order {
         orderLineItems.add(orderLineItem);
     }
 
-    public void changeStatus(Order order) {
+    public void changeStatus(OrderStatus status) {
+        System.out.println("herehere" + orderStatus);
+
         if (orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException();
         }
 
-        orderStatus = order.orderStatus;
+        orderStatus = status;
     }
 
     @Override

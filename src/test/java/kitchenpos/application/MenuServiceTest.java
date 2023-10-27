@@ -9,6 +9,7 @@ import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.ui.response.MenuResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -64,7 +65,7 @@ class MenuServiceTest {
                 new MenuProducts(List.of(menuProduct)));
 
         // when
-        Menu createdMenu = menuService.create(menuCreateRequest);
+        MenuResponse createdMenu = menuService.create(menuCreateRequest);
 
         // then
         assertThat(createdMenu).usingRecursiveComparison()
@@ -102,7 +103,7 @@ class MenuServiceTest {
     @Test
     void 메뉴_리스트를_조회한다() {
         // given, when
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         // then
         assertThat(menus).usingRecursiveComparison()
