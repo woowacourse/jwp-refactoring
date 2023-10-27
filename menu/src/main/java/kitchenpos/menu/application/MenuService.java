@@ -7,7 +7,7 @@ import kitchenpos.menu.application.dto.MenuDto;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProductAppender;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.product.domain.MenuValidator;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.vo.Price;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

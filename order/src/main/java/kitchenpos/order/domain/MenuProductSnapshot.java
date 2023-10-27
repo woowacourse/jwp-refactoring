@@ -12,7 +12,7 @@ import kitchenpos.vo.Price;
 public class MenuProductSnapshot {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     private String name;

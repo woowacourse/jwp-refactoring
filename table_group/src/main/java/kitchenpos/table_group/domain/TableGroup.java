@@ -1,10 +1,9 @@
 package kitchenpos.table_group.domain;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity

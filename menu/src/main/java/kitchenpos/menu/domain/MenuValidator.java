@@ -1,4 +1,4 @@
-package kitchenpos.product.domain;
+package kitchenpos.menu.domain;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static kitchenpos.menu.domain.exception.MenuExceptionType.MENU_GROUP_IS_NOT_FOUND;
@@ -7,10 +7,10 @@ import static kitchenpos.menu.domain.exception.MenuExceptionType.PRICE_IS_BIGGER
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.exception.MenuException;
 import kitchenpos.menu_group.domain.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.vo.Price;
 import org.springframework.stereotype.Component;
 

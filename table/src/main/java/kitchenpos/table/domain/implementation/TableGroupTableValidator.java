@@ -9,6 +9,7 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table_group.domain.GroupTableValidator;
 import kitchenpos.table_group.domain.exception.TableGroupException;
+import kitchenpos.table_group.domain.exception.TableGroupExceptionType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,13 +36,13 @@ public class TableGroupTableValidator implements GroupTableValidator {
             .anyMatch(orderTable -> !orderTable.isEmpty());
 
         if (isNotEmpty) {
-            throw new TableGroupException(TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY);
+            throw new TableGroupException(ORDER_TABLE_IS_NOT_EMPTY);
         }
     }
 
     private static void validateOrderTableSize(final List<OrderTable> savedOrderTables) {
         if (savedOrderTables.size() < MINIMUM_TABLE_SIZE) {
-            throw new TableGroupException(TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_TWO);
+            throw new TableGroupException(ORDER_TABLE_SIZE_IS_LOWER_THAN_TWO);
         }
     }
 

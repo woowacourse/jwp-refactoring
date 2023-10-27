@@ -14,7 +14,7 @@ import kitchenpos.table.domain.exception.OrderTableException;
 public class OrderTable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     private Long tableGroupId;

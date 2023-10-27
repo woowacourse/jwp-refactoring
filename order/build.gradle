@@ -1,3 +1,7 @@
 dependencies {
     implementation project(':support')
+    implementation project(':table')
+    implementation project(':product')
+    implementation project(':menu')
+    implementation project(':table_group')
 }

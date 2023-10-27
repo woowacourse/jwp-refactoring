@@ -13,7 +13,7 @@ import javax.persistence.OneToOne;
 public class OrderLineItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long seq;
 
     private Long quantity;
