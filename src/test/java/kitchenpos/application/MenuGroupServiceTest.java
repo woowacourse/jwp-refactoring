@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.menu.MenuGroup;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuGroupService;
 import kitchenpos.menu.dto.MenuGroupRequest;
 import kitchenpos.menu.dto.MenuGroupResponse;

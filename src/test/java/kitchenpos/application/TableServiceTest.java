@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.ordertable.OrderTable;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.TableService;
 import kitchenpos.ordertable.dto.OrderTableRequest;
 import kitchenpos.ordertable.dto.OrderTableResponse;

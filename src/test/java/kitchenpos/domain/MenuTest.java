@@ -1,8 +1,5 @@
 package kitchenpos.domain;
 
-import static java.util.List.of;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 class MenuTest {
 
 //    @Test

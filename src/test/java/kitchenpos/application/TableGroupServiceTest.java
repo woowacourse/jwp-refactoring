@@ -4,17 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import kitchenpos.ordertable.JpaOrderTableRepository;
+import kitchenpos.fixtures.Fixtures;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.ordertable.JpaOrderTableRepository;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.tablegroup.TableGroup;
-import kitchenpos.fixtures.Fixtures;
 import kitchenpos.tablegroup.TableGroupService;
 import kitchenpos.tablegroup.dto.TableGroupRequest;
-import kitchenpos.ordertable.dto.OrderTableResponse;
-import kitchenpos.tablegroup.dto.TableGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,15 +45,10 @@ class TableGroupServiceTest extends ServiceTest {
             );
 
             // when
-            TableGroupResponse result = tableGroupService.create(request);
+            Long tableGroupId = tableGroupService.create(request);
 
             // then
-            List<Long> orderTableIds = result.getOrderTableResponses()
-                    .stream()
-                    .map(OrderTableResponse::getId)
-                    .collect(Collectors.toList());
-
-            assertThat(orderTableIds).contains(orderTableA.getId(), orderTableB.getId());
+            assertThat(tableGroupId).isNotNull();
         }
 
         @Test

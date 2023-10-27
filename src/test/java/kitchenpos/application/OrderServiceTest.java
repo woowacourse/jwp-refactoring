@@ -4,15 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.fixtures.Fixtures;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.order.OrderService;
-import kitchenpos.ordertable.OrderTable;
-import kitchenpos.product.Product;
-import kitchenpos.fixtures.Fixtures;
 import kitchenpos.order.dto.OrderLineRequest;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
