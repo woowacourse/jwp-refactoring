@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")

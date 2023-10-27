@@ -1,7 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.tablegroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.table.OrderTable;
 
 public class TableGroup {
     private Long id;

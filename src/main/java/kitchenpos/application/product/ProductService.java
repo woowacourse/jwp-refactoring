@@ -1,8 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.application.product;
 
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;

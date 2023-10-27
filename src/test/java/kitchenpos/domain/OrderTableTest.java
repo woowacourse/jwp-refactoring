@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.Test;
 
