@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface OrderTableValidator {
 
-    void validateOrderStatus(final List<Long> orderTableIds);
+    void validateOrderStatusByOrderTableIds(final List<Long> orderTableIds);
 
 }

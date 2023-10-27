@@ -66,7 +66,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        orderValidator.validateOrderStatus(orderTableIds);
+        orderValidator.validateOrderStatusByOrderTableIds(orderTableIds);
         unGroupOrderTable(orderTables);
     }
 

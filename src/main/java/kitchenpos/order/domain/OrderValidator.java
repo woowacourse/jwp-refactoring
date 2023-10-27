@@ -16,7 +16,7 @@ public class OrderValidator implements OrderTableValidator {
     }
 
     @Override
-    public void validateOrderStatus(final List<Long> orderTableIds) {
+    public void validateOrderStatusByOrderTableIds(final List<Long> orderTableIds) {
         orderRepository.findAllByOrderTableIdIn(orderTableIds)
                 .forEach(Order::validateUncompleted);
     }
