@@ -41,9 +41,9 @@ class TableGroupServiceTest extends ApplicationTestConfig {
     @BeforeEach
     void setUp() {
         tableGroupService = new TableGroupService(
-                orderRepository,
                 orderTableRepository,
-                tableGroupRepository
+                tableGroupRepository,
+                tableGroupValidator
         );
     }
 
@@ -193,8 +193,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
 
         private OrderTable createOrder(final OrderStatus orderStatus, final Menu menu, final int numberOfGuests) {
             final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(numberOfGuests, true));
-            final OrderLineItem orderLineItem = OrderLineItem.withoutOrder(menu, new Quantity(1));
-            final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
+            final OrderLineItem orderLineItem = OrderLineItem.withoutOrder(menu.getId(), new Quantity(1));
+            final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable.getId()));
             savedOrder.addOrderLineItems(List.of(orderLineItem));
             savedOrder.changeOrderStatus(orderStatus);
 
