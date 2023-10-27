@@ -2,14 +2,14 @@ package kitchenpos.dto.response;
 
 import kitchenpos.domain.OrderTable;
 
-public class OrderTableDto {
+public class OrderTableReseponse {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public static OrderTableDto from(OrderTable orderTable) {
-        return new OrderTableDto(
+    public static OrderTableReseponse from(OrderTable orderTable) {
+        return new OrderTableReseponse(
                 orderTable.getId(),
                 orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),
@@ -17,15 +17,11 @@ public class OrderTableDto {
         );
     }
 
-    public OrderTableDto(Long id) {
+    public OrderTableReseponse(Long id) {
         this(id, null, 0, false);
     }
 
-    public OrderTableDto(int numberOfGuests, boolean empty) {
-        this(null, null, numberOfGuests, empty);
-    }
-
-    public OrderTableDto(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTableReseponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
@@ -36,31 +32,15 @@ public class OrderTableDto {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

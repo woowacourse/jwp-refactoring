@@ -6,7 +6,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.response.OrderTableDto;
+import kitchenpos.dto.response.OrderTableReseponse;
 import kitchenpos.dto.response.TableGroupDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,18 +49,18 @@ public class TableGroupService {
     }
 
     private List<OrderTable> getFilledOrderTables(TableGroupDto tableGroupDto) {
-        final List<OrderTableDto> orderTableDtos = tableGroupDto.getOrderTables();
+        final List<OrderTableReseponse> orderTableReseponses = tableGroupDto.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableReseponses) || orderTableReseponses.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTableDtos.stream()
-                .map(OrderTableDto::getId)
+        final List<Long> orderTableIds = orderTableReseponses.stream()
+                .map(OrderTableReseponse::getId)
                 .collect(Collectors.toList());
 
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        if (orderTableDtos.size() != savedOrderTables.size()) {
+        if (orderTableReseponses.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 

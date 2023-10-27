@@ -11,7 +11,8 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.response.OrderTableDto;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableReseponse;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,11 +51,11 @@ public class TableServiceTest {
         //given
         given(orderTableDao.save(any(OrderTable.class))).willReturn(빈_신규_테이블1);
 
-        OrderTableDto orderTableRequest = new OrderTableDto(
+        OrderTableRequest orderTableRequest = new OrderTableRequest(
                 빈_신규_테이블1.getNumberOfGuests(), 빈_신규_테이블1.isEmpty());
 
         // when
-        OrderTableDto result = tableService.create(orderTableRequest);
+        OrderTableReseponse result = tableService.create(orderTableRequest);
 
         //then
         assertThat(result.getId()).isNotNull();
@@ -66,7 +67,7 @@ public class TableServiceTest {
         given(orderTableDao.findAll()).willReturn(List.of(빈_신규_테이블1));
 
         //when
-        List<OrderTableDto> result = tableService.list();
+        List<OrderTableReseponse> result = tableService.list();
 
         //then
         assertThat(result).hasSize(1);
@@ -79,10 +80,10 @@ public class TableServiceTest {
         given(orderTableDao.findById(requestedOrderTableId)).willReturn(Optional.of(빈_신규_테이블1));
         given(orderTableDao.save(any(OrderTable.class))).willAnswer(AdditionalAnswers.returnsFirstArg());
 
-        OrderTableDto orderTableRequest = new OrderTableDto(0, true);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
 
         //when
-        OrderTableDto result = tableService.changeEmpty(requestedOrderTableId, orderTableRequest);
+        OrderTableReseponse result = tableService.changeEmpty(requestedOrderTableId, orderTableRequest);
 
         //then
         assertThat(result.isEmpty()).isTrue();
@@ -94,7 +95,7 @@ public class TableServiceTest {
         Long requestedOrderTableId = 그룹핑된_식사_테이블.getId();
         given(orderTableDao.findById(requestedOrderTableId)).willReturn(Optional.of(그룹핑된_식사_테이블));
 
-        OrderTableDto orderTableRequest = new OrderTableDto(0, true);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
 
         //when, then
         assertThatThrownBy(() -> tableService.changeEmpty(requestedOrderTableId, orderTableRequest))
@@ -110,7 +111,7 @@ public class TableServiceTest {
                 List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(true);
 
-        OrderTableDto orderTableRequest = new OrderTableDto(0, true);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
 
         //when, then
         assertThatThrownBy(() -> tableService.changeEmpty(requestedOrderTableId, orderTableRequest))
@@ -122,14 +123,14 @@ public class TableServiceTest {
         //given
         Long requestedOrderTableId = 단일_조리_테이블.getId();
 
-        OrderTableDto orderTableRequest = new OrderTableDto(단일_조리_테이블.getId(),
+        OrderTableRequest orderTableRequest = new OrderTableRequest(단일_조리_테이블.getId(),
                 단일_조리_테이블.getTableGroupId(), 6, false);
 
         given(orderTableDao.findById(requestedOrderTableId)).willReturn(Optional.of(단일_조리_테이블));
         given(orderTableDao.save(any(OrderTable.class))).willAnswer(AdditionalAnswers.returnsFirstArg());
 
         //when
-        OrderTableDto result = tableService.changeNumberOfGuests(requestedOrderTableId, orderTableRequest);
+        OrderTableReseponse result = tableService.changeNumberOfGuests(requestedOrderTableId, orderTableRequest);
 
         //then
         assertThat(result.getNumberOfGuests()).isEqualTo(6);
@@ -140,7 +141,7 @@ public class TableServiceTest {
         //given
         Long requestedOrderTableId = 단일_조리_테이블.getId();
 
-        OrderTableDto orderTableRequest = new OrderTableDto(단일_조리_테이블.getId(),
+        OrderTableRequest orderTableRequest = new OrderTableRequest(단일_조리_테이블.getId(),
                 단일_조리_테이블.getTableGroupId(), -1, false);
 
         //when, then
@@ -154,7 +155,7 @@ public class TableServiceTest {
         Long requestedOrderTableId = 빈_신규_테이블1.getId();
         given(orderTableDao.findById(requestedOrderTableId)).willReturn(Optional.of(빈_신규_테이블1));
 
-        OrderTableDto orderTableRequest = new OrderTableDto(빈_신규_테이블1.getId(),
+        OrderTableRequest orderTableRequest = new OrderTableRequest(빈_신규_테이블1.getId(),
                 빈_신규_테이블1.getTableGroupId(), 6, false);
 
         //when, then

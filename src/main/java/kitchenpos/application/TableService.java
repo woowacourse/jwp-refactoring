@@ -5,7 +5,8 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.response.OrderTableDto;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableReseponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,23 +24,23 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableDto create(final OrderTableDto orderTableDto) {
-        OrderTable newOrderTable = new OrderTable(orderTableDto.getNumberOfGuests(),
-                orderTableDto.isEmpty());
+    public OrderTableReseponse create(final OrderTableRequest orderTableRequest) {
+        OrderTable newOrderTable = new OrderTable(orderTableRequest.getNumberOfGuests(),
+                orderTableRequest.isEmpty());
         OrderTable savedOrderTable = orderTableDao.save(newOrderTable);
-        return OrderTableDto.from(savedOrderTable);
+        return OrderTableReseponse.from(savedOrderTable);
     }
 
-    public List<OrderTableDto> list() {
+    public List<OrderTableReseponse> list() {
         List<OrderTable> allOrderTables = orderTableDao.findAll();
         return allOrderTables.stream()
-                .map(OrderTableDto::from)
+                .map(OrderTableReseponse::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableDto orderTableDto) {
-        validateResetToEmptyRequest(orderTableDto);
+    public OrderTableReseponse changeEmpty(final Long orderTableId, final OrderTableRequest orderTableRequest) {
+        validateResetToEmptyRequest(orderTableRequest);
 
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -48,11 +49,11 @@ public class TableService {
 
         savedOrderTable.changeToEmptyTable();
         savedOrderTable = orderTableDao.save(savedOrderTable);
-        return OrderTableDto.from(savedOrderTable);
+        return OrderTableReseponse.from(savedOrderTable);
     }
 
-    private void validateResetToEmptyRequest(OrderTableDto orderTableDto) {
-        if (!orderTableDto.isEmpty()) {
+    private void validateResetToEmptyRequest(OrderTableRequest orderTableRequest) {
+        if (!orderTableRequest.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
@@ -71,11 +72,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableDto changeNumberOfGuests(final Long orderTableId, final OrderTableDto orderTableDto) {
+    public OrderTableReseponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrderTable.changeNumberOfGuests(orderTableDto.getNumberOfGuests());
+        savedOrderTable.changeNumberOfGuests(orderTableRequest.getNumberOfGuests());
         savedOrderTable = orderTableDao.save(savedOrderTable);
-        return OrderTableDto.from(savedOrderTable);
+        return OrderTableReseponse.from(savedOrderTable);
     }
 }

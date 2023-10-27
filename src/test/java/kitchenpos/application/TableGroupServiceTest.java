@@ -14,7 +14,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.response.OrderTableDto;
+import kitchenpos.dto.response.OrderTableReseponse;
 import kitchenpos.dto.response.TableGroupDto;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
@@ -55,9 +55,10 @@ public class TableGroupServiceTest {
                 .willReturn(그룹핑된_신규_테이블1)
                 .willReturn(그룹핑된_신규_테이블2);
 
-        OrderTableDto orderTableDto1 = new OrderTableDto(빈_신규_테이블1.getId());
-        OrderTableDto orderTableDto2 = new OrderTableDto(빈_신규_테이블2.getId());
-        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1, orderTableDto2));
+        OrderTableReseponse orderTableReseponse1 = new OrderTableReseponse(빈_신규_테이블1.getId());
+        OrderTableReseponse orderTableReseponse2 = new OrderTableReseponse(빈_신규_테이블2.getId());
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableReseponse1,
+                orderTableReseponse2));
 
         //when
         TableGroupDto response = tableGroupService.create(tableGroupRequest);
@@ -84,8 +85,8 @@ public class TableGroupServiceTest {
     void 입력한_주문_테이블_정보가_하나인_경우_예외처리한다() {
         //given
         OrderTable 빈_신규_테이블1 = OrderTableFixture.빈_신규_테이블1();
-        OrderTableDto orderTableDto1 = new OrderTableDto(빈_신규_테이블1.getId());
-        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1));
+        OrderTableReseponse orderTableReseponse1 = new OrderTableReseponse(빈_신규_테이블1.getId());
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableReseponse1));
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -100,10 +101,11 @@ public class TableGroupServiceTest {
 
         given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(빈_신규_테이블1, 빈_신규_테이블2));
 
-        OrderTableDto orderTableDto1 = new OrderTableDto(빈_신규_테이블1.getId());
-        OrderTableDto orderTableDto2 = new OrderTableDto(빈_신규_테이블2.getId());
-        OrderTableDto unsavedOrderTableDto = new OrderTableDto(null, null, 0, true);
-        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1, orderTableDto2, unsavedOrderTableDto));
+        OrderTableReseponse orderTableReseponse1 = new OrderTableReseponse(빈_신규_테이블1.getId());
+        OrderTableReseponse orderTableReseponse2 = new OrderTableReseponse(빈_신규_테이블2.getId());
+        OrderTableReseponse unsavedOrderTableReseponse = new OrderTableReseponse(null, null, 0, true);
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableReseponse1,
+                orderTableReseponse2, unsavedOrderTableReseponse));
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -119,9 +121,10 @@ public class TableGroupServiceTest {
         given(orderTableDao.findAllByIdIn(List.of(빈_신규_테이블1.getId(), 비지않은_신규_테이블.getId())))
                 .willReturn(List.of(빈_신규_테이블1, 비지않은_신규_테이블));
 
-        OrderTableDto orderTableDto1 = new OrderTableDto(빈_신규_테이블1.getId());
-        OrderTableDto orderTableDto2 = new OrderTableDto(비지않은_신규_테이블.getId());
-        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1, orderTableDto2));
+        OrderTableReseponse orderTableReseponse1 = new OrderTableReseponse(빈_신규_테이블1.getId());
+        OrderTableReseponse orderTableReseponse2 = new OrderTableReseponse(비지않은_신규_테이블.getId());
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableReseponse1,
+                orderTableReseponse2));
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -136,9 +139,10 @@ public class TableGroupServiceTest {
 
         given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(그룹핑된_신규_테이블1, 그룹핑된_신규_테이블2));
 
-        OrderTableDto orderTableDto1 = new OrderTableDto(그룹핑된_신규_테이블1.getId());
-        OrderTableDto orderTableDto2 = new OrderTableDto(그룹핑된_신규_테이블2.getId());
-        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1, orderTableDto2));
+        OrderTableReseponse orderTableReseponse1 = new OrderTableReseponse(그룹핑된_신규_테이블1.getId());
+        OrderTableReseponse orderTableReseponse2 = new OrderTableReseponse(그룹핑된_신규_테이블2.getId());
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableReseponse1,
+                orderTableReseponse2));
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))

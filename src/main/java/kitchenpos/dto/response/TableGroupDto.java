@@ -8,20 +8,21 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupDto {
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTableDto> orderTables;
+    private List<OrderTableReseponse> orderTables;
 
     public static TableGroupDto from(TableGroup tableGroup) {
-        List<OrderTableDto> orderTableDtos = tableGroup.getOrderTables().stream()
-                .map(OrderTableDto::from)
+        List<OrderTableReseponse> orderTableReseponses = tableGroup.getOrderTables().stream()
+                .map(OrderTableReseponse::from)
                 .collect(Collectors.toList());
-        return new TableGroupDto(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableDtos);
+        return new TableGroupDto(tableGroup.getId(), tableGroup.getCreatedDate(),
+                orderTableReseponses);
     }
 
-    public TableGroupDto(List<OrderTableDto> orderTables) {
+    public TableGroupDto(List<OrderTableReseponse> orderTables) {
         this(null, null, orderTables);
     }
 
-    public TableGroupDto(Long id, LocalDateTime createdDate, List<OrderTableDto> orderTables) {
+    public TableGroupDto(Long id, LocalDateTime createdDate, List<OrderTableReseponse> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -35,7 +36,7 @@ public class TableGroupDto {
         return createdDate;
     }
 
-    public List<OrderTableDto> getOrderTables() {
+    public List<OrderTableReseponse> getOrderTables() {
         return orderTables;
     }
 }
