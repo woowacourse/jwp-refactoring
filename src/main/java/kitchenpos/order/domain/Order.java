@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -17,8 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -42,7 +39,8 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+    public Order(final OrderTable orderTable, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this.orderTable = orderTable;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;

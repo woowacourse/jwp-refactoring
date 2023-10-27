@@ -1,4 +1,4 @@
-package kitchenpos.table.service.dto;
+package kitchenpos.order.service.dto;
 
 public class TableRequest {
 

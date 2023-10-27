@@ -3,9 +3,9 @@ package kitchenpos.supports;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.service.dto.TableIdRequest;
-import kitchenpos.table.service.dto.TableGroupRequest;
-import kitchenpos.table.service.dto.TableResponse;
+import kitchenpos.order.service.dto.TableIdRequest;
+import kitchenpos.order.service.dto.TableGroupRequest;
+import kitchenpos.order.service.dto.TableResponse;
 
 public class TableGroupFixture {
 

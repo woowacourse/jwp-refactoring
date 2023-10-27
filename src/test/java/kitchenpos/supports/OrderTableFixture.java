@@ -1,6 +1,6 @@
 package kitchenpos.supports;
 
-import kitchenpos.table.service.dto.TableRequest;
+import kitchenpos.order.service.dto.TableRequest;
 
 public class OrderTableFixture {
 
