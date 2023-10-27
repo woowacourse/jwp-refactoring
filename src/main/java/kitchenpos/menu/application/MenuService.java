@@ -3,16 +3,17 @@ package kitchenpos.menu.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import kitchenpos.common.vo.Money;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.product.domain.repository.ProductRepository;
-import kitchenpos.common.vo.Money;
 import kitchenpos.menu.dto.menu.CreateMenuRequest;
 import kitchenpos.menu.dto.menu.MenuProductRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +40,10 @@ public class MenuService {
     @Transactional
     public Menu create(final CreateMenuRequest createMenuRequest) {
         validate(createMenuRequest);
+        final MenuGroup menuGroup = menuGroupRepository.findById(createMenuRequest.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
 
-        final Menu menu = menuRepository.save(createMenuRequest.toDomain());
+        final Menu menu = menuRepository.save(createMenuRequest.toDomainWith(menuGroup));
         final List<MenuProduct> menuProducts = createMenuRequest.getMenuProducts().stream()
                 .map(menuProductRequest -> new MenuProduct(menu.getId(), menuProductRequest.getProductId(), menuProductRequest.getQuantity()))
                 .collect(Collectors.toList());
@@ -49,15 +52,8 @@ public class MenuService {
     }
 
     private void validate(final CreateMenuRequest createMenuRequest) {
-        validateMenuGroupExists(createMenuRequest);
         validatePrice(createMenuRequest);
         validateProductExists(createMenuRequest);
-    }
-
-    private void validateMenuGroupExists(final CreateMenuRequest createMenuRequest) {
-        if (!menuGroupRepository.existsById(createMenuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validatePrice(final CreateMenuRequest createMenuRequest) {

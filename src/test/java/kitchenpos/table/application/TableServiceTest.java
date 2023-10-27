@@ -2,9 +2,8 @@ package kitchenpos.table.application;
 
 import java.util.List;
 
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderTableRepository;
-import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.dto.table.CreateOrderTableRequest;
 import kitchenpos.table.dto.table.UpdateTableGuestRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;

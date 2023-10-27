@@ -3,11 +3,10 @@ package kitchenpos.table.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.ordertablegroup.OrderTableValidator;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.repository.TableGroupRepository;
 import kitchenpos.table.dto.tablegroup.OrderTableIdRequest;
 import org.springframework.stereotype.Service;
@@ -16,18 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderTableValidator orderValidator;
 
     public TableGroupService(
-            final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final TableGroupRepository tableGroupRepository,
+            final OrderTableValidator orderValidator
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -67,15 +66,10 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        validateOrderStatus(orderTableIds);
-
+        orderValidator.validateOrderStatus(orderTableIds);
         unGroupOrderTable(orderTables);
     }
 
-    private void validateOrderStatus(final List<Long> orderTableIds) {
-        orderRepository.findAllByOrderTableIdIn(orderTableIds)
-                .forEach(Order::validateUncompleted);
-    }
 
     private void unGroupOrderTable(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {

@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import kitchenpos.common.vo.Money;
 
 @Entity
@@ -24,7 +26,9 @@ public class Menu {
     @AttributeOverride(name = "value", column = @Column(name = "price", nullable = false))
     private Money price;
 
-    private Long menuGroupId;
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id", nullable = false, updatable = false)
+    private MenuGroup menuGroup;
 
     protected Menu() {
     }
@@ -32,23 +36,22 @@ public class Menu {
     public Menu(
             final String name,
             final BigDecimal price,
-            final Long menuGroupId
+            final MenuGroup menuGroup
     ) {
-        this(null, name, price, menuGroupId);
+        this(null, name, price, menuGroup);
     }
 
-    public Menu(
+    private Menu(
             final Long id,
             final String name,
             final BigDecimal price,
-            final Long menuGroupId
+            final MenuGroup menuGroup
     ) {
         this.id = id;
         this.name = name;
         this.price = Money.valueOf(price);
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
     }
-
 
     public Long getId() {
         return id;
@@ -62,7 +65,7 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 }

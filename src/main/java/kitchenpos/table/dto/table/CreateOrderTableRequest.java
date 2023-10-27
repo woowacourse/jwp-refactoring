@@ -1,6 +1,6 @@
 package kitchenpos.table.dto.table;
 
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public class CreateOrderTableRequest {
 

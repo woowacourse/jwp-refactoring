@@ -8,11 +8,11 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.order.dto.CreateOrderRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.UpdateOrderRequest;
@@ -53,7 +53,7 @@ class OrderServiceTest {
     void 주문을_저장할_수_있다() {
         // given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
+        final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 5);
         final CreateOrderRequest createOrderRequest = new CreateOrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
@@ -86,7 +86,7 @@ class OrderServiceTest {
         void 주문_항목의_개수와_메뉴_개수가_일치하지_않으면_에외가_발생한다() {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-            final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
+            final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup));
             final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, false));
 
             final OrderLineItemRequest firstOrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
@@ -103,7 +103,7 @@ class OrderServiceTest {
         void 주문_테이블이_비어있을_경우_예외가_발생한다() {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-            final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
+            final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup));
 
             final OrderLineItemRequest firstOrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
             final OrderLineItemRequest secondOrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);

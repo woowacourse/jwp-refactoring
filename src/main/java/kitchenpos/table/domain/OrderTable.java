@@ -1,13 +1,11 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.table.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -17,14 +15,13 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
     private int numberOfGuests;
 
     private boolean empty;
 
-    protected OrderTable() {
+    public OrderTable() {
     }
 
     public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
@@ -66,7 +63,7 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup()    {
+    public TableGroup getTableGroup() {
         return tableGroup;
     }
 

@@ -2,10 +2,8 @@ package kitchenpos.table.application;
 
 import java.util.List;
 
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.dto.table.CreateOrderTableRequest;
 import kitchenpos.table.dto.table.UpdateTableGuestRequest;
 import kitchenpos.table.dto.table.UpdateTableStatusRequest;
@@ -15,11 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    //    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -38,8 +35,8 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        orderRepository.findAllByOrderTableId(orderTableId)
-                .forEach(Order::validateUncompleted);
+//        orderRepository.findAllByOrderTableId(orderTableId)
+//                .forEach(Order::validateUncompleted);
 
         orderTable.updateStatus(updateTableStatusRequest.getEmpty());
         return orderTableRepository.save(orderTable);

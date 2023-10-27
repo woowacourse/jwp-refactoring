@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import kitchenpos.table.application.TableService;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.table.CreateOrderTableRequest;
 import kitchenpos.table.dto.table.UpdateTableGuestRequest;
 import kitchenpos.table.dto.table.UpdateTableStatusRequest;

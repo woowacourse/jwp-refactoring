@@ -2,8 +2,6 @@ package kitchenpos.table.domain;
 
 import java.util.List;
 
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

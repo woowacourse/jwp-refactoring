@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import kitchenpos.order.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.util.CollectionUtils;
 
@@ -34,7 +33,7 @@ public class TableGroup {
         this(null, orderTables);
     }
 
-    public TableGroup(final Long id, final List<OrderTable> orderTables) {
+    private TableGroup(final Long id, final List<OrderTable> orderTables) {
         validate(orderTables);
         this.id = id;
         this.createdDate = LocalDateTime.now();
