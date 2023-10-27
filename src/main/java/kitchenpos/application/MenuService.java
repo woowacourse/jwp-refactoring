@@ -1,14 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.dto.MenuRequest;
 import kitchenpos.domain.dto.MenuRequest.MenuProductRequest;
 import kitchenpos.domain.dto.MenuResponse;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -21,18 +20,15 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuProductRepository menuProductRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
-            final MenuProductRepository menuProductRepository,
             final MenuGroupRepository menuGroupRepository,
             final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
-        this.menuProductRepository = menuProductRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }
@@ -48,9 +44,6 @@ public class MenuService {
 
         menuRepository.save(menu);
 
-        menuProducts.updateMenu(menu);
-        menuProductRepository.saveAll(menuProducts.getValues());
-
         return MenuResponse.from(menu);
     }
 
@@ -58,8 +51,8 @@ public class MenuService {
         final List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
 
         final List<MenuProduct> menuProducts = menuProductRequests.stream()
-                .map(menuProduct -> new MenuProduct(null,
-                        productRepository.findById(menuProduct.getProductId()).orElseThrow(IllegalArgumentException::new),
+                .map(menuProduct -> new MenuProduct(productRepository.findById(menuProduct.getProductId())
+                        .orElseThrow(IllegalArgumentException::new),
                         menuProduct.getQuantity()))
                 .collect(Collectors.toList());
 

@@ -1,14 +1,18 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.dto.OrderRequest;
 import kitchenpos.domain.dto.OrderRequest.OrderLineItemRequest;
 import kitchenpos.domain.dto.OrderResponse;
-import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.table.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,7 +20,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import support.fixture.TableBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +38,20 @@ class OrderServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
+    private MenuRepository menuRepository;
+
+    private OrderLineItems orderLineItems;
+
+    @BeforeEach
+    void setUp() {
+        final Menu menu1 = menuRepository.findById(1L).get();
+        final Menu menu2 = menuRepository.findById(2L).get();
+
+        final OrderLineItem orderLineItem1 = new OrderLineItem(menu1.getId(), 1L, menu1.getName(), menu1.getPrice());
+        final OrderLineItem orderLineItem2 = new OrderLineItem(menu2.getId(), 2L, menu2.getName(), menu2.getPrice());
+
+        orderLineItems = new OrderLineItems(List.of(orderLineItem1, orderLineItem2));
+    }
 
     @Test
     @DisplayName("모든 주문 목록을 조회한다.")
@@ -43,7 +59,7 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(0));
 
-        orderRepository.save(new Order(orderTable));
+        orderRepository.save(new Order(orderTable, orderLineItems));
 
         final List<Order> orders = orderRepository.findAll();
         final List<Long> expect = orders.stream()
@@ -67,10 +83,10 @@ class OrderServiceTest {
     class CreateTest {
 
         @Test
-        @DisplayName("생성된 주문의 상태는 COOKING이고 OrderLineItem의 OrderId는 생성된 주문의 id이다.")
+        @DisplayName("생성된 주문의 상태는 COOKING이다.")
         void createOrderTest() {
             // given
-            final OrderTable table = orderTableRepository.save(new OrderTable(null, 0, false));
+            final OrderTable table = orderTableRepository.save(new OrderTable(1));
 
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
 
@@ -81,24 +97,13 @@ class OrderServiceTest {
 
             // then
             assertEquals(OrderStatus.COOKING.name(), response.getOrderStatus());
-
-            response.getOrderLineItemIds()
-                    .forEach(orderLineItemId -> {
-                        orderLineItemRepository.findById(orderLineItemId)
-                                .ifPresentOrElse(
-                                        actual -> assertEquals(response.getId(), actual.getOrder().getId()),
-                                        () -> fail("OrderLineItem이 존재하지 않습니다.")
-                                );
-                    });
         }
 
         @Test
         @DisplayName("OrderLineItem이 비어있을 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_OrderLineItem_is_empty() {
             // given
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
             final OrderRequest request = new OrderRequest(table.getId(), null, Collections.emptyList());
 
@@ -147,7 +152,7 @@ class OrderServiceTest {
             // given
             final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            final Order order = orderRepository.save(new Order(table));
+            final Order order = orderRepository.save(new Order(table, orderLineItems));
 
             final OrderRequest request = new OrderRequest(null, orderStatus, null);
 
@@ -168,7 +173,7 @@ class OrderServiceTest {
             // given
             final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            final Order order = new Order(table);
+            final Order order = new Order(table, orderLineItems);
             order.updateOrderStatus(OrderStatus.COMPLETION);
             orderRepository.save(order);
 

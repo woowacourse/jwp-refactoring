@@ -1,8 +1,8 @@
 package support.fixture;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.dto.OrderTableRequest;
 import kitchenpos.domain.dto.OrderTableResponse;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,20 +49,13 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        validateNotGrouped(orderTable);
-        validateChangeableOrderStatus(orderTableId);
+        orderTable.updateEmpty(request.isEmpty());
 
-        orderTable.setEmpty(request.isEmpty());
+        validateChangeableOrderStatus(orderTableId);
 
         orderTableRepository.save(orderTable);
 
         return OrderTableResponse.from(orderTable);
-    }
-
-    private void validateNotGrouped(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateChangeableOrderStatus(final Long orderTableId) {

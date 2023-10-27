@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.dto.TableGroupRequest;
 import kitchenpos.domain.dto.TableGroupResponse;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,14 +31,23 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<OrderTable> orderTableEntities = orderTableRepository.findAllByIdIn(request.getOrderTableIds());
+
+        validateSavedOrderTable(request, orderTableEntities);
+
         final OrderTables orderTables = new OrderTables(orderTableEntities);
         final TableGroup tableGroup = new TableGroup(orderTables);
+
+        tableGroup.group();
+
         tableGroupRepository.save(tableGroup);
 
-        orderTables.updateGroup(tableGroup);
-        orderTableRepository.saveAll(orderTables.getValues());
-
         return TableGroupResponse.from(tableGroup);
+    }
+
+    private void validateSavedOrderTable(final TableGroupRequest request, final List<OrderTable> orderTableEntities) {
+        if (request.getOrderTableIds().size() != orderTableEntities.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional
