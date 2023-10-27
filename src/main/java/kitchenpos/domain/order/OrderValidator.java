@@ -1,13 +1,21 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Component
 public class OrderValidator {
+
+    private final OrderTableRepository orderTableRepository;
+
+    public OrderValidator(final OrderTableRepository orderTableRepository) {
+        this.orderTableRepository = orderTableRepository;
+    }
 
     public void validate(final Order order) {
         validateOrderLineItems(order);
@@ -30,7 +38,8 @@ public class OrderValidator {
     }
 
     private void validateEmptyOrderTable(final Order order) {
-        final OrderTable orderTable = order.getOrderTable();
+        final Long orderTableId = order.getOrderTableId();
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId).orElseThrow(NoSuchElementException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("[ERROR] 빈 테이블에서는 주문을 할 수 없습니다.");
