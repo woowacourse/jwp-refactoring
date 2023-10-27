@@ -127,7 +127,7 @@ class TableGroupServiceTest extends MockServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> tableGroupService.create(createTableGroupDto))
-                .isInstanceOf(TableGroupException.class);
+                .isInstanceOf(OrderTableException.class);
     }
 
     @Test
@@ -147,7 +147,7 @@ class TableGroupServiceTest extends MockServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> tableGroupService.create(createTableGroupDto))
-                .isInstanceOf(TableGroupException.class);
+                .isInstanceOf(OrderTableException.class);
     }
 
     @Test

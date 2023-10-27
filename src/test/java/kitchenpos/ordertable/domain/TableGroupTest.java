@@ -1,6 +1,7 @@
 package kitchenpos.ordertable.domain;
 
 import kitchenpos.BaseTest;
+import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.tablegroup.exception.TableGroupException;
 import kitchenpos.tablegroup.domain.OrderTables;
 import org.assertj.core.api.Assertions;
@@ -48,7 +49,7 @@ class TableGroupTest extends BaseTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> orderTables.group(2L))
-                .isInstanceOf(TableGroupException.class);
+                .isInstanceOf(OrderTableException.class);
     }
 
     @Test
@@ -61,6 +62,6 @@ class TableGroupTest extends BaseTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> orderTables.group(2L))
-                .isInstanceOf(TableGroupException.class);
+                .isInstanceOf(OrderTableException.class);
     }
 }

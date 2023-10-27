@@ -1,7 +1,6 @@
 package kitchenpos.ordertable.domain;
 
 import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.tablegroup.exception.TableGroupException;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -42,10 +41,10 @@ public class OrderTable {
 
     public void changeTableGroupId(Long tableGroupId) {
         if (isNotEmpty()) {
-            throw new TableGroupException("주문 테이블이 주문이 가능한 상태여서 테이블 그룹을 생성할 수 없습니다.");
+            throw new OrderTableException("주문 테이블이 주문이 가능한 상태여서 테이블 그룹을 생성할 수 없습니다.");
         }
         if (existsTableGroup()) {
-            throw new TableGroupException("주문 테이블이 이미 테이블 그룹에 속해 있어 테이블 그룹을 생성할 수 없습니다.");
+            throw new OrderTableException("주문 테이블이 이미 테이블 그룹에 속해 있어 테이블 그룹을 생성할 수 없습니다.");
         }
         empty = Boolean.FALSE;
         this.tableGroupId = tableGroupId;
