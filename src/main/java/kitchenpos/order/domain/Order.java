@@ -99,6 +99,10 @@ public class Order {
         return MEAL.equals(orderStatus);
     }
 
+    public boolean isCookingOrMeal() {
+        return isCooking() || isMeal();
+    }
+
     public Long getId() {
         return id;
     }
