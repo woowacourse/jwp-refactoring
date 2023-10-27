@@ -49,7 +49,14 @@ public class Order {
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
+        validateOrderStatusNotNull(orderStatus);
         this.orderStatus = orderStatus;
+    }
+
+    private void validateOrderStatusNotNull(final OrderStatus orderStatus) {
+        if (orderStatus == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

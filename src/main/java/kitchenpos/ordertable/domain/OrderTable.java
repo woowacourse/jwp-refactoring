@@ -1,15 +1,11 @@
 package kitchenpos.ordertable.domain;
 
-import kitchenpos.tablegroup.domain.TableGroup;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -17,18 +13,17 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -41,21 +36,26 @@ public class OrderTable {
         this.empty = isEmpty;
     }
 
-    public void updateTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void updateTableGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
-    public void validateTableGroupIsNonNull() {
-        if (!Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException();
-        }
+    public boolean validateTableGroupIsNonNull() {
+        return Objects.nonNull(tableGroupId);
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
     }
 
     public void validateNumberOfGuests() {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
@@ -75,8 +75,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

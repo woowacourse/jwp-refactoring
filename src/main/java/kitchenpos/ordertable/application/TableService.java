@@ -1,6 +1,5 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -11,17 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
-
 @Service
 @Transactional
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableValidator orderTableValidator, final OrderTableRepository orderTableRepository) {
+        this.orderTableValidator = orderTableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -40,15 +36,8 @@ public class TableService {
 
     public void changeEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
-        savedOrderTable.validateTableGroupIsNonNull();
-        checkOrderExistsWithStatus(orderTableId);
+        orderTableValidator.validate(orderTableId, savedOrderTable);
         savedOrderTable.updateEmpty(isEmpty);
-    }
-
-    private void checkOrderExistsWithStatus(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING, MEAL))) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public void changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
