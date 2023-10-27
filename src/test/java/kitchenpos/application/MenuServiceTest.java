@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductDto;
+import kitchenpos.application.dto.response.MenuProductResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.*;
 import kitchenpos.persistence.MenuGroupRepository;
 import kitchenpos.persistence.MenuProductRepository;
@@ -66,8 +68,9 @@ class MenuServiceTest {
             final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
                     List.of(new MenuProductDto(1L, 1L)));
 
-            final Menu result = menuService.create(request);
-            final Menu expect = new Menu(1L, "신메뉴", new Price(BigDecimal.valueOf(1000)), new MenuGroup(1L, "한식"));
+            final MenuResponse result = menuService.create(request);
+            final MenuResponse expect = new MenuResponse(1L, "신메뉴", BigDecimal.valueOf(1000), 1L,
+                    List.of(new MenuProductResponse(1L, 1L, 1L, 1)));
 
             // then
             assertThat(result)
@@ -163,7 +166,7 @@ class MenuServiceTest {
                 .thenReturn(Collections.emptyList());
 
         // when
-        final List<Menu> result = menuService.list();
+        final List<MenuResponse> result = menuService.list();
 
         // then
         assertThat(result).isEmpty();

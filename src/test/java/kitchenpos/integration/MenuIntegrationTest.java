@@ -5,6 +5,7 @@ import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -41,17 +42,17 @@ class MenuIntegrationTest extends IntegrationTest {
         final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menu);
 
         // when
-        final ResponseEntity<Menu> response = testRestTemplate
-                .postForEntity("/api/menus", request, Menu.class);
-        final Menu createdMenu = response.getBody();
+        final ResponseEntity<MenuResponse> response = testRestTemplate
+                .postForEntity("/api/menus", request, MenuResponse.class);
+        final MenuResponse menuResponse = response.getBody();
 
         // then
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                 () -> assertThat(response.getHeaders().get("Location"))
-                        .contains("/api/menus/" + createdMenu.getId()),
-                () -> assertThat(createdMenu.getName()).isEqualTo("치킨 + 피자"),
-                () -> assertThat(createdMenu.getPrice().getValue().intValue()).isEqualTo(900)
+                        .contains("/api/menus/" + menuResponse.getId()),
+                () -> assertThat(menuResponse.getName()).isEqualTo("치킨 + 피자"),
+                () -> assertThat(menuResponse.getPrice().intValue()).isEqualTo(900)
         );
     }
 

@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.response.MenuProductResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -38,15 +41,17 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         final MenuGroup menuGroup = findMenuGroupById(request.getMenuGroupId());
         final Menu menu = new Menu(request.getName(), new Price(request.getPrice()), menuGroup);
         final Menu savedMenu = menuRepository.save(menu);
+        final List<MenuProduct> savedMenuProducts = menuProductRepository.saveAll(makeMenuProducts(request, savedMenu));
 
-        final List<MenuProduct> menuProducts = makeMenuProducts(request, savedMenu);
-        menuProductRepository.saveAll(menuProducts);
-
-        return savedMenu;
+        return new MenuResponse(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice().getValue(), savedMenu.getMenuGroup().getId(),
+                savedMenuProducts.stream()
+                        .map(menuProduct -> new MenuProductResponse(menuProduct.getSeq(), menuProduct.getMenu().getId(),
+                                menuProduct.getProduct().getId(), menuProduct.getQuantity()))
+                        .collect(Collectors.toList()));
     }
 
     private MenuGroup findMenuGroupById(final Long menuGroupId) {
@@ -78,7 +83,18 @@ public class MenuService {
         }
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        final List<Menu> savedMenu = menuRepository.findAll();
+
+        return savedMenu.stream()
+                .map(menu -> {
+                    final List<MenuProduct> savedMenuProducts = menuProductRepository.findAllByMenu(menu);
+                    return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(),
+                            savedMenuProducts.stream()
+                                    .map(menuProduct -> new MenuProductResponse(menuProduct.getSeq(), menuProduct.getMenu().getId(),
+                                            menuProduct.getProduct().getId(), menuProduct.getQuantity()))
+                                    .collect(Collectors.toList()));
+                })
+                .collect(Collectors.toList());
     }
 }
