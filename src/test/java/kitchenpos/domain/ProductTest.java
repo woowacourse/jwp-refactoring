@@ -9,7 +9,7 @@ import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ProductTest {
+class ProductTest {
 
     @Test
     @DisplayName("Product 인스턴스를 생성할 수 있어야 함")
