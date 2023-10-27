@@ -9,7 +9,7 @@ import java.util.List;
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts;
 

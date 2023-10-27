@@ -11,7 +11,7 @@ import java.util.List;
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
