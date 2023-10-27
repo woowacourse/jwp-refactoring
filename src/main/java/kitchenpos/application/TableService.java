@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.ordertable.ChangeEmptyRequest;
 import kitchenpos.dto.ordertable.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.ordertable.OrderTableRequest;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +19,12 @@ public class TableService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+    private final TableGroupRepository tableGroupRepository;
+
+    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -45,6 +49,7 @@ public class TableService {
         }
 
         savedOrderTable.changeEmptyStatus(changeEmptyRequest.isEmpty());
+
 
         return orderTableRepository.save(savedOrderTable);
     }

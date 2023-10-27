@@ -1,9 +1,6 @@
 package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -11,6 +8,9 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.ordertable.ChangeEmptyRequest;
 import kitchenpos.dto.ordertable.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.ordertable.OrderTableRequest;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -125,7 +125,7 @@ class TableServiceTest {
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         OrderTable orderTable = new OrderTable(4, false);
-        orderTable.setTableGroup(savedTableGroup);
+        orderTable.setTableGroupId(savedTableGroup.getId());
         OrderTable saveTable = orderTableRepository.save(orderTable);
 
         // when

@@ -2,11 +2,13 @@ package kitchenpos.domain;
 
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +24,8 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
@@ -47,7 +50,7 @@ public class TableGroup {
 
     public void ungroup() {
         for (OrderTable orderTable : this.orderTables) {
-            orderTable.setTableGroup(null);
+            orderTable.setTableGroupId(null);
             orderTable.changeEmptyStatus(false);
         }
 

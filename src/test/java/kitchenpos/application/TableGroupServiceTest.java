@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.tablegroup.TableGroupRequest;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -100,11 +100,11 @@ class TableGroupServiceTest {
         TableGroup savedWrongTableGroup = tableGroupRepository.save(wrongTableGroup);
 
         OrderTable orderTableA = new OrderTable(0, true);
-        orderTableA.setTableGroup(savedWrongTableGroup);
+        orderTableA.setTableGroupId(savedWrongTableGroup.getId());
         OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
 
         OrderTable orderTableB = new OrderTable(0, true);
-        orderTableA.setTableGroup(savedWrongTableGroup);
+        orderTableA.setTableGroupId(savedWrongTableGroup.getId());
         OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
 
         // when & then
@@ -143,8 +143,8 @@ class TableGroupServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(orderTableRepository.findById(savedOrderTableA.getId()).get().getTableGroup()).isNull();
-            softly.assertThat(orderTableRepository.findById(savedOrderTableB.getId()).get().getTableGroup()).isNull();
+            softly.assertThat(orderTableRepository.findById(savedOrderTableA.getId()).get().getTableGroupId()).isNull();
+            softly.assertThat(orderTableRepository.findById(savedOrderTableB.getId()).get().getTableGroupId()).isNull();
         });
     }
 
