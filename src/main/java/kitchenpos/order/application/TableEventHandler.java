@@ -21,20 +21,18 @@ public class TableEventHandler {
     @EventListener
     public void onApplicationEvent(final OrderTableChangeEmptyEvent event) {
         final List<Order> orders = orderRepository.findByOrderTableId(event.getOrderTableId());
-        for (final Order order : orders) {
-            if (order.isInProgress()) {
-                throw new IllegalArgumentException("진행중인 주문이 있으면 해당 테이블을 비울 수 없습니다.");
-            }
+        if (orders.stream().anyMatch(Order::isInProgress)) {
+            throw new IllegalArgumentException("진행중인 주문이 있으면 해당 테이블을 비울 수 없습니다.");
         }
+
     }
 
     @EventListener
     public void onApplicationEvent(final TableGroupCreateEvent event) {
         final List<Order> orders = orderRepository.findByOrderTableId(event.getOrderTableId());
-        for (final Order order : orders) {
-            if (order.isInProgress()) {
-                throw new IllegalArgumentException("진행중인 주문이 있으면 해당 테이블을 비울 수 없습니다.");
-            }
+        if (orders.stream().anyMatch(Order::isInProgress)) {
+            throw new IllegalArgumentException("진행중인 주문이 있으면 해당 테이블을 비울 수 없습니다.");
         }
+
     }
 }
