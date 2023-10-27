@@ -1,13 +1,12 @@
 package kitchenpos.domain;
 
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.IllegalOrderStatusException;
 import kitchenpos.product.domain.Price;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.exception.IllegalOrderStatusException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

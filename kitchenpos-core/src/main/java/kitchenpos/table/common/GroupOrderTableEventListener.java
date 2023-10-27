@@ -27,7 +27,7 @@ public class GroupOrderTableEventListener {
 
         validateOrderTable(orderTables, orderTableIds);
 
-        orderTables.stream().forEach(orderTable -> orderTable.changeTableGroup(groupOrderTablesEvent.getTableGroupId()));
+        orderTables.forEach(orderTable -> orderTable.changeTableGroup(groupOrderTablesEvent.getTableGroupId()));
     }
 
     private void validateOrderTable(final List<OrderTable> orderTables, final List<Long> orderTableIds) {

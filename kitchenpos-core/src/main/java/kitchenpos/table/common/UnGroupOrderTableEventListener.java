@@ -26,11 +26,11 @@ public class UnGroupOrderTableEventListener {
     public void ungroup(final UngroupOrderTableEvent ungroupOrderTableEvent) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(ungroupOrderTableEvent.getTableGroupId());
         final List<Long> orderTableIds = orderTables.stream()
-                .map(it -> it.getId())
+                .map(OrderTable::getId)
                 .collect(Collectors.toList());
         eventPublisher.publishEvent(new ValidateOrderTablesOrderStatusEvent(orderTableIds));
 
-        orderTables.stream()
+        orderTables
                 .forEach(orderTable -> orderTable.ungroup());
     }
 }

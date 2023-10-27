@@ -2,6 +2,7 @@ package kitchenpos.tableGroup.application;
 
 import kitchenpos.common.GroupOrderTablesEvent;
 import kitchenpos.common.UngroupOrderTableEvent;
+import kitchenpos.table.dto.OrderTableIdRequest;
 import kitchenpos.tableGroup.domain.TableGroup;
 import kitchenpos.tableGroup.domain.TableGroupRepository;
 import kitchenpos.tableGroup.dto.TableGroupRequest;
@@ -30,7 +31,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTables().stream()
-                .map(it -> it.getId())
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
         final TableGroup tableGroup = new TableGroup();
         tableGroup.validate(orderTableIds);

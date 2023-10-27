@@ -10,6 +10,6 @@ class TableGroupTest {
     @Test
     void create() {
         //when&then
-        assertDoesNotThrow(() -> new TableGroup());
+        assertDoesNotThrow(TableGroup::new);
     }
 }
