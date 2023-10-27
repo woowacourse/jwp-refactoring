@@ -24,9 +24,8 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private OrderTable orderTable;
+    @Column(nullable = false)
+    private long orderTableId;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus;
@@ -39,9 +38,9 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final LocalDateTime orderedTime,
+    public Order(final long orderTableId, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
@@ -55,8 +54,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

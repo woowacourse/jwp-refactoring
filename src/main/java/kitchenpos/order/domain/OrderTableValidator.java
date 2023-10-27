@@ -20,7 +20,7 @@ public class OrderTableValidator {
     }
 
     private boolean isOrderUncompleted(final OrderTable orderTable) {
-        final List<Order> orders = orderRepository.findAllByOrderTable_Id(orderTable.getId());
+        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
         for (Order order : orders) {
             if (!order.isCompleted()) {
                 return true;
