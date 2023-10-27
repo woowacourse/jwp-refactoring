@@ -1,20 +1,31 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+
 public class OrderLineItem {
     private Long seq;
     private Long orderId;
     private Long menuId;
-    private long quantity;
+    private Long quantity;
+    private String name;
+    private BigDecimal price;
 
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
-        this(null, orderId, menuId, quantity);
+    public OrderLineItem(Long seq, Long orderId, Long menuId, Long quantity) {
+        this(seq, orderId, menuId, quantity, null, null);
     }
 
-    public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(Long orderId, Long menuId, Long quantity, String name, BigDecimal price) {
+        this(null, orderId, menuId, quantity, name, price);
+    }
+
+    public OrderLineItem(Long seq, Long orderId, Long menuId, Long quantity, String name,
+            BigDecimal price) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
+        this.name = name;
+        this.price = price;
     }
 
     public Long getSeq() {
@@ -31,5 +42,13 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 }

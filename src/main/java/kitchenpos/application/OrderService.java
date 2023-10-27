@@ -4,6 +4,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -53,8 +54,10 @@ public class OrderService {
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            Menu menu = menuDao.findById(orderLineItemRequest.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new);
             OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(),
-                    orderLineItemRequest.getQuantity());
+                    orderLineItemRequest.getQuantity(), menu.getName(), menu.getPrice());
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         savedOrder = new Order(savedOrder.getId(), savedOrder.getOrderTableId(),

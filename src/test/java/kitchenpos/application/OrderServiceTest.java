@@ -13,6 +13,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -20,6 +21,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -52,11 +54,13 @@ public class OrderServiceTest {
     @Test
     void 주문테이블id_주문상태_주문한시간_주문항목을_받아서_주문_정보를_등록할_수_있다() {
         //given
+        Menu 메뉴_후라이드 = MenuFixture.메뉴_후라이드();
         OrderTable 단일_신규_테이블 = OrderTableFixture.단일_신규_테이블();
         OrderLineItem 후라이드_두마리_주문 = OrderLineItemFixture.후라이드_두마리_주문();
         Order 조리_상태의_주문 = OrderFixture.조리_상태의_주문();
 
         given(menuDao.countByIdIn(eq(List.of(1L)))).willReturn(1L);
+        given(menuDao.findById(eq(메뉴_후라이드.getId()))).willReturn(Optional.of(메뉴_후라이드));
         given(orderTableDao.findById(eq(3L))).willReturn(Optional.of(단일_신규_테이블));
         given(orderDao.save(any(Order.class))).willReturn(조리_상태의_주문);
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(후라이드_두마리_주문);
@@ -117,10 +121,12 @@ public class OrderServiceTest {
     @Test
     void 주문이_등록되면_주문_상태는_조리중인_상태로_바뀌고_주문한_시간이_현재_시간으로_저장된다() {
         //given
+        Menu 메뉴_후라이드 = MenuFixture.메뉴_후라이드();
         OrderTable 단일_신규_테이블 = OrderTableFixture.단일_신규_테이블();
         OrderLineItem 후라이드_두마리_주문 = OrderLineItemFixture.후라이드_두마리_주문();
 
         given(menuDao.countByIdIn(eq(List.of(1L)))).willReturn(1L);
+        given(menuDao.findById(eq(메뉴_후라이드.getId()))).willReturn(Optional.of(메뉴_후라이드));
         given(orderTableDao.findById(eq(단일_신규_테이블.getId()))).willReturn(Optional.of(단일_신규_테이블));
         given(orderDao.save(any(Order.class))).willAnswer(AdditionalAnswers.returnsFirstArg());
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(후라이드_두마리_주문);
