@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':ordertable')
+    implementation project(':menu')
+}
+
+bootJar { enabled = false }
+jar { enabled = true }
