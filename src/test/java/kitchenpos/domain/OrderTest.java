@@ -1,5 +1,11 @@
 package kitchenpos.domain;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
