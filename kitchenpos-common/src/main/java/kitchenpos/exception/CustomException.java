@@ -1,4 +1,4 @@
-package kitchenpos.global.exception;
+package kitchenpos.exception;
 
 public abstract class CustomException extends RuntimeException {
 
