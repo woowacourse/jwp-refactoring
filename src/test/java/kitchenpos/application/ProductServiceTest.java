@@ -1,88 +1,97 @@
 package kitchenpos.application;
 
-import kitchenpos.application.fixture.ProductServiceFixture;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidPriceValue;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.dto.product.ProductRequest;
+import kitchenpos.ui.dto.product.ProductResponse;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class ProductServiceTest extends ProductServiceFixture {
+@DisplayName("상품 서비스 테스트")
+class ProductServiceTest extends ServiceTestConfig {
 
-    @InjectMocks
-    ProductService productService;
+    @Autowired
+    private ProductService productService;
 
-    @Mock
-    ProductDao productDao;
+    @Autowired
+    private ProductRepository productRepository;
 
-    @Test
-    void 상품을_등록한다() {
-        // given
-        given(productDao.save(any(Product.class))).willReturn(저장된_상품);
+    @Nested
+    class 상품_등록 {
 
-        final Product product = new Product(상품_이름, 상품_가격);
+        @Test
+        void 상품을_등록한다() {
+            // given
+            final ProductRequest productRequest = ProductFixture.상품_요청_dto_생성();
 
-        // when
-        final Product actual = productService.create(product);
+            // when
+            final ProductResponse actual = productService.create(productRequest);
 
-        // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual.getId()).isPositive();
-            softAssertions.assertThat(actual).usingRecursiveComparison().isEqualTo(저장된_상품);
-        });
+            // then
+            assertThat(actual.getId()).isPositive();
+        }
+
+        @ParameterizedTest
+        @NullSource
+        void 상품_등록시_가격이_null이라면_예외를_반환한다(BigDecimal price) {
+            // given
+            final ProductRequest product = new ProductRequest(ProductFixture.상품명, price);
+
+            // when & then
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(InvalidPriceValue.class)
+                    .hasMessage("상품의 가격은 0 혹은 양수여야 합니다.");
+        }
+
+        @Test
+        void 상품_등록시_가격이_음수라면_예외를_반환한다() {
+            // given
+            final BigDecimal negative_price = BigDecimal.valueOf(-10_000);
+            final ProductRequest product = new ProductRequest(ProductFixture.상품명, negative_price);
+
+            // when & then
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(InvalidPriceValue.class)
+                    .hasMessage("상품의 가격은 0 혹은 양수여야 합니다.");
+        }
     }
 
-    @ParameterizedTest
-    @NullSource
-    void 상품_등록시_가격이_null이라면_예외를_반환한다(BigDecimal price) {
-        // given
-        final Product product = new Product(상품_이름, price);
+    @Nested
+    class 상품_목록_조회 {
 
-        // when & then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        @Test
+        void 상품_목록을_조회한다() {
+            // given
+            final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(3));
 
-    @Test
-    void 상품_등록시_가격이_음수라면_예외를_반환한다() {
-        // given
-        final Product product = new Product(상품_이름, 상품_가격이_음수);
+            // when
+            final List<ProductResponse> actual = productService.list();
 
-        // when & then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 상품_목록을_조회한다() {
-        // given
-        given(productDao.findAll()).willReturn(저장된_상품들);
-
-        // when
-        final List<Product> actual = productService.list();
-
-        // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(저장된_상품1);
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(저장된_상품2);
-        });
+            // then
+            SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(actual).hasSize(3);
+                softAssertions.assertThat(actual.get(0).getId()).isEqualTo(products.get(0).getId());
+                softAssertions.assertThat(actual.get(1).getId()).isEqualTo(products.get(1).getId());
+                softAssertions.assertThat(actual.get(2).getId()).isEqualTo(products.get(2).getId());
+            });
+        }
     }
 }

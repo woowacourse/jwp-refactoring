@@ -1,178 +1,219 @@
 package kitchenpos.application;
 
-import kitchenpos.application.fixture.TableServiceFixture;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.application.exception.InvalidChangeOrderTableNumberOfGuests;
+import kitchenpos.application.exception.InvalidOrderToChangeEmptyException;
+import kitchenpos.application.exception.NotFoundOrderTableException;
+import kitchenpos.common.ServiceTestConfig;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
-import org.assertj.core.api.*;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidUpdateNumberOfGuestsException;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.fixture.TableGroupFixture;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.ui.dto.menugroup.ChangeOrderTableEmptyRequest;
+import kitchenpos.ui.dto.table.ChangeOrderTableNumberOfGuestsRequest;
+import kitchenpos.ui.dto.table.OrderTableRequest;
+import kitchenpos.ui.dto.table.OrderTableResponse;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class TableServiceTest extends TableServiceFixture {
+@DisplayName("테이블 서비스 테스트")
+class TableServiceTest extends ServiceTestConfig {
 
-    @InjectMocks
-    TableService tableService;
+    @Autowired
+    private TableService tableService;
 
-    @Mock
-    OrderDao orderDao;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    @Mock
-    OrderTableDao orderTableDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @Test
-    void 테이블을_등록한다() {
-        // given
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(저장된_주문_테이블);
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
-        final OrderTable orderTable = new OrderTable(방문한_손님_수, false);
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
-        // when
-        final OrderTable actual = tableService.create(orderTable);
+    @Autowired
+    private MenuRepository menuRepository;
 
-        // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual.getId()).isPositive();
-            softAssertions.assertThat(actual).usingRecursiveComparison()
-                          .ignoringFields("id")
-                          .isEqualTo(저장된_주문_테이블);
-        });
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Nested
+    class 테이블_등록 {
+
+        @Test
+        void 주문_테이블을_등록한다() {
+            // given
+            final OrderTableRequest orderTable = OrderTableFixture.주문_테이블_요청_dto_생성();
+
+            // when
+            final OrderTableResponse actual = tableService.create(orderTable);
+
+            // then
+            assertThat(actual.getId()).isPositive();
+        }
     }
 
-    @Test
-    void 주문_테이블_목록을_조회한다() {
-        // given
-        given(orderTableDao.findAll()).willReturn(저장된_주문_테이블들);
+    @Nested
+    class 주문_테이블_목록_조회 {
 
-        // when
-        final List<OrderTable> actual = tableService.list();
+        @Test
+        void 주문_테이블_목록을_조회한다() {
+            // given
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.주문_테이블_엔티티들_생성(3));
 
-        // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual).hasSize(3);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(저장된_주문_테이블1);
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(저장된_주문_테이블2);
-            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison().isEqualTo(저장된_주문_테이블3);
-        });
+            // when
+            final List<OrderTableResponse> actual = tableService.list();
+
+            // then
+            SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(actual).hasSize(3);
+                softAssertions.assertThat(actual.get(0).getId()).isEqualTo(orderTables.get(0).getId());
+                softAssertions.assertThat(actual.get(1).getId()).isEqualTo(orderTables.get(1).getId());
+                softAssertions.assertThat(actual.get(2).getId()).isEqualTo(orderTables.get(2).getId());
+            });
+        }
     }
 
-    @Test
-    void 주문_테이블의_empty_값을_참에서_거짓으로_변경할_수_있다() {
-        // given
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(empty가_참인_저장된_주문_테이블));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(false);
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(empty가_거짓인_저장된_주문_테이블);
+    @Nested
+    class 주문_테이블의_empty_변경 {
 
-        // when
-        final OrderTable actual = tableService.changeEmpty(empty가_참인_저장된_주문_테이블.getId(), empty가_거짓인_주문_테이블);
+        @Test
+        void 주문_테이블의_empty_값을_참에서_거짓으로_변경할_수_있다() {
+            // given
+            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.빈_테이블_엔티티_생성());
+            final ChangeOrderTableEmptyRequest changeEmptyRequest = new ChangeOrderTableEmptyRequest(false);
 
-        // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual).usingRecursiveComparison()
-                          .ignoringFields("empty")
-                          .isEqualTo(empty가_참인_저장된_주문_테이블);
-            softAssertions.assertThat(actual.isEmpty()).isFalse();
-        });
+            // when
+            final OrderTableResponse actual = tableService.changeEmpty(orderTable.getId(), changeEmptyRequest);
+
+            // then
+            assertThat(actual.isEmpty()).isFalse();
+        }
+
+        @Test
+        void 주문_테이블의_empty_값을_거짓에서_참으로_변경할_수_있다() {
+            // given
+            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.비지_않은_테이블_엔티티_생성());
+            final ChangeOrderTableEmptyRequest changeEmptyRequest = new ChangeOrderTableEmptyRequest(true);
+
+            // when
+            final OrderTableResponse actual = tableService.changeEmpty(orderTable.getId(), changeEmptyRequest);
+
+            // then
+            assertThat(actual.isEmpty()).isTrue();
+        }
+
+        @Test
+        void 주문_테이블의_empty_값_변경시_단체_지정_아이디가_null이_아니라면_예외를_반환한다() {
+            // given
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
+            final OrderTable targetOrderTable = orderTables.get(0);
+            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
+            final ChangeOrderTableEmptyRequest changeEmptyRequest = new ChangeOrderTableEmptyRequest(true);
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTable.getId(), changeEmptyRequest))
+                    .isInstanceOf(InvalidOrderToChangeEmptyException.class)
+                    .hasMessage("단체 지정이 정해지지 않아 상태 변경이 불가능합니다.");
+        }
+
+        @Test
+        void 특정_주문_테이블중_조리_혹은_식사_상태인_것이_존재한다면_예외를_반환한다() {
+            // given
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
+            final OrderTable targetOrderTable = orderTables.get(0);
+            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
+            final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
+            final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
+            final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
+            orderRepository.save(OrderFixture.조리_상태의_주문_엔티티_생성(targetOrderTable, menu));
+            final ChangeOrderTableEmptyRequest changeEmptyRequest = new ChangeOrderTableEmptyRequest(true);
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTable.getId(), changeEmptyRequest))
+                    .isInstanceOf(InvalidOrderToChangeEmptyException.class)
+                    .hasMessage("단체 지정이 정해지지 않아 상태 변경이 불가능합니다.");
+        }
     }
 
-    @Test
-    void 주문_테이블의_empty_값을_거짓에서_참으로_변경할_수_있다() {
-        // given
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(empty가_거짓인_저장된_주문_테이블));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(false);
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(empty가_참인_저장된_주문_테이블);
+    @Nested
+    class 주문_테이블_방문자_수_변경 {
 
-        // when
-        final OrderTable actual = tableService.changeEmpty(empty가_거짓인_저장된_주문_테이블.getId(), empty가_참인_주문_테이블);
+        @Test
+        void 주문_테이블의_방문자_수의_값을_변경할_수_있다() {
+            // given
+            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_엔티티_생성(4));
+            final ChangeOrderTableNumberOfGuestsRequest changeNumberOfGuestsRequest = new ChangeOrderTableNumberOfGuestsRequest(2);
 
-        // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual).usingRecursiveComparison()
-                          .ignoringFields("empty")
-                          .isEqualTo(empty가_거짓인_저장된_주문_테이블);
-            softAssertions.assertThat(actual.isEmpty()).isTrue();
-        });
-    }
+            // when
+            final OrderTableResponse actual = tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOfGuestsRequest);
 
-    @Test
-    void 주문_테이블의_empty_값_변경시_단체_지정_아이디가_null이_아니라면_예외를_반환한다() {
-        // given
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(단체_지정_아이디가_있는_주문_테이블));
+            // then
+            assertThat(actual.getNumberOfGuests()).isEqualTo(2);
+        }
 
-        // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(단체_지정_아이디가_있는_주문_테이블.getId(), empty가_참인_주문_테이블))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        @Test
+        void 주문_테이블의_방문자_수를_0미만으로_변경할시_예외를_반환한다() {
+            // given
+            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_엔티티_생성(4));
+            final ChangeOrderTableNumberOfGuestsRequest changeNumberOfGuestsRequest = new ChangeOrderTableNumberOfGuestsRequest(-4);
 
-    @Test
-    void 특정_주문_테이블중_조리_혹은_식사_상태인_것이_존재한다면_예외를_반환한다() {
-        // given
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(empty가_거짓인_저장된_주문_테이블));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(true);
 
-        // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(empty가_거짓인_저장된_주문_테이블.getId(), empty가_참인_주문_테이블))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+            // when & then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOfGuestsRequest))
+                    .isInstanceOf(InvalidUpdateNumberOfGuestsException.class)
+                    .hasMessage("방문한 손님 수는 음수가 될 수 없습니다.");
+        }
 
-    @Test
-    void 주문_테이블의_방문자_수의_값을_변경할_수_있다() {
-        // given
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(방문자수가_4인_저장된_주문_테이블));
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(방문자수가_2인_저장된_주문_테이블);
+        @Test
+        void 존재하지_않는_주문_테이블의_방문자_수를_변경할시_예외를_반환한다() {
+            // given
+            final Long unsavedId = 999L;
+            final ChangeOrderTableNumberOfGuestsRequest changeNumberOfGuestsRequest = new ChangeOrderTableNumberOfGuestsRequest(4);
 
-        // when
-        final OrderTable actual = tableService.changeNumberOfGuests(방문자수가_4인_저장된_주문_테이블.getId(), 방문자수가_2인_저장된_주문_테이블);
+            // when & then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(unsavedId, changeNumberOfGuestsRequest))
+                    .isInstanceOf(NotFoundOrderTableException.class)
+                    .hasMessage("해당 주문 테이블이 존재하지 않습니다.");
+        }
 
-        // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual).usingRecursiveComparison()
-                          .ignoringFields("numberOfGuests")
-                          .isEqualTo(방문자수가_2인_저장된_주문_테이블);
-            softAssertions.assertThat(actual.getNumberOfGuests()).isEqualTo(2);
-        });
-    }
+        @Test
+        void 주문_테이블의_방문자_수를_변경할시_해당_주문_테이블의_empty가_참이라면_예외를_반환한다() {
+            // given
+            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.빈_테이블_엔티티_생성());
+            final ChangeOrderTableNumberOfGuestsRequest changeNumberOfGuestsRequest = new ChangeOrderTableNumberOfGuestsRequest(2);
 
-    @Test
-    void 주문_테이블의_방문자_수를_0으로_변경할시_예외를_반환한다() {
-        // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(방문자수가_4인_저장된_주문_테이블.getId(), 방문자수가_0인_주문_테이블))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 존재하지_않는_주문_테이블의_방문자_수를_변경할시_예외를_반환한다() {
-        // given
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
-
-        // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(존재하지_않는_주문_테이블_아이디, 방문자수가_2인_저장된_주문_테이블))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블의_방문자_수를_변경할시_해당_주문_테이블의_empty가_참이라면_예외를_반환한다() {
-        // given
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(empty가_참인_저장된_주문_테이블));
-
-        // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(empty가_참인_저장된_주문_테이블.getId(), 방문자수가_2인_저장된_주문_테이블))
-                .isInstanceOf(IllegalArgumentException.class);
+            // when & then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOfGuestsRequest))
+                    .isInstanceOf(InvalidChangeOrderTableNumberOfGuests.class)
+                    .hasMessage("주문 테이블이 빈 상태라면 사용자 수를 변경할 수 없습니다.");
+        }
     }
 }
