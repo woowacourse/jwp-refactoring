@@ -34,10 +34,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<Long> requestOrderTableIds = request.getOrderTables()
-                .stream()
-                .map(OrderTableIdRequest::getId)
-                .collect(Collectors.toList());
+        final List<Long> requestOrderTableIds = getOrderTableIds(request);
         final List<OrderTable> findOrderTables = orderTableRepository.findAllByIdIn(requestOrderTableIds);
         if (requestOrderTableIds.size() != findOrderTables.size()) {
             throw new IllegalArgumentException("단체 지정을 위해 요청하신 주문 테이블 목록이 정확하지 않습니다. 선택한 주문 테이블 목록을 다시 확인해주세요.");
@@ -49,6 +46,13 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         return TableGroupResponse.from(savedTableGroup);
+    }
+
+    private List<Long> getOrderTableIds(final TableGroupCreateRequest request) {
+        return request.getOrderTables()
+                .stream()
+                .map(OrderTableIdRequest::getId)
+                .collect(Collectors.toList());
     }
 
     @Transactional

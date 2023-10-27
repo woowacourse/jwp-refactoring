@@ -2,7 +2,7 @@ package kitchenpos.order.application.event;
 
 public class OrderPreparedEvent {
 
-    private Long orderId;
+    private final Long orderId;
 
     public OrderPreparedEvent(final Long orderId) {
         this.orderId = orderId;

@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 @Component
 public class MenuHistoryEventListener {
 
-    private OrderRepository orderRepository;
-    private MenuHistoryRepository menuHistoryRepository;
-    private MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
+    private final MenuHistoryRepository menuHistoryRepository;
+    private final MenuRepository menuRepository;
 
     public MenuHistoryEventListener(final OrderRepository orderRepository,
                                     final MenuRepository menuRepository,

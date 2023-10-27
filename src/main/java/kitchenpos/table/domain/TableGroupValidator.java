@@ -17,10 +17,15 @@ public class TableGroupValidator {
     }
 
     public void validateUngroup(final TableGroup tableGroup) {
-        final boolean isNotAllCompleted = getOrders(tableGroup).stream().anyMatch(Order::isNotCompleted);
-        if (isNotAllCompleted) {
+        if (isNotAllCompleted(tableGroup)) {
             throw new IllegalArgumentException("주문 목록이 모두 완료된 상태가 아닌 경우 단체 지정을 해제할 수 없습니다.");
         }
+    }
+
+    private boolean isNotAllCompleted(final TableGroup tableGroup) {
+        return getOrders(tableGroup)
+                .stream()
+                .anyMatch(Order::isNotCompleted);
     }
 
     private List<Order> getOrders(final TableGroup tableGroup) {
