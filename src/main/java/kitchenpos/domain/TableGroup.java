@@ -32,7 +32,7 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTablesValue() {
-        return orderTables.getValue();
+        return orderTables.getItems();
     }
 
     public void updateOrderTables(List<OrderTable> orderTables) {

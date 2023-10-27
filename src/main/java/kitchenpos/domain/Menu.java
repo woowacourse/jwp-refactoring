@@ -62,6 +62,6 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProductsValue() {
-        return menuProducts.getValue();
+        return menuProducts.getItems();
     }
 }

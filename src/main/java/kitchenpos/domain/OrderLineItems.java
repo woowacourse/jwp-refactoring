@@ -12,13 +12,13 @@ import org.springframework.util.CollectionUtils;
 public class OrderLineItems {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    List<OrderLineItem> value = new ArrayList<>();
+    List<OrderLineItem> items = new ArrayList<>();
 
     protected OrderLineItems() {
     }
 
-    private OrderLineItems(final List<OrderLineItem> value) {
-        this.value = value;
+    private OrderLineItems(final List<OrderLineItem> items) {
+        this.items = items;
     }
 
     public static OrderLineItems from(List<OrderLineItem> orderLineItems) {
@@ -32,7 +32,7 @@ public class OrderLineItems {
         }
     }
 
-    public List<OrderLineItem> getValue() {
-        return Collections.unmodifiableList(value);
+    public List<OrderLineItem> getItems() {
+        return Collections.unmodifiableList(items);
     }
 }

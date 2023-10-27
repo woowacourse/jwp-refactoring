@@ -12,13 +12,13 @@ import javax.persistence.OneToMany;
 public class MenuProducts {
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<MenuProduct> value = new ArrayList<>();
+    private List<MenuProduct> items = new ArrayList<>();
 
     protected MenuProducts() {
     }
 
-    private MenuProducts(List<MenuProduct> value) {
-        this.value = value;
+    private MenuProducts(List<MenuProduct> items) {
+        this.items = items;
     }
 
     public static MenuProducts of(List<MenuProduct> menuProducts, Price price) {
@@ -38,7 +38,7 @@ public class MenuProducts {
                 .reduce(Price.from(BigDecimal.ZERO), Price::add);
     }
 
-    public List<MenuProduct> getValue() {
-        return Collections.unmodifiableList(value);
+    public List<MenuProduct> getItems() {
+        return Collections.unmodifiableList(items);
     }
 }

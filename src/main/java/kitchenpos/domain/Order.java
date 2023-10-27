@@ -84,6 +84,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItemsValue() {
-        return orderLineItems.getValue();
+        return orderLineItems.getItems();
     }
 }

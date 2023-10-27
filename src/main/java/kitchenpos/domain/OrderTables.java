@@ -12,13 +12,13 @@ import org.springframework.util.CollectionUtils;
 public class OrderTables {
 
     @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> value = new ArrayList<>();
+    private List<OrderTable> items = new ArrayList<>();
 
     protected OrderTables() {
     }
 
-    private OrderTables(final List<OrderTable> value) {
-        this.value = value;
+    private OrderTables(final List<OrderTable> items) {
+        this.items = items;
     }
 
     public static OrderTables from(final List<OrderTable> orderTables) {
@@ -42,17 +42,17 @@ public class OrderTables {
     }
 
     public void group(TableGroup tableGroup) {
-        for (final OrderTable orderTable : value) {
+        for (final OrderTable orderTable : items) {
             orderTable.updateEmpty(false);
             orderTable.updateTableGroup(tableGroup);
         }
     }
 
     public void ungroup() {
-        value.forEach(OrderTable::unGroup);
+        items.forEach(OrderTable::unGroup);
     }
 
-    public List<OrderTable> getValue() {
-        return Collections.unmodifiableList(value);
+    public List<OrderTable> getItems() {
+        return Collections.unmodifiableList(items);
     }
 }
