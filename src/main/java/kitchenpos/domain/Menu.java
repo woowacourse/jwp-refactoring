@@ -31,7 +31,7 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -81,6 +81,14 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts.getMenuProducts();
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updatePrice(BigDecimal price) {
+        this.price = price;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,24 +21,23 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @Embedded
+    private OrderedMenu orderedMenu;
 
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
+    public OrderLineItem(Long seq, Order order, OrderedMenu orderedMenu, long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menu = menu;
+        this.orderedMenu = orderedMenu;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(Order order, Menu menu, long quantity) {
-        this(null, order, menu, quantity);
+    public OrderLineItem(Order order, OrderedMenu orderedMenu, long quantity) {
+        this(null, order, orderedMenu, quantity);
     }
 
     public Long getSeq() {
@@ -52,8 +52,8 @@ public class OrderLineItem {
         this.order = order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public OrderedMenu getOrderedMenu() {
+        return orderedMenu;
     }
 
     public long getQuantity() {
