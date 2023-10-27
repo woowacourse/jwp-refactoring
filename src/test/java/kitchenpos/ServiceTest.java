@@ -5,7 +5,7 @@ import kitchenpos.menugroup.respository.MenuGroupRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.table.repository.TableGroupRepository;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,10 +1,11 @@
-package kitchenpos.table.application.mapper;
+package kitchenpos.tablegroup.application.mapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.table.application.mapper.OrderTableMapper;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.TableGroupResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
 
 public class TableGroupMapper {
 

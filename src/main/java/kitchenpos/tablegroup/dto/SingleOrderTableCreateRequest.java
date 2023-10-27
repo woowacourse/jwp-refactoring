@@ -1,4 +1,4 @@
-package kitchenpos.table.dto;
+package kitchenpos.tablegroup.dto;
 
 public class SingleOrderTableCreateRequest {
 
