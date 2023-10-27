@@ -111,6 +111,16 @@ class OrderServiceTest {
     }
 
     @Test
+    void 주문당시의_메뉴_이름과_가격을_저장한다() {
+        Order ordered = orderOneFromTable1(후라이드치킨());
+
+        var firstLineItem = ordered.getOrderLineItems().get(0);
+
+        assertThat(firstLineItem.getOrderedName()).isEqualTo(후라이드치킨().getName());
+        assertThat(firstLineItem.getOrderedPrice().isEqualTo(후라이드치킨().getPrice())).isTrue();
+    }
+
+    @Test
     @Transactional
     void 모든_주문들을_가져온다() {
         Order saved = orderOneFromTable1(후라이드치킨());

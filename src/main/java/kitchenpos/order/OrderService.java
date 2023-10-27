@@ -1,5 +1,6 @@
 package kitchenpos.order;
 
+import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuRepository;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
@@ -64,10 +65,13 @@ public class OrderService {
     }
 
     private OrderLineItem toOrderLineItem(OrderLineItemRequest request) {
-        menuRepository.validateContains(request.getMenuId());
+        Menu menu = menuRepository.getBy(request.getMenuId());
+
         return new OrderLineItem(
                 request.getMenuId(),
-                request.getQuantity()
+                request.getQuantity(),
+                menu.getName(),
+                menu.getPrice()
         );
     }
 }
