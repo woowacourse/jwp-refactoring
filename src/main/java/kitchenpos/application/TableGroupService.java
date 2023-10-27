@@ -1,17 +1,13 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.tablegroup.TableGroupRequest;
 import kitchenpos.application.dto.tablegroup.TableGroupResponse;
 import kitchenpos.application.dto.tablegroup.TableOfGroupDto;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.TableGroupManager;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,57 +15,35 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupManager tableGroupManager;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+    public TableGroupService(final TableGroupRepository tableGroupRepository, final TableGroupManager tableGroupManager) {
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupManager = tableGroupManager;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTable> orderTables = convertToOrderTables(tableGroupRequest.getOrderTables());
-
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        tableGroup.addOrderTables(orderTables);
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        final List<Long> tableIdsToGroup = convertToTableIds(tableGroupRequest.getOrderTables());
+        tableGroupManager.group(tableGroup, tableIdsToGroup);
         tableGroupRepository.save(tableGroup);
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.groupBy(tableGroup);
-        }
-
-        return TableGroupResponse.from(tableGroup);
+        return TableGroupResponse.of(tableGroup, tableIdsToGroup);
     }
 
-    private List<OrderTable> convertToOrderTables(final List<TableOfGroupDto> tables) {
+    private List<Long> convertToTableIds(final List<TableOfGroupDto> tables) {
         return tables.stream()
-            .map(tableRequest -> getOrderTable(tableRequest.getId()))
+            .map(TableOfGroupDto::getId)
             .collect(Collectors.toList());
-    }
-
-    private OrderTable getOrderTable(final Long id) {
-        return orderTableRepository.findById(id)
-            .orElseThrow(IllegalArgumentException::new);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 그룹입니다."));
 
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        final List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-        }
+       tableGroupManager.ungroup(tableGroup);
     }
 }

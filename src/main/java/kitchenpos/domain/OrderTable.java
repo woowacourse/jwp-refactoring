@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -15,8 +14,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Column
     private int numberOfGuests;
@@ -39,26 +38,34 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
+        this.empty = false;
     }
 
     public void groupBy(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroup.getId();
     }
 
     public boolean isUnableToBeGrouped() {
-        return !empty || Objects.nonNull(tableGroup);
+        return !empty || Objects.nonNull(tableGroupId);
     }
 
     private boolean isGrouped() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        validateGuestChange(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateGuestChange(final int numberOfGuests) {
         if (empty) {
             throw new IllegalArgumentException("비어있는 테이블은 손님 수를 바꿀 수 없습니다.");
         }
-        this.numberOfGuests = numberOfGuests;
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("변경하려는 손님 수는 0보다 작을 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -66,15 +73,7 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        if (tableGroup == null) {
-            return null;
-        }
-
-        return tableGroup.getId();
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

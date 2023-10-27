@@ -30,7 +30,7 @@ class OrderTableTest {
     void updateEmpty_fail() {
         // given
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(new TableGroup(LocalDateTime.now()));
+        orderTable.groupBy(TableGroup.saved(1L, LocalDateTime.now()));
 
         // when, then
         assertThatThrownBy(() -> orderTable.updateEmpty(false))
@@ -45,11 +45,11 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(3, true);
         orderTable.groupBy(new TableGroup(LocalDateTime.now()));
 
-        // when
+        // when1
         orderTable.ungroup();
 
         // then
-        assertThat(orderTable.getTableGroup()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
     }
 
     @DisplayName("주문 테이블을 그룹으로 묶는다.")
@@ -59,10 +59,10 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(3, true);
 
         // when
-        orderTable.groupBy(new TableGroup(LocalDateTime.now()));
+        orderTable.groupBy(TableGroup.saved(1L, LocalDateTime.now()));
 
         // then
-        assertThat(orderTable.getTableGroup()).isNotNull();
+        assertThat(orderTable.getTableGroupId()).isNotNull();
     }
 
     @DisplayName("그룹으로 묶을 수 없는 테이블이면 true 가 반환된다.")
@@ -86,7 +86,7 @@ class OrderTableTest {
 
     private static OrderTable createGroupedOrderTable() {
         final OrderTable orderTable = new OrderTable(3, true);
-        orderTable.groupBy(new TableGroup(LocalDateTime.now()));
+        orderTable.groupBy(TableGroup.saved(1L, LocalDateTime.now()));
 
         return orderTable;
     }

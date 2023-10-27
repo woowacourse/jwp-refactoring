@@ -1,7 +1,5 @@
 package kitchenpos.application.dto.tablegroup;
 
-import kitchenpos.domain.OrderTable;
-
 public class TableOfGroupDto {
 
     private Long id;
@@ -12,8 +10,8 @@ public class TableOfGroupDto {
         this.id = id;
     }
 
-    public static TableOfGroupDto from(final OrderTable table) {
-        return new TableOfGroupDto(table.getId());
+    public static TableOfGroupDto from(final Long orderTableId) {
+        return new TableOfGroupDto(orderTableId);
     }
 
     public Long getId() {

@@ -60,7 +60,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         final OrderTable orderTable2 = new OrderTable(3, true);
         orderTableRepository.saveAll(List.of(orderTable1, orderTable2));
 
-        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1), TableOfGroupDto.from(orderTable2)));
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1.getId()), TableOfGroupDto.from(orderTable2.getId())));
 
         // when
         final TableGroupResponse savedTableGroup = tableGroupService.create(tableGroupRequest);
@@ -68,7 +68,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         // then
         assertThat(savedTableGroup.getId()).isNotNull();
         assertThat(savedTableGroup.getOrderTables()).usingRecursiveComparison()
-            .isEqualTo(List.of(TableOfGroupDto.from(orderTable1), TableOfGroupDto.from(orderTable2)));
+            .isEqualTo(List.of(TableOfGroupDto.from(orderTable1.getId()), TableOfGroupDto.from(orderTable2.getId())));
     }
 
     @DisplayName("테이블 그룹을 생성할 때, 묶을 테이블이 없으면 예외가 발생한다.")
@@ -89,7 +89,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         final OrderTable orderTable1 = new OrderTable(3, true);
         orderTableRepository.save(orderTable1);
 
-        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1)));
+        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1.getId())));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -102,7 +102,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(3, true));
         final TableOfGroupDto notSavedOrderTableRequest = new TableOfGroupDto(NOT_EXIST_ID);
-        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(savedOrderTable), notSavedOrderTableRequest));
+        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(savedOrderTable.getId()), notSavedOrderTableRequest));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -116,7 +116,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(3, false));
 
-        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1), TableOfGroupDto.from(orderTable2)));
+        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1.getId()), TableOfGroupDto.from(orderTable2.getId())));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -129,12 +129,12 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(3, true));
-        final TableGroupRequest firstRequest = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1), TableOfGroupDto.from(orderTable2)));
+        final TableGroupRequest firstRequest = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1.getId()), TableOfGroupDto.from(orderTable2.getId())));
         tableGroupService.create(firstRequest);
 
         // when, then
         final OrderTable orderTable3 = orderTableRepository.save(new OrderTable(3, true));
-        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1), TableOfGroupDto.from(orderTable3)));
+        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1.getId()), TableOfGroupDto.from(orderTable3.getId())));
 
         assertThatThrownBy(() -> tableGroupService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
@@ -146,7 +146,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroupRequest firstRequest = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1), TableOfGroupDto.from(orderTable2)));
+        final TableGroupRequest firstRequest = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1.getId()), TableOfGroupDto.from(orderTable2.getId())));
         final TableGroupResponse tableGroupResponse = tableGroupService.create(firstRequest);
 
         // when, then
@@ -159,7 +159,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, true));
-        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1), TableOfGroupDto.from(orderTable2)));
+        final TableGroupRequest request = new TableGroupRequest(List.of(TableOfGroupDto.from(orderTable1.getId()), TableOfGroupDto.from(orderTable2.getId())));
         final TableGroupResponse tableGroupResponse = tableGroupService.create(request);
         final Long tableGroupId = tableGroupResponse.getId();
 

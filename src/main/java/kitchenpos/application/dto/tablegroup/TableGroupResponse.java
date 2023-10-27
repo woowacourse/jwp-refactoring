@@ -19,13 +19,12 @@ public class TableGroupResponse {
         this.orderTables = orderTables;
     }
 
-    public static TableGroupResponse from(final TableGroup tableGroup) {
-        final List<TableOfGroupDto> tableOfGroupDtos = tableGroup.getOrderTables()
-            .stream()
+    public static TableGroupResponse of(final TableGroup tableGroup, final List<Long> orderTableIds) {
+        final List<TableOfGroupDto> tablesOfGroup = orderTableIds.stream()
             .map(TableOfGroupDto::from)
             .collect(Collectors.toList());
 
-        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), tableOfGroupDtos);
+        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), tablesOfGroup);
     }
 
     public Long getId() {
