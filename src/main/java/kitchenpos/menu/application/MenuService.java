@@ -3,6 +3,7 @@ package kitchenpos.menu.application;
 import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
@@ -46,14 +47,14 @@ public class MenuService {
         final MenuGroup menuGroup =
                 menuGroupRepository.findById(menuRequest.getMenuGroupId())
                                    .orElseThrow(() -> new NotFoundMenuGroupException("해당 메뉴 그룹이 존재하지 않습니다."));
-        final List<MenuProduct> menuProducts = convertToMenuProducts(menuRequest.getMenuProducts());
+        final MenuProducts menuProducts = convertToMenuProducts(menuRequest.getMenuProducts());
         final Menu menu = menuRequest.toEntity(menuGroup, menuProducts);
         final Menu savedMenu = menuRepository.save(menu);
 
         return MenuResponse.from(savedMenu);
     }
 
-    private List<MenuProduct> convertToMenuProducts(final List<MenuProductDto> menuProductDtos) {
+    private MenuProducts convertToMenuProducts(final List<MenuProductDto> menuProductDtos) {
         final Map<Long, Product> products = findAllProducts(menuProductDtos);
 
         final List<MenuProduct> menuProducts = new ArrayList<>();
@@ -62,7 +63,7 @@ public class MenuService {
             menuProducts.add(menuProductDto.toEntity(product));
         }
 
-        return menuProducts;
+        return new MenuProducts(menuProducts);
     }
 
     private Map<Long, Product> findAllProducts(final List<MenuProductDto> menuProductDtos) {
@@ -93,11 +94,18 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.updateMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            final MenuProducts menuProducts = findAllMenuProducts(menu);
+            menu.updateMenuProducts(menuProducts);
         }
 
         return menus.stream()
                     .map(MenuResponse::from)
                     .collect(Collectors.toList());
+    }
+
+    private MenuProducts findAllMenuProducts(final Menu menu) {
+        final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
+
+        return new MenuProducts(menuProducts);
     }
 }

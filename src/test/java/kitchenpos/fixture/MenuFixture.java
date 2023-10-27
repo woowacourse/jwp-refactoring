@@ -1,6 +1,7 @@
 package kitchenpos.fixture;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
@@ -26,9 +27,7 @@ public class MenuFixture {
             메뉴_이름 += number.toString();
         }
 
-
-
-        final List<MenuProduct> 메뉴_상품들 = 메뉴_상품_엔티티들_생성(products);
+        final MenuProducts 메뉴_상품들 = 메뉴_상품_엔티티들_생성(products);
         final Menu 메뉴 = Menu.of(메뉴_이름, new Price(메뉴_가격_계산(products)), menuGroup, 메뉴_상품들);
 
         return 메뉴;
@@ -57,10 +56,11 @@ public class MenuFixture {
         return sum;
     }
 
-    private static List<MenuProduct> 메뉴_상품_엔티티들_생성(final List<Product> products) {
-        return products.stream()
-                       .map(product -> 메뉴_상품_엔티티_생성(product))
-                       .collect(Collectors.toList());
+    private static MenuProducts 메뉴_상품_엔티티들_생성(final List<Product> products) {
+        final List<MenuProduct> menuProducts = products.stream()
+                                                       .map(product -> 메뉴_상품_엔티티_생성(product))
+                                                       .collect(Collectors.toList());
+        return new MenuProducts(menuProducts);
     }
 
     private static MenuProduct 메뉴_상품_엔티티_생성(final Product product) {

@@ -1,12 +1,10 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.product.domain.Product;
-import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.common.vo.Price;
+import kitchenpos.exception.InvalidMenuPriceException;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 import javax.persistence.AttributeOverride;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -17,9 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,8 +36,8 @@ public class Menu {
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts;
 
     protected Menu() {}
 
@@ -49,7 +45,7 @@ public class Menu {
             final String name,
             final Price price,
             final MenuGroup menuGroup,
-            final List<MenuProduct> menuProducts
+            final MenuProducts menuProducts
     ) {
         this.name = name;
         this.price = price;
@@ -61,31 +57,21 @@ public class Menu {
             final String name,
             final Price price,
             final MenuGroup menuGroup,
-            final List<MenuProduct> menuProducts
+            final MenuProducts menuProducts
     ) {
         final Menu menu = new Menu(name, price, menuGroup, menuProducts);
 
         validateMenuPrice(menuProducts, price);
-        addMenuProducts(menuProducts, menu);
+        menuProducts.addMenuProducts(menu);
 
         return menu;
     }
 
-    private static void validateMenuPrice(final List<MenuProduct> menuProducts, final Price price) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = menuProduct.getProduct();
-            sum = sum.add(product.getPriceValue().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
+    private static void validateMenuPrice(final MenuProducts menuProducts, final Price price) {
+        final Price totalPrice = menuProducts.calculateTotalPrice();
 
-        if (price.compareTo(new Price(sum))) {
+        if (price.compareTo(totalPrice)) {
             throw new InvalidMenuPriceException("메뉴 가격이 상품들의 가격 합보다 클 수 없습니다.");
-        }
-    }
-
-    private static void addMenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenu(menu);
         }
     }
 
@@ -106,10 +92,10 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getMenuProducts();
     }
 
-    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
+    public void updateMenuProducts(final MenuProducts menuProducts) {
         this.menuProducts = menuProducts;
     }
 
