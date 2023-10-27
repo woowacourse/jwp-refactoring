@@ -6,6 +6,7 @@ import kitchenpos.menu.application.dto.MenuResponse.MenuProductResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.common.domain.Price;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
@@ -150,9 +151,7 @@ class MenuServiceTest {
     @DisplayName("등록됨 상품들 목록을 가져온다.")
     void getMenuList() {
         // given
-        final Menu menu = new Menu.MenuFactory(MENU_NAME, new Price(BigDecimal.valueOf(1900)), testMenuGroup)
-                .addProduct(testProduct, 2)
-                .create();
+        final Menu menu = new Menu(MENU_NAME, new Price(BigDecimal.valueOf(1900)), testMenuGroup, List.of(new MenuProduct(testMenuGroup.getId(), 2L)));
         final Menu savedMenu = menuRepository.save(menu);
         final MenuResponse expectedLastResponse = MenuResponse.from(savedMenu);
 

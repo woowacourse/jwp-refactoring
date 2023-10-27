@@ -1,7 +1,6 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.common.domain.Price;
-import kitchenpos.product.domain.Product;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,9 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -50,21 +47,11 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(
-            final String name,
-            final Price price,
-            final MenuGroup menuGroup
-    ) {
+    public Menu(final String name, final Price price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-    }
-
-    private void addMenuProduct(final MenuProduct menuProduct) {
-        if (Objects.isNull(menuProducts)) {
-            menuProducts = new ArrayList<>();
-        }
-        menuProducts.add(menuProduct);
+        this.menuProducts = menuProducts;
     }
 
     public Long getId() {
@@ -103,41 +90,4 @@ public class Menu {
         return menuGroup.getName();
     }
 
-    public static class MenuFactory {
-
-        private Menu menu;
-
-        public MenuFactory(final String name, final Price price, final MenuGroup menuGroup) {
-            this.menu = new Menu(name, price, menuGroup);
-        }
-
-        public MenuFactory addProduct(final Product product, final long quantity) {
-            menu.addMenuProduct(new MenuProduct(quantity, product));
-            return this;
-        }
-
-        public Menu create() {
-            if (Objects.isNull(menu)) {
-                throw new IllegalStateException("Menu already created from this factory " + this);
-            }
-            validatePrice();
-
-            final Menu result = menu;
-            this.menu = null;
-
-            return result;
-        }
-
-        private void validatePrice() {
-            Price sum = new Price(BigDecimal.ZERO);
-            for (final MenuProduct menuProduct : menu.menuProducts) {
-                final Price productPrice = menuProduct.getProduct().getPrice();
-                final Price menuProductPrice = productPrice.multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
-                sum = sum.add(menuProductPrice);
-            }
-            if (menu.price.isLargerThan(sum)) {
-                throw new IllegalArgumentException();
-            }
-        }
-    }
 }

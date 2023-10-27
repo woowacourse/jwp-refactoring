@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.MenuSnapshotService;
@@ -80,9 +81,7 @@ class TableGroupServiceTest {
 
         final MenuGroup menuGroup = menuGroupRepository.save(TEST_GROUP());
         final Product product = productRepository.save(PIZZA());
-        final Menu menu = new Menu.MenuFactory("test menu", product.getPrice(), menuGroup)
-                .addProduct(product, 1L)
-                .create();
+        final Menu menu = new Menu("test menu", product.getPrice(), menuGroup, List.of(new MenuProduct(product.getId(), 1L)));
         testMenu = menuRepository.save(menu);
     }
 
