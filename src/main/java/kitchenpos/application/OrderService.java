@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.repository.MenuRepository;
@@ -37,13 +36,11 @@ public class OrderService {
     public Order create(final CreateOrderRequest request) {
         validateOrderLineItems(request);
 
-        final Order order = createNewOrder(request.getOrderTableId(), orderValidator);
         final List<OrderLineItem> orderLineItems = getOrderLineItems(request);
+        final Order order = new Order(request.getOrderTableId(), orderLineItems);
+        orderValidator.validate(order);
 
-        final Order savedOrder = orderRepository.save(order);
-        savedOrder.addOrderLineItems(new OrderLineItems(orderLineItems));
-
-        return savedOrder;
+        return orderRepository.save(order);
     }
 
     private void validateOrderLineItems(final CreateOrderRequest request) {
@@ -51,13 +48,6 @@ public class OrderService {
         if (createOrderLineItemRequests.isEmpty()) {
             throw new IllegalArgumentException("주문 항목이 비어있습니다.");
         }
-    }
-
-    public Order createNewOrder(final Long orderTableId, OrderValidator orderValidator) {
-        final Order order = new Order(orderTableId);
-        orderValidator.validate(order);
-
-        return order;
     }
 
     private List<OrderLineItem> getOrderLineItems(final CreateOrderRequest request) {

@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -28,21 +29,15 @@ public class Order extends BaseCreateTimeEntity {
     private OrderStatus orderStatus;
 
     @Embedded
-    private final OrderLineItems orderLineItems = new OrderLineItems();
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
-    public Order(final Long orderTableId) {
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = INITIAL_ORDER_STATUS;
-    }
-
-    public void addOrderLineItems(final OrderLineItems orderLineItems) {
-        for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
-            this.orderLineItems.add(orderLineItem);
-            orderLineItem.initOrder(this);
-        }
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public boolean isNotComplete() {

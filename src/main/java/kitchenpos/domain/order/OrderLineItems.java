@@ -2,15 +2,16 @@ package kitchenpos.domain.order;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "order_id", nullable = false)
+    private List<OrderLineItem> orderLineItems;
 
     protected OrderLineItems() {
     }

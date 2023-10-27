@@ -1,12 +1,21 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.NumberOfGuests;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.dto.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.ChangeOrderTableEmptyRequest;
@@ -22,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +44,15 @@ class TableServiceTest {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private TableService tableService;
@@ -142,8 +161,15 @@ class TableServiceTest {
     @DisplayName("테이블의 비어있음 정보를 변경할 때 테이블의 주문이 조리중이거나 식사중이면 예외가 발생한다")
     void changeEmpty_invalidOrderStatus(final OrderStatus orderStatus) {
         // given
+        final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
+        final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2L);
+        final Menu 후라이드_2개_메뉴 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴));
+        후라이드_2개_메뉴.addMenuProducts(new MenuProducts(List.of(후라이드_2개)));
+        final OrderLineItem 주문_항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 2);
+
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
-        final Order 두명_테이블_주문 = orderRepository.save(new Order(두명_테이블.getId()));
+        final Order 두명_테이블_주문 = orderRepository.save(new Order(두명_테이블.getId(), List.of(주문_항목)));
         두명_테이블_주문.changeOrderStatus(orderStatus);
 
         em.flush();

@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,7 +19,9 @@ class OrderTest {
     void isNotComplete_true(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order order = new Order(orderTable.getId());
+        final Long menuId = 1L;
+        final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
+        final Order order = new Order(orderTable.getId(), List.of(orderLineItem));
         order.changeOrderStatus(orderStatus);
 
         // when
@@ -32,7 +36,9 @@ class OrderTest {
     void isNotComplete_false() {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order completeOrder = new Order(orderTable.getId());
+        final Long menuId = 1L;
+        final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
+        final Order completeOrder = new Order(orderTable.getId(), List.of(orderLineItem));
         completeOrder.changeOrderStatus(OrderStatus.COMPLETION);
 
         // when
@@ -47,7 +53,9 @@ class OrderTest {
     void changeOrderStatus_completeOrder() {
         // given
         final OrderTable orderTable = new OrderTable(4, false);
-        final Order completeOrder = new Order(orderTable.getId());
+        final Long menuId = 1L;
+        final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
+        final Order completeOrder = new Order(orderTable.getId(), List.of(orderLineItem));
         completeOrder.changeOrderStatus(OrderStatus.COMPLETION);
 
         // when

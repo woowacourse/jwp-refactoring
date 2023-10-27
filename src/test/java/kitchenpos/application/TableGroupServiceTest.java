@@ -1,11 +1,20 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.dto.CreateTableGroupOrderTableRequest;
 import kitchenpos.dto.CreateTableGroupRequest;
@@ -20,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +47,15 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -193,6 +212,13 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해제할 때 해제하려는 테이블의 주문이 조리중이나 식사중이면 예외가 발생한다")
     void ungroup_invalidOrderStatus(final OrderStatus orderStatus) {
         // given
+        final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
+        final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2L);
+        final Menu 후라이드_2개_메뉴 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴));
+        후라이드_2개_메뉴.addMenuProducts(new MenuProducts(List.of(후라이드_2개)));
+        final OrderLineItem 주문_항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 2);
+
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
         final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
@@ -200,8 +226,8 @@ class TableGroupServiceTest {
         세명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
         네명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
 
-        orderRepository.save(new Order(세명_테이블.getId()));
-        final Order 네명_테이블_미완료_주문 = orderRepository.save(new Order(네명_테이블.getId()));
+        orderRepository.save(new Order(세명_테이블.getId(), List.of(주문_항목)));
+        final Order 네명_테이블_미완료_주문 = orderRepository.save(new Order(네명_테이블.getId(), List.of(주문_항목)));
         네명_테이블_미완료_주문.changeOrderStatus(orderStatus);
 
         em.flush();
