@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,10 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void createAndList() {
         // given
-        String name = "두마리메뉴";
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("두마리메뉴");
 
         // when
-        MenuGroup savedMenuGroup = menuGroupService.create(name);
+        MenuGroup savedMenuGroup = menuGroupService.create(request);
         List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
