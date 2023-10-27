@@ -1,14 +1,13 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderTable;
-
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.domain.OrderTable;
+import org.springframework.data.repository.CrudRepository;
 
-public interface OrderTableDao {
-    OrderTable save(OrderTable entity);
-
-    Optional<OrderTable> findById(Long id);
+public interface OrderTableDao extends CrudRepository<OrderTable, Long> {
+    default OrderTable findMandatoryById(Long id) {
+        return findById(id).orElseThrow(IllegalArgumentException::new);
+    }
 
     List<OrderTable> findAll();
 

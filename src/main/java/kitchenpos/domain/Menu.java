@@ -1,52 +1,57 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import kitchenpos.domain.product.Price;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 
 public class Menu {
+    @Id
     private Long id;
     private String name;
-    private BigDecimal price;
+    @Embedded.Empty
+    private Price price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    @MappedCollection(idColumn = "MENU_ID")
+    private Set<MenuProduct> menuProducts;
+
+    public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
+                final MenuProducts menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = new HashSet<>(menuProducts.getMenuProducts());
+    }
+
+    public Menu(final String name, final Price price, final Long menuGroupId, final MenuProducts menuProducts) {
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = new HashSet<>(menuProducts.getMenuProducts());
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+        return new ArrayList<>(menuProducts);
     }
 }

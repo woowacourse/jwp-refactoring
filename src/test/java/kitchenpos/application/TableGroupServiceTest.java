@@ -1,61 +1,39 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.kitchenposFixture.메뉴그룹만들기;
-import static kitchenpos.application.kitchenposFixture.메뉴상품만들기;
-import static kitchenpos.application.kitchenposFixture.상품만들기;
-import static kitchenpos.application.kitchenposFixture.저장할메뉴만들기;
-import static kitchenpos.application.kitchenposFixture.주문테이블만들기;
-import static kitchenpos.application.kitchenposFixture.주문할메뉴만들기;
+import static kitchenpos.application.KitchenposFixture.메뉴그룹만들기;
+import static kitchenpos.application.KitchenposFixture.상품만들기;
+import static kitchenpos.application.KitchenposFixture.주문테이블만들기;
+import static kitchenpos.application.KitchenposFixture.주문할메뉴만들기;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.sql.DataSource;
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.request.MenuProductRequest;
+import kitchenpos.application.request.OrderLineItemsRequest;
+import kitchenpos.application.response.MenuResponse;
+import kitchenpos.application.response.TableGroupResponse;
+import kitchenpos.dao.TableGroupCustomDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.domain.ordertable.NumberOfGuests;
+import kitchenpos.domain.product.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 
-@JdbcTest
-@Import({ProductService.class, JdbcTemplateProductDao.class, MenuService.class,
-        JdbcTemplateMenuDao.class, MenuGroupService.class, JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class, JdbcTemplateOrderTableDao.class, OrderService.class,
-        JdbcTemplateOrderDao.class, TableService.class,
-        JdbcTemplateOrderLineItemDao.class})
+@DataJdbcTest
+@Import({TableGroupService.class, TableService.class, ProductService.class, TableGroupCustomDao.class, MenuService.class,
+        MenuGroupService.class, OrderService.class, OrderStatusValidator.class})
 class TableGroupServiceTest {
 
     @Autowired
-    private DataSource dataSource;
     private TableGroupService tableGroupService;
-
-    @BeforeEach
-    void SetUp() {
-        this.tableGroupService = new TableGroupService(
-                new JdbcTemplateOrderDao(dataSource),
-                new JdbcTemplateOrderTableDao(dataSource),
-                new JdbcTemplateTableGroupDao(dataSource)
-        );
-    }
 
     @Nested
     @DisplayName("주문 테이블을 그룹화할 때")
@@ -66,9 +44,8 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
             final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(
+                    List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
 
             assertThat(savedTableGroup).isNotNull();
             assertThat(savedTableGroup.getId()).isNotNull();
@@ -82,25 +59,19 @@ class TableGroupServiceTest {
         void invalidOrderTableSize(@Autowired TableService tableService) {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(savedOrderTable));
-
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(List.of(savedOrderTable.getId())))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("그룹화하려는 주문 테이블 중 실재하지 않는 주문 테이블이 있다면 그룹화할 수 없다.")
         void notExistingOrderTable(@Autowired TableService tableService) {
-            final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
+            final OrderTable orderTable = 주문테이블만들기(tableService, true);
 
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable2.setEmpty(true); // 저장하지 않은 orderTable
+            final OrderTable orderTable2 = new OrderTable(0L, 0L, new NumberOfGuests(0), true);
+            // 저장하지 않은 orderTable
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(savedOrderTable, orderTable2));
-
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId())))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -111,16 +82,12 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
             final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
-            tableGroupService.create(tableGroup);
+            tableGroupService.create(List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
 
             final OrderTable savedOrderTable3 = 주문테이블만들기(tableService, true);
 
-            final TableGroup tableGroup2 = new TableGroup();
-            tableGroup2.setOrderTables(List.of(savedOrderTable2, savedOrderTable3));
-
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
+            assertThatThrownBy(
+                    () -> tableGroupService.create(List.of(savedOrderTable2.getId(), savedOrderTable3.getId())))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -134,15 +101,12 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
             final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(
+                    List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
 
-            assertThat(
-                    savedTableGroup.getOrderTables()
-                            .stream().map(OrderTable::getId)
-                            .collect(Collectors.toList())
-            ).contains(savedOrderTable.getId(), savedOrderTable2.getId());
+            assertThat(savedTableGroup.getOrderTables())
+                    .extracting("id")
+                    .contains(savedOrderTable.getId(), savedOrderTable2.getId());
         }
 
         @Test
@@ -159,9 +123,8 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
             final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(
+                    List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
 
             주어진_OrderTable로_주문하기(productService, menuService, menuGroupService, orderService, savedOrderTable);
 
@@ -169,7 +132,7 @@ class TableGroupServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        private Order 주어진_OrderTable로_주문하기(
+        private void 주어진_OrderTable로_주문하기(
                 final ProductService productService,
                 final MenuService menuService,
                 final MenuGroupService menuGroupService,
@@ -183,20 +146,23 @@ class TableGroupServiceTest {
             final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
             // given : 메뉴
-            final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
-
-            final Menu savedMenu = menuService.create(저장할메뉴만들기("메뉴!", "4000", savedMenuGroup.getId(), menuProduct));
-            final Menu savedMenu2 = menuService.create(저장할메뉴만들기("메뉴 2!", "9000", savedMenuGroup.getId(), menuProduct));
+            final MenuResponse savedMenu
+                    = menuService.create("메뉴!", new Price(new BigDecimal("4000")), savedMenuGroup.getId(), List.of(new MenuProductRequest(savedProduct.getId(), 4L)));
+            final MenuResponse savedMenu2
+                    = menuService.create("메뉴 2!", new Price(new BigDecimal("4000")), savedMenuGroup.getId(), List.of(new MenuProductRequest(savedProduct.getId(), 4L)));
 
             // given : 주문 메뉴
-            final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu, 4);
-            final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
+            final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu.getId(), 4);
+            final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2.getId(), 3);
 
             // given : 주문
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem, orderLineItem2));
-            return orderService.create(order);
+            orderService.create(
+                    orderTable.getId(),
+                    List.of(
+                            new OrderLineItemsRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()),
+                            new OrderLineItemsRequest(orderLineItem2.getMenuId(), orderLineItem2.getQuantity())
+                    )
+            );
         }
     }
 }

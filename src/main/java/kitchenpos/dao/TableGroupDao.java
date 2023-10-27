@@ -3,12 +3,10 @@ package kitchenpos.dao;
 import kitchenpos.domain.TableGroup;
 
 import java.util.List;
-import java.util.Optional;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface TableGroupDao {
-    TableGroup save(TableGroup entity);
-
-    Optional<TableGroup> findById(Long id);
-
+@Repository
+public interface TableGroupDao extends CrudRepository<TableGroup, Long> {
     List<TableGroup> findAll();
 }
