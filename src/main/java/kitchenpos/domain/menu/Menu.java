@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.common.BaseDate;
+import kitchenpos.domain.menugroup.MenuGroup;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
