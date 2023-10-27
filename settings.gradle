@@ -1,1 +1,4 @@
 rootProject.name = 'kitchenpos'
+include 'domain', 'application', 'ui'
+include 'app'
+
