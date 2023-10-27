@@ -10,13 +10,13 @@ public class CreateMenuRequest {
     private final String name;
     private final Integer price;
     private final Long menuGroupId;
-    private final List<MenuProductDto> menuProducts;
+    private final List<MenuProductRequest> menuProducts;
 
     public CreateMenuRequest(
             final String name,
             final Integer price,
             final Long menuGroupId,
-            final List<MenuProductDto> menuProducts
+            final List<MenuProductRequest> menuProducts
     ) {
         this.name = name;
         this.price = price;
@@ -40,7 +40,7 @@ public class CreateMenuRequest {
         return menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProducts() {
+    public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
     }
 

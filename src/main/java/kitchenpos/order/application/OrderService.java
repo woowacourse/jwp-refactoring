@@ -11,7 +11,7 @@ import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import kitchenpos.order.dto.CreateOrderRequest;
-import kitchenpos.order.dto.OrderLineItemDto;
+import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.UpdateOrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,15 +49,15 @@ public class OrderService {
     }
 
     private void saveOrderLineItems(final CreateOrderRequest createOrderRequest, final Long orderId) {
-        for (final OrderLineItemDto orderLineItemDto : createOrderRequest.getOrderLineItems()) {
-            final OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemDto.getMenuId(), orderLineItemDto.getQuantity());
+        for (final OrderLineItemRequest orderLineItemRequest : createOrderRequest.getOrderLineItems()) {
+            final OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
             orderLineItemRepository.save(orderLineItem);
         }
     }
 
     private void validateMenuIds(final CreateOrderRequest createOrderRequest) {
         final List<Long> menuIds = createOrderRequest.getOrderLineItems().stream()
-                .map(OrderLineItemDto::getMenuId)
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();

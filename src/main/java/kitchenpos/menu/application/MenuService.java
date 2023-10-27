@@ -12,7 +12,7 @@ import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.common.vo.Money;
 import kitchenpos.menu.dto.menu.CreateMenuRequest;
-import kitchenpos.menu.dto.menu.MenuProductDto;
+import kitchenpos.menu.dto.menu.MenuProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +42,7 @@ public class MenuService {
 
         final Menu menu = menuRepository.save(createMenuRequest.toDomain());
         final List<MenuProduct> menuProducts = createMenuRequest.getMenuProducts().stream()
-                .map(menuProductDto -> new MenuProduct(menu.getId(), menuProductDto.getProductId(), menuProductDto.getQuantity()))
+                .map(menuProductRequest -> new MenuProduct(menu.getId(), menuProductRequest.getProductId(), menuProductRequest.getQuantity()))
                 .collect(Collectors.toList());
         menuProductRepository.saveAll(menuProducts);
         return menu;
@@ -69,15 +69,15 @@ public class MenuService {
 
     private void validateProductExists(final CreateMenuRequest createMenuRequest) {
         createMenuRequest.getMenuProducts()
-                .forEach(menuProductDto -> productRepository.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new));
+                .forEach(menuProductRequest -> productRepository.findById(menuProductRequest.getProductId()).orElseThrow(IllegalArgumentException::new));
     }
 
-    private Money calculateMoney(final List<MenuProductDto> menuProductDtos) {
+    private Money calculateMoney(final List<MenuProductRequest> menuProductRequests) {
         Money sum = Money.empty();
-        for (final MenuProductDto menuProductDto : menuProductDtos) {
-            final Product product = productRepository.findById(menuProductDto.getProductId())
+        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
+            final Product product = productRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(Money.valueOf(menuProductDto.getQuantity())));
+            sum = sum.add(product.getPrice().multiply(Money.valueOf(menuProductRequest.getQuantity())));
         }
         return sum;
     }

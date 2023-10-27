@@ -10,7 +10,7 @@ import kitchenpos.product.domain.Product;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.menu.dto.menu.CreateMenuRequest;
-import kitchenpos.menu.dto.menu.MenuProductDto;
+import kitchenpos.menu.dto.menu.MenuProductRequest;
 import kitchenpos.common.vo.Money;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -44,8 +44,8 @@ class MenuServiceTest {
         // given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
         final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
-        final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
-        final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 5_000, menuGroup.getId(), List.of(menuProductDto));
+        final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 3);
+        final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 5_000, menuGroup.getId(), List.of(menuProductRequest));
 
         // when
         final Menu actual = menuService.create(createMenuRequest);
@@ -68,8 +68,8 @@ class MenuServiceTest {
             final Integer price = -999999;
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
             final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
-            final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
-            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", price, menuGroup.getId(), List.of(menuProductDto));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 3);
+            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", price, menuGroup.getId(), List.of(menuProductRequest));
 
             // expected
             assertThatThrownBy(() -> menuService.create(createMenuRequest))
@@ -81,8 +81,8 @@ class MenuServiceTest {
             // given
             final Long menuGroupId = 999999L;
             final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
-            final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
-            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 5_000, menuGroupId, List.of(menuProductDto));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 3);
+            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 5_000, menuGroupId, List.of(menuProductRequest));
 
             // expect
             assertThatThrownBy(() -> menuService.create(createMenuRequest))
@@ -105,8 +105,8 @@ class MenuServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
             final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
-            final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
-            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 500_000, menuGroup.getId(), List.of(menuProductDto));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 3);
+            final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 500_000, menuGroup.getId(), List.of(menuProductRequest));
 
             // expect
             assertThatThrownBy(() -> menuService.create(createMenuRequest))

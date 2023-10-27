@@ -13,9 +13,8 @@ import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.dto.CreateOrderRequest;
-import kitchenpos.order.dto.OrderLineItemDto;
+import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.UpdateOrderRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -56,8 +55,8 @@ class OrderServiceTest {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
-        final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 5);
-        final CreateOrderRequest createOrderRequest = new CreateOrderRequest(orderTable.getId(), List.of(orderLineItemDto));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 5);
+        final CreateOrderRequest createOrderRequest = new CreateOrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
 
         // when
         final Order actual = orderService.create(createOrderRequest);
@@ -90,10 +89,10 @@ class OrderServiceTest {
             final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
             final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, false));
 
-            final OrderLineItemDto firstOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
-            final OrderLineItemDto secondOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
+            final OrderLineItemRequest firstOrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
+            final OrderLineItemRequest secondOrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
 
-            final CreateOrderRequest createOrderRequest = new CreateOrderRequest(orderTable.getId(), List.of(firstOrderLineItemDto, secondOrderLineItemDto));
+            final CreateOrderRequest createOrderRequest = new CreateOrderRequest(orderTable.getId(), List.of(firstOrderLineItemRequest, secondOrderLineItemRequest));
 
             // expected
             assertThatThrownBy(() -> orderService.create(createOrderRequest))
@@ -106,10 +105,10 @@ class OrderServiceTest {
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
             final Menu menu = menuRepository.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId()));
 
-            final OrderLineItemDto firstOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
-            final OrderLineItemDto secondOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
+            final OrderLineItemRequest firstOrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
+            final OrderLineItemRequest secondOrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
 
-            final CreateOrderRequest createOrderRequest = new CreateOrderRequest(null, List.of(firstOrderLineItemDto, secondOrderLineItemDto));
+            final CreateOrderRequest createOrderRequest = new CreateOrderRequest(null, List.of(firstOrderLineItemRequest, secondOrderLineItemRequest));
 
             // expected
             assertThatThrownBy(() -> orderService.create(createOrderRequest))
