@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.order;
 
 import com.sun.tools.javac.util.List;
 import kitchenpos.menu.domain.Menu;
