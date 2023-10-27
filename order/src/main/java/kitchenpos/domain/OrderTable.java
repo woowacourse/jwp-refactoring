@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;

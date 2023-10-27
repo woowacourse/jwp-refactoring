@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.presentation;
 
 import kitchenpos.application.OrderTableService;
 import kitchenpos.dto.request.OrderTableCreateRequest;

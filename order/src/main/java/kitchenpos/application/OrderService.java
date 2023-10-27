@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
@@ -28,7 +26,7 @@ public class OrderService {
     @Transactional
     public Long create(final Long orderTableId) {
         OrderTable orderTable = orderTableRepository.getById(orderTableId);
-        Order order = new Order(orderTable, COOKING, LocalDateTime.now());
+        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
         return orderRepository.save(order).getId();
     }
 
