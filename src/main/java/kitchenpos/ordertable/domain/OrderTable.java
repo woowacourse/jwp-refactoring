@@ -3,7 +3,7 @@ package kitchenpos.ordertable.domain;
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
-    private int numberOfGuests;
+    private NumberOfGuests numberOfGuests;
     private boolean empty;
 
     public OrderTable(int numberOfGuests, boolean empty) {
@@ -13,7 +13,7 @@ public class OrderTable {
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
     }
 
@@ -29,13 +29,10 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("테이블의 손님 수는 음수일 수 없습니다.");
-        }
         if (empty) {
             throw new IllegalArgumentException("빈 테이블의 손님 수는 변경할 수 없습니다.");
         }
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
     public void group(Long tableGroupId) {
@@ -57,7 +54,7 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
     public boolean isEmpty() {
