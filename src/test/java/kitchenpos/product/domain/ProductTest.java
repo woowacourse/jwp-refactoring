@@ -1,6 +1,5 @@
 package kitchenpos.product.domain;
 
-import kitchenpos.menu.domain.Price;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;

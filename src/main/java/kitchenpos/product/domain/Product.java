@@ -1,7 +1,5 @@
 package kitchenpos.product.domain;
 
-import kitchenpos.menu.domain.Price;
-
 public class Product {
 
     private final Long id;

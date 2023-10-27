@@ -19,7 +19,7 @@ public class MenuProduct {
     }
 
     public Price calculatePrice() {
-        return product.getPrice().multiply(quantity);
+        return new Price(product.getPrice().getValue()).multiply(quantity);
     }
 
     public Long getSeq() {

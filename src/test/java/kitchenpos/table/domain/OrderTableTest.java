@@ -14,7 +14,7 @@ class OrderTableTest {
         //given
         final NumberOfGuests before = DEFAULT_NUMBER_OF_GUESTS;
         final NumberOfGuests after = NumberOfGuests.from(4);
-        final OrderTable orderTable = new OrderTable(before, true);
+        final OrderTable orderTable = new OrderTable(before, false);
 
         //when
         orderTable.updateNumberOfGuests(after);
