@@ -12,6 +12,6 @@ public interface OrderLineItemRepository extends JpaRepository<OrderLineItem, Lo
     List<OrderLineItem> findAllByOrderId(Long orderId);
 
     @Query(value = "select oli from OrderLineItem oli " +
-            "where oli.menu.id in :menuIds")
+            "where oli.orderMenu.id in :menuIds")
     List<OrderLineItem> findAllByMenuIds(@Param("menuIds") List<Long> menuIds);
 }

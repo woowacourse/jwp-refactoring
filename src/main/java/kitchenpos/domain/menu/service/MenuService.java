@@ -3,8 +3,11 @@ package kitchenpos.domain.menu.service;
 import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.domain.menu.repository.MenuGroupRepository;
+import kitchenpos.domain.menu.repository.MenuProductRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.service.dto.MenuCreateRequest;
 import kitchenpos.domain.menu.service.dto.MenuResponse;
@@ -22,10 +25,14 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final MenuValidator menuValidator;
 
-    public MenuService(final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository) {
+    public MenuService(final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository, final MenuProductRepository menuProductRepository, final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.menuValidator = menuValidator;
     }
 
     @Transactional
@@ -35,9 +42,14 @@ public class MenuService {
 
         final Price price = new Price(BigDecimal.valueOf(request.getPrice()));
 
-        final Menu menu = new Menu(request.getName(), price, savedMenuGroup, new MenuProducts());
+        final MenuProducts menuProducts = new MenuProducts();
+        final Menu menu = new Menu(request.getName(), price, savedMenuGroup, menuProducts);
 
+        final List<MenuProduct> toSaveMenuProducts = menuProductRepository.findAllById(request.getMenuProductIds());
+        menu.validatePrice(menuValidator, toSaveMenuProducts);
         final Menu savedMenu = menuRepository.save(menu);
+        menuProducts.addAll(toSaveMenuProducts);
+
         return MenuResponse.toDto(savedMenu);
     }
 

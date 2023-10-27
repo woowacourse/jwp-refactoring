@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class OrderResponse {
     private final Long id;
 
-    private final OrderTableResponse orderTable;
+    private final Long orderTableId;
 
     private final String orderStatus;
 
@@ -17,9 +17,9 @@ public class OrderResponse {
 
     private final List<OrderLineItemResponse> orderLineItems;
 
-    public OrderResponse(final Long id, final OrderTableResponse orderTable, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItemResponse> orderLineItems) {
+    public OrderResponse(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -31,7 +31,7 @@ public class OrderResponse {
                 .collect(Collectors.toList());
 
         return new OrderResponse(order.getId(),
-                OrderTableResponse.toDto(order.getOrderTable()),
+                order.getOrderTableId(),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
                 orderLineItemResponses);
@@ -41,8 +41,8 @@ public class OrderResponse {
         return id;
     }
 
-    public OrderTableResponse getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {

@@ -18,26 +18,25 @@ public class MenuProduct {
     @ManyToOne(fetch = LAZY)
     private Menu menu;
 
-    @ManyToOne(fetch = LAZY)
-    private Product product;
+    private Long productId;
 
     private long quantity;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Product product, final long quantity) {
-        this(null, null, product, quantity);
+    public MenuProduct(final Long productId, final long quantity) {
+        this(null, null, productId, quantity);
     }
 
-    public MenuProduct(final Menu menu, final Product product, final long quantity) {
-        this(null, menu, product, quantity);
+    public MenuProduct(final Menu menu, final Long productId, final long quantity) {
+        this(null, menu, productId, quantity);
     }
 
-    public MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
+    public MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity) {
         this.seq = seq;
         this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 
@@ -53,8 +52,8 @@ public class MenuProduct {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {

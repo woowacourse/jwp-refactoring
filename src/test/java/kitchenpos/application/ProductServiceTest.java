@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.menu.repository.ProductRepository;
-import kitchenpos.domain.menu.service.ProductService;
-import kitchenpos.domain.menu.service.dto.ProductCreateRequest;
-import kitchenpos.domain.menu.service.dto.ProductResponse;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.repository.ProductRepository;
+import kitchenpos.domain.product.service.ProductService;
+import kitchenpos.domain.product.service.dto.ProductCreateRequest;
+import kitchenpos.domain.product.service.dto.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

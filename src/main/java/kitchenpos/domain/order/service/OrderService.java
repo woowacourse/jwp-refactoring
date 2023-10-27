@@ -4,14 +4,14 @@ import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
-import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.service.dto.OrderCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderLineItemCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderResponse;
 import kitchenpos.domain.order.service.dto.OrderUpateRequest;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +50,7 @@ public class OrderService {
 
         final OrderTable savedOrderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException(String.format("OrderTableId로 OrderTable을 찾을 수 없습니다. 입력값 = %s", request.getOrderTableId())));
-        final Order savedOrder = orderRepository.save(new Order(savedOrderTable, COOKING, now(), new OrderLineItems()));
+        final Order savedOrder = orderRepository.save(new Order(savedOrderTable.getId(), COOKING, now(), new OrderLineItems()));
         savedOrder.addAllOrderLineItems(orderLineItems);
 
         return OrderResponse.toDto(savedOrder);

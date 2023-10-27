@@ -4,11 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -23,8 +21,7 @@ public class Order {
     @Id
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(STRING)
     private OrderStatus orderStatus;
@@ -42,13 +39,13 @@ public class Order {
         this(null, null, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
-        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -56,7 +53,7 @@ public class Order {
 
     public void addAllOrderLineItems(final OrderLineItems orderLineItems) {
         for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
-            orderLineItem.changeOrder(this);
+            orderLineItem.changeOrder(id);
             this.orderLineItems.add(orderLineItem);
         }
     }
@@ -82,8 +79,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

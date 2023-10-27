@@ -66,3 +66,11 @@
   - [x] order 관련해서 JPA로 바꾼다.
 - [x] DAO를 지우고 Repository로 변경한다.
 - [x] Transaction readonly를 적용한다.
+
+### 3단계
+- [x] 패키지를 product, table, menu, order 로 분리한다.
+- [x] 각각의 패키지간 참조를 간접 참조로 변경한다.
+  - [x] order
+  - [x] menu
+- [x] 메뉴가 변경되도 주문 항목이 변경되지 않게 바꾼다.
+- [x] 양방향 연관관계를 제거한다. 

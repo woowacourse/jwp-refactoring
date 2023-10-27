@@ -4,8 +4,8 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuProductRepository;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,9 +31,8 @@ class MenuProductRepositoryTest extends RepositoryTestConfig {
 
         final Product potato = createProduct("감자", BigDecimal.valueOf(3000));
         final Product noodle = createProduct("면", BigDecimal.valueOf(3000));
-
-        final MenuProduct frenchFries = createMenuProduct(expected, potato, 5000);
-        final MenuProduct wooDong = createMenuProduct(other, noodle, 6000);
+        final MenuProduct frenchFries = createMenuProduct(expected, potato.getId(), 5000);
+        final MenuProduct wooDong = createMenuProduct(other, noodle.getId(), 6000);
 
         final MenuProducts expectedMenuProducts = new MenuProducts();
         expectedMenuProducts.addAll(List.of(frenchFries));
@@ -64,9 +63,8 @@ class MenuProductRepositoryTest extends RepositoryTestConfig {
 
         final Product potato = createProduct("감자", BigDecimal.valueOf(3000));
         final Product noodle = createProduct("면", BigDecimal.valueOf(3000));
-
-        final MenuProduct frenchFries = createMenuProduct(expected, potato, 5000);
-        final MenuProduct wooDong = createMenuProduct(other, noodle, 6000);
+        final MenuProduct frenchFries = createMenuProduct(expected, potato.getId(), 5000);
+        final MenuProduct wooDong = createMenuProduct(other, noodle.getId(), 6000);
 
         final MenuProducts expectedMenuProducts = new MenuProducts();
         expectedMenuProducts.addAll(List.of(frenchFries));
@@ -90,9 +88,9 @@ class MenuProductRepositoryTest extends RepositoryTestConfig {
                         .collect(Collectors.toList())
                 ).containsExactly(expected, other),
                 () -> assertThat(actual.stream()
-                        .map(MenuProduct::getProduct)
+                        .map(MenuProduct::getProductId)
                         .collect(Collectors.toList())
-                ).containsExactly(potato, noodle)
+                ).containsExactly(potato.getId(), noodle.getId())
         );
     }
 }

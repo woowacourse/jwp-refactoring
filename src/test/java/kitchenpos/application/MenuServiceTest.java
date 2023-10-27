@@ -4,8 +4,9 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.domain.menu.repository.MenuGroupRepository;
+import kitchenpos.domain.menu.repository.MenuProductRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.service.MenuService;
 import kitchenpos.domain.menu.service.dto.MenuCreateRequest;
@@ -26,15 +27,15 @@ import java.util.Optional;
 import static kitchenpos.application.fixture.MenuFixture.menu;
 import static kitchenpos.application.fixture.MenuGroupFixture.western;
 import static kitchenpos.application.fixture.MenuProductFixture.menuProduct;
-import static kitchenpos.application.fixture.ProductFixture.noodle;
-import static kitchenpos.application.fixture.ProductFixture.potato;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.only;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -51,20 +52,26 @@ class MenuServiceTest {
     @Mock
     private MenuGroupRepository menuGroupRepository;
 
+    @Mock
+    private MenuProductRepository menuProductRepository;
+
+    @Mock
+    private MenuValidator menuValidator;
+
     @Nested
     class Create {
 
         @Test
         void 메뉴를_생성한다() {
             // given
-            final Product noodle = noodle();
-            final Product potato = potato();
+            final Long noodleId = 1L;
+            final Long potatoId = 2L;
             final MenuGroup menuGroup = western();
             final Menu expected = spy(menu("우동세트", BigDecimal.valueOf(9000), menuGroup, new ArrayList<>()));
 
             final MenuProducts menuProducts = new MenuProducts();
-            final MenuProduct wooDong = menuProduct(expected, noodle, 1);
-            final MenuProduct frenchFries = menuProduct(expected, potato, 1);
+            final MenuProduct wooDong = menuProduct(expected, noodleId, 1);
+            final MenuProduct frenchFries = menuProduct(expected, potatoId, 1);
             menuProducts.addAll(List.of(wooDong, frenchFries));
             expected.addMenuProducts(menuProducts);
 
@@ -72,6 +79,8 @@ class MenuServiceTest {
             given(menuRepository.save(any(Menu.class))).willReturn(expected);
             final long savedId = 1L;
             given(expected.getId()).willReturn(savedId);
+            given(menuProductRepository.findAllById(anyList())).willReturn(List.of(wooDong, frenchFries));
+            willDoNothing().given(menuValidator).validatePrice(any(Menu.class), anyList());
 
             // when
             final MenuCreateRequest request = new MenuCreateRequest("우동", 1L, 1L, List.of(1L, 2L));
@@ -81,9 +90,7 @@ class MenuServiceTest {
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
-                    () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice().getPrice().longValue()),
-                    () -> assertMenuGroup(actual.getMenuGroup(), expected.getMenuGroup()),
-                    () -> assertThat(actual.getMenuProductResponses()).hasSize(expected.getMenuProducts().getMenuProducts().size())
+                    () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice().getPrice().longValue())
             );
         }
 

@@ -1,15 +1,17 @@
 package kitchenpos.repository;
 
+import kitchenpos.application.fixture.OrderMenuFixture;
 import kitchenpos.application.fixture.TableGroupFixture;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderMenu;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -44,20 +46,26 @@ public abstract class RepositoryTestConfig {
         return menu;
     }
 
+    protected OrderMenu createOrderMenu(final Long menuId, final String name, final BigDecimal price) {
+        final OrderMenu orderMenu = OrderMenuFixture.orderMenu(menuId, name, price);
+        em.persist(orderMenu);
+        return orderMenu;
+    }
+
     protected Product createProduct(final String name, final BigDecimal price) {
         final Product product = product(name, price);
         em.persist(product);
         return product;
     }
 
-    protected MenuProduct createMenuProduct(final Menu menu, final Product product, final long price) {
-        final MenuProduct menuProduct = menuProduct(menu, product, price);
+    protected MenuProduct createMenuProduct(final Menu menu, final Long productId, final long price) {
+        final MenuProduct menuProduct = menuProduct(menu, productId, price);
         em.persist(menuProduct);
         return menuProduct;
     }
 
     protected TableGroup createTableGroup(final LocalDateTime createdDate) {
-        final TableGroup tableGroup = TableGroupFixture.tableGroup(createdDate, new ArrayList<>());
+        final TableGroup tableGroup = TableGroupFixture.tableGroup(createdDate);
         em.persist(tableGroup);
         return tableGroup;
     }
@@ -68,14 +76,14 @@ public abstract class RepositoryTestConfig {
         return orderTable;
     }
 
-    protected Order createOrder(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        final Order order = order(orderTable, orderStatus, orderedTime, new ArrayList<>());
+    protected Order createOrder(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
+        final Order order = order(orderTableId, orderStatus, orderedTime, new ArrayList<>());
         em.persist(order);
         return order;
     }
 
-    protected OrderLineItem createOrderLineItem(final Order order, final Menu menu, final long quantity) {
-        final OrderLineItem orderLineItem = orderLineItem(order, menu, quantity);
+    protected OrderLineItem createOrderLineItem(final Long orderId, final OrderMenu orderMenu, final long quantity) {
+        final OrderLineItem orderLineItem = orderLineItem(orderId, orderMenu, quantity);
         em.persist(orderLineItem);
         return orderLineItem;
     }

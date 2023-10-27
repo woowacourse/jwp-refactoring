@@ -3,21 +3,21 @@ package kitchenpos.application;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderMenu;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
-import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.service.OrderService;
 import kitchenpos.domain.order.service.dto.OrderCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderLineItemCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderResponse;
 import kitchenpos.domain.order.service.dto.OrderUpateRequest;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ import static kitchenpos.application.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.application.fixture.MenuProductFixture.menuProduct;
 import static kitchenpos.application.fixture.OrderFixture.order;
 import static kitchenpos.application.fixture.OrderLineItemFixture.orderLineItem;
-import static kitchenpos.application.fixture.ProductFixture.product;
+import static kitchenpos.application.fixture.OrderMenuFixture.orderMenu;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,9 +75,9 @@ class OrderServiceTest {
     @Mock
     private OrderTableRepository orderTableRepository;
 
-    private Menu noodle;
+    private OrderMenu noodle;
 
-    private Menu potato;
+    private OrderMenu potato;
 
     private OrderLineItem wooDong;
 
@@ -85,8 +85,8 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        noodle = mock(Menu.class);
-        potato = mock(Menu.class);
+        noodle = mock(OrderMenu.class);
+        potato = mock(OrderMenu.class);
         wooDong = new OrderLineItem(null, noodle, 1);
         frenchFries = new OrderLineItem(null, potato, 1);
     }
@@ -98,22 +98,25 @@ class OrderServiceTest {
         void 주문을_생성할_수_있다() {
             // given
             final Menu menu = menu("우동세트", BigDecimal.valueOf(5_000), menuGroup("일식"), List.of());
-            final MenuProduct menuProduct = menuProduct(menu, product("면", BigDecimal.valueOf(5_000)), 5000L);
+            final long productId = 1L;
+            final MenuProduct menuProduct = menuProduct(menu, productId, 5000L);
             final MenuProducts menuProducts = new MenuProducts();
             menuProducts.addAll(List.of(menuProduct));
             menu.addMenuProducts(menuProducts);
 
-            final Order order = spy(order(mock(OrderTable.class), COOKING, now(), new ArrayList<>()));
-            final OrderLineItem orderLineItem = orderLineItem(order, menu, 1L);
+            final long orderTableId = 1L;
+            final Order order = spy(order(orderTableId, COOKING, now(), new ArrayList<>()));
+            final long savedIOrderId = 1L;
+            given(order.getId()).willReturn(savedIOrderId);
+
+            final OrderMenu orderMenu = orderMenu(1L, "우동세트", BigDecimal.valueOf(5_000));
+            final OrderLineItem orderLineItem = orderLineItem(savedIOrderId, orderMenu, 1L);
             order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
             given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(orderLineItem));
 
             given(menuRepository.countByIdIn(anyList())).willReturn(1L);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(mock(OrderTable.class)));
             given(orderRepository.save(any(Order.class))).willReturn(order);
-
-            final long savedId = 1L;
-            given(order.getId()).willReturn(savedId);
 
             // when
             final List<OrderLineItemCreateRequest> orderLineItemCreateRequest = List.of(new OrderLineItemCreateRequest(1L, 2L));
@@ -125,7 +128,7 @@ class OrderServiceTest {
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus().name()),
                     () -> assertThat(actual.getOrderedTime()).isEqualTo(order.getOrderedTime()),
-                    () -> assertThat(actual.getOrderTable()).isNotNull(),
+                    () -> assertThat(actual.getOrderTableId()).isNotNull(),
                     () -> assertThat(actual.getOrderLineItems()).hasSize(2)
             );
         }
@@ -146,9 +149,11 @@ class OrderServiceTest {
         void 주문_항목의_총합과_메뉴의_총합이_다르면_예외를_발생한다() {
             // given
             final Order order = order(COMPLETION, now(), List.of(wooDong, frenchFries));
-            final Product product = product("우동", BigDecimal.valueOf(3_000L));
-            final Menu menu = menu("우동세트", BigDecimal.valueOf(8_000), menuGroup("일식"), List.of(menuProduct(product, 3_000L)));
-            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(new OrderLineItem(order, menu, 1)));
+            final Long wooDongId = 1L;
+            final Menu menu = menu("우동세트", BigDecimal.valueOf(8_000), menuGroup("일식"), List.of(menuProduct(wooDongId, 3_000L)));
+            final OrderMenu orderMenu = orderMenu(null, "우동세트", BigDecimal.valueOf(8_000));
+            final Long savedOrderId = 1L;
+            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(new OrderLineItem(savedOrderId, orderMenu, 1)));
 
             // when
             final long incorrectMenuSize = order.getOrderLineItems().getOrderLineItems().size() - 1;
@@ -165,13 +170,17 @@ class OrderServiceTest {
         void 주문에_있는_주문_테이블이_없으면_예외가_발생한다() {
             // given
             final Menu menu = menu("우동세트", BigDecimal.valueOf(5_000), menuGroup("일식"), List.of());
-            final MenuProduct menuProduct = menuProduct(menu, product("면", BigDecimal.valueOf(5_000)), 5000L);
+            final Long productId = 1L;
+            final MenuProduct menuProduct = menuProduct(menu, productId, 5000L);
             final MenuProducts menuProducts = new MenuProducts();
             menuProducts.addAll(List.of(menuProduct));
             menu.addMenuProducts(menuProducts);
 
-            final Order order = spy(order(mock(OrderTable.class), COOKING, now(), new ArrayList<>()));
-            final OrderLineItem orderLineItem = orderLineItem(order, menu, 1L);
+            final long orderTableId = 1L;
+            final Order order = spy(order(orderTableId, COOKING, now(), new ArrayList<>()));
+            final Long savedOrderId = 1L;
+            final OrderMenu orderMenu = orderMenu(1L, "우동세트", BigDecimal.valueOf(5_000));
+            final OrderLineItem orderLineItem = orderLineItem(savedOrderId, orderMenu, 1L);
             order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
             given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(orderLineItem));
 
@@ -179,7 +188,6 @@ class OrderServiceTest {
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // then
-            final long orderTableId = 1L;
             final OrderCreateRequest request = new OrderCreateRequest(orderTableId, List.of(new OrderLineItemCreateRequest(1L, 2L)));
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);

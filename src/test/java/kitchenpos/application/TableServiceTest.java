@@ -3,14 +3,14 @@ package kitchenpos.application;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderRepository;
-import kitchenpos.domain.order.repository.OrderTableRepository;
-import kitchenpos.domain.order.service.TableService;
-import kitchenpos.domain.order.service.dto.OrderTableCreateRequest;
-import kitchenpos.domain.order.service.dto.OrderTableResponse;
-import kitchenpos.domain.order.service.dto.OrderTableUpdateGuestsRequest;
-import kitchenpos.domain.order.service.dto.OrderTableUpdateRequest;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.repository.OrderTableRepository;
+import kitchenpos.domain.table.service.TableService;
+import kitchenpos.domain.table.service.dto.OrderTableCreateRequest;
+import kitchenpos.domain.table.service.dto.OrderTableResponse;
+import kitchenpos.domain.table.service.dto.OrderTableUpdateGuestsRequest;
+import kitchenpos.domain.table.service.dto.OrderTableUpdateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -94,7 +94,7 @@ class TableServiceTest {
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
 
             final long orderTableId = 1L;
-            final Order order = new Order(spyOrderTable, COMPLETION, LocalDateTime.now(), new OrderLineItems());
+            final Order order = new Order(orderTableId, COMPLETION, LocalDateTime.now(), new OrderLineItems());
             given(orderRepository.findByOrderTableId(orderTableId)).willReturn(Optional.ofNullable(order));
 
             // when, then
@@ -110,7 +110,7 @@ class TableServiceTest {
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
 
             final long orderTableId = 1L;
-            final Order order = new Order(spyOrderTable, orderStatus, LocalDateTime.now(), new OrderLineItems());
+            final Order order = new Order(orderTableId, orderStatus, LocalDateTime.now(), new OrderLineItems());
             given(orderRepository.findByOrderTableId(orderTableId)).willReturn(Optional.ofNullable(order));
 
             // when, then

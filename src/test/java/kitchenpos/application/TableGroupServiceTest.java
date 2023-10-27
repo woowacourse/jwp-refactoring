@@ -3,14 +3,14 @@ package kitchenpos.application;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
-import kitchenpos.domain.order.repository.OrderTableRepository;
-import kitchenpos.domain.order.repository.TableGroupRepository;
-import kitchenpos.domain.order.service.TableGroupService;
-import kitchenpos.domain.order.service.dto.TableGroupCreateRequest;
-import kitchenpos.domain.order.service.dto.TableGroupResponse;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.repository.OrderTableRepository;
+import kitchenpos.domain.table.repository.TableGroupRepository;
+import kitchenpos.domain.table.service.TableGroupService;
+import kitchenpos.domain.table.service.dto.TableGroupCreateRequest;
+import kitchenpos.domain.table.service.dto.TableGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -57,11 +56,11 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = new OrderTable(3, true);
             final OrderTable orderTable2 = new OrderTable(5, true);
-            final TableGroup expected = tableGroup(now(), List.of(orderTable1, orderTable2));
+            final TableGroup expected = tableGroup(now());
 
             given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
 
-            final TableGroup spyExpected = spy(tableGroup(expected.getCreatedDate(), new ArrayList<>()));
+            final TableGroup spyExpected = spy(tableGroup(expected.getCreatedDate()));
             given(tableGroupRepository.save(any(TableGroup.class))).willReturn(spyExpected);
 
             // when
@@ -112,7 +111,8 @@ class TableGroupServiceTest {
             given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(ordertables);
             given(spyOrderTable.getId()).willReturn(1L);
 
-            final Order order = new Order(spyOrderTable, orderStatus, now(), new OrderLineItems());
+            final Long orderTableId = 1L;
+            final Order order = new Order(orderTableId, orderStatus, now(), new OrderLineItems());
             given(orderRepository.findAllByOrderTableIds(anyList())).willReturn(List.of(order));
 
             // when, then
