@@ -61,16 +61,21 @@ public class MenuValidator {
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
         final List<Product> savedProducts = findAllProductsByIds(extractProductIds(menuProducts));
+
         for (MenuProduct menuProduct : menuProducts) {
-            final Product savedProduct = savedProducts.stream()
-                    .filter(each -> each.getId().equals(menuProduct.getProductId()))
-                    .findFirst()
-                    .orElseThrow();
+            final Product savedProduct = findSavedProductsById(savedProducts, menuProduct.getProductId());
             maxPrice = maxPrice.add(savedProduct.getPrice().multiply(menuProduct.getQuantity()));
         }
 
         if (menuPrice.isHigherThan(maxPrice)) {
             throw new IllegalArgumentException("메뉴 가격 조정이 필요합니다.");
         }
+    }
+
+    private Product findSavedProductsById(final List<Product> savedProducts, final long productId) {
+        return savedProducts.stream()
+                .filter(each -> each.getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
     }
 }
