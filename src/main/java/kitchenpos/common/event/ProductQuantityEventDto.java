@@ -2,8 +2,8 @@ package kitchenpos.common.event;
 
 public class ProductQuantityEventDto {
 
-    private Long productId;
-    private long quantity;
+    private final Long productId;
+    private final long quantity;
 
     public ProductQuantityEventDto(final Long productId, final long quantity) {
         this.productId = productId;
