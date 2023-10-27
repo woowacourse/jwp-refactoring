@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.MenuValidator;
-import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.response.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -19,17 +18,14 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
     private final MenuValidator menuValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository,
             final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
         this.menuValidator = menuValidator;
     }
 
@@ -37,7 +33,7 @@ public class MenuService {
     public Long create(final MenuCreateRequest request) {
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(it -> new MenuProduct(
-                                productRepository.findById(it.getProductId()).get(),
+                                it.getProductId(),
                                 it.getQuantity()
                         )
                 ).collect(Collectors.toList());

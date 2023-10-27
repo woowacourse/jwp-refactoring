@@ -1,5 +1,7 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -8,6 +10,12 @@ import java.util.Objects;
 
 @Component
 public class MenuValidator {
+
+    private final ProductRepository productRepository;
+
+    public MenuValidator(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public void validate(final Menu menu) {
         if (menu.getMenuGroup() == null) {
@@ -20,7 +28,8 @@ public class MenuValidator {
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            final Product product = productRepository.findById(menuProduct.getProductId()).orElseThrow();
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {

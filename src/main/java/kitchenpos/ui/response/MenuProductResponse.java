@@ -25,7 +25,7 @@ public class MenuProductResponse {
                 .map(menuProduct -> new MenuProductResponse(
                         menuProduct.getSeq(),
                         menu.getId(),
-                        menuProduct.getProduct().getId(),
+                        menuProduct.getSeq(),
                         menuProduct.getQuantity()
                 )).collect(Collectors.toList());
     }

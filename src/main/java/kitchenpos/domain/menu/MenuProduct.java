@@ -1,15 +1,12 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.common.BaseDate;
-import kitchenpos.domain.product.Product;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -19,19 +16,18 @@ public class MenuProduct extends BaseDate {
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
     private long quantity;
 
-    public MenuProduct(final Long seq, final Product product, final long quantity) {
+    public MenuProduct(final Long seq, final Long productId, final long quantity) {
         this.seq = seq;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 
-    public MenuProduct(final Product product, final long quantity) {
-        this(null, product, quantity);
+    public MenuProduct(final Long productId, final long quantity) {
+        this(null, productId, quantity);
     }
 
     protected MenuProduct() {
@@ -41,20 +37,11 @@ public class MenuProduct extends BaseDate {
         return seq;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    @Override
-    public String toString() {
-        return "MenuProduct{" +
-                "seq=" + seq +
-                ", product=" + product +
-                ", quantity=" + quantity +
-                '}';
     }
 }
