@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.ProductService;
 import kitchenpos.dto.product.request.ProductCreateRequest;
 import kitchenpos.dto.product.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
