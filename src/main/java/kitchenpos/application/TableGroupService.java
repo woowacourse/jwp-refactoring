@@ -23,7 +23,8 @@ public class TableGroupService {
     public TableGroupService(
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository,
-            final TableGroupValidator tableGroupValidator) {
+            final TableGroupValidator tableGroupValidator
+    ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
         this.tableGroupValidator = tableGroupValidator;
