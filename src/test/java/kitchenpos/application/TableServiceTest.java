@@ -5,6 +5,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.*;
 import kitchenpos.fixture.MenuGroupFixtures;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableChangeEmptyRequest;
 import kitchenpos.request.TableChangeNumberOfGuestsRequest;

@@ -5,6 +5,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.*;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import kitchenpos.request.OrderCreateRequest;
 import kitchenpos.request.OrderLineItemDto;
