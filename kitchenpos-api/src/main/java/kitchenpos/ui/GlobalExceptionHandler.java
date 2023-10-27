@@ -1,6 +1,6 @@
 package kitchenpos.ui;
 
-import kitchenpos.common.dto.ExceptionResponse;
+import kitchenpos.ui.dto.ExceptionResponse;
 import kitchenpos.common.exception.KitchenPosException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

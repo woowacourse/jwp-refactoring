@@ -106,6 +106,25 @@ classDiagram
     OrderTable --> TableGroup
 ```
 
+## 모듈 의존성 다이어그램
+```mermaid
+flowchart TD
+    api --> domain
+    api --> test
+    domain --> test
+```
+
+```mermaid
+flowchart TD
+  core -.- domain
+  menu -.- domain
+  menu-group -.- domain
+  order -.- domain
+  order-table -.- domain
+  product -.- domain
+  table-group -.- domain
+```
+
 ## 프로젝트 개선 목록
 
 - [X] 코드 서식을 정리한다.

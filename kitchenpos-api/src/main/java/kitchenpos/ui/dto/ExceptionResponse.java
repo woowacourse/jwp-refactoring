@@ -1,4 +1,4 @@
-package kitchenpos.common.dto;
+package kitchenpos.ui.dto;
 
 public class ExceptionResponse {
 

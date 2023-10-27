@@ -3,7 +3,7 @@ jar {
 }
 
 dependencies {
-    implementation project(':kitchenpos-common')
+    implementation project(':kitchenpos-domain:core')
     implementation project(':kitchenpos-domain:menu')
     implementation project(':kitchenpos-domain:menu-group')
     implementation project(':kitchenpos-domain:order')

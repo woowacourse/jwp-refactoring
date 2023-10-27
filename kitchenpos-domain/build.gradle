@@ -10,7 +10,6 @@ jar {
 
 subprojects {
     dependencies {
-        implementation project(':kitchenpos-common')
         testImplementation project(':kitchenpos-test')
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'org.flywaydb:flyway-core'
