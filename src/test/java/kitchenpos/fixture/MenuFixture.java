@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuFixture {
@@ -10,7 +10,7 @@ public class MenuFixture {
         return Menu.builder()
                 .name(name)
                 .price(price)
-                .menuGroup(MenuGroup.builder().build())
+                .menuGroupId(MenuGroup.builder().build().getId())
                 .build();
     }
 }
