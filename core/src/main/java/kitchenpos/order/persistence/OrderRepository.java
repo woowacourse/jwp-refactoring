@@ -14,4 +14,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM orders o JOIN FETCH o.orderLineItems.values")
     List<Order> findAllWithFetch();
+
+    List<Order> findAllByOrderTableId(Long orderTableId);
 }

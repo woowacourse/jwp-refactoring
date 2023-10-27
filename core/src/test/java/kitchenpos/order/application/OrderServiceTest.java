@@ -66,8 +66,7 @@ class OrderServiceTest {
         Product product = productRepository.save(new Product("족발", BigDecimal.valueOf(1000.00)));
         Long menuGroupId = menuGroupRepository.save(new MenuGroup("세트")).getId();
         menu = menuRepository.save(
-            new Menu("황족발", BigDecimal.valueOf(1800.00), menuGroupId, List.of(new MenuProduct(product, 2))));
-
+                new Menu("황족발", BigDecimal.valueOf(1800.00), menuGroupId, List.of(new MenuProduct(product, 2))));
     }
 
     @Nested
@@ -85,9 +84,9 @@ class OrderServiceTest {
 
             // then
             assertAll(
-                () -> assertThat(actual.getId()).isPositive(),
-                () -> assertThat(actual.getOrderLineItems())
-                    .allSatisfy(it -> assertThat(it.getId()).isPositive())
+                    () -> assertThat(actual.getId()).isPositive(),
+                    () -> assertThat(actual.getOrderLineItems())
+                            .allSatisfy(it -> assertThat(it.getId()).isPositive())
             );
         }
 
@@ -99,7 +98,7 @@ class OrderServiceTest {
 
             // when && then
             assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -111,7 +110,7 @@ class OrderServiceTest {
 
             // when && then
             assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -123,7 +122,7 @@ class OrderServiceTest {
 
             // when && then
             assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -141,8 +140,8 @@ class OrderServiceTest {
 
         // then
         assertThat(actual).usingRecursiveComparison()
-            .ignoringFields("orderTable")
-            .isEqualTo(expected);
+                .ignoringFields("orderTable")
+                .isEqualTo(expected);
     }
 
     @Nested
@@ -170,7 +169,7 @@ class OrderServiceTest {
 
             // when && then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, COOKING))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
     }
