@@ -28,7 +28,6 @@ public class OrderService {
     @Transactional
     public Long create(final Long orderTableId) {
         OrderTable orderTable = orderTableRepository.getById(orderTableId);
-        orderTable.validateIsEmpty();
         Order order = new Order(orderTable, COOKING, LocalDateTime.now());
         return orderRepository.save(order).getId();
     }
