@@ -1,12 +1,9 @@
 package kitchenpos.tablegroup.ui.response;
 
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.ordertable.ui.response.OrderTableResponse;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class TableGroupResponse {
     private final Long id;

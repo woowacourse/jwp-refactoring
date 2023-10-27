@@ -1,18 +1,15 @@
 package kitchenpos.application;
 
-import fixture.OrderTableBuilder;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.validator.OrderValidator;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.order.domain.validator.OrderValidator;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
 import kitchenpos.order.ui.request.UpdateOrderStatusRequest;
 import kitchenpos.order.ui.response.OrderResponse;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

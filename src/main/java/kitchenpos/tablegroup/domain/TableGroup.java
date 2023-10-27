@@ -25,7 +25,7 @@ public class TableGroup {
     }
 
     private TableGroup(final Long id,
-                      final LocalDateTime createdDate) {
+                       final LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
     }

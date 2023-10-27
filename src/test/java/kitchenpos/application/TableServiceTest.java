@@ -1,10 +1,7 @@
 package kitchenpos.application;
 
-import fixture.OrderTableBuilder;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.application.TableService;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.ordertable.ui.request.OrderTableRequest;
 import kitchenpos.ordertable.ui.request.UpdateOrderTableEmptyRequest;

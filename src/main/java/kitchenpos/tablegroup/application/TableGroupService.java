@@ -1,7 +1,7 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.GroupingService;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.tablegroup.domain.validator.TableGroupValidator;
 import kitchenpos.tablegroup.ui.request.TableGroupRequest;
