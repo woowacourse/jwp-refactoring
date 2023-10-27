@@ -29,10 +29,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(TableGroupCreateRequest request) {
-        List<Long> orderTableIds = request.getOrderTables().stream()
-                .map(TableGroupUnitDto::getId)
-                .collect(Collectors.toList());
-
+        List<Long> orderTableIds = request.getOrderTableIds();
         OrderTables savedOrderTables = new OrderTables(orderTableDao.findAllByIdIn(orderTableIds));
         if (savedOrderTables.size() != orderTableIds.size()) {
             throw new IllegalArgumentException();
