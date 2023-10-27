@@ -1,10 +1,10 @@
 package kitchenpos.prodcut;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.product.Product;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -30,14 +30,14 @@ class ProductTest {
         @ValueSource(ints = {-100, -1})
         void 가격이_음수면_예외(int price) {
             // when && then
-            assertThatThrownBy(() -> new Product("상품", BigDecimal.valueOf(price)))
+            Assertions.assertThatThrownBy(() -> new Product("상품", BigDecimal.valueOf(price)))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 가격이_널이면_예외() {
             // when && then
-            assertThatThrownBy(() -> new Product("상품", (BigDecimal) null))
+            Assertions.assertThatThrownBy(() -> new Product("상품", (BigDecimal) null))
                 .isInstanceOf(IllegalArgumentException.class);
         }
     }

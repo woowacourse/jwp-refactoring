@@ -1,7 +1,6 @@
 package kitchenpos.table.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
@@ -17,6 +16,7 @@ import kitchenpos.table.TableGroup;
 import kitchenpos.table.persistence.OrderTableRepository;
 import kitchenpos.table.persistence.TableGroupRepository;
 import kitchenpos.table.request.OrderTableCreateRequest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -106,7 +106,7 @@ class OrderTableServiceTest {
         @Test
         void 없는_주문테이블이면_예외() {
             // when && then
-            assertThatThrownBy(() -> orderTableService.changeEmpty(1L, true))
+            Assertions.assertThatThrownBy(() -> orderTableService.changeEmpty(1L, true))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -118,7 +118,7 @@ class OrderTableServiceTest {
             OrderTable orderTableB = orderTableRepository.save(new OrderTable(null, tableGroupId, 2, true));
 
             // when && then
-            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTableA.getId(), false))
+            Assertions.assertThatThrownBy(() -> orderTableService.changeEmpty(orderTableA.getId(), false))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블그룹에 속한 테이블의 상태를 변경할 수 없습니다.");
 
@@ -133,7 +133,7 @@ class OrderTableServiceTest {
             orderRepository.save(order);
 
             // when && then
-            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId(), true))
+            Assertions.assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문이 완료된 테이블만 상태를 변경할 수 있습니다.");
         }
@@ -162,7 +162,7 @@ class OrderTableServiceTest {
             Long givenId = orderTableRepository.save(new OrderTable(5, false)).getId();
 
             // when & then
-            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(givenId, wrongValue))
+            Assertions.assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(givenId, wrongValue))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블 인원은 양수여야합니다.");
         }
@@ -170,7 +170,7 @@ class OrderTableServiceTest {
         @Test
         void 해당하는_주문테이블이_없으면_예외() {
             // when & then
-            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(1L, 1))
+            Assertions.assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(1L, 1))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 주문테이블입니다.");
         }
@@ -181,7 +181,7 @@ class OrderTableServiceTest {
             Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
 
             // when & then
-            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(givenId, 4))
+            Assertions.assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(givenId, 4))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("비어있는 테이블의 인원을 변경할 수 없습니다.");
         }

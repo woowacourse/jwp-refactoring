@@ -27,6 +27,7 @@ import kitchenpos.product.persistence.ProductRepository;
 import kitchenpos.support.ServiceTest;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.persistence.OrderTableRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -140,7 +141,7 @@ class OrderServiceTest {
         List<Order> actual = orderService.list();
 
         // then
-        assertThat(actual).usingRecursiveComparison()
+        Assertions.assertThat(actual).usingRecursiveComparison()
             .ignoringFields("orderTable")
             .isEqualTo(expected);
     }

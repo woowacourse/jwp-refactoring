@@ -16,6 +16,7 @@ import kitchenpos.menu.request.MenuProductCreateRequest;
 import kitchenpos.product.Product;
 import kitchenpos.product.persistence.ProductRepository;
 import kitchenpos.support.ServiceTest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -144,7 +145,7 @@ class MenuServiceTest {
         List<Menu> actual = menuService.list();
 
         // then
-        assertThat(actual).usingRecursiveComparison()
+        Assertions.assertThat(actual).usingRecursiveComparison()
             .ignoringFields("menuProducts.product")
             .isEqualTo(List.of(menuA, menuB));
     }

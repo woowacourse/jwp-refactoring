@@ -2,7 +2,6 @@ package kitchenpos.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,13 +12,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class OrderTest {
 
     @ParameterizedTest
-    @EnumSource(value = OrderStatus.class, names = {"COMPLETION"} ,mode = EXCLUDE)
+    @EnumSource(value = OrderStatus.class, names = {"COMPLETION"} ,mode = Mode.EXCLUDE)
     void 주문상태가_완료가_아닌지_확인한다_true(OrderStatus orderStatus) {
         // given
         Order order = getOrder(orderStatus);
@@ -41,7 +41,7 @@ class OrderTest {
     class 주문상태_변경시 {
 
         @ParameterizedTest
-        @EnumSource(value = OrderStatus.class, names = {"COMPLETION"} ,mode = EXCLUDE)
+        @EnumSource(value = OrderStatus.class, names = {"COMPLETION"} ,mode = Mode.EXCLUDE)
         void 성공(OrderStatus orderStatus) {
             // given
             Order order = getOrder(orderStatus);

@@ -2,11 +2,11 @@ package kitchenpos.table;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +45,7 @@ class TableGroupTest {
             TableGroup tableGroup = TableGroup.createEmpty(LocalDateTime.now());
 
             // when && then
-            assertThatThrownBy(() -> tableGroup.group(orderTables))
+            Assertions.assertThatThrownBy(() -> tableGroup.group(orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블 그룹은 최소 2개 이상의 테이블이 필요합니다.");
         }
@@ -60,7 +60,7 @@ class TableGroupTest {
             TableGroup tableGroup = TableGroup.createEmpty(LocalDateTime.now());
 
             // when && then
-            assertThatThrownBy(() -> tableGroup.group(orderTables))
+            Assertions.assertThatThrownBy(() -> tableGroup.group(orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("비어있는 테이블만 주문그룹이 될 수 있습니다.");
         }
@@ -75,7 +75,7 @@ class TableGroupTest {
             TableGroup tableGroup = TableGroup.createEmpty(LocalDateTime.now());
 
             // when && then
-            assertThatThrownBy(() -> tableGroup.group(orderTables))
+            Assertions.assertThatThrownBy(() -> tableGroup.group(orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("비어있는 테이블만 주문그룹이 될 수 있습니다.");
         }
