@@ -1,7 +1,7 @@
-package kitchenpos.tablegroup.infra;
+package kitchenpos.infra;
 
 import java.util.NoSuchElementException;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.domain.TableGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TableGroupRepository extends JpaRepository<TableGroup, Long> {
