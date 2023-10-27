@@ -2,7 +2,7 @@ package kitchenpos.menu.service;
 
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.service.dto.MenuRequest;
 import kitchenpos.menu.service.dto.MenuResponse;
