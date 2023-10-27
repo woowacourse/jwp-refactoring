@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.tablegroup.TableGroup;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
 class OrderTablesTest {

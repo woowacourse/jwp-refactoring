@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.menugroup.dto.MenuGroupCreateRequest;
-import kitchenpos.menugroup.dto.MenuGroupCreateResponse;
-import kitchenpos.menugroup.dto.MenuGroupResponse;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menugroup.application.dto.MenuGroupCreateResponse;
+import kitchenpos.menugroup.application.dto.MenuGroupResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
