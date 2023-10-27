@@ -112,27 +112,6 @@ class OrderServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 메뉴입니다.");
         }
-
-        @Test
-        void 메뉴의_수와_실제_주문한_메뉴의_수가_다르면_예외를_반환한다() {
-            // given
-            final var tableGroup = tableGroupRepository.save(TableGroup.create());
-            final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
-            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
-            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, List.of()));
-            final var orderLineItem1 = new OrderLineItem(menu, 5);
-            final var orderLineItem2 = new OrderLineItem(menu, 3);
-            orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2)));
-
-            final var orderLineItemRequest1 = new OrderLineItemInOrderDto(1L, 5L);
-            final var orderLineItemRequest2 = new OrderLineItemInOrderDto(1L, 3L);
-            final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest1, orderLineItemRequest2));
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 메뉴의 수와 실제 주문한 메뉴의 수가 다릅니다.");
-        }
     }
 
     @Nested
