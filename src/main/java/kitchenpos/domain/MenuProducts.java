@@ -34,7 +34,7 @@ public class MenuProducts {
 
     private static Price sum(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-                .map(MenuProduct::getPrice)
+                .map(MenuProduct::calculateAmount)
                 .reduce(Price.from(BigDecimal.ZERO), Price::add);
     }
 

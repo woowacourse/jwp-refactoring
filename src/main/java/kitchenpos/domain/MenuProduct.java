@@ -53,7 +53,7 @@ public class MenuProduct {
         this.menu = menu;
     }
 
-    public Price getPrice() {
+    public Price calculateAmount() {
         final Price price = product.getPrice();
         return price.multiply(quantity);
     }
