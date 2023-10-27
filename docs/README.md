@@ -45,3 +45,23 @@
 
 ## 패키지 간 의존성 개선
 - [ ] 패키지 사이 의존 관계를 단방향이 되도록한다.
+
+### 패키지 구조
+- 메뉴 관련
+  - MenuGroup
+  - Menu
+  - MenuProducts
+  - MenuProduct
+  - Product
+  - Price
+
+- 테이블 관련
+  - TableGroup
+  - OrderTables
+  - OrderTable
+  - NumberOfGuests
+
+- 주문 관련
+  - Order
+  - OrderLineItems
+  - OrderStatus
