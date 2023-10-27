@@ -1,13 +1,11 @@
 package kitchenpos.order.application;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.model.Menu;
-import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.model.Order;
 import kitchenpos.order.domain.model.OrderLineItem;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.domain.service.OrderValidator;
 import kitchenpos.order.dto.request.OrderChangeStatusRequest;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
@@ -21,48 +19,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-                        OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+    public OrderService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
+                        OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
-    public OrderResponse create(final OrderCreateRequest request) {
+    public OrderResponse create(OrderCreateRequest request) {
         OrderTable orderTable = orderTableRepository.findByIdOrThrow(request.getOrderTableId());
-        Order order = orderRepository.save(Order.init(orderTable));
-        List<OrderLineItem> orderLineItems = createOrderLineItems(order, request.getOrderLineItems());
-        order.setUpOrderLineItems(orderLineItems);
+        List<OrderLineItem> orderLineItems = createOrderLineItems(request.getOrderLineItems());
+        Order order = orderRepository.save(Order.create(orderTable, orderLineItems, orderValidator));
         return OrderResponse.from(order);
     }
 
-    private List<OrderLineItem> createOrderLineItems(Order order, List<OrderLineItemRequest> orderLineItemRequests) {
-        Map<Long, Menu> menuIdToMenu = findMenus(orderLineItemRequests).stream()
-            .collect(Collectors.toMap(Menu::getId, menu -> menu));
-
+    private List<OrderLineItem> createOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
-            .map(orderLineItem -> new OrderLineItem(menuIdToMenu.get(orderLineItem.getMenuId()),
-                orderLineItem.getQuantity()))
+            .map(orderLineItem -> new OrderLineItem(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
             .collect(Collectors.toList());
-    }
-
-    private List<Menu> findMenus(List<OrderLineItemRequest> orderLineRequests) {
-        List<Long> menuIds = orderLineRequests.stream()
-            .map(OrderLineItemRequest::getMenuId)
-            .collect(Collectors.toList());
-        List<Menu> menus = menuRepository.findAllById(menuIds);
-        validateMenusSize(menus, menuIds);
-        return menus;
-    }
-
-    private void validateMenusSize(List<Menu> menus, List<Long> menuIds) {
-        if (menus.size() != menuIds.size()) {
-            throw new IllegalArgumentException("올바르지 않은 메뉴입니다.");
-        }
     }
 
     @Transactional(readOnly = true)

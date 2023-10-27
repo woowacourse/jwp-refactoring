@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.order.domain.service.OrderValidator;
 import kitchenpos.table.domain.model.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -45,40 +46,22 @@ public class Order {
     protected Order() {
     }
 
-    private Order(OrderTable orderTable, OrderStatus orderStatus) {
-        this(null, orderTable, orderStatus);
+    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, orderLineItems);
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus) {
-        validate(orderTable);
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
+        this.orderLineItems = orderLineItems;
     }
 
-    public static Order init(OrderTable orderTable) {
-        return new Order(orderTable, OrderStatus.COOKING);
-    }
-
-    private void validate(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 주문 테이블입니다.");
-        }
-    }
-
-    public void setUpOrderLineItems(List<OrderLineItem> orderLineItems) {
-        validateSize(orderLineItems);
-        this.orderLineItems.addAll(orderLineItems);
-    }
-
-    private void validateSize(List<OrderLineItem> orderLineItems) {
-        long menuSize = orderLineItems.stream()
-            .map(orderLineItem -> orderLineItem.getMenu().getId())
-            .distinct()
-            .count();
-        if (menuSize != orderLineItems.size()) {
-            throw new IllegalArgumentException("올바르지 않은 메뉴입니다.");
-        }
+    public static Order create(OrderTable orderTable, List<OrderLineItem> orderLineItems,
+                               OrderValidator orderValidator) {
+        Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+        orderValidator.validate(order);
+        return order;
     }
 
     public void changeStatus(OrderStatus orderStatus) {

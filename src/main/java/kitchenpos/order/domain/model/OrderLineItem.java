@@ -1,12 +1,10 @@
 package kitchenpos.order.domain.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import kitchenpos.menu.domain.model.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -15,30 +13,31 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Menu menu;
+    @Column(name = "menu_id", nullable = false)
+    private Long menuId;
 
+    @Column(nullable = false)
     private Long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Menu menu, Long quantity) {
-        this(null, menu, quantity);
+    public OrderLineItem(Long menuId, Long quantity) {
+        this(null, menuId, quantity);
     }
 
-    public OrderLineItem(Long seq, Menu menu, Long quantity) {
+    public OrderLineItem(Long seq, Long menuId, Long quantity) {
         this.seq = seq;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = quantity;
     }
-    
+
     public Long getSeq() {
         return seq;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public Long getQuantity() {

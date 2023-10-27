@@ -1,13 +1,11 @@
 package kitchenpos.order.supports;
 
-import kitchenpos.menu.domain.model.Menu;
-import kitchenpos.menu.supports.MenuFixture;
 import kitchenpos.order.domain.model.OrderLineItem;
 
 public class OrderLineItemFixture {
 
     private Long seq = null;
-    private Menu menu = MenuFixture.fixture().build();
+    private Long menuId = 1L;
     private long quantity = 3L;
 
     private OrderLineItemFixture() {
@@ -22,8 +20,8 @@ public class OrderLineItemFixture {
         return this;
     }
 
-    public OrderLineItemFixture menu(Menu menu) {
-        this.menu = menu;
+    public OrderLineItemFixture menuId(Long menuId) {
+        this.menuId = menuId;
         return this;
     }
 
@@ -33,6 +31,6 @@ public class OrderLineItemFixture {
     }
 
     public OrderLineItem build() {
-        return new OrderLineItem(seq, menu, quantity);
+        return new OrderLineItem(seq, menuId, quantity);
     }
 }
