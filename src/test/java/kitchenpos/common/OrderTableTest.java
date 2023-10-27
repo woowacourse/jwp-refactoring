@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.common;
 
 import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
