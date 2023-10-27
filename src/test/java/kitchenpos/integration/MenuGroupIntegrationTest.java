@@ -6,8 +6,8 @@ import static kitchenpos.integration.fixture.MenuGroupAPIFixture.listMenuGroups;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.integration.helper.InitIntegrationTest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.util.List;

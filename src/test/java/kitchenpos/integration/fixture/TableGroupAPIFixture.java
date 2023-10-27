@@ -4,8 +4,8 @@ import static io.restassured.RestAssured.given;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.table.application.dto.response.TableGroupResponse;
 import org.springframework.http.MediaType;
 
 public class TableGroupAPIFixture {

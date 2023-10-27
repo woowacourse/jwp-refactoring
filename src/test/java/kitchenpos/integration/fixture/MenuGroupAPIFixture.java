@@ -5,8 +5,8 @@ import static io.restassured.RestAssured.given;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.MenuGroupCreateRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
 import org.springframework.http.MediaType;
 import java.util.List;
 
