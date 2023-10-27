@@ -1,10 +1,6 @@
 package kitchenpos.menu.domain;
 
-import static kitchenpos.Price.ZERO_PRICE;
-
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import kitchenpos.Price;
 import kitchenpos.menugroup.domain.MenuGroup;
 
@@ -33,9 +28,8 @@ public class Menu {
     @JoinColumn(name = "MENU_GROUP_ID")
     private MenuGroup menuGroup;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "MENU_ID", nullable = false, updatable = false)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts;
 
     public Menu() {
     }
@@ -44,14 +38,12 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        validateMenuProducts(menuProducts);
-        this.menuProducts.addAll(menuProducts);
+        this.menuProducts = new MenuProducts(menuProducts);
+        validateMenuProducts();
     }
 
-    private void validateMenuProducts(final List<MenuProduct> menuProducts) {
-        final Price sum = menuProducts.stream()
-                .map(MenuProduct::calculatePrice)
-                .reduce(ZERO_PRICE, Price::add);
+    private void validateMenuProducts() {
+        final Price sum = menuProducts.calculateSum();
         if (price.isBiggerThan(sum)) {
             throw new IllegalArgumentException("메뉴의 가격은 상품가격 * 수량의 합보다 작거나 같아야한다");
         }
@@ -74,6 +66,6 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getMenuProducts();
     }
 }
