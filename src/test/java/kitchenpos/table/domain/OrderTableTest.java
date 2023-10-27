@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -128,35 +126,6 @@ class OrderTableTest {
 
                 softly.assertThatThrownBy(() -> orderTableTwo.assignTableGroup(1L))
                         .isInstanceOf(IllegalArgumentException.class);
-            });
-        }
-    }
-
-    @DisplayName("단체 지정 해제")
-    @Nested
-    class DeassignTableGroupNestedClass {
-
-        @DisplayName("[SUCCESS] 단체 지정을 제거하고 비어있는 상태를 false 로 변경한다.")
-        @Test
-        void success_ungroupTableGroup() {
-            // given
-            final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
-            final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
-            TableGroup.withOrderTables(List.of(
-                    orderTableOne,
-                    orderTableTwo
-            ));
-
-            // when
-            orderTableOne.deassignTableGroup();
-            orderTableTwo.deassignTableGroup();
-
-            // then
-            assertSoftly(softly -> {
-                softly.assertThat(orderTableOne.isGrouped()).isFalse();
-                softly.assertThat(orderTableOne.getTableGroupId()).isNull();
-                softly.assertThat(orderTableTwo.isGrouped()).isFalse();
-                softly.assertThat(orderTableTwo.getTableGroupId()).isNull();
             });
         }
     }

@@ -26,8 +26,8 @@ public class OrderTable {
     }
 
     public OrderTable(final Long tableGroupId,
-                         final int numberOfGuests,
-                         final boolean empty
+                      final int numberOfGuests,
+                      final boolean empty
     ) {
         this(null, tableGroupId, numberOfGuests, empty);
     }
@@ -51,6 +51,11 @@ public class OrderTable {
         return tableGroupId != null;
     }
 
+    public void changeOrderTableEmpty(final OrderTableValidator orderTableValidator, final boolean isEmpty) {
+        orderTableValidator.validateChangeEmpty(this);
+        this.empty = isEmpty;
+    }
+
     public void changeOrderTableEmpty(final boolean isEmpty) {
         if (isEmpty && tableGroupId != null) {
             throw new IllegalArgumentException("단체 지정이 되어 있으므로 주문 테이블 상태를 비어있게 할 수 없습니다.");
@@ -64,11 +69,6 @@ public class OrderTable {
             throw new IllegalArgumentException("이미 단체 지정이 되어있는 주문 테이블을 새롭게 단체 지정할 수 없습니다.");
         }
         tableGroupId = requestTableGroupId;
-    }
-
-    public void deassignTableGroup() {
-        this.tableGroupId = null;
-        this.empty = false;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
