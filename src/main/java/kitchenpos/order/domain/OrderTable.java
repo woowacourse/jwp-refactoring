@@ -38,7 +38,7 @@ public class OrderTable {
         this.id = id;
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
-        this.orders = new Orders(orders);
+        this.orders = new Orders(orders, this);
     }
 
     public static OrderTable forSave(final int numberOfGuests, final boolean empty, final List<Order> orders) {
@@ -65,24 +65,13 @@ public class OrderTable {
     }
 
     public void registerTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
-    public void addOrder(final Order order) {
         validateEmptyStatus();
-        validateOrderTable(order);
-        orders.addOrder(order);
+        this.tableGroup = tableGroup;
     }
 
     private void validateEmptyStatus() {
         if (empty) {
-            throw new IllegalArgumentException("빈 테이블에는 주문을 추가할 수 없습니다.");
-        }
-    }
-
-    private void validateOrderTable(final Order order) {
-        if (order.getOrderTableId() != null) {
-            throw new IllegalArgumentException("이미 주문 테이블에 속한 주문은 추가할 수 없습니다.");
+            throw new IllegalArgumentException("빈 테이블에는 테이블 그룹을 추가할 수 없습니다.");
         }
     }
 

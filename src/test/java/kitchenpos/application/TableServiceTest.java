@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.common.domain.Price;
 import kitchenpos.order.application.TableService;
 import kitchenpos.order.application.dto.OrderTableResponse;
 import kitchenpos.order.application.dto.OrderTableUpdateEmptyRequest;
@@ -15,7 +16,6 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.common.domain.Price;
 import kitchenpos.order.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,7 +57,7 @@ class TableServiceTest {
         given(orderTableRepository.getById(orderTableId))
             .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.singletonList(
                 new Order(1L, OrderStatus.COOKING,
-                          List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), orderTableId))));
+                          List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null))));
 
         // when
         // then

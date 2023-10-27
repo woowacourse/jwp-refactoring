@@ -8,17 +8,17 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.common.domain.Price;
 import kitchenpos.order.application.dto.OrderTableIdRequest;
-import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.common.domain.Price;
-import kitchenpos.table_group.domain.TableGroup;
 import kitchenpos.order.repository.OrderTableRepository;
-import kitchenpos.table_group.repository.TableGroupRepository;
 import kitchenpos.table_group.application.TableGroupService;
+import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
+import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.table_group.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,8 +43,8 @@ class TableGroupServiceTest {
     void create() {
         // given
         final List<OrderTable> orderTables = List.of(
-            new OrderTable(1L, 2, true, Collections.emptyList()),
-            new OrderTable(2L, 2, true, Collections.emptyList())
+            new OrderTable(1L, 2, false, Collections.emptyList()),
+            new OrderTable(2L, 2, false, Collections.emptyList())
         );
 
         given(orderTableRepository.getAllById(any()))
@@ -159,9 +159,9 @@ class TableGroupServiceTest {
         // given
         final List<OrderTable> orderTables = List.of(
             new OrderTable(1L, 2, true, List.of(new Order(1L, OrderStatus.COOKING, List.of(
-                new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L))),
+                new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null))),
             new OrderTable(2L, 2, true, List.of(new Order(1L, OrderStatus.COOKING, List.of(
-                new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 2L)))
+                new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null)))
         );
         final TableGroup tableGroup = new TableGroup(1L);
 

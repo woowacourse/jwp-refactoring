@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.common.domain.Price;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -22,7 +21,7 @@ class OrderTableTest {
         // given
         final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
             new Order(1L, OrderStatus.COMPLETION,
-                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L)));
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null)));
 
         // when
         orderTable.changeEmpty(true);
@@ -37,49 +36,26 @@ class OrderTableTest {
         // given
         final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
             new Order(1L, OrderStatus.COOKING,
-                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
-                      1L)));
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null)));
 
         // when
         // then
-        assertThatThrownBy(() -> orderTable.changeEmpty(true)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문 테이블에 주문을 추가한다.")
-    @Test
-    void addOrder() {
-        // given
-        final OrderTable orderTable = new OrderTable(1L, 0, false, List.of(
-            new Order(1L, OrderStatus.COOKING,
-                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L)));
-
-        // when
-        final Order addedOrder = new Order(2L, OrderStatus.COOKING,
-                                           List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
-                                           null);
-        orderTable.addOrder(addedOrder);
-
-        // then
-        assertThat(orderTable.getOrders().stream()
-                       .map(Order::getId)
-                       .collect(Collectors.toList())).contains(addedOrder.getId());
+        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("빈 테이블에 주문을 추가하면 예외가 발생한다.")
     @Test
     void addOrder_failEmptyTable() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 0, true, List.of(
-            new Order(1L, OrderStatus.COOKING,
-                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L)));
 
         // when
         // then
         assertThatThrownBy(
-            () -> orderTable.addOrder(
-                new Order(2L, OrderStatus.COOKING,
-                          List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
-                          orderTable.getId())));
+            () -> new OrderTable(1L, 0, true, List.of(
+                new Order(1L, OrderStatus.COOKING,
+                          List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L))))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경한다.")
@@ -88,7 +64,7 @@ class OrderTableTest {
         // given
         final OrderTable orderTable = new OrderTable(1L, 1, false, List.of(
             new Order(1L, OrderStatus.COOKING,
-                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L)));
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null)));
 
         // when
         final int changedNumberOfGuests = 5;
@@ -104,7 +80,7 @@ class OrderTableTest {
         // given
         final OrderTable orderTable = new OrderTable(1L, 0, true, List.of(
             new Order(1L, OrderStatus.COOKING,
-                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), 1L)));
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)), null)));
 
         // when
         // then

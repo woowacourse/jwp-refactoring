@@ -8,6 +8,7 @@ import kitchenpos.common.domain.Price;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.Orders;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,14 +21,19 @@ class OrdersTest {
         // given
         final Orders orders = new Orders(
             List.of(
-                new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
-                          1L),
-                new Order(2L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
-                          1L),
-                new Order(3L, OrderStatus.MEAL, List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
-                          1L)
-            )
-        );
+                new Order(1L, OrderStatus.COMPLETION,
+                          List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                          null),
+                new Order(2L, OrderStatus.COOKING,
+                          List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                          null),
+                new Order(3L, OrderStatus.MEAL,
+                          List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                          null)
+            ), new OrderTable(1L, 2, false, List.of(
+            new Order(4L, OrderStatus.COMPLETION,
+                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                      null))));
 
         // when
         final boolean hasProceedingOrder = orders.hasProceedingOrder();

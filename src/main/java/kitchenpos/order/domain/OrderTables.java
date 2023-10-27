@@ -41,7 +41,7 @@ public class OrderTables {
 
     private void validateOrderTableStatus(final List<OrderTable> orderTables) {
         if (orderTables.stream()
-            .anyMatch(OrderTable::isNotEmpty)) {
+            .anyMatch(OrderTable::isEmpty)) {
             throw new IllegalArgumentException("비어 있지 않은 테이블은 테이블 그룹으로 지정할 수 없습니다.");
         }
         if (orderTables.stream()

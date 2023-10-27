@@ -52,6 +52,10 @@ public class Order {
         return new Order(null, orderStatus, orderLineItems, orderTableId);
     }
 
+    public void registerOrderTable(final Long orderTableId) {
+        this.orderTableId = orderTableId;
+    }
+
     public void changeOrderStatus(final OrderStatus orderStatus) {
         validateOrderStatus();
         this.orderStatus = orderStatus;
