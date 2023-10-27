@@ -3,9 +3,9 @@ package kitchenpos.order.domain;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.menu.domain.vo.Name;
-import kitchenpos.menu.domain.vo.Price;
-import kitchenpos.menu.domain.vo.Quantity;
+import kitchenpos.common.vo.Name;
+import kitchenpos.common.vo.Price;
+import kitchenpos.common.vo.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

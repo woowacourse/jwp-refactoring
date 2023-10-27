@@ -1,5 +1,7 @@
-package kitchenpos.menu.domain.vo;
+package kitchenpos.common.vo;
 
+import kitchenpos.common.vo.Price;
+import kitchenpos.common.vo.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
