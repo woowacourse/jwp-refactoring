@@ -1,7 +1,5 @@
 package kitchenpos.order.domain;
 
-import static java.util.Objects.nonNull;
-
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,9 +19,6 @@ public class OrderLineItem {
     private Long seq;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private Order order;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private Menu menu;
     @Column(nullable = false)
     private long quantity;
@@ -40,23 +35,12 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
     public Menu getMenu() {
         return menu;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void updateOrder(final Order order) {
-        if(nonNull(this.order)) {
-            throw new IllegalStateException("이미 주문이 등록되어 변경이 불가합니다.");
-        }
-        this.order = order;
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,20 +35,22 @@ public class Order {
     private OrderStatus orderStatus;
     @Column(nullable = false)
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final LocalDateTime orderedTime) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("테이블이 비어있어 주문을 할 수 없습니다.");
-        }
+    public Order(final OrderTable orderTable, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this.orderTable = orderTable;
-        this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = orderedTime;
-        this.orderLineItems = new ArrayList<>();
+        this.orderLineItems = orderLineItems;
+    }
+
+    public void place(final OrderValidator orderValidator) {
+        orderValidator.validate(this);
+        this.orderStatus = OrderStatus.COOKING;
     }
 
     public Long getId() {
@@ -72,16 +75,6 @@ public class Order {
 
     public boolean isCompleted() {
         return orderStatus == OrderStatus.COMPLETION;
-    }
-
-    public void addOrderLineItem(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 품목이 없어 주문할 수 없습니다.");
-        }
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.updateOrder(this);
-        }
-        this.orderLineItems.addAll(orderLineItems);
     }
 
     public void updateStatus(final OrderStatus orderStatus) {

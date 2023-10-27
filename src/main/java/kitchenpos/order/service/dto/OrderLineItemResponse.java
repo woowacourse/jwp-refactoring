@@ -18,10 +18,10 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static List<OrderLineItemResponse> from(final List<OrderLineItem> orderLineItems) {
+    public static List<OrderLineItemResponse> from(final List<OrderLineItem> orderLineItems, final Long orderId) {
         return orderLineItems.stream().map(each -> new OrderLineItemResponse(
                 each.getSeq(),
-                each.getOrder().getId(),
+                orderId,
                 each.getMenu().getId(),
                 each.getQuantity()
         )).collect(Collectors.toList());

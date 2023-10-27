@@ -7,6 +7,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
@@ -23,25 +24,22 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
     public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository,
-                        final OrderLineItemRepository orderLineItemRepository,
-                        final OrderTableRepository orderTableRepository) {
+                        final OrderTableRepository orderTableRepository, final OrderValidator orderValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final Order order = new Order(findOrderTableById(request.getOrderTableId()), LocalDateTime.now());
-        order.addOrderLineItem(extractOrderLineItems(request));
-
+        final Order order = new Order(findOrderTableById(request.getOrderTableId()), LocalDateTime.now(), extractOrderLineItems(request));
+        order.place(orderValidator);
         orderRepository.save(order);
-        orderLineItemRepository.saveAll(order.getOrderLineItems());
         return OrderResponse.from(order);
     }
 
