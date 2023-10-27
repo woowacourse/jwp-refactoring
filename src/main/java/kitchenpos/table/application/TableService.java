@@ -1,26 +1,28 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.common.OrderStatus;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.dto.OrderStatusValidated;
 import kitchenpos.table.dto.OrderTableChangNumberOfGuestRequest;
 import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.OrderTableCreateRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(
+            final OrderTableRepository orderTableRepository,
+            final ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -37,10 +39,7 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = findOrderTableBy(orderTableId);
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("주문 테이블은 존재하면서 결제완료 상태가 아니어야 합니다.");
-        }
+        applicationEventPublisher.publishEvent(new OrderStatusValidated(orderTableId));
 
         savedOrderTable.changeEmpty(request.isEmpty());
         return orderTableRepository.save(savedOrderTable);
