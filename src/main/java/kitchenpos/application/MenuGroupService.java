@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.response.MenuGroupResponse;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.product.Name;
 import org.springframework.stereotype.Service;
@@ -11,18 +11,18 @@ import java.util.List;
 
 @Service
 public class MenuGroupService {
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
     public MenuGroupResponse create(final Name menuGroupName) {
-        return MenuGroupResponse.from(menuGroupDao.save(new MenuGroup(menuGroupName)));
+        return MenuGroupResponse.from(menuGroupRepository.save(new MenuGroup(menuGroupName)));
     }
 
     public List<MenuGroupResponse> list() {
-        return MenuGroupResponse.from(menuGroupDao.findAll());
+        return MenuGroupResponse.from(menuGroupRepository.findAll());
     }
 }

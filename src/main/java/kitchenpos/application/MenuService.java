@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
@@ -17,18 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final ProductDao productDao
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -43,21 +43,21 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        return MenuResponse.from(menuDao.save(new Menu(name, price, menuGroupId, menuProducts)));
+        return MenuResponse.from(menuRepository.save(new Menu(name, price, menuGroupId, menuProducts)));
     }
 
     private void validateMenuGroupIdExists(final Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
     }
 
     private MenuProduct getMenuProduct(final MenuProductRequest menuProductRequest) {
-        final Product product = productDao.findMandatoryById(menuProductRequest.getProductId());
+        final Product product = productRepository.findMandatoryById(menuProductRequest.getProductId());
         return new MenuProduct(product.getPrice(), product.getId(), menuProductRequest.getQuantity());
     }
 
     public List<MenuResponse> list() {
-        return MenuResponse.from(menuDao.findAll());
+        return MenuResponse.from(menuRepository.findAll());
     }
 }

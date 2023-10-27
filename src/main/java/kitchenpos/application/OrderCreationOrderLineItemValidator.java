@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.springframework.stereotype.Component;
@@ -11,10 +11,10 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class OrderCreationOrderLineItemValidator implements OrderCreationValidator {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
 
-    public OrderCreationOrderLineItemValidator(final MenuDao menuDao) {
-        this.menuDao = menuDao;
+    public OrderCreationOrderLineItemValidator(final MenuRepository menuRepository) {
+        this.menuRepository = menuRepository;
     }
 
     @Override
@@ -40,6 +40,6 @@ public class OrderCreationOrderLineItemValidator implements OrderCreationValidat
     }
 
     private boolean hasInvalidMenuId(final List<Long> menuIds) {
-        return menuIds.size() != menuDao.countByIdIn(menuIds);
+        return menuIds.size() != menuRepository.countByIdIn(menuIds);
     }
 }

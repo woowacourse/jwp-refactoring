@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import kitchenpos.application.response.ProductResponse;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.product.Name;
 import kitchenpos.domain.product.Price;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,11 +19,11 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {
-        this.productService = new ProductService(productDao);
+        this.productService = new ProductService(productRepository);
     }
 
     @Test

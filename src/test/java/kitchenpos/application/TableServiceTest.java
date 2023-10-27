@@ -16,7 +16,7 @@ import kitchenpos.application.response.MenuResponse;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.application.response.TableResponse;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -101,12 +101,12 @@ class TableServiceTest {
 
         @Test
         @DisplayName("orderTableId에 해당하는 pathVariable에 주문 테이블 식별자를, requestBody에 변경하려는 손님 수를 제공하여 변경할 수 있다.")
-        void given(@Autowired OrderTableDao orderTableDao) {
+        void given(@Autowired OrderTableRepository orderTableRepository) {
             final TableResponse savedTableId = tableService.create(new NumberOfGuests(6), false);
 
             tableService.changeNumberOfGuests(savedTableId.getId(), new NumberOfGuests(9));
 
-            final Optional<OrderTable> changedOrderTable = orderTableDao.findById(savedTableId.getId());
+            final Optional<OrderTable> changedOrderTable = orderTableRepository.findById(savedTableId.getId());
             assertThat(changedOrderTable.get().getNumberOfGuests()).isEqualTo(new NumberOfGuests(9));
         }
 

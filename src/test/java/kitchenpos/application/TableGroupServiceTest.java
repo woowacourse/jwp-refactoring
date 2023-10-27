@@ -13,7 +13,7 @@ import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.OrderLineItemsRequest;
 import kitchenpos.application.response.MenuResponse;
 import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.dao.TableGroupCustomDao;
+import kitchenpos.dao.TableGroupRepositoryImpl;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -28,7 +28,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
-@Import({TableGroupService.class, TableService.class, ProductService.class, TableGroupCustomDao.class, MenuService.class,
+@Import({TableGroupService.class, TableService.class, ProductService.class, TableGroupRepositoryImpl.class, MenuService.class,
         MenuGroupService.class, OrderService.class, OrderStatusValidator.class})
 class TableGroupServiceTest {
 

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.request.OrderLineItemsRequest;
 import kitchenpos.application.response.OrderResponse;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -14,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final List<OrderCreationValidator> orderCreationValidators;
 
-    public OrderService(final OrderDao orderDao, final List<OrderCreationValidator> orderCreationValidators) {
-        this.orderDao = orderDao;
+    public OrderService(final OrderRepository orderRepository, final List<OrderCreationValidator> orderCreationValidators) {
+        this.orderRepository = orderRepository;
         this.orderCreationValidators = orderCreationValidators;
     }
 
@@ -31,7 +31,7 @@ public class OrderService {
             orderCreationValidator.validate(order);
         }
 
-        return OrderResponse.from(orderDao.save(order));
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     private static List<OrderLineItem> convertToLineItems(final List<OrderLineItemsRequest> orderLineItemRequests) {
@@ -41,15 +41,15 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = orderRepository.findAll();
         return OrderResponse.from(orders);
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId) {
-        final Order savedOrder = orderDao.findMandatoryById(orderId);
+        final Order savedOrder = orderRepository.findMandatoryById(orderId);
         savedOrder.transitionToNextStatus();
-        orderDao.save(savedOrder);
+        orderRepository.save(savedOrder);
         return OrderResponse.from(savedOrder);
     }
 }
