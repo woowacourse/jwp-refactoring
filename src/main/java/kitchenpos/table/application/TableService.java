@@ -11,7 +11,6 @@ import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,9 +41,6 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        if (Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
         if (isChangeEmptyUnable(orderTable)) {
             throw new IllegalArgumentException();
         }
@@ -68,9 +64,6 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
         orderTable.changeNumberOfGuests(numberOfGuests);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         return OrderTableMapper.mapToResponse(savedOrderTable);

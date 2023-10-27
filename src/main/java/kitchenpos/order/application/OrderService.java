@@ -14,7 +14,6 @@ import kitchenpos.order.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,9 +77,6 @@ public class OrderService {
         final OrderStatus orderStatus = OrderMapper.mapToOrderStatus(orderStatusChangeRequest);
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
         savedOrder.changeOrderStatus(orderStatus);
         return OrderMapper.mapToResponse(orderRepository.save(savedOrder));
     }

@@ -12,11 +12,11 @@ public class Price {
     }
 
     private Price(final BigDecimal value) {
-        validateMoreThanZero(value);
+        validateEqualOrMoreThanZero(value);
         this.value = value;
     }
 
-    private void validateMoreThanZero(final BigDecimal value) {
+    private void validateEqualOrMoreThanZero(final BigDecimal value) {
         if (value == null || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
