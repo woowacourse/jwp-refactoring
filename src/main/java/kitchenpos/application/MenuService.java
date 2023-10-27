@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menugroup.MenuGroupRepository;
-import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.MenuValidator;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.response.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -19,15 +20,17 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
+    private final MenuValidator menuValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
-    ) {
+            final ProductRepository productRepository,
+            final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
     }
 
     @Transactional
@@ -39,15 +42,15 @@ public class MenuService {
                         )
                 ).collect(Collectors.toList());
 
-        final Menu savedMenu = menuRepository.save(
-                new Menu(
-                        request.getName(),
-                        request.getPrice(),
-                        menuGroupRepository.findById(request.getMenuGroupId()).get(),
-                        menuProducts
-                )
+        final Menu menu = new Menu(
+                request.getName(),
+                request.getPrice(),
+                menuGroupRepository.findById(request.getMenuGroupId()).get(),
+                menuProducts
         );
-        return savedMenu.getId();
+        menu.validate(menuValidator);
+
+        return menuRepository.save(menu).getId();
     }
 
     public List<MenuResponse> list() {
