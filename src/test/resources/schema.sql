@@ -29,6 +29,8 @@ create table if not exists order_line_item
     quantity bigint not null,
     menu_id  bigint not null,
     order_id bigint not null,
+    name     varchar(255) not null,
+    price    decimal(19, 2) not null,
     primary key (seq)
 );
 
