@@ -4,11 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.product.ProductRequest;
-import kitchenpos.application.dto.product.ProductResponse;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductRequest;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.vo.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.support.DataDependentIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
