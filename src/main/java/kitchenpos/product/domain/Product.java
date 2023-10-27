@@ -26,7 +26,7 @@ public class Product {
                 .throwIfNegative(IllegalArgumentException::new);
     }
 
-    public BigDecimal getTotalPrice(final BigDecimal quantity) {
+    public BigDecimal calculateTotalPrice(final BigDecimal quantity) {
         return price.multiply(quantity);
     }
 
