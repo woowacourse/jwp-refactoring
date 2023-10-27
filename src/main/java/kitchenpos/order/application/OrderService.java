@@ -3,16 +3,16 @@ package kitchenpos.order.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -60,7 +60,7 @@ public class OrderService {
         for (final OrderLineItemCreateRequest request : orderLineItemCreateRequests) {
             final Menu menu = menuRepository.getById(request.getMenuId());
             final OrderLineItem orderLineItem = OrderLineItem.forSave(request.getQuantity(), menu.getName(),
-                                                                      menu.getPrice(), menu);
+                                                                      menu.getPrice(), menu.getId());
             orderLineItems.add(orderLineItem);
         }
 

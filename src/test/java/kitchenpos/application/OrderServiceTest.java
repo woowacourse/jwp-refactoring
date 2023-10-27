@@ -8,18 +8,18 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.common.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.common.domain.Price;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -51,8 +51,8 @@ class OrderServiceTest {
         final Menu menu1 = new Menu(1L, "후라이드", Collections.emptyList(), 1L);
         final Menu menu2 = new Menu(2L, "피자", Collections.emptyList(), 1L);
         final List<OrderLineItem> orderLineItems = List.of(
-            new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), menu1),
-            new OrderLineItem(2L, 2L, "피자", new Price(BigDecimal.TEN), menu2));
+            new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), menu1.getId()),
+            new OrderLineItem(2L, 2L, "피자", new Price(BigDecimal.TEN), menu2.getId()));
 
         final Order order = new Order(1L, OrderStatus.COOKING, orderLineItems, 1L);
         final OrderTable orderTable = new OrderTable(1L, 10, false, Collections.emptyList());

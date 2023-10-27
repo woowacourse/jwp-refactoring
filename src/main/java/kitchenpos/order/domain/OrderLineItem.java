@@ -1,14 +1,12 @@
 package kitchenpos.order.domain;
 
 import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.common.domain.Price;
 
 @Entity
@@ -25,25 +23,24 @@ public class OrderLineItem {
 
     private long quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @Column(name = "menu_id")
+    private Long menuId;
 
     protected OrderLineItem() {
     }
 
     public OrderLineItem(final Long seq, final long quantity, final String name, final Price price,
-                         final Menu menu) {
+                         final Long menuId) {
         this.seq = seq;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
-        this.menu = menu;
+        this.menuId = menuId;
     }
 
     public static OrderLineItem forSave(final long quantity, final String name, final Price price,
-                                        final Menu menu) {
-        return new OrderLineItem(null, quantity, name, price, menu);
+                                        final Long menuId) {
+        return new OrderLineItem(null, quantity, name, price, menuId);
     }
 
     public Long getSeq() {
@@ -60,5 +57,9 @@ public class OrderLineItem {
 
     public BigDecimal getPrice() {
         return price.getValue();
+    }
+
+    public Long getMenuId() {
+        return menuId;
     }
 }
