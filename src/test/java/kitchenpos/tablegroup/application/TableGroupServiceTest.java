@@ -1,31 +1,31 @@
 package kitchenpos.tablegroup.application;
 
+import kitchenpos.config.ServiceTestConfig;
+import kitchenpos.exception.InvalidOrderTableToTableGroup;
+import kitchenpos.exception.InvalidOrderTablesSize;
 import kitchenpos.exception.NotAllowedUngroupException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.NotFoundTableGroupException;
-import kitchenpos.config.ServiceTestConfig;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.product.domain.Product;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.exception.InvalidOrderTableToTableGroup;
-import kitchenpos.exception.InvalidOrderTablesSize;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
 import kitchenpos.tablegroup.ui.dto.TableGroupRequest;
 import kitchenpos.tablegroup.ui.dto.TableGroupResponse;
-import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -80,8 +80,8 @@ class TableGroupServiceTest extends ServiceTestConfig {
 
             SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(actual.getId()).isPositive();
-                softAssertions.assertThat(actualOrderTables.get(0).getTableGroup().getId()).isEqualTo(actual.getId());
-                softAssertions.assertThat(actualOrderTables.get(1).getTableGroup().getId()).isEqualTo(actual.getId());
+                softAssertions.assertThat(actualOrderTables.get(0).getTableGroupId()).isEqualTo(actual.getId());
+                softAssertions.assertThat(actualOrderTables.get(1).getTableGroupId()).isEqualTo(actual.getId());
             });
         }
 
@@ -139,7 +139,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
         void 단체_지정_등록시_단체_지정이_null이_아닌_것이_존재한다면_예외를_반환한다() {
             // given
             final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
-            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
+            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성());
             orderTableRepository.saveAll(orderTables);
             orderTables.add(OrderTableFixture.빈_테이블_엔티티_생성());
             final TableGroupRequest tableGroupRequest = TableGroupFixture.단체_지정_요청_dto_생성(orderTables);
@@ -158,7 +158,8 @@ class TableGroupServiceTest extends ServiceTestConfig {
         void 그룹을_해제한다() {
             // given
             final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
-            final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
+            final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성());
+            orderTables.forEach(orderTable -> orderTable.updateTableGroup(tableGroup.getId()));
 
             // when
             tableGroupService.ungroup(tableGroup.getId());
@@ -167,9 +168,9 @@ class TableGroupServiceTest extends ServiceTestConfig {
             final List<OrderTable> actualOrderTables = orderTableRepository.findAll();
 
             SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(actualOrderTables.get(0).getTableGroup()).isNull();
+                softAssertions.assertThat(actualOrderTables.get(0).getTableGroupId()).isNull();
                 softAssertions.assertThat(actualOrderTables.get(0).isEmpty()).isFalse();
-                softAssertions.assertThat(actualOrderTables.get(1).getTableGroup()).isNull();
+                softAssertions.assertThat(actualOrderTables.get(1).getTableGroupId()).isNull();
                 softAssertions.assertThat(actualOrderTables.get(1).isEmpty()).isFalse();
             });
         }
@@ -189,7 +190,8 @@ class TableGroupServiceTest extends ServiceTestConfig {
         void 그룹_해제시_특정_주문_테이블_아이디들_중_조리_혹은_식사_상태인_것이_존재한다면_예외를_반환한다() {
             // given
             final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
-            final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
+            final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성());
+            orderTables.forEach(orderTable -> orderTable.updateTableGroup(tableGroup.getId()));
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));

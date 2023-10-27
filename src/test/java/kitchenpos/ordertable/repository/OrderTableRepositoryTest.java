@@ -1,11 +1,11 @@
 package kitchenpos.ordertable.repository;
 
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
-import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -53,7 +53,8 @@ class OrderTableRepositoryTest {
     void 테이블_그룹_아이디_리스트에서_존재하는_아이디_개수를_반환한다() {
         // given
         final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(4));
-        final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
+        final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성());
+        orderTables.forEach(orderTable -> orderTable.updateTableGroup(tableGroup.getId()));
 
         // when
         final List<OrderTable> actual = orderTableRepository.findAllByTableGroupId(tableGroup.getId());

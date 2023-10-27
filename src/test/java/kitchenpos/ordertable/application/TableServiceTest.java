@@ -1,31 +1,32 @@
 package kitchenpos.ordertable.application;
 
+import kitchenpos.config.ServiceTestConfig;
 import kitchenpos.exception.InvalidChangeOrderTableNumberOfGuests;
 import kitchenpos.exception.InvalidOrderToChangeEmptyException;
-import kitchenpos.exception.NotFoundOrderTableException;
-import kitchenpos.config.ServiceTestConfig;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.product.domain.Product;
 import kitchenpos.exception.InvalidUpdateNumberOfGuestsException;
+import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.product.repository.ProductRepository;
-import kitchenpos.tablegroup.repository.TableGroupRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menugroup.ui.dto.ChangeOrderTableEmptyRequest;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
 import kitchenpos.ordertable.ui.dto.OrderTableRequest;
 import kitchenpos.ordertable.ui.dto.OrderTableResponse;
-import org.assertj.core.api.SoftAssertions;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -135,7 +136,8 @@ class TableServiceTest extends ServiceTestConfig {
             // given
             final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
             final OrderTable targetOrderTable = orderTables.get(0);
-            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
+            final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성());
+            targetOrderTable.updateTableGroup(tableGroup.getId());
             final ChangeOrderTableEmptyRequest changeEmptyRequest = new ChangeOrderTableEmptyRequest(true);
 
             // when & then
@@ -149,7 +151,7 @@ class TableServiceTest extends ServiceTestConfig {
             // given
             final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
             final OrderTable targetOrderTable = orderTables.get(0);
-            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
+            tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성());
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));

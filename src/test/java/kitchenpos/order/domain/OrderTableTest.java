@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.exception.InvalidUpdateNumberOfGuestsException;
-import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.*;
@@ -12,9 +11,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("주문 테이블 테스트")
@@ -42,17 +41,16 @@ class OrderTableTest {
         @Test
         void 주문_테이블의_그룹을_해제한다() {
             // given
-            final List<OrderTable> orderTables = OrderTableFixture.빈_테이블_엔티티들_생성(2);
-            final TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), orderTables);
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             final OrderTable orderTable = OrderTable.of(0, true);
-            orderTable.updateTableGroup(tableGroup);
+            orderTable.updateTableGroup(tableGroup.getId());
 
             // when
             orderTable.ungroup();
 
             // then
             SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(orderTable.getTableGroup()).isNull();
+                softAssertions.assertThat(orderTable.getTableGroupId()).isNull();
                 softAssertions.assertThat(orderTable.isEmpty()).isFalse();
             });
         }

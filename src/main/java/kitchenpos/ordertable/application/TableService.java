@@ -1,12 +1,12 @@
 package kitchenpos.ordertable.application;
 
+import kitchenpos.common.vo.OrderStatus;
 import kitchenpos.exception.InvalidOrderToChangeEmptyException;
 import kitchenpos.exception.NotFoundOrderTableException;
-import kitchenpos.common.vo.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.menugroup.ui.dto.ChangeOrderTableEmptyRequest;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
 import kitchenpos.ordertable.ui.dto.OrderTableRequest;
 import kitchenpos.ordertable.ui.dto.OrderTableResponse;
@@ -61,7 +61,7 @@ public class TableService {
     }
 
     private void validateOrder(final Long orderTableId, final OrderTable orderTable) {
-        if (Objects.nonNull(orderTable.getTableGroup())) {
+        if (Objects.nonNull(orderTable.getTableGroupId())) {
             throw new InvalidOrderToChangeEmptyException("단체 지정이 정해지지 않아 상태 변경이 불가능합니다.");
         }
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
