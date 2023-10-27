@@ -1,10 +1,13 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.application.mapper.TableGroupMapper;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.TableGroupRepository;
@@ -29,14 +32,16 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final List<OrderTableDto> request) {
+    public TableGroupResponse create(final List<OrderTableDto> request) {
         checkRequestOrderTableSize(request);
         final List<OrderTable> savedOrderTables = findOrderTables(request);
         checkSavedOrderTablesHasSameSizeWithRequest(request, savedOrderTables);
 
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
         final OrderTables orderTables = new OrderTables(savedOrderTables);
-        final TableGroup tableGroup = new TableGroup(orderTables);
-        return tableGroupRepository.save(tableGroup);
+        orderTables.joinGroup(savedTableGroup);
+
+        return TableGroupMapper.mapToTableGroupResponse(savedTableGroup, orderTables);
     }
 
     private static void checkRequestOrderTableSize(final List<OrderTableDto> request) {
@@ -62,19 +67,20 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = findTableGroupById(tableGroupId);
-        validateOrderStatusInTableGroup(tableGroup.getTableIdsInGroup());
-        tableGroup.ungroup();
-        tableGroupRepository.save(tableGroup);
+        final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroup.getId()));
+        validateOrderStatusInTableGroup(orderTables);
+        orderTables.leaveGroup();
+        orderTableRepository.saveAll(orderTables.getOrderTables());
     }
 
     private TableGroup findTableGroupById(final Long tableGroupId) {
-        return tableGroupRepository.findByIdWithOrderTables(tableGroupId)
+        return tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateOrderStatusInTableGroup(final List<Long> orderTableIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+    private void validateOrderStatusInTableGroup(final OrderTables orderTables) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
+                orderTables.getOrderTables(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }

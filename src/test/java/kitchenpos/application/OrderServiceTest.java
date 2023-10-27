@@ -3,7 +3,13 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.domain.*;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.OrderLineItemRepository;
 import kitchenpos.persistence.OrderRepository;
@@ -15,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -50,8 +57,8 @@ class OrderServiceTest {
             // given
             final OrderTable savedOrderTable = new OrderTable(1L, null, 0, false);
             final Order savedOrder = new Order(1L, savedOrderTable, OrderStatus.COOKING);
-            final Menu savedMenu = new Menu();
-            final OrderLineItem savedOrderLineItem = new OrderLineItem();
+            final Menu savedMenu = new Menu(1L, "신메뉴", new Price(BigDecimal.valueOf(1000)), null, null);
+            final OrderLineItem savedOrderLineItem = new OrderLineItem(savedOrder, savedMenu.getId(), 1);
 
             when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
@@ -61,14 +68,14 @@ class OrderServiceTest {
                     .thenReturn(savedOrder);
             when(menuRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedMenu));
-            when(orderLineItemRepository.save(any(OrderLineItem.class)))
-                    .thenReturn(savedOrderLineItem);
+            when(orderLineItemRepository.saveAll(any()))
+                    .thenReturn(List.of(savedOrderLineItem));
 
             // when
             final OrderCreateRequest request = new OrderCreateRequest(1L,
                     List.of(new OrderLineItemDto(1L, 1L), new OrderLineItemDto(2L, 1L)));
 
-            final Order result = orderService.create(request);
+            final OrderResponse result = orderService.create(request);
 
             // then
             assertThat(result.getId()).isEqualTo(1);
@@ -139,13 +146,14 @@ class OrderServiceTest {
     @Test
     void 전체_주문_목록을_조회한다() {
         // given
-        final Order savedOrder = new Order();
+        final OrderTable savedOrderTable = new OrderTable(1L, null, 0, false);
+        final Order savedOrder = new Order(1L, savedOrderTable, OrderStatus.COOKING);
 
         when(orderRepository.findAll())
                 .thenReturn(List.of(savedOrder));
 
         // when
-        final List<Order> result = orderService.list();
+        final List<OrderResponse> result = orderService.list();
 
         // then
         assertThat(result).hasSize(1);
@@ -166,10 +174,10 @@ class OrderServiceTest {
                     .thenReturn(updatedOrder);
 
             // when
-            final Order result = orderService.changeOrderStatus(1L, new OrderStatusDto("COMPLETION"));
+            final OrderResponse result = orderService.changeOrderStatus(1L, new OrderStatusDto("COMPLETION"));
 
             // then
-            assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
+            assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
         }
 
         @Test

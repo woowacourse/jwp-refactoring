@@ -1,6 +1,13 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -10,8 +17,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn()
     private TableGroup tableGroup;
 
     @Column(nullable = false)
@@ -64,7 +71,6 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
         checkNumberOfGuestsSameOrGraterThanZero(numberOfGuests);
-
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -74,10 +80,12 @@ public class OrderTable {
 
     public void registerGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
+        empty = false;
     }
 
     public void leaveGroup() {
         tableGroup = null;
+        empty = false;
     }
 
     public Long getId() {

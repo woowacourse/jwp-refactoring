@@ -1,12 +1,16 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.ProductCreateRequest;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.application.mapper.ProductMapper;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.product.Product;
 import kitchenpos.persistence.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -17,12 +21,17 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final ProductCreateRequest request) {
-        final Product product = new Product(request.getName(), request.getPrice());
-        return productRepository.save(product);
+    public ProductResponse create(final ProductCreateRequest request) {
+        final Product product = new Product(request.getName(), new Price(request.getPrice()));
+        final Product savedProduct = productRepository.save(product);
+
+        return ProductMapper.mapToProductResponse(savedProduct);
     }
 
-    public List<Product> list() {
-        return productRepository.findAll();
+    public List<ProductResponse> list() {
+        return productRepository.findAll()
+                .stream()
+                .map(ProductMapper::mapToProductResponse)
+                .collect(Collectors.toList());
     }
 }

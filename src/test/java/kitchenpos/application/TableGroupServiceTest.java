@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.TableGroupRepository;
@@ -45,8 +45,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable savedOrderTable1 = new OrderTable(1L, null, 0, true);
             final OrderTable savedOrderTable2 = new OrderTable(2L, null, 0, true);
-            final OrderTables orderTables = new OrderTables(List.of(savedOrderTable1, savedOrderTable2));
-            final TableGroup savedTabledGroup = new TableGroup(1L, orderTables);
+            final TableGroup savedTabledGroup = new TableGroup(1L);
 
             when(orderTableRepository.findAllByIdIn(any()))
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
@@ -55,7 +54,7 @@ class TableGroupServiceTest {
 
             // when
             final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
-            final TableGroup result = tableGroupService.create(request);
+            final TableGroupResponse result = tableGroupService.create(request);
 
             // then
             assertThat(result.getId()).isEqualTo(1);
@@ -90,7 +89,6 @@ class TableGroupServiceTest {
             // when
             final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
 
-
             // then
             assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -117,7 +115,7 @@ class TableGroupServiceTest {
         @Test
         void 테이블_그룹을_생성할_때_전달된_주문_테이블이_다른_테이블_그룹에_속해_있다면_실패한다() {
             // given
-            final TableGroup tableGroup = new TableGroup(1L, null);
+            final TableGroup tableGroup = new TableGroup(1L);
             final OrderTable savedOrderTable1 = new OrderTable(null, tableGroup, 0, true);
             final OrderTable savedOrderTable2 = new OrderTable(null, null, 0, true);
 
@@ -137,30 +135,31 @@ class TableGroupServiceTest {
     @Nested
     class 테이블_그룹_삭제 {
         @Test
-        void 테이블_그룹을_삭제한다() {
+        void 테이블_그룹을_해제한다() {
             // given
             final OrderTable savedOrderTable1 = new OrderTable(1L, null, 0, true);
             final OrderTable savedOrderTable2 = new OrderTable(2L, null, 0, true);
-            final OrderTables orderTables = new OrderTables(List.of(savedOrderTable1, savedOrderTable2));
-            final TableGroup savedTableGroup = new TableGroup(1L, orderTables);
+            final TableGroup savedTableGroup = new TableGroup(1L);
 
-            when(tableGroupRepository.findByIdWithOrderTables(anyLong()))
+            when(tableGroupRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedTableGroup));
-            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
+            when(orderTableRepository.findAllByTableGroupId(anyLong()))
+                    .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
+            when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any()))
                     .thenReturn(false);
 
             // when
             tableGroupService.ungroup(1L);
 
             // then
-            verify(tableGroupRepository, times(1))
-                    .save(any(TableGroup.class));
+            verify(orderTableRepository, times(1))
+                    .saveAll(any());
         }
 
         @Test
-        void 테이블_그룹을_삭제할_때_DB에_존재하지_않는_테이블_그룹_아이디가_전달될_경우_실패한다() {
+        void 테이블_그룹을_해제할_때_DB에_존재하지_않는_테이블_그룹_아이디가_전달될_경우_실패한다() {
             // given
-            when(tableGroupRepository.findByIdWithOrderTables(anyLong()))
+            when(tableGroupRepository.findById(anyLong()))
                     .thenReturn(Optional.empty());
 
             // when, then
@@ -173,12 +172,13 @@ class TableGroupServiceTest {
             // given
             final OrderTable savedOrderTable1 = new OrderTable(1L, null, 0, true);
             final OrderTable savedOrderTable2 = new OrderTable(2L, null, 0, true);
-            final OrderTables orderTables = new OrderTables(List.of(savedOrderTable1, savedOrderTable2));
-            final TableGroup savedTableGroup = new TableGroup(1L, orderTables);
+            final TableGroup savedTableGroup = new TableGroup(1L);
 
-            when(tableGroupRepository.findByIdWithOrderTables(anyLong()))
+            when(tableGroupRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedTableGroup));
-            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
+            when(orderTableRepository.findAllByTableGroupId(anyLong()))
+                    .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
+            when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any()))
                     .thenReturn(true);
 
             // when, then

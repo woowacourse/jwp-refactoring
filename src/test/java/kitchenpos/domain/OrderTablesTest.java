@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -23,13 +26,15 @@ class OrderTablesTest {
     }
 
     @Test
-    void OrderTables_생성_시_받은_OrderTable_중_빈_상태가_아닌_테이블이_있다면_예외가_발생한다() {
+    void OrderTables들을_그룹에_참여시킬_때_중_빈_상태가_아닌_테이블이_있다면_예외가_발생한다() {
         // given
         final OrderTable emptyOrderTable = new OrderTable(0, false);
         final OrderTable notEmptyOrderTable = new OrderTable(0, true);
+        final OrderTables orderTables = new OrderTables(List.of(emptyOrderTable, notEmptyOrderTable));
+        final TableGroup tableGroup = new TableGroup();
 
         // when, then
-        assertThatThrownBy(() -> new OrderTables(List.of(emptyOrderTable, notEmptyOrderTable)))
+        assertThatThrownBy(() -> orderTables.joinGroup(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -39,9 +44,11 @@ class OrderTablesTest {
         final TableGroup tableGroup = new TableGroup();
         final OrderTable hasGroupOrderTable = new OrderTable(1L, tableGroup, 0, false);
         final OrderTable notGroupOrderTable = new OrderTable(0, true);
+        final OrderTables orderTables = new OrderTables(List.of(hasGroupOrderTable, notGroupOrderTable));
+        final TableGroup otherTableGroup = new TableGroup();
 
         // when, then
-        assertThatThrownBy(() -> new OrderTables(List.of(hasGroupOrderTable, notGroupOrderTable)))
+        assertThatThrownBy(() -> orderTables.joinGroup(otherTableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

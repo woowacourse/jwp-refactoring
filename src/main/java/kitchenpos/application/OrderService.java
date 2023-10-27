@@ -3,7 +3,13 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.domain.*;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.mapper.OrderMapper;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.OrderLineItemRepository;
 import kitchenpos.persistence.OrderRepository;
@@ -12,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,14 +42,15 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItemDto> orderLineItems = request.getOrderLineItems();
         checkValidOrderLineItems(orderLineItems);
 
         final OrderTable orderTable = findOrderTableById(request.getOrderTableId());
         final Order savedOrder = orderRepository.save(new Order(orderTable));
-        saveOrderLineItems(orderLineItems, savedOrder);
-        return savedOrder;
+        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, savedOrder);
+
+        return OrderMapper.mapToOrderResponseBy(savedOrder, savedOrderLineItems);
     }
 
     private void checkValidOrderLineItems(final List<OrderLineItemDto> orderLineItems) {
@@ -71,29 +79,34 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void saveOrderLineItems(final List<OrderLineItemDto> orderLineItems, final Order order) {
-        for (final OrderLineItemDto orderLineItem : orderLineItems) {
-            final Menu savedMenu = menuRepository.findById(orderLineItem.getMenuId())
+    private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos, final Order order) {
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (final OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
+            final Menu savedMenu = menuRepository.findById(orderLineItemDto.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
-            orderLineItemRepository.save(new OrderLineItem(order, savedMenu, orderLineItem.getQuantity()));
+            orderLineItems.add(new OrderLineItem(order, savedMenu.getId(), orderLineItemDto.getQuantity()));
         }
+        return orderLineItemRepository.saveAll(orderLineItems);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
-
-        //for (final Order order : orders) {
-        //    order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        //}
-
-        return orders;
+        return orders.stream()
+                .map(order -> {
+                    final List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
+                    return OrderMapper.mapToOrderResponseBy(order, savedOrderLineItems);
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusDto status) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusDto status) {
         final Order order = findOrderById(orderId);
         order.changeStatus(OrderStatus.valueOf(status.getOrderStatus()));
-        return orderRepository.save(order);
+        final Order savedOrder = orderRepository.save(order);
+        final List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
+
+        return OrderMapper.mapToOrderResponseBy(savedOrder, savedOrderLineItems);
     }
 
     private Order findOrderById(final Long orderId) {

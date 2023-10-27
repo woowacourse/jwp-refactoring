@@ -1,11 +1,26 @@
 package kitchenpos.integration;
 
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.MenuProductDto;
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.domain.*;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -15,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -24,7 +40,7 @@ class OrderIntegrationTest extends IntegrationTest {
     @Test
     void 주문_생성을_요청한다() {
         // given
-        final Menu menu = createMenu("오마카세", 1000);
+        final Menu menu = createMenu("오마카세", 900);
         final OrderTable orderTable = createTable();
 
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
@@ -32,15 +48,15 @@ class OrderIntegrationTest extends IntegrationTest {
         final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
         // when
-        final ResponseEntity<Order> response = testRestTemplate
-                .postForEntity("/api/orders", request, Order.class);
-        final Order createdOrder = response.getBody();
+        final ResponseEntity<OrderResponse> response = testRestTemplate
+                .postForEntity("/api/orders", request, OrderResponse.class);
+        final OrderResponse orderResponse = response.getBody();
 
         // then
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                 () -> assertThat(response.getHeaders().get("Location"))
-                        .contains("/api/orders/" + createdOrder.getId())
+                        .contains("/api/orders/" + orderResponse.getId())
         );
     }
 
@@ -54,12 +70,12 @@ class OrderIntegrationTest extends IntegrationTest {
                 List.of(new OrderLineItemDto(menu.getId(), 1L)));
         final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
-        testRestTemplate.postForEntity("/api/orders", request, Order.class);
+        testRestTemplate.postForEntity("/api/orders", request, OrderResponse.class);
 
         // when
-        final ResponseEntity<Order[]> response = testRestTemplate
-                .getForEntity("/api/orders", Order[].class);
-        final List<Order> orders = Arrays.asList(response.getBody());
+        final ResponseEntity<OrderResponse[]> response = testRestTemplate
+                .getForEntity("/api/orders", OrderResponse[].class);
+        final List<OrderResponse> orders = Arrays.asList(response.getBody());
 
         // then
         assertAll(
@@ -72,7 +88,7 @@ class OrderIntegrationTest extends IntegrationTest {
     void 주문_상태_변경을_요청한다() {
         // given
         // 최초 주문 요청
-        final Menu menu = createMenu("오마카세", 1000);
+        final Menu menu = createMenu("오마카세", 900);
         final OrderTable orderTable = createTable();
 
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
@@ -80,7 +96,7 @@ class OrderIntegrationTest extends IntegrationTest {
         final HttpEntity<OrderCreateRequest> request = new HttpEntity<>(orderCreateRequest);
 
         final Long orderId = testRestTemplate
-                .postForEntity("/api/orders", request, Order.class)
+                .postForEntity("/api/orders", request, OrderResponse.class)
                 .getBody()
                 .getId();
 
@@ -89,14 +105,14 @@ class OrderIntegrationTest extends IntegrationTest {
         final HttpEntity<OrderStatusDto> updateRequest = new HttpEntity<>(statusRequest);
 
         // when
-        final ResponseEntity<Order> response = testRestTemplate
-                .exchange("/api/orders/" + orderId + "/order-status", HttpMethod.PUT, updateRequest, Order.class);
-        final Order updatedOrder = response.getBody();
+        final ResponseEntity<OrderResponse> response = testRestTemplate
+                .exchange("/api/orders/" + orderId + "/order-status", HttpMethod.PUT, updateRequest, OrderResponse.class);
+        final OrderResponse orderResponse = response.getBody();
 
         // then
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
-                () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
+                () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
         );
     }
 
@@ -109,35 +125,47 @@ class OrderIntegrationTest extends IntegrationTest {
                 List.of(new MenuProductDto(chicken.getId(), 1L), new MenuProductDto(pizza.getId(), 1L)));
         final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menuCreateRequest);
 
-        return testRestTemplate
-                .postForEntity("/api/menus", request, Menu.class)
+        final MenuResponse response = testRestTemplate.postForEntity("/api/menus", request, MenuResponse.class)
                 .getBody();
+
+        final MenuProducts menuProducts = new MenuProducts(response.getMenuProducts()
+                .stream()
+                .map(it -> new MenuProduct(it.getSeq(), null, it.getQuantity()))
+                .collect(Collectors.toList()));
+
+        return new Menu(response.getId(), response.getName(), new Price(response.getPrice()), null, menuProducts);
     }
 
-    private Product createProduct(final String name, final int price) {
-        final Product product = new Product(name, BigDecimal.valueOf(price));
-        final HttpEntity<Product> request = new HttpEntity<>(product);
+    private Product createProduct(final String name, final int value) {
+        final ProductCreateRequest product = new ProductCreateRequest(name, BigDecimal.valueOf(value));
+        final HttpEntity<ProductCreateRequest> request = new HttpEntity<>(product);
 
-        return testRestTemplate
-                .postForEntity("/api/products", request, Product.class)
+        final ProductResponse response = testRestTemplate
+                .postForEntity("/api/products", request, ProductResponse.class)
                 .getBody();
+
+        return new Product(response.getId(), response.getName(), new Price(response.getPrice()));
     }
 
     private MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup(name);
-        final HttpEntity<MenuGroup> request = new HttpEntity<>(menuGroup);
+        final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest(name);
+        final HttpEntity<MenuGroupCreateRequest> request = new HttpEntity<>(menuGroup);
 
-        return testRestTemplate
-                .postForEntity("/api/menu-groups", request, MenuGroup.class)
+        final MenuGroupResponse response = testRestTemplate
+                .postForEntity("/api/menu-groups", request, MenuGroupResponse.class)
                 .getBody();
+
+        return new MenuGroup(response.getId(), response.getName());
     }
 
     private OrderTable createTable() {
-        final OrderTable orderTable = new OrderTable(3, false);
-        final HttpEntity<OrderTable> request = new HttpEntity<>(orderTable);
+        final OrderTableCreateRequest orderTable = new OrderTableCreateRequest(3, false);
+        final HttpEntity<OrderTableCreateRequest> request = new HttpEntity<>(orderTable);
 
-        return testRestTemplate
-                .postForEntity("/api/tables", request, OrderTable.class)
+        final OrderTableResponse response = testRestTemplate
+                .postForEntity("/api/tables", request, OrderTableResponse.class)
                 .getBody();
+
+        return new OrderTable(response.getId(), null, response.getNumberOfGuests(), response.isEmpty());
     }
 }

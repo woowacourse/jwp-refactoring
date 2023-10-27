@@ -1,6 +1,8 @@
 package kitchenpos.integration;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.domain.menu.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -17,13 +19,13 @@ class MenuGroupIntegrationTest extends IntegrationTest {
     @Test
     void 메뉴_그룹_생성을_요청한다() {
         // given
-        final MenuGroup menuGroup = new MenuGroup("양식");
-        final HttpEntity<MenuGroup> request = new HttpEntity<>(menuGroup);
+        final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest("양식");
+        final HttpEntity<MenuGroupCreateRequest> request = new HttpEntity<>(menuGroup);
 
         // when
-        final ResponseEntity<MenuGroup> response = testRestTemplate
-                .postForEntity("/api/menu-groups", request, MenuGroup.class);
-        final MenuGroup createdMenuGroup = response.getBody();
+        final ResponseEntity<MenuGroupResponse> response = testRestTemplate
+                .postForEntity("/api/menu-groups", request, MenuGroupResponse.class);
+        final MenuGroupResponse createdMenuGroup = response.getBody();
 
         // then
         assertAll(
@@ -43,9 +45,9 @@ class MenuGroupIntegrationTest extends IntegrationTest {
         createMenuGroup("중식");
 
         // when
-        final ResponseEntity<MenuGroup[]> response = testRestTemplate
-                .getForEntity("/api/menu-groups", MenuGroup[].class);
-        final List<MenuGroup> menuGroups = Arrays.asList(response.getBody());
+        final ResponseEntity<MenuGroupResponse[]> response = testRestTemplate
+                .getForEntity("/api/menu-groups", MenuGroupResponse[].class);
+        final List<MenuGroupResponse> menuGroups = Arrays.asList(response.getBody());
 
         // then
         assertAll(
@@ -55,11 +57,13 @@ class MenuGroupIntegrationTest extends IntegrationTest {
     }
 
     private MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup(name);
-        final HttpEntity<MenuGroup> request = new HttpEntity<>(menuGroup);
+        final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest(name);
+        final HttpEntity<MenuGroupCreateRequest> request = new HttpEntity<>(menuGroup);
 
-        return testRestTemplate
-                .postForEntity("/api/menu-groups", request, MenuGroup.class)
+        final MenuGroupResponse response = testRestTemplate
+                .postForEntity("/api/menu-groups", request, MenuGroupResponse.class)
                 .getBody();
+
+        return new MenuGroup(response.getId(), response.getName());
     }
 }

@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +57,7 @@ class OrderTableTest {
     @Test
     void OrderTable의_빈_상태_변경시_OrderTable이_다른_테이블_그룹에_속해있다면_예외가_발생한다() {
         // given
-        final TableGroup tableGroup = new TableGroup();
+        final TableGroup tableGroup = new TableGroup(1L);
         final OrderTable orderTable = new OrderTable(1L, tableGroup, 0, false);
 
         // when, then
