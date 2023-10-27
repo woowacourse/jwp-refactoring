@@ -5,8 +5,6 @@ import java.util.List;
 
 public class CreateMenuRequest {
 
-    private Long id;
-
     private Long menuGroupId;
 
     private List<MenuProductDto> menuProducts;
