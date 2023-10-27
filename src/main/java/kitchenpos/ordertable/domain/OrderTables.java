@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.ordertable.application.OrderTableUpGroupValidator;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
 public class OrderTables implements Iterable<OrderTable> {
@@ -32,8 +31,8 @@ public class OrderTables implements Iterable<OrderTable> {
         return true;
     }
 
-    public void validateOrderTablesUnGroupable(List<OrderTableUpGroupValidator> validators) {
-        for (OrderTableUpGroupValidator validator : validators) {
+    public void validateOrderTablesUnGroupable(List<OrderTableUngroupValidator> validators) {
+        for (OrderTableUngroupValidator validator : validators) {
             validator.validate(this);
         }
     }
@@ -53,8 +52,8 @@ public class OrderTables implements Iterable<OrderTable> {
         return this.orderTables.iterator();
     }
 
-    public void ungroup(final List<OrderTableUpGroupValidator> orderTableUpGroupValidators) {
-        validateOrderTablesUnGroupable(orderTableUpGroupValidators);
+    public void ungroup(final List<OrderTableUngroupValidator> orderTableUngroupValidators) {
+        validateOrderTablesUnGroupable(orderTableUngroupValidators);
         for (OrderTable orderTable : orderTables) {
             orderTable.upgroup();
         }

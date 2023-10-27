@@ -1,14 +1,15 @@
-package kitchenpos.order.application;
+package kitchenpos.order.application.validator;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.ordertable.application.OrderTableUpGroupValidator;
+import kitchenpos.order.application.OrderDao;
+import kitchenpos.ordertable.domain.OrderTableUngroupValidator;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTables;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderStatusValidator implements OrderTableUpGroupValidator {
+public class OrderStatusValidator implements OrderTableUngroupValidator {
 
     private final OrderDao orderDao;
 

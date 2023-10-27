@@ -14,6 +14,7 @@ import kitchenpos.menu.application.dto.MenuProductRequest;
 import kitchenpos.order.application.dto.OrderLineItemsRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.validator.OrderStatusOrderTablesValidator;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.application.dto.TableResponse;
@@ -36,7 +37,8 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
-@Import({TableService.class, ProductService.class, MenuService.class, OrderService.class, MenuGroupService.class})
+@Import({TableService.class, ProductService.class, MenuService.class, OrderService.class, MenuGroupService.class,
+        OrderStatusOrderTablesValidator.class})
 class TableServiceTest {
 
     @Autowired

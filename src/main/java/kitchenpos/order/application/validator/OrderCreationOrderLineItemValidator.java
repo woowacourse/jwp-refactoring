@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.order.application.validator;
 
 import java.util.List;
 import java.util.stream.Collectors;

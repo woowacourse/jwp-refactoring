@@ -6,7 +6,7 @@ import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.ordertable.application.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTables;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.ordertable.application.OrderTableUpGroupValidator;
+import kitchenpos.ordertable.domain.OrderTableUngroupValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,13 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
     private final OrderTableDao orderTableDao;
     private final TableGroupCustomDao tableGroupDao;
-    private final List<OrderTableUpGroupValidator> orderTableUpGroupValidators;
+    private final List<OrderTableUngroupValidator> orderTableUngroupValidators;
 
     public TableGroupService(final OrderTableDao orderTableDao, final TableGroupCustomDao tableGroupDao,
-                             final List<OrderTableUpGroupValidator> orderTableUpGroupValidators) {
+                             final List<OrderTableUngroupValidator> orderTableUngroupValidators) {
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
-        this.orderTableUpGroupValidators = orderTableUpGroupValidators;
+        this.orderTableUngroupValidators = orderTableUngroupValidators;
     }
 
     @Transactional
@@ -45,7 +45,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables = new OrderTables(orderTableDao.findAllByTableGroupId(tableGroupId));
-        orderTables.ungroup(orderTableUpGroupValidators);
+        orderTables.ungroup(orderTableUngroupValidators);
         orderTableDao.saveAll(orderTables);
     }
 }

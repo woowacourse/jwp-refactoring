@@ -1,5 +1,6 @@
-package kitchenpos.order.application;
+package kitchenpos.order.application.validator;
 
+import kitchenpos.order.application.OrderCreationValidator;
 import kitchenpos.ordertable.application.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.ordertable.domain.OrderTable;
