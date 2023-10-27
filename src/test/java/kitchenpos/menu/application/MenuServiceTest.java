@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.dto.MenuCreateRequest;
-import kitchenpos.menu.dto.MenuProductRequest;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.menu.dto.MenuCreateRequest;
+import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
@@ -65,7 +65,7 @@ class MenuServiceTest {
             assertAll(
                     () -> assertThat(savedMenu.getName()).isEqualTo("후라이드치킨"),
                     () -> assertThat(savedMenu.getPrice()).isEqualTo("15000.00"),
-                    () -> assertThat(savedMenu.getMenuGroup().getId()).isEqualTo(1L)
+                    () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(1L)
             );
         }
 
@@ -141,17 +141,20 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 정상적으로 조회한다.")
     void list() {
         // given
+        final MenuValidator menuValidator = new MenuValidator(productRepository);
         final Product productA = new Product("후라이드치킨", new BigDecimal("15000.00"));
         productRepository.save(productA);
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-        final MenuProduct menuProductA = new MenuProduct(null, productA, 1);
-        final Menu menuA = Menu.of(savedMenuGroup, List.of(menuProductA), "후라이드치킨", new BigDecimal("15000.00"));
+        final MenuProduct menuProductA = new MenuProduct(null, productA.getId(), 1);
+        final Menu menuA = Menu.of(savedMenuGroup.getId(), List.of(menuProductA), "후라이드치킨",
+                new BigDecimal("15000.00"), menuValidator);
         menuRepository.save(menuA);
 
         final Product productB = new Product("양념치킨", new BigDecimal("17000.00"));
         productRepository.save(productB);
-        final MenuProduct menuProductB = new MenuProduct(null, productB, 1);
-        final Menu menuB = Menu.of(savedMenuGroup, List.of(menuProductB), "양념치킨", new BigDecimal("17000.00"));
+        final MenuProduct menuProductB = new MenuProduct(null, productB.getId(), 1);
+        final Menu menuB = Menu.of(savedMenuGroup.getId(), List.of(menuProductB), "양념치킨", new BigDecimal("17000.00"),
+                menuValidator);
         menuRepository.save(menuB);
 
         // when
@@ -164,10 +167,10 @@ class MenuServiceTest {
                 () -> assertThat(menus).hasSize(2),
                 () -> assertThat(savedMenuA.getName()).isEqualTo("후라이드치킨"),
                 () -> assertThat(savedMenuA.getPrice()).isEqualTo("15000.00"),
-                () -> assertThat(savedMenuA.getMenuGroup().getId()).isEqualTo(1L),
+                () -> assertThat(savedMenuA.getMenuGroupId()).isEqualTo(1L),
                 () -> assertThat(savedMenuB.getName()).isEqualTo("양념치킨"),
                 () -> assertThat(savedMenuB.getPrice()).isEqualTo("17000.00"),
-                () -> assertThat(savedMenuB.getMenuGroup().getId()).isEqualTo(1L)
+                () -> assertThat(savedMenuB.getMenuGroupId()).isEqualTo(1L)
         );
     }
 }

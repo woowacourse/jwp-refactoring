@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.tablegroup.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -11,8 +11,8 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupGenerator;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.dto.OrderTableRequest;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
@@ -43,6 +43,9 @@ class TableGroupServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private TableGroupGenerator tableGroupGenerator;
+
     @Nested
     @DisplayName("테이블 그룹을 생성할 때 ")
     class Create {
@@ -65,7 +68,7 @@ class TableGroupServiceTest {
             final TableGroup savedTableGroup = tableGroupService.create(request);
 
             // then
-            assertThat(savedTableGroup.getOrderTables()).hasSize(2);
+            assertThat(savedTableGroup.getId()).isEqualTo(1L);
         }
 
         @Test
@@ -125,11 +128,9 @@ class TableGroupServiceTest {
         }
 
         @Test
-        @DisplayName("테이블 그룹이 빈 값이 아닌 경우 예외가 발생한다.")
+        @DisplayName("테이블 그룹ID가 빈 값이 아닌 경우 예외가 발생한다.")
         void throwExceptionWhenTableGroupIsNonNull() {
-            final TableGroup tableGroup = new TableGroup(new ArrayList<>());
-            tableGroupRepository.save(tableGroup);
-            final OrderTable orderTableA = new OrderTable(tableGroup, 2, true);
+            final OrderTable orderTableA = new OrderTable(1L, 2, true);
             final OrderTable orderTableB = new OrderTable(null, 3, true);
             orderTableRepository.save(orderTableA);
             orderTableRepository.save(orderTableB);
@@ -142,18 +143,15 @@ class TableGroupServiceTest {
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("테이블 그룹은 비어있어야 합니다.");
+                    .hasMessage("테이블 그룹ID는 비어있어야 합니다.");
         }
 
 
         @Test
         @DisplayName("주문 테이블의 테이블 그룹 ID가 이미 있는 경우 예외가 발생한다.")
         void throwExceptionWhenTableGroupIdAlreadyExists() {
-            final TableGroup beforeTableGroup = new TableGroup(new ArrayList<>());
-            final OrderTable orderTableA = new OrderTable(beforeTableGroup, 2, true);
+            final OrderTable orderTableA = new OrderTable(1L, 2, true);
             final OrderTable orderTableB = new OrderTable(null, 3, true);
-
-            tableGroupRepository.save(beforeTableGroup);
 
             final OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
             final OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
@@ -198,9 +196,9 @@ class TableGroupServiceTest {
             final OrderTable ungroupedOrderTableB = orderTables.get(1);
 
             assertAll(
-                    () -> assertThat(ungroupedOrderTableA.getTableGroup()).isNull(),
+                    () -> assertThat(ungroupedOrderTableA.getTableGroupId()).isNull(),
                     () -> assertThat(ungroupedOrderTableA.isEmpty()).isFalse(),
-                    () -> assertThat(ungroupedOrderTableB.getTableGroup()).isNull(),
+                    () -> assertThat(ungroupedOrderTableB.getTableGroupId()).isNull(),
                     () -> assertThat(ungroupedOrderTableB.isEmpty()).isFalse()
             );
         }
@@ -215,7 +213,7 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
             final OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
 
-            final Order order = new Order(new ArrayList<>(), orderTableA, orderStatus);
+            final Order order = new Order(new ArrayList<>(), orderTableA.getId(), orderStatus);
             orderRepository.save(order);
 
             final OrderTableRequest orderTableRequestA = new OrderTableRequest(savedOrderTableA.getId());

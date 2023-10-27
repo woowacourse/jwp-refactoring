@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,15 +9,17 @@ import java.util.List;
 import kitchenpos.common.OrderStatus;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.OrderChangeRequest;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +39,9 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
+    private MenuValidator menuValidator;
+
+    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @Autowired
@@ -44,6 +49,13 @@ class OrderServiceTest {
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
 
     @Nested
     @DisplayName("주문 목록을 생성할 때 ")
@@ -56,8 +68,10 @@ class OrderServiceTest {
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product product = new Product("치킨", new BigDecimal("15000.00"));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            final Menu menu = Menu.of(savedMenuGroup, List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
+            final Menu menu = Menu.of(savedMenuGroup.getId(), List.of(menuProduct), "후라이드 치킨",
+                    new BigDecimal("15000.00"), menuValidator);
             menuRepository.save(menu);
 
             final OrderTable orderTable = new OrderTable(null, 1, false);
@@ -84,8 +98,10 @@ class OrderServiceTest {
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product product = new Product("치킨", new BigDecimal("15000.00"));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            final Menu menu = Menu.of(savedMenuGroup, List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
+            final Menu menu = Menu.of(savedMenuGroup.getId(), List.of(menuProduct), "후라이드 치킨",
+                    new BigDecimal("15000.00"), menuValidator);
             menuRepository.save(menu);
 
             final OrderLineItemRequest orderLineItemRequestA = new OrderLineItemRequest(menu.getId(), 1);
@@ -110,8 +126,10 @@ class OrderServiceTest {
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product product = new Product("치킨", new BigDecimal("15000.00"));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            final Menu menu = Menu.of(savedMenuGroup, List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
+            final Menu menu = Menu.of(savedMenuGroup.getId(), List.of(menuProduct), "후라이드 치킨",
+                    new BigDecimal("15000.00"), menuValidator);
             menuRepository.save(menu);
 
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
@@ -130,8 +148,10 @@ class OrderServiceTest {
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product product = new Product("치킨", new BigDecimal("15000.00"));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            final Menu menu = Menu.of(savedMenuGroup, List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
+            final Menu menu = Menu.of(savedMenuGroup.getId(), List.of(menuProduct), "후라이드 치킨",
+                    new BigDecimal("15000.00"), menuValidator);
             menuRepository.save(menu);
 
             final OrderTable orderTable = new OrderTable(null, 1, true);
@@ -154,9 +174,12 @@ class OrderServiceTest {
         // given
         final MenuGroup menuGroup = new MenuGroup("치킨");
         final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
         final Product product = new Product("치킨", new BigDecimal("15000.00"));
-        final MenuProduct menuProduct = new MenuProduct(null, product, 1);
-        final Menu menu = Menu.of(savedMenuGroup, List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"));
+        productRepository.save(product);
+        final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
+        final Menu menu = Menu.of(savedMenuGroup.getId(), List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"),
+                menuValidator);
         menuRepository.save(menu);
 
         final OrderTable orderTable = new OrderTable(null, 1, false);
@@ -190,8 +213,10 @@ class OrderServiceTest {
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product product = new Product("치킨", new BigDecimal("15000.00"));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            final Menu menu = Menu.of(savedMenuGroup, List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
+            final Menu menu = Menu.of(savedMenuGroup.getId(), List.of(menuProduct), "후라이드 치킨",
+                    new BigDecimal("15000.00"), menuValidator);
             menuRepository.save(menu);
 
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
@@ -221,8 +246,10 @@ class OrderServiceTest {
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product product = new Product("치킨", new BigDecimal("15000.00"));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            final Menu menu = Menu.of(savedMenuGroup, List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
+            final Menu menu = Menu.of(savedMenuGroup.getId(), List.of(menuProduct), "후라이드 치킨",
+                    new BigDecimal("15000.00"), menuValidator);
             menuRepository.save(menu);
 
             final OrderTable orderTable = new OrderTable(null, 1, false);
@@ -248,8 +275,10 @@ class OrderServiceTest {
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product product = new Product("치킨", new BigDecimal("15000.00"));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            final Menu menu = Menu.of(savedMenuGroup, List.of(menuProduct), "후라이드 치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
+            final Menu menu = Menu.of(savedMenuGroup.getId(), List.of(menuProduct), "후라이드 치킨",
+                    new BigDecimal("15000.00"), menuValidator);
             menuRepository.save(menu);
 
             final OrderTable orderTable = new OrderTable(null, 1, false);

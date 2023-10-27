@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,13 +9,12 @@ import java.util.List;
 import kitchenpos.common.OrderStatus;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.dto.OrderTableChangNumberOfGuestRequest;
 import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.OrderTableCreateRequest;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupGenerator;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -44,6 +43,9 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private TableGroupGenerator tableGroupGenerator;
 
     @Test
     @DisplayName("주문 테이블을 정상적으로 생성한다.")
@@ -125,16 +127,15 @@ class TableServiceTest {
         @DisplayName("테이블 그룹이 빈 값이 아니면 예외가 발생한다.")
         void throwsExceptionWhenTableGroupIdIsNoTNull() {
             // given
-            final TableGroup tableGroup = new TableGroup(new ArrayList<>());
-            tableGroupRepository.save(tableGroup);
-            final OrderTable orderTable = new OrderTable(tableGroup, 2, false);
-            final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+            final OrderTable orderTableA = new OrderTable(1L, 2, false);
+            orderTableRepository.save(orderTableA);
+
             final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableA.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("테이블 그룹은 비어있어야 합니다.");
+                    .hasMessage("테이블 그룹ID는 비어있어야 합니다.");
         }
 
         @ParameterizedTest
@@ -145,7 +146,7 @@ class TableServiceTest {
             final OrderTable orderTable = new OrderTable(null, 2, false);
             orderTableRepository.save(orderTable);
 
-            final Order order = new Order(new ArrayList<>(), orderTable, orderStatus);
+            final Order order = new Order(new ArrayList<>(), orderTable.getId(), orderStatus);
             orderRepository.save(order);
 
             final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);

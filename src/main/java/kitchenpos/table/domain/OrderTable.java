@@ -3,13 +3,9 @@ package kitchenpos.table.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -18,9 +14,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -32,11 +26,11 @@ public class OrderTable {
     }
 
     public OrderTable(
-            final TableGroup tableGroup,
+            final Long tableGroupId,
             final int numberOfGuests,
             final boolean empty
     ) {
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -47,8 +41,8 @@ public class OrderTable {
     }
 
     public void validateNoTableGroup() {
-        if (Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException("테이블 그룹은 비어있어야 합니다.");
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("테이블 그룹ID는 비어있어야 합니다.");
         }
     }
 
@@ -71,7 +65,7 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
@@ -96,8 +90,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -108,7 +102,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void setTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 }

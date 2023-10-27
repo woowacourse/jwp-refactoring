@@ -1,11 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import kitchenpos.common.OrderStatus;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ class OrderTest {
     void changeOrderStatus() {
         // given
         final OrderTable orderTable = new OrderTable(null, 2, false);
-        final Order order = new Order(new ArrayList<>(), orderTable, OrderStatus.COOKING);
+        final Order order = new Order(new ArrayList<>(), orderTable.getId(), OrderStatus.COOKING);
 
         // when
         order.changeOrderStatus(OrderStatus.COMPLETION);
@@ -31,7 +30,7 @@ class OrderTest {
     void throwsExceptionWhenOrderStatusIsAlreadyCompletion() {
         // given
         final OrderTable orderTable = new OrderTable(null, 2, false);
-        final Order order = new Order(new ArrayList<>(), orderTable, OrderStatus.COMPLETION);
+        final Order order = new Order(new ArrayList<>(), orderTable.getId(), OrderStatus.COMPLETION);
 
         // when
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))

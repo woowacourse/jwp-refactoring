@@ -8,6 +8,7 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupGenerator;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.dto.OrderTableRequest;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
@@ -19,36 +20,35 @@ public class TableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupGenerator tableGroupGenerator;
 
     public TableGroupService(
             final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final TableGroupRepository tableGroupRepository,
+            final TableGroupGenerator tableGroupGenerator
     ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupGenerator = tableGroupGenerator;
     }
 
     @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
         final List<OrderTableRequest> orderTableRequests = request.getOrderTables();
+        final List<Long> orderTableIds = getOrderTableIds(orderTableRequests);
 
-        if (orderTableRequests.size() < 2) {
-            throw new IllegalArgumentException("주문 테이블은 2개 이상이어야 합니다.");
-        }
+        final TableGroup newTableGroup = TableGroup.of(tableGroupGenerator, orderTableIds);
+        final TableGroup savedTableGroup = tableGroupRepository.save(newTableGroup);
+        tableGroupGenerator.setOrderTableGroupId(savedTableGroup.getId(), orderTableIds);
+        return savedTableGroup;
+    }
 
-        final List<Long> orderTableIds = orderTableRequests.stream()
+    private List<Long> getOrderTableIds(final List<OrderTableRequest> orderTableRequests) {
+        return orderTableRequests.stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTableRequests.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("요청한 주문 테이블 수와 저장된 주문 테이블의 수가 다릅니다.");
-        }
-
-        final TableGroup newTableGroup = new TableGroup(savedOrderTables);
-        return tableGroupRepository.save(newTableGroup);
     }
 
     @Transactional
