@@ -1,10 +1,30 @@
 package kitchenpos.ordertable.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private Long tableGroupId;
+
+    @Embedded
     private NumberOfGuests numberOfGuests;
+
+    @Column
     private boolean empty;
+
+    protected OrderTable() {
+    }
 
     public OrderTable(int numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
@@ -15,10 +35,6 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
-    }
-
-    public OrderTable() {
-
     }
 
     public void changeEmpty(boolean isEmpty) {
@@ -54,7 +70,7 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests.getValue();
+        return numberOfGuests.getNumberOfGuests();
     }
 
     public boolean isEmpty() {

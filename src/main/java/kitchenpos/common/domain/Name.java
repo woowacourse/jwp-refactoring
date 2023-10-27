@@ -4,17 +4,20 @@ import java.util.Objects;
 
 public class Name {
 
-    private final String value;
+    private String name;
 
-    public Name(String value) {
-        if (value.isBlank()) {
-            throw new IllegalArgumentException("이름은 공백일 수 없습니다.");
-        }
-        this.value = value;
+    protected Name() {
     }
 
-    public String getValue() {
-        return value;
+    public Name(String name) {
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("이름은 공백일 수 없습니다.");
+        }
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -26,11 +29,11 @@ public class Name {
             return false;
         }
         Name name = (Name) o;
-        return Objects.equals(value, name.value);
+        return Objects.equals(this.name, name.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(name);
     }
 }

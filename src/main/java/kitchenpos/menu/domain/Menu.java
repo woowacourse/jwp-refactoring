@@ -1,18 +1,40 @@
 package kitchenpos.menu.domain;
 
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import kitchenpos.common.domain.Name;
 import kitchenpos.common.domain.Price;
 
+@Entity
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Embedded
     private Name name;
+
+    @Embedded
     private Price price;
+
+    @Column(nullable = false)
     private Long menuGroupId;
+
+    @OneToMany(mappedBy = "menuId")
     private List<MenuProduct> menuProducts;
 
-    public Menu(String name, Price price, Long menuGroupId) {
-        this(null, name, price, menuGroupId, null);
+    protected Menu() {
+    }
+
+    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
     public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
@@ -23,19 +45,12 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public void assignProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-        for (MenuProduct menuProduct : this.menuProducts) {
-            menuProduct.setMenuId(this.id);
-        }
-    }
-
     public Long getId() {
         return id;
     }
 
     public String getName() {
-        return name.getValue();
+        return name.getName();
     }
 
     public Price getPrice() {

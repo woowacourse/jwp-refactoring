@@ -2,14 +2,41 @@ package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import kitchenpos.ordertable.domain.OrderTable;
+import org.springframework.data.annotation.CreatedDate;
 
+@Table(name = "orders")
+@Entity
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private Long orderTableId;
+
+    @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "orderId")
     private List<OrderLineItem> orderLineItems;
+
+    protected Order() {
+    }
 
     public Order(
             Long id,
@@ -33,12 +60,6 @@ public class Order {
             throw new IllegalArgumentException("비어 있는 테이블은 주문을 생성할 수 없습니다.");
         }
         return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-    }
-
-    public void assignOrderToTable() {
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.assignMenuId(this.id);
-        }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

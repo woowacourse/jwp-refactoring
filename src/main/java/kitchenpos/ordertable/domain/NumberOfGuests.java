@@ -4,17 +4,20 @@ import java.util.Objects;
 
 public class NumberOfGuests {
 
-    private final int value;
+    private int numberOfGuests;
 
-    public NumberOfGuests(int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException("손님 수는 0보다 작을 수 없습니다.");
-        }
-        this.value = value;
+    protected NumberOfGuests() {
     }
 
-    public int getValue() {
-        return value;
+    public NumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님 수는 0보다 작을 수 없습니다.");
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
     }
 
     @Override
@@ -26,11 +29,11 @@ public class NumberOfGuests {
             return false;
         }
         NumberOfGuests that = (NumberOfGuests) o;
-        return value == that.value;
+        return numberOfGuests == that.numberOfGuests;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(numberOfGuests);
     }
 }

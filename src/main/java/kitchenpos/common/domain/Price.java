@@ -5,11 +5,14 @@ import java.util.Objects;
 
 public class Price {
 
-    private final BigDecimal value;
+    private BigDecimal price;
 
-    public Price(BigDecimal value) {
-        validate(value);
-        this.value = value;
+    protected Price() {
+    }
+
+    public Price(BigDecimal price) {
+        validate(price);
+        this.price = price;
     }
 
     private void validate(BigDecimal value) {
@@ -19,11 +22,11 @@ public class Price {
     }
 
     public boolean isBiggerThan(BigDecimal other) {
-        return value.compareTo(other) > 0;
+        return price.compareTo(other) > 0;
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     @Override
@@ -35,11 +38,11 @@ public class Price {
             return false;
         }
         Price price = (Price) o;
-        return Objects.equals(value, price.value);
+        return Objects.equals(this.price, price.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(price);
     }
 }

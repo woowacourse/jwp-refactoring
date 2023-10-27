@@ -4,17 +4,20 @@ import java.util.Objects;
 
 public class Quantity {
 
-    private final long value;
+    private long quantity;
 
-    public Quantity(long value) {
-        if (value < 0) {
-            throw new IllegalArgumentException("수량은 0보다 작을 수 없습니다.");
-        }
-        this.value = value;
+    protected Quantity() {
     }
 
-    public long getValue() {
-        return value;
+    public Quantity(long quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("수량은 0보다 작을 수 없습니다.");
+        }
+        this.quantity = quantity;
+    }
+
+    public long getQuantity() {
+        return quantity;
     }
 
     @Override
@@ -26,11 +29,11 @@ public class Quantity {
             return false;
         }
         Quantity quantity = (Quantity) o;
-        return value == quantity.value;
+        return this.quantity == quantity.quantity;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(quantity);
     }
 }
