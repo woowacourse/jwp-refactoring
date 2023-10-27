@@ -1,131 +1,145 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import org.assertj.core.api.Assertions;
+import kitchenpos.ServiceTest;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuPrice;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupName;
+import kitchenpos.domain.menuproduct.MenuProduct;
+import kitchenpos.domain.menuproduct.MenuProductQuantity;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableNumberOfGuests;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductName;
+import kitchenpos.domain.product.ProductPrice;
+import kitchenpos.dto.request.OrderChangeStatusRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-@SpringBootTest
-@Transactional
-@SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@ServiceTest
 class OrderServiceTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuProductRepository menuProductRepository;
     @Autowired
-    private ProductDao productDao;
+    private MenuGroupRepository menuGroupRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemCreateRequest> orderLineItems = new ArrayList<>();
     private OrderTable savedOrderTable;
 
     @BeforeEach
     void setUp() {
-        final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(null, "메뉴 그룹"));
-        final Product savedProduct = productDao.save(new Product(null, "상품", BigDecimal.ONE));
-        final List<MenuProduct> menuProducts = List.of(new MenuProduct(null, null, savedProduct.getId(), 2));
-        final Menu savedMenu = menuDao.save(new Menu(null, "메뉴", BigDecimal.ONE, savedMenuGroup.getId(), menuProducts));
-        orderLineItems = List.of(new OrderLineItem(null, null, savedMenu.getId(), 1));
-        savedOrderTable = orderTableDao.save(new OrderTable(null, null, 5, false));
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new MenuGroupName("메뉴 그룹")));
+        final Product savedProduct = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE)));
+        final Menu savedMenu = menuRepository.save(new Menu(new MenuName("메뉴"), new MenuPrice(BigDecimal.ONE), savedMenuGroup));
+        final MenuProduct savedMenuProduct = menuProductRepository.save(new MenuProduct(savedMenu, savedProduct, new MenuProductQuantity(2)));
+        orderLineItems.add(new OrderLineItemCreateRequest(savedMenu.getId(), 1));
+        savedOrderTable = orderTableRepository.save(new OrderTable(null, new OrderTableNumberOfGuests(5), false));
     }
 
     @Nested
     class 주문을_등록한다 {
         @Test
         void 주문이_정상적으로_등록된다() {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-            final Order savedOrder = orderService.create(order);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            final OrderResponse response = orderService.create(request);
 
             SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(savedOrder.getId()).isNotNull();
-                softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-                softly.assertThat(savedOrder.getOrderedTime()).isNotNull();
+                softly.assertThat(response.getId()).isNotNull();
+                softly.assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+                softly.assertThat(response.getOrderedTime()).isNotNull();
             });
         }
 
         @Test
         void 존재하지_않는_테이블에_주문이_등록되면_예외가_발생한다() {
-            final Order order = new Order(null, savedOrderTable.getId() + 1, null, null, orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId() + 1, orderLineItems);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 비어있는_상태의_테이블에_주문이_등록되면_예외가_발생한다() {
-            savedOrderTable.setEmpty(true);
-            orderTableDao.save(savedOrderTable);
+            savedOrderTable.updateEmpty(true);
+            orderTableRepository.save(savedOrderTable);
 
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_항목들이_비어있으면_예외가_발생한다() {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, List.of());
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), List.of());
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_항목들에_메뉴가_중복되면_예외가_발생한다() {
+            orderLineItems.add(orderLineItems.get(0));
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_항목이_존재하지_않으면_예외가_발생한다() {
-            orderLineItems.get(0).setMenuId(orderLineItems.get(0).getMenuId() + 1);
+            orderLineItems.add(new OrderLineItemCreateRequest(orderLineItems.get(0).getMenuId() + 1, 1));
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
 
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @Test
     void 주문의_목록을_조회한다() {
-        final List<Order> expected = orderService.list();
+        final List<OrderResponse> expected = orderService.list();
         for (int i = 0; i < 3; i++) {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-            expected.add(orderService.create(order));
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            expected.add(orderService.create(request));
         }
 
-        final List<Order> result = orderService.list();
+        final List<OrderResponse> result = orderService.list();
 
         assertSoftly(softly -> {
             softly.assertThat(result).hasSize(expected.size());
@@ -141,32 +155,24 @@ class OrderServiceTest {
         @ParameterizedTest
         @ValueSource(strings = {"MEAL", "COMPLETION"})
         void 주문의_상태를_정상적으로_변경한다(final String status) {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-            final Order savedOrder = orderService.create(order);
-            final Order changeStatusOrder = new Order(null, null, status, null, null);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            final OrderResponse response = orderService.create(request);
+            final OrderChangeStatusRequest changeStatusRequest = new OrderChangeStatusRequest(status);
 
-            orderService.changeOrderStatus(savedOrder.getId(), changeStatusOrder);
-            final Order changeOrder = orderDao.findById(savedOrder.getId()).get();
+            orderService.changeOrderStatus(response.getId(), changeStatusRequest);
+            final Order changeOrder = orderRepository.findById(response.getId())
+                    .orElseThrow(IllegalArgumentException::new);
 
-            assertThat(changeOrder.getOrderStatus()).isEqualTo(status);
-        }
-
-        @Test
-        void 주문의_상태가_계산_완료일때_예외가_발생한다() {
-            final Order savedOrder = orderDao.save(new Order(null, savedOrderTable.getId(), "COMPLETION", LocalDateTime.now(), orderLineItems));
-            final Order changeStatusOrder = new Order(null, null, "MEAL", null, null);
-
-            Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeStatusOrder))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThat(changeOrder.getOrderStatus().name()).isEqualTo(status);
         }
 
         @Test
         void 주문이_존재하지_않으면_예외가_발생한다() {
-            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
-            final Order savedOrder = orderService.create(order);
-            final Order changeStatusOrder = new Order(null, null, "MEAL", null, null);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+            final OrderResponse response = orderService.create(request);
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId() + 1, changeStatusOrder))
+            final OrderChangeStatusRequest changeStatusRequest = new OrderChangeStatusRequest("MEAL");
+            assertThatThrownBy(() -> orderService.changeOrderStatus(response.getId() + 1, changeStatusRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
