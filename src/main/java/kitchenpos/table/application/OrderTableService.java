@@ -1,9 +1,9 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.presentation.dto.OrderTableCreateRequest;
-import kitchenpos.order.presentation.dto.OrderTableUpdateEmptyRequest;
-import kitchenpos.order.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.table.presentation.dto.OrderTableCreateRequest;
+import kitchenpos.table.presentation.dto.OrderTableUpdateEmptyRequest;
+import kitchenpos.table.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

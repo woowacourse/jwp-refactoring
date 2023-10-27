@@ -10,7 +10,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.presentation.dto.OrderCreateRequest;
 import kitchenpos.order.presentation.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

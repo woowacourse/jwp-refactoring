@@ -10,7 +10,7 @@ import kitchenpos.order.presentation.dto.OrderCreateRequest;
 import kitchenpos.order.presentation.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
