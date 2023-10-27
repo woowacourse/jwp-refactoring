@@ -6,6 +6,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.*;
 import kitchenpos.fixture.MenuGroupFixtures;
 import kitchenpos.request.OrderTableCreateRequest;
+import kitchenpos.request.TableChangeEmptyRequest;
 import kitchenpos.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,7 +88,7 @@ class TableServiceTest extends ServiceTest {
         orderDao.save(order);
 
         // when
-        OrderTable savedOrderTable = tableService.changeEmpty(orderTable.getId(), true);
+        OrderTable savedOrderTable = tableService.changeEmpty(orderTable.getId(), new TableChangeEmptyRequest(true));
 
         // then
         assertThat(savedOrderTable.isEmpty()).isTrue();
@@ -117,7 +118,7 @@ class TableServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTable1.getId(), true))
+                () -> tableService.changeEmpty(orderTable1.getId(), new TableChangeEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -142,7 +143,7 @@ class TableServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTable.getId(), true))
+                () -> tableService.changeEmpty(orderTable.getId(), new TableChangeEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
