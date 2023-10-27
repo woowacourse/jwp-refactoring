@@ -1,12 +1,16 @@
 package kitchenpos.test.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
 
 public class MenuProductFixture {
 
-    public static MenuProduct 메뉴_상품(Menu menu, Product product, long quantity) {
-        return new MenuProduct(menu, product, quantity);
+    public static MenuProduct 메뉴_상품(Product product, long quantity) {
+        return new MenuProduct(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                quantity
+        );
     }
 }
