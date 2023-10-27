@@ -39,7 +39,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
                 .map(orderLineItem -> new OrderLineItem(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
                 .collect(Collectors.toList());
-        validateOrderLineItems(orderLineItems);
+        validateOrderLineItemsSize(orderLineItems);
 
         OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -53,7 +53,7 @@ public class OrderService {
         return savedOrder;
     }
 
-    private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
+    private void validateOrderLineItemsSize(List<OrderLineItem> orderLineItems) {
         List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
