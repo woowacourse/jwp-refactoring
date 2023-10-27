@@ -2,6 +2,3 @@ dependencies {
     implementation project(':kitchenpos-ordertable')
     implementation project(':kitchenpos-common')
 }
-
-bootJar { enabled = false }
-jar { enabled = true }

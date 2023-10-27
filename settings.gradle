@@ -7,7 +7,7 @@ include(
         'kitchenpos-ordertable',
         'kitchenpos-product',
         'kitchenpos-tablegroup',
-        'kitchenpos-common'
+        'kitchenpos-common',
+        'kitcehnpos-app'
 )
-include 'kitcehnpos-app'
 
