@@ -1,6 +1,7 @@
-package kitchenpos.common.dto.response;
+package kitchenpos.order.dto.response;
 
 import java.util.List;
+import kitchenpos.table.dto.response.TableResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 

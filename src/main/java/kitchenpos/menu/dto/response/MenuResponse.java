@@ -1,6 +1,7 @@
-package kitchenpos.common.dto.response;
+package kitchenpos.menu.dto.response;
 
 import java.math.BigDecimal;
+import kitchenpos.menugroup.dto.request.MenuGroupResponse;
 import kitchenpos.menu.domain.Menu;
 
 public class MenuResponse {

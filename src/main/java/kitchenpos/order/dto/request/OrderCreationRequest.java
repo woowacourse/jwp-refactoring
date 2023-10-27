@@ -1,4 +1,4 @@
-package kitchenpos.common.dto.request;
+package kitchenpos.order.dto.request;
 
 import java.util.List;
 import java.util.Map;

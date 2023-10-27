@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.common.dto.request.OrderTableRequest;
-import kitchenpos.common.dto.request.TableGroupCreationRequest;
+import kitchenpos.order.dto.request.OrderTableRequest;
+import kitchenpos.tablegroup.dto.request.TableGroupCreationRequest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;

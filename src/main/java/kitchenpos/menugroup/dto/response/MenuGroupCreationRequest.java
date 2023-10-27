@@ -1,4 +1,4 @@
-package kitchenpos.common.dto.request;
+package kitchenpos.menugroup.dto.response;
 
 import javax.validation.constraints.NotNull;
 

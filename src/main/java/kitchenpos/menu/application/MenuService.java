@@ -8,12 +8,12 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
-import kitchenpos.common.dto.request.MenuCreationRequest;
-import kitchenpos.common.dto.request.MenuProductRequest;
-import kitchenpos.common.dto.response.MenuResponse;
+import kitchenpos.menu.dto.request.MenuCreationRequest;
+import kitchenpos.menu.dto.request.MenuProductRequest;
+import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.common.dto.response.MenuGroupResponse;
+import kitchenpos.menugroup.dto.request.MenuGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

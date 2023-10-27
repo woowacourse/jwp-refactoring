@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.common.dto.request.MenuGroupCreationRequest;
-import kitchenpos.common.dto.response.MenuGroupResponse;
+import kitchenpos.menugroup.dto.response.MenuGroupCreationRequest;
+import kitchenpos.menugroup.dto.request.MenuGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
