@@ -1,6 +1,8 @@
 package kitchenpos.domain;
 
 import kitchenpos.common.BaseDate;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

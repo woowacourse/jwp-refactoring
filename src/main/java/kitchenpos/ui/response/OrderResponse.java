@@ -1,6 +1,6 @@
 package kitchenpos.ui.response;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 
 import java.time.LocalDateTime;
 import java.util.Collections;

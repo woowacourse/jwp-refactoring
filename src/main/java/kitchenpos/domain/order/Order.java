@@ -1,6 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import kitchenpos.common.BaseDate;
+import kitchenpos.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;

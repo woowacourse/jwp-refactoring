@@ -1,7 +1,7 @@
 package kitchenpos.ui.response;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 
 import java.util.List;
 import java.util.stream.Collectors;
