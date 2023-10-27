@@ -4,6 +4,7 @@ import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.*;
 import kitchenpos.application.dto.MenuProductDto;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -126,9 +127,11 @@ class OrderIntegrationTest extends IntegrationTest {
         final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest(name);
         final HttpEntity<MenuGroupCreateRequest> request = new HttpEntity<>(menuGroup);
 
-        return testRestTemplate
-                .postForEntity("/api/menu-groups", request, MenuGroup.class)
+        final MenuGroupResponse response = testRestTemplate
+                .postForEntity("/api/menu-groups", request, MenuGroupResponse.class)
                 .getBody();
+
+        return new MenuGroup(response.getId(), response.getName());
     }
 
     private OrderTable createTable() {

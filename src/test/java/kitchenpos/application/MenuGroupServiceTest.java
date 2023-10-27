@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.persistence.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
@@ -33,8 +34,8 @@ class MenuGroupServiceTest {
                 .thenReturn(savedMenuGroup);
 
         // when
-        final MenuGroup result = menuGroupService.create(new MenuGroupCreateRequest("신메뉴"));
-        final MenuGroup expect = new MenuGroup(1L, "신메뉴");
+        final MenuGroupResponse result = menuGroupService.create(new MenuGroupCreateRequest("신메뉴"));
+        final MenuGroupResponse expect = new MenuGroupResponse(1L, "신메뉴");
 
         // then
         assertThat(result)
@@ -49,7 +50,7 @@ class MenuGroupServiceTest {
                 .thenReturn(Collections.emptyList());
 
         // when
-        final List<MenuGroup> result = menuGroupService.list();
+        final List<MenuGroupResponse> result = menuGroupService.list();
 
         // then
         assertThat(result).isEmpty();

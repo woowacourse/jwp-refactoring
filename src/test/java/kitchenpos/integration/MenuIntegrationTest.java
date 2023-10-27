@@ -1,9 +1,10 @@
 package kitchenpos.integration;
 
-import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductDto;
+import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
@@ -90,8 +91,10 @@ class MenuIntegrationTest extends IntegrationTest {
         final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest(name);
         final HttpEntity<MenuGroupCreateRequest> request = new HttpEntity<>(menuGroup);
 
-        return testRestTemplate
-                .postForEntity("/api/menu-groups", request, MenuGroup.class)
+        final MenuGroupResponse response = testRestTemplate
+                .postForEntity("/api/menu-groups", request, MenuGroupResponse.class)
                 .getBody();
+
+        return new MenuGroup(response.getId(), response.getName());
     }
 }
