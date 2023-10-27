@@ -26,7 +26,7 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository, orderValidator, orderMapper);
     }
 
     @DisplayName("[SUCCESS] 전체 주문 목록을 조회한다.")
@@ -48,13 +48,14 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
         final Menu savedMenu = menuRepository.save(menu);
         final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
-        final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
+        final Order order = Order.ofEmptyOrderLineItems(savedOrderTable.getId());
         order.addOrderLineItems(List.of(
-                OrderLineItem.withoutOrder(savedMenu, new Quantity(10))
+                OrderLineItem.withoutOrder(savedMenu.getId(), new Quantity(10))
         ));
         final Order savedOrder = orderRepository.save(order);
+        final OrderTable findOrderTable = orderTableRepository.findOrderTableById(order.getOrderTableId());
 
-        final OrderResponse expected = OrderResponse.from(savedOrder);
+        final OrderResponse expected = OrderResponse.from(savedOrder, findOrderTable, List.of(menu));
 
         // when
         final List<OrderResponse> actual = orderService.list();

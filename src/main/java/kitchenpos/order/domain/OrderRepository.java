@@ -22,13 +22,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select o " +
            "from Order o " +
-           "where o.orderTable.tableGroupId = :tableGroupId")
-    List<Order> findOrdersByTableGroupId(@Param("tableGroupId") final Long tableGroupId);
-
-    @Query("select case when coalesce(count(1), 0) > 0 then true else false end " +
-           " from Order o " +
-           " where o.orderTable.id = :orderTableId " +
-           " and o.orderStatus in :orderStatuses ")
-    boolean existsByOrderTableIdAndOrderStatusIn(@Param("orderTableId") final Long orderTableId,
-                                                 @Param("orderStatuses") final List<OrderStatus> orderStatuses);
+           "where o.orderTableId in :orderTableIds")
+    List<Order> findInOrderTableIds(@Param("orderTableIds") final List<Long> orderTableIds);
 }

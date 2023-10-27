@@ -4,12 +4,11 @@ import kitchenpos.config.RepositoryTestConfig;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.menu.domain.Product;
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.menu.domain.vo.Name;
 import kitchenpos.menu.domain.vo.Price;
 import kitchenpos.menu.domain.vo.Quantity;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -31,7 +29,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     void success_findOrderById() {
         // given
         final OrderTable savedOrderTable = persistOrderTable(OrderTable.withoutTableGroup(5, true));
-        final Order expected = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
+        final Order expected = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable.getId()));
 
         em.flush();
         em.close();
@@ -42,7 +40,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual.getId()).isEqualTo(expected.getId());
-            softly.assertThat(actual.getOrderTable()).isEqualTo(expected.getOrderTable());
+            softly.assertThat(actual.getOrderTableId()).isEqualTo(expected.getOrderTableId());
             softly.assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
             softly.assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
             softly.assertThat(actual.getOrderLineItems()).isEqualTo(expected.getOrderLineItems());
@@ -61,7 +59,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     void success_findOrderByOrderTableId() {
         // given
         final OrderTable savedOrderTable = persistOrderTable(OrderTable.withoutTableGroup(5, true));
-        final Order expected = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
+        final Order expected = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable.getId()));
 
         em.flush();
         em.close();
@@ -72,7 +70,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual.getId()).isEqualTo(expected.getId());
-            softly.assertThat(actual.getOrderTable()).isEqualTo(expected.getOrderTable());
+            softly.assertThat(actual.getOrderTableId()).isEqualTo(expected.getOrderTableId());
             softly.assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
             softly.assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
             softly.assertThat(actual.getOrderLineItems()).isEqualTo(expected.getOrderLineItems());
@@ -86,41 +84,6 @@ class OrderRepositoryTest extends RepositoryTestConfig {
                 .isInstanceOf(EmptyResultDataAccessException.class);
     }
 
-    @DisplayName("[SUCCESS] 단체 지정 식별자값으로 주문 목록을 조회한다.")
-    @Test
-    void success_findOrdersByTableGroupId() {
-        // given
-        final Menu savedMenu = createMenu();
-        final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
-        final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
-        final TableGroup savedTableGroup = TableGroup.withOrderTables(List.of(
-                orderTableOne,
-                orderTableTwo
-        ));
-        persistTableGroup(savedTableGroup);
-
-        final Order order = Order.ofEmptyOrderLineItems(orderTableTwo);
-        final Order savedOrder = persistOrder(order);
-
-        savedOrder.addOrderLineItems(List.of(
-                OrderLineItem.withoutOrder(savedMenu, new Quantity(1))
-        ));
-
-        em.flush();
-        em.close();
-
-        // when
-        final List<Order> actual = orderRepository.findOrdersByTableGroupId(savedTableGroup.getId());
-
-        // then
-        assertSoftly(softly -> {
-            softly.assertThat(actual).hasSize(1);
-            final Order actualOrder = actual.get(0);
-
-            softly.assertThat(actualOrder).isEqualTo(savedOrder);
-        });
-    }
-
     private Menu createMenu() {
         final Product savedProduct = persistProduct(new Product(new Name("테스트용 상품명"), Price.from("10000")));
         final MenuGroup savedMenuGroup = persistMenuGroup(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
@@ -132,24 +95,30 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         return savedMenu;
     }
 
-    @DisplayName("[SUCCESS] 주문 테이블 식별자값과 주문 상태 목록 조건에 해당하는 주문이 존재하는지 확인한다.")
+    @DisplayName("[SUCCESS] 주문 테이블 식별자값 목록으로 주문 목록을 조회한다.")
     @Test
-    void success_existsByOrderTableIdAndOrderStatusIn() {
+    void success_findInOrderTableIds() {
         // given
-        final Menu savedMenu = createMenu();
-        final OrderTable savedOrderTable = persistOrderTable(OrderTable.withoutTableGroup(10, false));
-        final Order savedOrder = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
-        savedOrder.addOrderLineItems(List.of(
-                OrderLineItem.withoutOrder(savedMenu, new Quantity(1))
-        ));
+        final OrderTable savedOrderTable = persistOrderTable(OrderTable.withoutTableGroup(10, true));
+        final Order savedOrder = persistOrder(
+                new Order(
+                        savedOrderTable.getId(),
+                        new OrderLineItems(List.of())
+                )
+        );
 
         em.flush();
         em.close();
 
         // when
-        final boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(savedOrderTable.getId(), List.of(OrderStatus.COOKING));
+        final List<Order> actual = orderRepository.findInOrderTableIds(List.of(savedOrderTable.getId()));
 
         // then
-        assertThat(actual).isTrue();
+        assertSoftly(softly -> {
+            softly.assertThat(actual).hasSize(1);
+            final Order actualOrder = actual.get(0);
+
+            softly.assertThat(actualOrder).isEqualTo(savedOrder);
+        });
     }
 }
