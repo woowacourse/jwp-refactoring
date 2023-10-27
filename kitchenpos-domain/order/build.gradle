@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':kitchenpos-domain:menu')
+    implementation project(':kitchenpos-domain:menu-group')
+    implementation project(':kitchenpos-domain:order-table')
+}
