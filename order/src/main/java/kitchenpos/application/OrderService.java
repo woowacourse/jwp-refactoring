@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateOrderRequest;
-import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.*;
@@ -10,40 +9,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderValidator orderValidator;
+    private final OrderLineItemValidator orderLineItemValidator;
+    private final OrderMapper orderMapper;
+    private final OrderLineItemsMapper orderLineItemsMapper;
 
     public OrderService(
             OrderRepository orderRepository,
             OrderLineItemRepository orderLineItemRepository,
-            OrderValidator orderValidator) {
+            OrderValidator orderValidator,
+            OrderLineItemValidator orderLineItemValidator,
+            OrderMapper orderMapper, OrderLineItemsMapper orderLineItemsMapper) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderValidator = orderValidator;
+        this.orderLineItemValidator = orderLineItemValidator;
+        this.orderMapper = orderMapper;
+        this.orderLineItemsMapper = orderLineItemsMapper;
     }
 
     @Transactional
     public OrderResponse create(CreateOrderRequest createOrderRequest) {
-        Order order = new Order(createOrderRequest.getOrderTableId());
-        List<OrderLineItem> orderLineItems = extractOrderLineItems(createOrderRequest);
-
-        orderValidator.validate(order, orderLineItems);
+        Order order = orderMapper.toOrder(createOrderRequest.getOrderTableId(), orderValidator);
+        List<OrderLineItem> orderLineItems = orderLineItemsMapper.toOrderLineItems(createOrderRequest, orderLineItemValidator);
 
         orderRepository.save(order);
         saveOrderLineItems(order, orderLineItems);
         return OrderResponse.of(order, orderLineItems);
-    }
-
-    private List<OrderLineItem> extractOrderLineItems(CreateOrderRequest createOrderRequest) {
-        List<OrderLineItemRequest> orderLineItemRequests = createOrderRequest.getOrderLineItems();
-        return orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> new OrderLineItem(orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()))
-                .collect(Collectors.toList());
     }
 
     private void saveOrderLineItems(Order order, List<OrderLineItem> orderLineItems) {

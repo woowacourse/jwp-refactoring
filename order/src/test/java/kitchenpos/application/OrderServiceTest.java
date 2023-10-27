@@ -10,13 +10,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -31,6 +33,15 @@ class OrderServiceTest {
     @Mock
     private OrderValidator orderValidator;
 
+    @Mock
+    OrderLineItemValidator orderLineItemValidator;
+
+    @Mock
+    OrderMapper orderMapper;
+
+    @Mock
+    OrderLineItemsMapper orderLineItemsMapper;
+
     @InjectMocks
     private OrderService orderService;
 
@@ -39,7 +50,7 @@ class OrderServiceTest {
         // when
         CreateOrderRequest createOrderRequest = new CreateOrderRequest(1L, Collections.emptyList());
         willThrow(IllegalArgumentException.class)
-                .given(orderValidator).validate(any(), anyList());
+                .given(orderLineItemsMapper).toOrderLineItems(any(), any());
 
         assertThatThrownBy(() -> orderService.create(createOrderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -52,7 +63,7 @@ class OrderServiceTest {
     void 주문_시_주문하려는_메뉴가_존재하지_않는_메뉴일_경우_예외발생() {
         // given
         willThrow(IllegalArgumentException.class)
-                .given(orderValidator).validate(any(), anyList());
+                .given(orderLineItemsMapper).toOrderLineItems(any(), any());
         // when
         CreateOrderRequest createOrderRequest = new CreateOrderRequest(1L, List.of(new OrderLineItemRequest(1L, 2)));
         assertThatThrownBy(() -> orderService.create(createOrderRequest))
@@ -65,7 +76,7 @@ class OrderServiceTest {
     void 주문_시_주문하려는_메뉴_간_중복이_있으면_예외발생() {
         // given
         willThrow(IllegalArgumentException.class)
-                .given(orderValidator).validate(any(), anyList());
+                .given(orderLineItemsMapper).toOrderLineItems(any(), any());
 
         // when
         CreateOrderRequest createOrderRequest = new CreateOrderRequest(1L, List.of(
@@ -80,7 +91,7 @@ class OrderServiceTest {
     void 주문_하는_테이블이_빈_테이블이면_예외발생() {
         // given
         willThrow(IllegalArgumentException.class)
-                .given(orderValidator).validate(any(), anyList());
+                .given(orderMapper).toOrder(anyLong(), any());
 
         // when, then
         CreateOrderRequest createOrderRequest = new CreateOrderRequest(1L, List.of(new OrderLineItemRequest(1L, 2)));
@@ -94,8 +105,12 @@ class OrderServiceTest {
     void 주문을_생성한다() {
         // given
         OrderTable orderTable = new OrderTable(1, false);
-        willDoNothing()
-                .given(orderValidator).validate(any(), anyList());
+
+        given(orderMapper.toOrder(anyLong(), any()))
+                .willReturn(new Order(1L));
+
+        given(orderLineItemsMapper.toOrderLineItems(any(), any()))
+                .willReturn(List.of(new OrderLineItem(1L, "치킨", BigDecimal.TEN), new OrderLineItem(3, "피자", BigDecimal.ONE)));
 
         given(orderRepository.save(any(Order.class)))
                 .willAnswer(i -> i.getArguments()[0]);
