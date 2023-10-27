@@ -31,7 +31,7 @@ class MenuTest {
             Product product2 = ProductFixture.fixture().id(2L).price(3000).build();
             Menu menu = MenuFixture.fixture().price(menuPrice).build();
             List<MenuProduct> menuProducts = List.of(
-                MenuProductFixture.fixture().menu(menu).product(product1).quantity(3L).build(),
+                MenuProductFixture.fixture().product(product1).quantity(3L).build(),
                 MenuProductFixture.fixture().product(product2).quantity(2L).build()
             );
 
@@ -50,7 +50,7 @@ class MenuTest {
             Product product2 = ProductFixture.fixture().id(2L).price(3000).build();
             Menu menu = MenuFixture.fixture().price(menuPrice).build();
             List<MenuProduct> menuProducts = List.of(
-                MenuProductFixture.fixture().menu(menu).product(product1).quantity(3L).build(),
+                MenuProductFixture.fixture().product(product1).quantity(3L).build(),
                 MenuProductFixture.fixture().product(product2).quantity(2L).build()
             );
 

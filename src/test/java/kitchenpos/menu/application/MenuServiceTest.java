@@ -189,12 +189,12 @@ class MenuServiceTest {
             );
             List<List<MenuProduct>> menuProducts = List.of(
                 List.of(
-                    MenuProductFixture.fixture().seq(1L).menu(menus.get(0)).build(),
-                    MenuProductFixture.fixture().seq(2L).menu(menus.get(0)).build()
+                    MenuProductFixture.fixture().seq(1L).build(),
+                    MenuProductFixture.fixture().seq(2L).build()
                 ),
                 List.of(
-                    MenuProductFixture.fixture().seq(3L).menu(menus.get(1)).build(),
-                    MenuProductFixture.fixture().seq(4L).menu(menus.get(1)).build()
+                    MenuProductFixture.fixture().seq(3L).build(),
+                    MenuProductFixture.fixture().seq(4L).build()
                 )
             );
 

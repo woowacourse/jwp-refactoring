@@ -45,7 +45,7 @@ public class MenuService {
             .collect(Collectors.toMap(Product::getId, product -> product));
 
         return menuProductRequests.stream()
-            .map(menuProduct -> new MenuProduct(menu, productIdToProduct.get(menuProduct.getProductId()),
+            .map(menuProduct -> new MenuProduct(productIdToProduct.get(menuProduct.getProductId()),
                 menuProduct.getQuantity()))
             .collect(Collectors.toList());
     }
