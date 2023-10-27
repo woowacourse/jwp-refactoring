@@ -1,12 +1,21 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
-import kitchenpos.repository.*;
-import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderLineItemCreateRequest;
+import kitchenpos.Product.repository.ProductRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuProductRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.presentation.dto.OrderCreateRequest;
+import kitchenpos.order.presentation.dto.OrderLineItemCreateRequest;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -58,9 +67,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_항목이_없으면_등록할_수_없다() {
-        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(주문_테이블.getId(), List.of());
-
-        assertThatThrownBy(() -> orderService.create(주문_생성_요청))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(주문_테이블.getId(), List.of())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -70,13 +77,13 @@ class OrderServiceTest extends ServiceTest {
         OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(Long.MIN_VALUE, List.of(주문_항목_생성_요청));
 
         assertThatThrownBy(() -> orderService.create(주문_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
     @Test
     void 주문_목록을_조회한다() {
-        Order 주문1 = orderRepository.save(새로운_주문(주문_테이블, List.of(새로운_주문_항목(메뉴, 1))));
-        Order 주문2 = orderRepository.save(새로운_주문(주문_테이블, List.of(새로운_주문_항목(메뉴, 1))));
+        Order 주문1 = orderRepository.save(새로운_주문(주문_테이블));
+        Order 주문2 = orderRepository.save(새로운_주문(주문_테이블));
 
         List<Order> orders = orderService.findAll();
 
@@ -86,6 +93,6 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 존재하지_않는_주문의_상태를_변경할_수_없다() {
         assertThatThrownBy(() -> orderService.changeOrderStatus(Long.MIN_VALUE, null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 }

@@ -1,9 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.*;
-import kitchenpos.ui.dto.TableGroupCreateRequest;
+import kitchenpos.Product.repository.ProductRepository;
+import kitchenpos.menu.repository.MenuProductRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.presentation.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
