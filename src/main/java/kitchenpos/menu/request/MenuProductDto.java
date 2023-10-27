@@ -1,13 +1,15 @@
 package kitchenpos.menu.request;
 
-import kitchenpos.menu.domain.MenuProduct;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductDto {
 
+    @NotNull
     private final Long productId;
+    @NotNull
     private final long quantity;
 
     private MenuProductDto(Long productId, long quantity) {

@@ -2,12 +2,18 @@ package kitchenpos.menu.request;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class MenuCreateRequest {
 
+    @NotBlank
     private final String name;
+    @NotNull
     private final BigDecimal price;
+    @NotNull
     private final Long menuGroupId;
+    @NotNull
     private final List<MenuProductDto> menuProducts;
 
     public MenuCreateRequest(

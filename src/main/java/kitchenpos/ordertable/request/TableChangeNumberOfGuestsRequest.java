@@ -1,7 +1,10 @@
 package kitchenpos.ordertable.request;
 
+import javax.validation.constraints.NotNull;
+
 public class TableChangeNumberOfGuestsRequest {
 
+    @NotNull
     private int numberOfGuests;
 
     private TableChangeNumberOfGuestsRequest() {
