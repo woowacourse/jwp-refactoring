@@ -44,3 +44,11 @@ allprojects { // 서브모듈에게 공통적으로 적용시킬 내용 추가
         enabled true
     }
 }
+
+bootJar {
+    enabled true
+}
+
+dependencies {
+    implementation project(':api')
+}

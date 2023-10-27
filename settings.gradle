@@ -1,2 +1,2 @@
 rootProject.name = 'kitchenpos'
-include 'core', 'api', 'app' // 포함할 서브 모듈 추가
+include 'core', 'api' // 포함할 서브 모듈 추가
