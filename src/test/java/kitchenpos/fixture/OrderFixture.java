@@ -1,12 +1,12 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.order.OrderLineItemDto;
-import kitchenpos.ui.dto.order.OrderRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.common.vo.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.order.ui.dto.OrderLineItemDto;
+import kitchenpos.order.ui.dto.OrderRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

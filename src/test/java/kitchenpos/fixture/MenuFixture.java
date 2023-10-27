@@ -1,12 +1,12 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.vo.Price;
-import kitchenpos.ui.dto.menu.MenuProductDto;
-import kitchenpos.ui.dto.menu.MenuRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
+import kitchenpos.common.vo.Price;
+import kitchenpos.menu.ui.dto.MenuProductDto;
+import kitchenpos.menu.ui.dto.MenuRequest;
 import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
