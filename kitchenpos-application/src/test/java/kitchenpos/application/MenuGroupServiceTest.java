@@ -4,6 +4,7 @@ import kitchenpos.domain.dto.MenuGroupRequest;
 import kitchenpos.domain.dto.MenuGroupResponse;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,8 +16,6 @@ import support.fixture.MenuGroupBuilder;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class MenuGroupServiceTest {
@@ -55,7 +54,7 @@ class MenuGroupServiceTest {
         final List<MenuGroupResponse> actual = menuGroupService.list();
 
         // then
-        assertThat(actual)
+        Assertions.assertThat(actual)
                 .usingRecursiveComparison()
                 .isEqualTo(expect);
     }
@@ -74,7 +73,7 @@ class MenuGroupServiceTest {
 
         final MenuGroupResponse actual = MenuGroupResponse.from(savedMenuGroup);
 
-        assertThat(actual)
+        Assertions.assertThat(actual)
                 .usingRecursiveComparison()
                 .isEqualTo(expect);
     }

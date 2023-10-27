@@ -4,6 +4,7 @@ import kitchenpos.domain.dto.ProductRequest;
 import kitchenpos.domain.dto.ProductResponse;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.repository.ProductRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -85,8 +87,8 @@ class ProductServiceTest {
             final ProductResponse actual = ProductResponse.from(product);
 
             assertAll(
-                    () -> assertEquals(expect.getId(), actual.getId()),
-                    () -> assertEquals(expect.getName(), actual.getName()),
+                    () -> Assertions.assertEquals(expect.getId(), actual.getId()),
+                    () -> Assertions.assertEquals(expect.getName(), actual.getName()),
                     () -> assertThat(expect.getPrice()).isEqualByComparingTo(actual.getPrice())
             );
         }

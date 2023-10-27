@@ -4,6 +4,7 @@ import kitchenpos.domain.dto.MenuRequest;
 import kitchenpos.domain.dto.MenuResponse;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,7 +16,6 @@ import support.fixture.MenuGroupBuilder;
 import java.math.BigDecimal;
 import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @SpringBootTest
@@ -50,7 +50,7 @@ class MenuServiceTest {
             final MenuResponse actual = menuService.create(request);
 
             // then
-            assertThat(actual)
+            Assertions.assertThat(actual)
                     .usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(expect);

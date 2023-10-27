@@ -8,6 +8,7 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @SpringBootTest
@@ -140,7 +140,7 @@ class TableServiceTest {
             // then
             final OrderTable actual = orderTableRepository.findById(table.getId()).get();
 
-            assertEquals(emptyStatus, actual.isEmpty());
+            Assertions.assertEquals(emptyStatus, actual.isEmpty());
         }
     }
 
@@ -163,7 +163,7 @@ class TableServiceTest {
             // then
             final OrderTable actual = orderTableRepository.findById(table.getId()).get();
 
-            assertEquals(expectNumberOfGuests, actual.getNumberOfGuests());
+            Assertions.assertEquals(expectNumberOfGuests, actual.getNumberOfGuests());
         }
 
         @Test

@@ -12,10 +12,7 @@ import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
 class OrderServiceTest {
@@ -58,6 +56,7 @@ class OrderServiceTest {
     void listTest() {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(0));
+
 
         orderRepository.save(new Order(orderTable, orderLineItems));
 
@@ -96,7 +95,7 @@ class OrderServiceTest {
             final OrderResponse response = orderService.create(request);
 
             // then
-            assertEquals(OrderStatus.COOKING.name(), response.getOrderStatus());
+            Assertions.assertEquals(OrderStatus.COOKING.name(), response.getOrderStatus());
         }
 
         @Test
@@ -162,7 +161,7 @@ class OrderServiceTest {
             // then
             orderRepository.findById(order.getId())
                     .ifPresentOrElse(
-                            actual -> assertEquals(orderStatus, actual.getOrderStatus()),
+                            actual -> Assertions.assertEquals(orderStatus, actual.getOrderStatus()),
                             () -> fail("Order가 존재하지 않습니다.")
                     );
         }
