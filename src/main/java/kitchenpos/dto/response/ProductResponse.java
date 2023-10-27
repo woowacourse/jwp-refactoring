@@ -3,21 +3,17 @@ package kitchenpos.dto.response;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 
-public class ProductDto {
+public class ProductResponse {
 
     private final Long id;
     private final String name;
     private final BigDecimal price;
 
-    public ProductDto(Product product) {
+    public ProductResponse(Product product) {
         this(product.getId(), product.getName(), product.getPrice());
     }
 
-    public ProductDto(String name, BigDecimal price) {
-        this(null, name, price);
-    }
-
-    public ProductDto(Long id, String name, BigDecimal price) {
+    public ProductResponse(Long id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;

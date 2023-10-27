@@ -9,7 +9,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.response.ProductDto;
+import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,13 +30,13 @@ public class ProductServiceTest {
     @Test
     void 상품_이름과_가격을_받아서_상품정보를_등록할_수_있다() {
         //given
-        ProductDto productRequest = new ProductDto("강정치킨", BigDecimal.valueOf(17000));
+        ProductRequest productRequest = new ProductRequest("강정치킨", BigDecimal.valueOf(17000));
 
         Product savedProduct = new Product(1L, "강정치킨", BigDecimal.valueOf(17000));
         given(productDao.save(any(Product.class))).willReturn(savedProduct);
 
         //when
-        ProductDto result = productService.create(productRequest);
+        ProductResponse result = productService.create(productRequest);
 
         //then
         assertThat(result.getId()).isEqualTo(1L);
@@ -46,7 +47,7 @@ public class ProductServiceTest {
     @Test
     void 상품_가격이_입력되지_않으면_예외처리한다() {
         //given
-        ProductDto productRequest = new ProductDto("강정치킨", null);
+        ProductRequest productRequest = new ProductRequest("강정치킨", null);
 
         //when, then
         assertThatThrownBy(() -> productService.create(productRequest))
@@ -56,7 +57,7 @@ public class ProductServiceTest {
     @Test
     void 상품_가격이_0_미만이면_예외처리한다() {
         //given
-        ProductDto productRequest = new ProductDto("강정치킨", BigDecimal.valueOf(-1000));
+        ProductRequest productRequest = new ProductRequest("강정치킨", BigDecimal.valueOf(-1000));
 
         //when, then
         assertThatThrownBy(() -> productService.create(productRequest))
@@ -72,7 +73,7 @@ public class ProductServiceTest {
                 .willReturn(List.of(savedProduct1, savedProduct2));
 
         //when
-        List<ProductDto> result = productService.list();
+        List<ProductResponse> result = productService.list();
 
         //then
         assertThat(result).hasSize(2);
