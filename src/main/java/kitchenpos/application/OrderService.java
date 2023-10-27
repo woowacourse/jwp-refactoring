@@ -40,7 +40,6 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = orderLineItemInOrderDtos.stream()
                 .map(this::convertOrderLineItem)
                 .collect(Collectors.toList());
-        validateOrderLineItems(orderLineItems);
 
         final OrderTable orderTable = findOrderTable(request.getOrderTableId());
 
@@ -63,15 +62,6 @@ public class OrderService {
     private Menu findMenu(final Long menuId) {
         return menuRepository.findById(menuId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 메뉴입니다."));
-    }
-
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(orderLineItem -> orderLineItem.getMenu().getId())
-                .collect(Collectors.toList());
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("[ERROR] 메뉴의 수와 실제 주문한 메뉴의 수가 다릅니다.");
-        }
     }
 
     @Transactional(readOnly = true)
