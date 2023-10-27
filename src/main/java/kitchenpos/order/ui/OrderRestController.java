@@ -1,5 +1,6 @@
 package kitchenpos.order.ui;
 
+import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.request.OrderCreateRequest;
@@ -53,8 +54,8 @@ public class OrderRestController {
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<OrderHistoryResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final String orderStatus
+            @RequestBody final OrderStatusUpdateRequest request
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatus));
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, request));
     }
 }

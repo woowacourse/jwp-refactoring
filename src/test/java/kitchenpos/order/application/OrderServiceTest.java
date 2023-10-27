@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderHistoryResponse;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.menu.domain.Menu;
@@ -182,7 +183,8 @@ class OrderServiceTest  {
 
 
             // when
-            final OrderHistoryResponse actual = orderService.changeOrderStatus(expected.getId(), OrderStatus.MEAL.name());
+            final OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
+            final OrderHistoryResponse actual = orderService.changeOrderStatus(expected.getId(), request);
 
             // then
             assertSoftly(softly -> {
@@ -198,8 +200,9 @@ class OrderServiceTest  {
         @DisplayName("[EXCEPTION] 주문이 존재하지 않을 경우 예외가 발생한다.")
         @Test
         void throwException_when_order_isNotExists() {
+            final OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
             final Long wrongOrderId = -1L;
-            assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, OrderStatus.COOKING.name()))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, request))
                     .isInstanceOf(EmptyResultDataAccessException.class);
         }
 
@@ -220,10 +223,11 @@ class OrderServiceTest  {
             final OrderResponse orderResponse = orderService.create(requestOrderSheet);
 
             // when
-            orderService.changeOrderStatus(orderResponse.getId(), OrderStatus.COMPLETION.name());
+            final OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.COMPLETION.name());
+            orderService.changeOrderStatus(orderResponse.getId(), request);
 
             // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), OrderStatus.COMPLETION.name()))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

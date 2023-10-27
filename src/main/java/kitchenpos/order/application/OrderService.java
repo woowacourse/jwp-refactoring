@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderHistoryResponse;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.menu.domain.Menu;
@@ -88,8 +89,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderHistoryResponse changeOrderStatus(final Long orderId, final String orderStatus) {
-        final OrderStatus findOrderStatus = OrderStatus.valueOf(orderStatus);
+    public OrderHistoryResponse changeOrderStatus(final Long orderId, final OrderStatusUpdateRequest request) {
+        final OrderStatus findOrderStatus = OrderStatus.valueOf(request.getOrderStatus());
 
         final Order findOrder = orderRepository.findOrderById(orderId);
         findOrder.changeOrderStatus(findOrderStatus);
