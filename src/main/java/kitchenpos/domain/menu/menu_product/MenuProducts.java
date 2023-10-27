@@ -1,4 +1,4 @@
-package kitchenpos.domain.menu;
+package kitchenpos.domain.menu.menu_product;
 
 import static kitchenpos.exception.MenuException.NoMenuProductsException;
 
@@ -8,7 +8,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.vo.Price;
 
 @Embeddable
 public class MenuProducts {
@@ -30,13 +29,6 @@ public class MenuProducts {
         if (Objects.isNull(menuProducts) || menuProducts.isEmpty()) {
             throw new NoMenuProductsException();
         }
-    }
-
-    public Price getTotalPrice() {
-        return menuProducts
-                .stream()
-                .map(MenuProduct::getPrice)
-                .reduce(Price.ZERO, Price::add);
     }
 
     public List<MenuProduct> menuProducts() {

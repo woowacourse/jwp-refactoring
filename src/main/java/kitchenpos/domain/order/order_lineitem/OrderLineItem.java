@@ -1,15 +1,15 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.order.order_lineitem;
 
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.exception.OrderException;
+import kitchenpos.support.AggregateReference;
 
 @Entity
 @Table(name = "order_line_item")
@@ -18,28 +18,25 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long seq;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private final Menu menu;
+    @Embedded
+    private final MenuInfo menuInfo;
     private final Long quantity;
 
     protected OrderLineItem() {
         this.seq = null;
-        this.menu = null;
+        this.menuInfo = null;
         this.quantity = null;
     }
 
-    public OrderLineItem(final Menu menu, final Long quantity) {
-        validateMenu(menu);
+    public OrderLineItem(
+            final AggregateReference<Menu> menuId,
+            final Long quantity,
+            final MenuInfoGenerator menuInfoGenerator
+    ) {
         validateQuantity(quantity);
         this.seq = null;
-        this.menu = menu;
         this.quantity = quantity;
-    }
-
-    private void validateMenu(final Menu menu) {
-        if (Objects.isNull(menu)) {
-            throw new OrderException.NoMenuException();
-        }
+        this.menuInfo = menuInfoGenerator.generateMenuInfo(menuId);
     }
 
     private void validateQuantity(final Long quantity) {
@@ -52,8 +49,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public MenuInfo getMenuInfo() {
+        return menuInfo;
     }
 
     public Long getQuantity() {

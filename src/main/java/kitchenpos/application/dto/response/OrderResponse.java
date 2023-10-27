@@ -4,8 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.order_lineitem.MenuInfo;
+import kitchenpos.domain.order.order_lineitem.OrderLineItem;
+import kitchenpos.domain.order.order_lineitem.OrderLineItems;
 
 public class OrderResponse {
 
@@ -73,18 +74,18 @@ public class OrderResponse {
     public static class OrderLineItemResponse {
         private final Long seq;
         private final Long orderId;
-        private final Long menuId;
+        private final MenuInfo menuInfo;
         private final long quantity;
 
         public OrderLineItemResponse(
                 final Long seq,
                 final Long orderId,
-                final Long menuId,
+                final MenuInfo menuInfo,
                 final long quantity
         ) {
             this.seq = seq;
             this.orderId = orderId;
-            this.menuId = menuId;
+            this.menuInfo = menuInfo;
             this.quantity = quantity;
         }
 
@@ -92,9 +93,25 @@ public class OrderResponse {
             return new OrderLineItemResponse(
                     orderlIneItem.getSeq(),
                     orderId,
-                    orderlIneItem.getMenu().getId(),
+                    orderlIneItem.getMenuInfo(),
                     orderlIneItem.getQuantity()
             );
+        }
+
+        public Long getSeq() {
+            return seq;
+        }
+
+        public Long getOrderId() {
+            return orderId;
+        }
+
+        public MenuInfo getMenuInfo() {
+            return menuInfo;
+        }
+
+        public long getQuantity() {
+            return quantity;
         }
     }
 }

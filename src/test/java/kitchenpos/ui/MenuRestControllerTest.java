@@ -19,7 +19,9 @@ import java.util.List;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menu.MenuValidator;
+import kitchenpos.domain.menu.menu_product.MenuProductValidator;
+import kitchenpos.domain.menu.menu_product.MenuProducts;
 import kitchenpos.domain.menu_group.MenuGroup;
 import kitchenpos.domain.product.Product;
 import kitchenpos.repositroy.MenuGroupRepository;
@@ -39,6 +41,10 @@ class MenuRestControllerTest extends ControllerTest {
     private ProductRepository productRepository;
     @Autowired
     private MenuRepository menuRepository;
+    @Autowired
+    private MenuProductValidator menuProductValidator;
+    @Autowired
+    private MenuValidator menuValidator;
 
     private String name;
     private BigDecimal price;
@@ -51,7 +57,10 @@ class MenuRestControllerTest extends ControllerTest {
     void setUp() {
         this.product1 = productRepository.save(상품("상품1", BigDecimal.valueOf(1000)));
         this.product2 = productRepository.save(상품("상품2", BigDecimal.valueOf(1000)));
-        this.menuProducts = 메뉴_상품들(메뉴_상품(product1, 1L), 메뉴_상품(product2, 2L));
+        this.menuProducts = 메뉴_상품들(메뉴_상품(
+                        product1.getId(), 1L, menuProductValidator),
+                메뉴_상품(product2.getId(), 2L, menuProductValidator)
+        );
         this.menuGroup = menuGroupRepository.save(메뉴_그룹("메뉴_그룹"));
         this.name = "메뉴";
         this.price = BigDecimal.valueOf(3000);
@@ -175,16 +184,19 @@ class MenuRestControllerTest extends ControllerTest {
             softly.assertThat(response)
                     .usingRecursiveComparison()
                     .ignoringFields("id", "menuProducts.seq")
-                    .isEqualTo(메뉴_등록_응답(메뉴(name, price.longValue(), menuProducts, menuGroup)));
+                    .isEqualTo(메뉴_등록_응답(메뉴(name, price.longValue(), menuProducts, menuGroup, menuValidator)));
         });
     }
 
     @Test
     void 메뉴를_전체_조회한다() {
         // given
-        final MenuProducts menuProducts2 = 메뉴_상품들(메뉴_상품(product1, 1L), 메뉴_상품(product2, 2L));
-        final Menu menu1 = menuRepository.save(메뉴("메뉴1", 3000L, menuProducts, menuGroup));
-        final Menu menu2 = menuRepository.save(메뉴("메뉴2", 3000L, menuProducts2, menuGroup));
+        final MenuProducts menuProducts2 = 메뉴_상품들(메뉴_상품(
+                        product1.getId(), 1L, menuProductValidator),
+                메뉴_상품(product2.getId(), 2L, menuProductValidator)
+        );
+        final Menu menu1 = menuRepository.save(메뉴("메뉴1", 3000L, menuProducts, menuGroup, menuValidator));
+        final Menu menu2 = menuRepository.save(메뉴("메뉴2", 3000L, menuProducts2, menuGroup, menuValidator));
 
         // when
         ExtractableResponse<Response> result = RestAssured
