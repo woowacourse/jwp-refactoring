@@ -1,31 +1,31 @@
 package kitchenpos.application.order;
 
-import static kitchenpos.domain.order.OrderStatus.COMPLETION;
-import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static kitchenpos.exception.menu.MenuExceptionType.MENU_NOT_FOUND;
-import static kitchenpos.exception.order.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
-import static kitchenpos.exception.order.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
-import static kitchenpos.exception.order.OrderExceptionType.ORDER_NOT_FOUND;
-import static kitchenpos.exception.order.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 import static kitchenpos.exception.table.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
+import static kitchenpos.order.exception.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
+import static kitchenpos.order.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
+import static kitchenpos.order.exception.OrderExceptionType.ORDER_NOT_FOUND;
+import static kitchenpos.order.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.application.order.dto.ChangeOrderStatusCommand;
-import kitchenpos.application.order.dto.ChangeOrderStatusResponse;
-import kitchenpos.application.order.dto.CreateOrderCommand;
-import kitchenpos.application.order.dto.CreateOrderResponse;
-import kitchenpos.application.order.dto.OrderLineItemCommand;
-import kitchenpos.application.order.dto.SearchOrderResponse;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.order.Order;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.order.application.dto.ChangeOrderStatusCommand;
+import kitchenpos.order.application.dto.ChangeOrderStatusResponse;
+import kitchenpos.order.application.dto.CreateOrderCommand;
+import kitchenpos.order.application.dto.CreateOrderResponse;
+import kitchenpos.order.application.dto.OrderLineItemCommand;
+import kitchenpos.order.application.dto.SearchOrderResponse;
+import kitchenpos.order.domain.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

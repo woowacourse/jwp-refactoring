@@ -1,11 +1,11 @@
 package kitchenpos.application.table;
 
-import static kitchenpos.exception.order.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
+import static kitchenpos.order.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.event.OrderedEvent;
-import kitchenpos.exception.order.OrderException;
+import kitchenpos.order.exception.OrderException;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

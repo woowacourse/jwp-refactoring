@@ -1,11 +1,11 @@
 package kitchenpos.application.table;
 
-import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.exception.order.OrderExceptionType.ORDER_STATUS_IS_COOKING_OR_MEAL;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE;
 import static kitchenpos.exception.table.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.exception.OrderExceptionType.ORDER_STATUS_IS_COOKING_OR_MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;

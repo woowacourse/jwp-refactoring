@@ -1,8 +1,8 @@
 package kitchenpos.application.order;
 
-import static kitchenpos.domain.order.OrderStatus.COMPLETION;
-import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.exception.order.OrderExceptionType.ORDER_STATUS_IS_COOKING_OR_MEAL;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.exception.OrderExceptionType.ORDER_STATUS_IS_COOKING_OR_MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;

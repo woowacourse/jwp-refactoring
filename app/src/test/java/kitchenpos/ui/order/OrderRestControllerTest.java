@@ -9,13 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.order.dto.ChangeOrderStatusResponse;
-import kitchenpos.application.order.dto.CreateOrderResponse;
-import kitchenpos.application.order.dto.SearchOrderResponse;
+import kitchenpos.order.application.dto.ChangeOrderStatusResponse;
+import kitchenpos.order.application.dto.CreateOrderResponse;
+import kitchenpos.order.application.dto.SearchOrderResponse;
+import kitchenpos.order.ui.dto.ChangeOrderStatusRequest;
+import kitchenpos.order.ui.dto.CreateOrderRequest;
+import kitchenpos.order.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.ControllerTest;
-import kitchenpos.ui.order.dto.ChangeOrderStatusRequest;
-import kitchenpos.ui.order.dto.CreateOrderRequest;
-import kitchenpos.ui.order.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
