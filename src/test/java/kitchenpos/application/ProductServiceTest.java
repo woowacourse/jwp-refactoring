@@ -6,10 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.product.ProductCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     class 상품을_추가할_때 {
@@ -43,25 +45,25 @@ class ProductServiceTest {
             final ProductCreateRequest product = productCreateRequest("product", 0L);
 
             //when
-            final Product savedProduct = productService.create(product);
+            final ProductResponse savedProduct = productService.create(product);
 
             //then
-            assertThat(productDao.findById(savedProduct.getId())).isPresent();
+            assertThat(productRepository.findById(savedProduct.getId())).isPresent();
         }
     }
 
     @Test
     void 상품_목록을_조회한다() {
         //given
-        final Product pizza = productDao.save(getProduct("product1", 10L));
-        final Product chicken = productDao.save(getProduct("product2", 10L));
+        final Product pizza = productRepository.save(getProduct("product1", 10L));
+        final Product chicken = productRepository.save(getProduct("product2", 10L));
 
         //when
-        final List<Product> products = productService.list();
+        final List<ProductResponse> products = productService.list();
 
         //then
         assertThat(products)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(pizza, chicken));
+                .isEqualTo(ProductResponse.listOf(List.of(pizza, chicken)));
     }
 }

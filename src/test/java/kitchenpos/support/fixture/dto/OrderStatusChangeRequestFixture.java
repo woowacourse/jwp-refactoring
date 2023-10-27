@@ -1,8 +1,8 @@
 package kitchenpos.support.fixture.dto;
 
-import kitchenpos.ui.dto.order.OrderStatusChangeRequest;
+import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 
-public class OrderStatusChangeRequestFixture {
+public abstract class OrderStatusChangeRequestFixture {
 
     public static OrderStatusChangeRequest orderStatusChangeRequest(final String orderStatus) {
         return new OrderStatusChangeRequest(orderStatus);
