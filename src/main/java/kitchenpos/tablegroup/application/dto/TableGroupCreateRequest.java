@@ -1,4 +1,6 @@
-package kitchenpos.ordertable.application.dto;
+package kitchenpos.tablegroup.application.dto;
+
+import kitchenpos.ordertable.application.dto.OrderTableId;
 
 import java.util.List;
 import java.util.stream.Collectors;

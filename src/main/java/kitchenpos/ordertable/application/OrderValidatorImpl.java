@@ -2,7 +2,7 @@ package kitchenpos.ordertable.application;
 
 import kitchenpos.order.application.OrderValidator;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 @Component

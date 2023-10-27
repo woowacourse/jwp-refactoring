@@ -6,10 +6,10 @@ import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.order.application.dto.OrderStatusRequest;

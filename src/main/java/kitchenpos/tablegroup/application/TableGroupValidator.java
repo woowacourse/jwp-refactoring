@@ -1,6 +1,6 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTables;
 import org.springframework.stereotype.Component;
