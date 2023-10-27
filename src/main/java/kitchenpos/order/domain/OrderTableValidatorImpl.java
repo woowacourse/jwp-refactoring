@@ -6,6 +6,7 @@ import kitchenpos.table.domain.TableGroup;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static kitchenpos.order.domain.OrderStatus.COOKING;
@@ -28,6 +29,13 @@ public class OrderTableValidatorImpl implements OrderTableValidator {
 
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("그룹 지정된 테이블은 빈 테이블로 변경할 수 없습니다.");
+        }
+    }
+
+    @Override
+    public void validateUngroup(final List<Long> orderTableIds) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(COOKING, MEAL))) {
+            throw new IllegalArgumentException("주문이 완료되지 않은 상태의 테이블이 존재합니다.");
         }
     }
 }

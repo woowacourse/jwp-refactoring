@@ -3,6 +3,7 @@ package kitchenpos.table.domain;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class TableGroup {
@@ -49,6 +50,14 @@ public class TableGroup {
         validateOrderTableSize(orderTables.size());
         orderTables.forEach(orderTable -> orderTable.group(this));
         this.orderTables = orderTables;
+    }
+
+    public void ungroup(final OrderTableValidator orderTableValidator) {
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        orderTableValidator.validateUngroup(orderTableIds);
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     public Long getId() {
