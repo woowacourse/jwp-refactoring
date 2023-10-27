@@ -21,25 +21,25 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    private String menuName;
+    private String name;
 
-    private Price menuPrice;
+    private Price price;
 
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Order order, final String menuName, final Price menuPrice, final long quantity) {
-        this(null, order, menuName, menuPrice, quantity);
+    public OrderLineItem(final Order order, final String name, final Price price, final long quantity) {
+        this(null, order, name, price, quantity);
     }
 
-    public OrderLineItem(final Long seq, final Order order, final String menuName, final Price menuPrice,
+    public OrderLineItem(final Long seq, final Order order, final String name, final Price price,
                          final long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menuName = menuName;
-        this.menuPrice = menuPrice;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
@@ -51,12 +51,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public String getMenuName() {
-        return menuName;
+    public String getName() {
+        return name;
     }
 
-    public Price getMenuPrice() {
-        return menuPrice;
+    public Price getPrice() {
+        return price;
     }
 
     public long getQuantity() {

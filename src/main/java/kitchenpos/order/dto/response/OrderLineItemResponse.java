@@ -20,8 +20,8 @@ public class OrderLineItemResponse {
     public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
-                orderLineItem.getMenuName(),
-                orderLineItem.getMenuPrice(),
+                orderLineItem.getName(),
+                orderLineItem.getPrice(),
                 orderLineItem.getQuantity()
         );
     }
