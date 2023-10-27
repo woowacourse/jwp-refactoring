@@ -3,6 +3,7 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.dto.ValidateExistMenuDto;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -14,6 +15,7 @@ import kitchenpos.order.dto.OrderLineItemInOrderDto;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,18 +23,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
 
     public OrderService(
-            final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderTableRepository orderTableRepository,
+            final ApplicationEventPublisher publisher
     ) {
-        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     public OrderResponse create(final OrderCreateRequest request) {
@@ -49,19 +51,15 @@ public class OrderService {
         return OrderResponse.from(order);
     }
 
+    private OrderLineItem convertOrderLineItem(final OrderLineItemInOrderDto request) {
+        final Long menuId = request.getMenuId();
+        publisher.publishEvent(new ValidateExistMenuDto(menuId));
+        return new OrderLineItem(menuId, request.getQuantity());
+    }
+
     private OrderTable findOrderTable(final Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 주문 테이블입니다."));
-    }
-
-    private OrderLineItem convertOrderLineItem(final OrderLineItemInOrderDto request) {
-        final Menu menu = findMenu(request.getMenuId());
-        return new OrderLineItem(menu, request.getQuantity());
-    }
-
-    private Menu findMenu(final Long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 메뉴입니다."));
     }
 
     @Transactional(readOnly = true)

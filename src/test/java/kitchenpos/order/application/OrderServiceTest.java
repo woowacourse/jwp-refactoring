@@ -62,9 +62,9 @@ class OrderServiceTest extends ServiceTest {
             final var orderTable = orderTableRepository.save(new OrderTable(1L, 3, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, List.of()));
-            final var orderLineitem = new OrderLineItem(menu, 5L);
+            final var orderLineitem = new OrderLineItem(1L, 5L);
             final var order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineitem)));
-            orderLineItemRepository.save(new OrderLineItem(order, menu, 5));
+            orderLineItemRepository.save(new OrderLineItem(order, 1L, 5));
 
             final var orderLineItemRequest = new OrderLineItemInOrderDto(1L, 5L);
             final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
@@ -87,7 +87,7 @@ class OrderServiceTest extends ServiceTest {
             final var orderTable = orderTableRepository.save(new OrderTable(1L, 3, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, List.of()));
-            final var orderLineItem = new OrderLineItem(menu, 5);
+            final var orderLineItem = new OrderLineItem(1L, 5);
             orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
 
             final var orderLineItemRequest = new OrderLineItemInOrderDto(1L, 5L);
@@ -134,7 +134,7 @@ class OrderServiceTest extends ServiceTest {
             final var orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, List.of()));
-            final var orderLineItem = new OrderLineItem(menu, 5);
+            final var orderLineItem = new OrderLineItem(1L, 5);
             final var order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
 
             final var expected = List.of(OrderResponse.from(order));
@@ -162,7 +162,7 @@ class OrderServiceTest extends ServiceTest {
             final var orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0L), menuGroup, List.of()));
-            final var orderLineItem = new OrderLineItem(menu, 5L);
+            final var orderLineItem = new OrderLineItem(1L, 5L);
             orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
             orderLineItemRepository.save(orderLineItem);
 
