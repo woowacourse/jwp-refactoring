@@ -10,6 +10,7 @@ import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
@@ -48,7 +49,7 @@ public class OrderService {
 
     private List<OrderLineItem> extractOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
-                .map(it -> new OrderLineItem(findMenuById(it.getMenuId()), it.getQuantity()))
+                .map(it -> new OrderLineItem(OrderMenu.from(findMenuById(it.getMenuId())), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 
