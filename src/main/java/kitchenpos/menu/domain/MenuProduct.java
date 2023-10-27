@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 
 @Entity
 public class MenuProduct {

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -14,6 +13,7 @@ import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.menu.repository.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +61,8 @@ public class OrderService {
         }
     }
 
-    private void saveOrderLineItem(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests, final Order savedOrder) {
+    private void saveOrderLineItem(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests,
+                                   final Order savedOrder) {
         for (final OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItemCreateRequests) {
             final OrderLineItem updatedOrderLineItem = new OrderLineItem(
                     savedOrder,
