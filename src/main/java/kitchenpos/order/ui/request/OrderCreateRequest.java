@@ -1,4 +1,6 @@
-package kitchenpos.order.application.request;
+package kitchenpos.order.ui.request;
+
+import kitchenpos.order.application.request.OrderCreateOrderLineItemRequest;
 
 import java.util.List;
 
