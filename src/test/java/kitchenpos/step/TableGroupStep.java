@@ -3,7 +3,7 @@ package kitchenpos.step;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.TableGroupCreateRequest;
+import kitchenpos.order.ui.request.TableGroupCreateRequest;
 
 import static io.restassured.http.ContentType.JSON;
 

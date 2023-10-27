@@ -2,9 +2,9 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.TableCreateRequest;
-import kitchenpos.ui.request.TableUpdateEmptyRequest;
-import kitchenpos.ui.request.TableUpdateNumberOfGuestsRequest;
+import kitchenpos.order.ui.request.TableCreateRequest;
+import kitchenpos.order.ui.request.TableUpdateEmptyRequest;
+import kitchenpos.order.ui.request.TableUpdateNumberOfGuestsRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

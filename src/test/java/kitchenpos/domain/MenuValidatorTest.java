@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuValidator;
-import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

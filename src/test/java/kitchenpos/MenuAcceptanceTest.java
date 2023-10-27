@@ -2,10 +2,10 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.MenuProductCreateRequest;
-import kitchenpos.ui.response.MenuGroupResponse;
-import kitchenpos.ui.response.MenuResponse;
-import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.menu.ui.request.MenuProductCreateRequest;
+import kitchenpos.menu.ui.response.MenuGroupResponse;
+import kitchenpos.menu.ui.response.MenuResponse;
+import kitchenpos.product.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

@@ -2,8 +2,8 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.TableCreateRequest;
-import kitchenpos.ui.request.TableGroupCreateRequest;
+import kitchenpos.order.ui.request.TableCreateRequest;
+import kitchenpos.order.ui.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

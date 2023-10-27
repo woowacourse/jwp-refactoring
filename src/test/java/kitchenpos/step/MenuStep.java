@@ -3,8 +3,8 @@ package kitchenpos.step;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.MenuCreateRequest;
-import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.menu.ui.request.MenuCreateRequest;
+import kitchenpos.menu.ui.request.MenuProductCreateRequest;
 
 import java.math.BigDecimal;
 import java.util.List;

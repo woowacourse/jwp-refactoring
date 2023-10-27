@@ -3,9 +3,9 @@ package kitchenpos.step;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.TableCreateRequest;
-import kitchenpos.ui.request.TableUpdateEmptyRequest;
-import kitchenpos.ui.request.TableUpdateNumberOfGuestsRequest;
+import kitchenpos.order.ui.request.TableCreateRequest;
+import kitchenpos.order.ui.request.TableUpdateEmptyRequest;
+import kitchenpos.order.ui.request.TableUpdateNumberOfGuestsRequest;
 
 import static io.restassured.http.ContentType.JSON;
 

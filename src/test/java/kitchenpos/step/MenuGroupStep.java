@@ -3,8 +3,8 @@ package kitchenpos.step;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.MenuGroupCreateRequest;
-import kitchenpos.ui.response.MenuGroupResponse;
+import kitchenpos.menu.ui.request.MenuGroupCreateRequest;
+import kitchenpos.menu.ui.response.MenuGroupResponse;
 
 import static io.restassured.http.ContentType.JSON;
 

@@ -3,9 +3,9 @@ package kitchenpos.step;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.product.Product;
-import kitchenpos.ui.request.ProductCreateRequest;
-import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.product.ui.response.ProductResponse;
 
 import java.math.BigDecimal;
 

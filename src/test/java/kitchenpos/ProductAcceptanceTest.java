@@ -2,8 +2,8 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.ProductCreateRequest;
-import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.product.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

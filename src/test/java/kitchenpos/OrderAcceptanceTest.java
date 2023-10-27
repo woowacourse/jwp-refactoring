@@ -2,15 +2,15 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.request.MenuProductCreateRequest;
-import kitchenpos.ui.request.OrderCreateRequest;
-import kitchenpos.ui.request.OrderLineItemCreateRequest;
-import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
-import kitchenpos.ui.request.TableCreateRequest;
-import kitchenpos.ui.request.TableGroupCreateRequest;
-import kitchenpos.ui.response.MenuGroupResponse;
-import kitchenpos.ui.response.OrderResponse;
-import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.menu.ui.request.MenuProductCreateRequest;
+import kitchenpos.order.ui.request.OrderCreateRequest;
+import kitchenpos.order.ui.request.OrderLineItemCreateRequest;
+import kitchenpos.order.ui.request.OrderUpdateOrderStatusRequest;
+import kitchenpos.order.ui.request.TableCreateRequest;
+import kitchenpos.order.ui.request.TableGroupCreateRequest;
+import kitchenpos.menu.ui.response.MenuGroupResponse;
+import kitchenpos.order.ui.response.OrderResponse;
+import kitchenpos.product.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
