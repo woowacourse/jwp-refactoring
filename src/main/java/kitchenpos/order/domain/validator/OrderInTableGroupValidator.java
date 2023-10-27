@@ -10,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class OrderInTableGroupValidator implements TableGroupValidator {
@@ -53,9 +54,11 @@ public class OrderInTableGroupValidator implements TableGroupValidator {
 
     @Override
     public void validateCompletedOrderTableInTableGroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final List<Long> orderTableIds = orderTableRepository.findAllByTableGroupId(tableGroupId).stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
         final List<OrderStatus> inProgressingOrderStatuses = Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(orderTables, inProgressingOrderStatuses)) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, inProgressingOrderStatuses)) {
             throw new IllegalArgumentException();
         }
     }

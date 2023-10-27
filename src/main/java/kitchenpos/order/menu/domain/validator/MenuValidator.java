@@ -1,6 +1,6 @@
-package kitchenpos.menu.domain.validator;
+package kitchenpos.order.menu.domain.validator;
 
-import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.menu.domain.MenuProduct;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;

@@ -38,8 +38,7 @@ public class TableService {
                                           final UpdateOrderTableEmptyRequest updateOrderTableEmptyRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        orderTableValidator.validateCompletedOrderTable(orderTable);
-        orderTable.setEmpty(updateOrderTableEmptyRequest.isEmpty());
+        orderTable.setEmpty(updateOrderTableEmptyRequest.isEmpty(), orderTableValidator);
         return OrderTableResponse.from(orderTable);
     }
 

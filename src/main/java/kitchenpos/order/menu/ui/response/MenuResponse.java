@@ -1,6 +1,6 @@
-package kitchenpos.menu.ui.response;
+package kitchenpos.order.menu.ui.response;
 
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.menu.domain.Menu;
 
 import java.math.BigDecimal;
 import java.util.List;

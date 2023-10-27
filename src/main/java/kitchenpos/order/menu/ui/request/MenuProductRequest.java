@@ -1,4 +1,4 @@
-package kitchenpos.menu.ui.request;
+package kitchenpos.order.menu.ui.request;
 
 import java.util.Objects;
 

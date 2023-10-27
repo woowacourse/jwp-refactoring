@@ -1,6 +1,6 @@
-package kitchenpos.menu.domain;
+package kitchenpos.order.menu.domain;
 
-import kitchenpos.menu.domain.validator.MenuValidator;
+import kitchenpos.order.menu.domain.validator.MenuValidator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

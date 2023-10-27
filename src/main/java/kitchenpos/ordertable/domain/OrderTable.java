@@ -1,5 +1,7 @@
 package kitchenpos.ordertable.domain;
 
+import kitchenpos.ordertable.domain.validator.OrderTableValidator;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -67,8 +69,10 @@ public class OrderTable {
         this.tableGroupId = null;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void setEmpty(final boolean empty,
+                         final OrderTableValidator validator) {
         validateGrouped();
+        validator.validateCompletedOrderTable(id);
         this.empty = empty;
     }
 

@@ -1,14 +1,9 @@
 package kitchenpos.application;
 
-import fixture.OrderBuilder;
-import fixture.OrderTableBuilder;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.application.TableGroupService;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.tablegroup.domain.validator.TableGroupValidator;
 import kitchenpos.tablegroup.ui.request.OrderTableIdRequest;

@@ -1,6 +1,6 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.order.domain.validator.OrderValidator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,9 +14,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @JoinColumn(name = "order_table_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private OrderTable orderTable;
+    private Long orderTableId;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
@@ -26,37 +24,32 @@ public class Order {
     protected Order() {
     }
 
-    private Order(final OrderTable orderTable,
+    private Order(final Long orderTableId,
                   final OrderStatus orderStatus,
                   final LocalDateTime orderedTime) {
-        this(null, orderTable, orderStatus, orderedTime);
+        this(null, orderTableId, orderStatus, orderedTime);
     }
 
     private Order(final Long id,
-                  final OrderTable orderTable,
+                  final Long orderTableId,
                   final OrderStatus orderStatus,
                   final LocalDateTime orderedTime) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public static Order create(final OrderTable orderTable,
-                               final List<OrderLineItem> orderLineItems) {
-        validateNotEmptyOrderTable(orderTable);
+    public static Order create(final Long orderTableId,
+                               final List<OrderLineItem> orderLineItems,
+                               final OrderValidator orderValidator) {
+        orderValidator.validateNotEmptyOrderTable(orderTableId);
         final Order order = new Order(
-                orderTable,
+                orderTableId,
                 OrderStatus.COOKING,
                 LocalDateTime.now());
         order.addOrderLineItems(orderLineItems);
         return order;
-    }
-
-    private static void validateNotEmptyOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -85,8 +78,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
@@ -118,7 +111,7 @@ public class Order {
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", orderTableId=" + orderTable.getId() +
+                ", orderTableId=" + orderTableId +
                 ", orderStatus='" + orderStatus + '\'' +
                 ", orderedTime=" + orderedTime +
                 ", orderLineItems.size=" + orderLineItems.size() +

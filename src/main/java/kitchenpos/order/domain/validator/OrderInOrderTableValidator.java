@@ -17,9 +17,9 @@ public class OrderInOrderTableValidator implements OrderTableValidator {
         this.orderRepository = orderRepository;
     }
 
-    public void validateCompletedOrderTable(final OrderTable orderTable) {
+    public void validateCompletedOrderTable(final Long orderTableId) {
         final List<OrderStatus> inProgressingOrderStatuses = Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(orderTable, inProgressingOrderStatuses)) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, inProgressingOrderStatuses)) {
             throw new IllegalArgumentException();
         }
     }

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import fixture.OrderBuilder;
 import fixture.OrderTableBuilder;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -11,7 +10,6 @@ import kitchenpos.ordertable.ui.request.OrderTableRequest;
 import kitchenpos.ordertable.ui.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.ordertable.ui.request.UpdateOrderTableNumberOfGuestsRequest;
 import kitchenpos.ordertable.ui.response.OrderTableResponse;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,11 +74,9 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 주문테이블의_아이디로_조리중_식사중_상태인_주문이_존재하면_예외를_발생한다() {
-        final OrderTable saveOrderTable = orderTableRepository.save(OrderTableBuilder.init().empty(false).build());
-        orderRepository.save(OrderBuilder.init().orderTable(saveOrderTable).orderStatus(OrderStatus.MEAL).build());
         final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(saveOrderTable.getId(), request)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
