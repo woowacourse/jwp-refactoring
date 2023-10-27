@@ -8,7 +8,7 @@ public class OrderLineItemPrice {
 
     private BigDecimal price;
 
-    public OrderLineItemPrice() {
+    protected OrderLineItemPrice() {
     }
 
     public OrderLineItemPrice(BigDecimal price) {

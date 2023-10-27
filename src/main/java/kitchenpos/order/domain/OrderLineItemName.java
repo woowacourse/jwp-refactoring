@@ -7,7 +7,7 @@ public class OrderLineItemName {
 
     private String name;
 
-    public OrderLineItemName() {
+    protected OrderLineItemName() {
     }
 
     public OrderLineItemName(String name) {

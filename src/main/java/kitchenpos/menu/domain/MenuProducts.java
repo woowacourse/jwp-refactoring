@@ -19,7 +19,7 @@ public class MenuProducts {
     @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public MenuProducts() {
+    protected MenuProducts() {
     }
 
     public void add(List<MenuProduct> menuProducts) {
