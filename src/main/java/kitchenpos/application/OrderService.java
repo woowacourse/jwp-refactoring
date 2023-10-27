@@ -1,13 +1,15 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItemRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
 import kitchenpos.ui.response.OrderResponse;
@@ -25,23 +27,31 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
+    private final MenuRepository menuRepository;
     private final OrderValidator orderValidator;
 
     public OrderService(
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository,
-            final OrderValidator orderValidator) {
+            final MenuRepository menuRepository,
+            final OrderValidator orderValidator
+    ) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
+        this.menuRepository = menuRepository;
         this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+                .map(it -> {
+                    final Menu menu = menuRepository.findById(it.getMenuId())
+                            .orElseThrow(NoSuchElementException::new);
+                    return new OrderLineItem(menu.getName(), menu.getPrice(), it.getMenuId(), it.getQuantity());
+                })
                 .collect(Collectors.toList());
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId()).orElseThrow();
