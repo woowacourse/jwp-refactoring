@@ -1,7 +1,7 @@
-package kitchenpos.ui.dto.response;
+package kitchenpos.product.dto;
 
 import java.math.BigDecimal;
-import kitchenpos.prodcut.Product;
+import kitchenpos.product.Product;
 
 public final class ProductResponse {
 

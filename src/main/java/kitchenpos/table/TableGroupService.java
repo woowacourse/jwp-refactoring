@@ -6,8 +6,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.order.JpaOrderRepository;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.ui.dto.request.TableGroupRequest;
-import kitchenpos.ui.dto.response.TableGroupResponse;
+import kitchenpos.table.dto.TableGroupRequest;
+import kitchenpos.table.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

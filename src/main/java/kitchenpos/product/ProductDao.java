@@ -1,6 +1,4 @@
-package kitchenpos.prodcut;
-
-import kitchenpos.prodcut.Product;
+package kitchenpos.product;
 
 import java.util.List;
 import java.util.Optional;

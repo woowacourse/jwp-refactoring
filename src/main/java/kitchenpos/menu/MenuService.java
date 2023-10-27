@@ -2,12 +2,12 @@ package kitchenpos.menu;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.prodcut.JpaProductRepository;
-import kitchenpos.prodcut.Price;
-import kitchenpos.prodcut.Product;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
-import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.product.JpaProductRepository;
+import kitchenpos.product.Price;
+import kitchenpos.product.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

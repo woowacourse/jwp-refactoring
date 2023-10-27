@@ -1,4 +1,4 @@
-package kitchenpos.prodcut;
+package kitchenpos.product;
 
 import java.math.BigDecimal;
 import java.util.Objects;

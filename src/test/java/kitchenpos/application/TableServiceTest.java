@@ -4,17 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.order.OrderStatus;
 import kitchenpos.table.OrderTable;
 import kitchenpos.fixtures.Fixtures;
 import kitchenpos.table.TableService;
-import kitchenpos.ui.dto.request.OrderTableRequest;
-import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.table.dto.OrderTableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class TableServiceTest extends ServiceTest {

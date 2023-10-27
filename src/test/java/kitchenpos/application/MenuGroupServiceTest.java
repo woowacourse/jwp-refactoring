@@ -6,8 +6,8 @@ import java.util.List;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.fixtures.Fixtures;
 import kitchenpos.menu.MenuGroupService;
-import kitchenpos.ui.dto.request.MenuGroupRequest;
-import kitchenpos.ui.dto.response.MenuGroupResponse;
+import kitchenpos.menu.dto.MenuGroupRequest;
+import kitchenpos.menu.dto.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,8 +1,7 @@
 package kitchenpos.table;
 
-import kitchenpos.table.TableService;
-import kitchenpos.ui.dto.request.OrderTableRequest;
-import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.table.dto.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto.response;
+package kitchenpos.table.dto;
 
 
 import kitchenpos.table.OrderTable;

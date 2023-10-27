@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.prodcut.Product;
+import kitchenpos.product.Product;
 import kitchenpos.fixtures.Fixtures;
-import kitchenpos.prodcut.ProductService;
-import kitchenpos.ui.dto.request.ProductRequest;
-import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.product.ProductService;
+import kitchenpos.product.dto.ProductRequest;
+import kitchenpos.product.dto.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
