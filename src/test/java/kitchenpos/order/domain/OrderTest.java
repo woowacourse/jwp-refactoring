@@ -2,24 +2,19 @@ package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.menu.domain.vo.Name;
 import kitchenpos.menu.domain.vo.Price;
 import kitchenpos.menu.domain.vo.Quantity;
+import kitchenpos.order.stub.OrderValidatorStub;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -35,7 +30,7 @@ class OrderTest {
         final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
 
         // expect
-        assertThatCode(() -> Order.ofEmptyOrderLineItems(orderTable))
+        assertThatCode(() -> Order.ofEmptyOrderLineItems(orderTable.getId()))
                 .doesNotThrowAnyException();
     }
 
@@ -44,12 +39,12 @@ class OrderTest {
     void success_ofEmptyOrderLineItems() {
         // given
         final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
-        final Order actual = Order.ofEmptyOrderLineItems(orderTable);
+        final Order actual = Order.ofEmptyOrderLineItems(orderTable.getId());
 
         // expect
         assertSoftly(softly -> {
             softly.assertThat(actual.getId()).isNull();
-            softly.assertThat(actual.getOrderTable()).isEqualTo(orderTable);
+            softly.assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId());
             softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
             softly.assertThat(actual.getOrderedTime()).isBefore(LocalDateTime.now());
             softly.assertThat(actual.getOrderLineItems().getOrderLineItems()).isEmpty();
@@ -64,11 +59,11 @@ class OrderTest {
         final Menu menu = Menu.withEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup);
 
         final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
-        final Order order = Order.ofEmptyOrderLineItems(orderTable);
+        final Order order = Order.ofEmptyOrderLineItems(orderTable.getId());
 
         // when
         order.addOrderLineItems(List.of(
-                new OrderLineItem(menu, new Quantity(10))
+                new OrderLineItem(menu.getId(), new Quantity(10))
         ));
 
         // then
@@ -79,8 +74,25 @@ class OrderTest {
 
             softly.assertThat(actualOrderLineItem)
                     .usingRecursiveComparison()
-                    .isEqualTo(new OrderLineItem(menu, new Quantity(10)));
+                    .isEqualTo(new OrderLineItem(menu.getId(), new Quantity(10)));
         });
+    }
+
+    @DisplayName("[SUCCESS] 주문을 준비한다.")
+    @Test
+    void success_prepare() {
+        // given
+        final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
+        final Menu menu = Menu.withEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup);
+
+        final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
+        final Order order = Order.ofEmptyOrderLineItems(orderTable.getId());
+
+        // when
+        order.prepare(new OrderValidatorStub());
+
+        // then
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @DisplayName("주문 상태 변경")
@@ -93,7 +105,7 @@ class OrderTest {
         void success_changeOrderStatus(final OrderStatus orderStatus) {
             // given
             final OrderTable orderTable = OrderTable.withoutTableGroup(5, false);
-            final Order order = Order.ofEmptyOrderLineItems(orderTable);
+            final Order order = Order.ofEmptyOrderLineItems(orderTable.getId());
 
             // when
             order.changeOrderStatus(orderStatus);
@@ -108,112 +120,12 @@ class OrderTest {
         void throwException_when_changeOrderStatus_Completion_to_Completion(final OrderStatus orderStatus) {
             // given
             final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
-            final Order order = Order.ofEmptyOrderLineItems(orderTable);
+            final Order order = Order.ofEmptyOrderLineItems(orderTable.getId());
             order.changeOrderStatus(OrderStatus.COMPLETION);
 
             // expect
             assertThatThrownBy(() -> order.changeOrderStatus(orderStatus))
                     .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
-
-    @DisplayName("주문 테이블 빈 상태 변경")
-    @Nested
-    class ChangeOrderStatusEmptyNestedClass {
-
-        @DisplayName("[SUCCESS] 주문 테이블을 채울 수 있다.")
-        @ParameterizedTest
-        @EnumSource(OrderStatus.class)
-        void success_changeOrderTableEmpty_full(final OrderStatus orderStatus) {
-            // given
-            final Order order = Order.ofEmptyOrderLineItems(OrderTable.withoutTableGroup(5, true));
-            order.changeOrderStatus(orderStatus);
-
-            // when
-            order.changeOrderTableEmpty(false);
-
-            // then
-            assertThat(order.getOrderTable().isEmpty()).isFalse();
-        }
-
-        @DisplayName("[SUCCESS] 주문이 완료된 상태일 때 채워져 있는 주문 테이블을 비울 수 있다.")
-        @Test
-        void success_changeOrderTableEmpty_when_orderStatus_isCompletion() {
-            // given
-            final Order order = Order.ofEmptyOrderLineItems(OrderTable.withoutTableGroup(5, true));
-            order.changeOrderStatus(OrderStatus.COMPLETION);
-
-            // when
-            order.changeOrderTableEmpty(true);
-
-            // then
-            assertThat(order.getOrderTable().isEmpty()).isTrue();
-        }
-
-        @DisplayName("[EXCEPTION] 주문이 완료된 상태가 아니라면 주문 테이블을 비울 수 없다.")
-        @Test
-        void throwException_changeOrderTableEmpty_when_orderStatus_isNotCompletion() {
-            // given
-            final Order order = Order.ofEmptyOrderLineItems(OrderTable.withoutTableGroup(5, true));
-
-            // expected
-            assertThatThrownBy(() -> order.changeOrderTableEmpty(true))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
-
-    @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("주문 테이블 그룹화 해제")
-    @Nested
-    class UngroupOrderTableNestedTest {
-
-        @DisplayName("[SUCCESS] 주문 테이블의 주문이 COMPLETION 일 경우 그룹화 해제할 수 있다.")
-        @Test
-        void success_ungroupOrderTable() {
-            // given
-            final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
-            final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
-            TableGroup.withOrderTables(List.of(
-                    orderTableOne,
-                    orderTableTwo
-            ));
-
-            final Order order = Order.ofEmptyOrderLineItems(orderTableOne);
-            order.changeOrderStatus(OrderStatus.COMPLETION);
-
-            // when
-            order.ungroupOrderTable();
-
-            // then
-            assertThat(order.getOrderTable().getTableGroupId()).isNull();
-        }
-
-        @DisplayName("[EXCEPTION] 주문 테이블의 주문 상태가 COMPLETION 이 아닐 경우 그룹화 해제할 수 없다.")
-        @ParameterizedTest
-        @MethodSource("getOrderStatusWithoutCompletion")
-        void throwException_ungroupOrderTable_when_orderStatus_isNotCompletion(final OrderStatus orderStatus) {
-            // given
-            final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
-            final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
-            TableGroup.withOrderTables(List.of(
-                    orderTableOne,
-                    orderTableTwo
-            ));
-
-            final Order order = Order.ofEmptyOrderLineItems(orderTableOne);
-
-            // when
-            order.changeOrderStatus(orderStatus);
-
-            // then
-            assertThatThrownBy(order::ungroupOrderTable)
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        private Stream<Arguments> getOrderStatusWithoutCompletion() {
-            return Arrays.stream(OrderStatus.values())
-                    .filter(orderStatus -> orderStatus != OrderStatus.COMPLETION)
-                    .map(Arguments::arguments);
         }
     }
 }
