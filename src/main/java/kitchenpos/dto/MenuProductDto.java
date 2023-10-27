@@ -9,10 +9,10 @@ public class MenuProductDto {
     private Long productId;
     private long quantity;
 
-    public static MenuProductDto from(MenuProduct entity) {
+    public static MenuProductDto from(MenuProduct entity, Long menuId) {
         MenuProductDto menuProductDto = new MenuProductDto();
         menuProductDto.setSeq(entity.getSeq());
-        menuProductDto.setMenuId(entity.getMenu().getId());
+        menuProductDto.setMenuId(menuId);
         menuProductDto.setProductId(entity.getProduct().getId());
         menuProductDto.setQuantity(entity.getQuantity());
         return menuProductDto;

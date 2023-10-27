@@ -16,9 +16,6 @@ public class MenuProduct {
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
     @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
     private long quantity;
@@ -26,9 +23,8 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+    public MenuProduct(Long seq, Product product, long quantity) {
         this.seq = seq;
-        this.menu = menu;
         this.product = product;
         this.quantity = quantity;
     }
@@ -44,10 +40,6 @@ public class MenuProduct {
         return seq;
     }
 
-    public Menu getMenu() {
-        return menu;
-    }
-
     public Product getProduct() {
         return product;
     }
@@ -56,24 +48,14 @@ public class MenuProduct {
         return quantity;
     }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
     public static class Builder {
 
         private Long seq;
-        private Menu menu;
         private Product product;
         private long quantity;
 
         public Builder seq(Long seq) {
             this.seq = seq;
-            return this;
-        }
-
-        public Builder menu(Menu menu) {
-            this.menu = menu;
             return this;
         }
 
@@ -88,7 +70,7 @@ public class MenuProduct {
         }
 
         public MenuProduct build() {
-            return new MenuProduct(seq, menu, product, quantity);
+            return new MenuProduct(seq, product, quantity);
         }
     }
 }

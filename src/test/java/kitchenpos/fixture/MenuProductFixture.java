@@ -31,7 +31,7 @@ public enum MenuProductFixture {
         return menuProductDto;
     }
 
-    public MenuProduct toEntity(Menu menu, Product product) {
-        return new MenuProduct(seq, menu, product, quantity);
+    public MenuProduct toEntity(Product product) {
+        return new MenuProduct(seq, product, quantity);
     }
 }

@@ -89,7 +89,7 @@ public class MenuService {
         for (final MenuDto menuDto : menuDtos) {
             List<MenuProductDto> menuProductDtos = menuProductDao.findAllByMenuId(menuDto.getId())
                                                                  .stream()
-                                                                 .map(MenuProductDto::from)
+                                                                 .map(menuProduct -> MenuProductDto.from(menuProduct, menuDto.getId()))
                                                                  .collect(toList());
             menuDto.setMenuProductDtos(menuProductDtos);
         }

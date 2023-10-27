@@ -52,7 +52,7 @@ public enum MenuFixture {
             .name(name)
             .price(price)
             .menuGroupId(MenuGroupFixture.LUNCH.toEntity().getId())
-            .menuProducts(List.of(MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(null, ProductFixture.FRIED_CHICKEN.toEntity())))
+            .menuProducts(List.of(MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(ProductFixture.FRIED_CHICKEN.toEntity())))
             .build();
     }
 }

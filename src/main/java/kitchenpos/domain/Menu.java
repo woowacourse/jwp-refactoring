@@ -13,6 +13,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
@@ -28,7 +29,8 @@ public class Menu {
     private MenuPrice price;
     @Column(name = "menu_group_id")
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu", orphanRemoval = true, cascade = {PERSIST, MERGE, REMOVE})
+    @OneToMany(cascade = {PERSIST, MERGE, REMOVE})
+    @JoinColumn(name = "menu_id", updatable = false, nullable = false)
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
@@ -47,9 +49,6 @@ public class Menu {
         this.price = new MenuPrice(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts == null ? new ArrayList<>() : menuProducts;
-        for (MenuProduct menuProduct : this.menuProducts) {
-            menuProduct.setMenu(this);
-        }
     }
 
     private void validatePrice(BigDecimal price, List<MenuProduct> menuProducts) {

@@ -1,16 +1,16 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuProduct;
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.domain.MenuProduct;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
 public interface MenuProductDao extends Repository<MenuProduct, Long> {
     MenuProduct save(MenuProduct entity);
 
-    Optional<MenuProduct> findById(Long id);
-
     List<MenuProduct> findAll();
 
-    List<MenuProduct> findAllByMenuId(Long menuId);
+    @Query(value = "SELECT * FROM MenuProduct WHERE menu_id = ?0", nativeQuery = true)
+    List<MenuProduct> findAllByMenuId(@Param("menuId") Long menuId);
 }

@@ -18,7 +18,7 @@ public class MenuDto {
     public static MenuDto from(Menu entity) {
         List<MenuProductDto> menuProductDtos = entity.getMenuProducts()
                                                      .stream()
-                                                     .map(MenuProductDto::from)
+                                                     .map(menuProduct -> MenuProductDto.from(menuProduct, entity.getId()))
                                                      .collect(toList());
 
         MenuDto menuDto = new MenuDto();
