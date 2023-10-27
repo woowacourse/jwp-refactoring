@@ -48,14 +48,14 @@ public class TableGroupService {
     }
 
     private void validateOrderTableCountFromRequest(TableGroupRequest request) {
-        List<OrderTableDto> orderTableDtos = request.getOrderTableDtos();
+        List<OrderTableDto> orderTableDtos = request.getOrderTables();
         if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
             throw new RequestOrderTableCountNotEnoughException();
         }
     }
 
     private List<OrderTable> validateOrderTableExistence(TableGroupRequest request) {
-        List<Long> orderTableIds = request.getOrderTableDtos().stream()
+        List<Long> orderTableIds = request.getOrderTables().stream()
                 .map(OrderTableDto::getId)
                 .collect(toList());
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);

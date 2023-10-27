@@ -44,7 +44,7 @@ public class OrderService {
     }
 
     public OrderResponse create(OrderCreateRequest request) {
-        List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItemDtos();
+        List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItems();
         validateOrderLineItemIsNotEmpty(orderLineItemDtos);
 
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())

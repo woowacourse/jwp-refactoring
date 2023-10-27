@@ -43,7 +43,7 @@ public class MenuValidator {
 
     private void validatePriceByQuantityBiggerThanRequestedPrice(MenuRequest request) {
         BigDecimal requestPrice = request.getPrice();
-        List<MenuProductDto> menuProductDtos = request.getMenuProductDtos();
+        List<MenuProductDto> menuProductDtos = request.getMenuProducts();
         BigDecimal priceByQuantity = calcPriceByQuantity(menuProductDtos);
         if (requestPrice.compareTo(priceByQuantity) > 0) {
             throw new MenuPriceTooExpensiveException();

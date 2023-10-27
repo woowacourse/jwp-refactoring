@@ -39,7 +39,7 @@ public class MenuService {
                 .orElseThrow(MenuGroupNotFoundException::new);
         Menu menu = menuRepository.save(
                 Menu.of(request.getName(), request.getPrice(), menuGroup.getId(),
-                        request.getMenuProductDtos().stream()
+                        request.getMenuProducts().stream()
                                 .map(dto -> new ProductIdAndQuantity(dto.getProductId(),
                                         dto.getQuantity())).collect(toList())));
         return MenuResponse.from(menu);
