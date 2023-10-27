@@ -3,8 +3,6 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.exception.CustomException;
-import kitchenpos.exception.ExceptionType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +22,5 @@ public class MenuGroupService {
 
     public List<MenuGroup> list() {
         return menuGroupDao.findAll();
-    }
-
-    public MenuGroup findById(final Long menuGroupId) {
-        return menuGroupDao.findById(menuGroupId)
-                           .orElseThrow(() -> new CustomException(ExceptionType.MENU_GROUP_NOT_FOUND, String.valueOf(menuGroupId)));
     }
 }

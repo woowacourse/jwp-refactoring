@@ -24,13 +24,12 @@ class MenuTest {
         MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(null,
             ProductFixture.FRIED_CHICKEN.toEntity());
         BigDecimal price = BigDecimal.valueOf(menuProduct.getProduct().getPrice().longValue() * menuProduct.getQuantity());
-        MenuGroup menuGroup = MenuGroupFixture.LUNCH.toEntity();
 
         // when
         Builder builder = new Builder()
             .name(name)
             .price(price)
-            .menuGroup(menuGroup)
+            .menuGroupId(1L)
             .menuProducts(List.of(menuProduct));
 
         // then
@@ -45,13 +44,12 @@ class MenuTest {
         MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(null,
             ProductFixture.FRIED_CHICKEN.toEntity());
         BigDecimal price = BigDecimal.valueOf(menuProduct.getProduct().getPrice().longValue() * menuProduct.getQuantity() + 1);
-        MenuGroup menuGroup = MenuGroupFixture.LUNCH.toEntity();
 
         // when
         Builder builder = new Builder()
             .name(name)
             .price(price)
-            .menuGroup(menuGroup)
+            .menuGroupId(1L)
             .menuProducts(List.of(menuProduct));
 
         // then
@@ -66,13 +64,12 @@ class MenuTest {
         MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(null,
             ProductFixture.FRIED_CHICKEN.toEntity());
         BigDecimal price = BigDecimal.valueOf(-1);
-        MenuGroup menuGroup = MenuGroupFixture.LUNCH.toEntity();
 
         // when
         Builder builder = new Builder()
             .name(name)
             .price(price)
-            .menuGroup(menuGroup)
+            .menuGroupId(1L)
             .menuProducts(List.of(menuProduct));
 
         // then

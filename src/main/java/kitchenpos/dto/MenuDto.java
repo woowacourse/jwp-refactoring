@@ -25,7 +25,7 @@ public class MenuDto {
         menuDto.setId(entity.getId());
         menuDto.setName(entity.getName());
         menuDto.setPrice(entity.getPrice());
-        menuDto.setMenuGroupId(entity.getMenuGroup().getId());
+        menuDto.setMenuGroupId(entity.getMenuGroupId());
         menuDto.setMenuProductDtos(menuProductDtos);
         return menuDto;
     }

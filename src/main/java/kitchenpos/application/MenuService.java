@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
+import static kitchenpos.exception.ExceptionType.MENU_GROUP_NOT_FOUND;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuDto;
@@ -23,31 +24,33 @@ public class MenuService {
 
     private final MenuDao menuDao;
     private final MenuProductDao menuProductDao;
-    private final MenuGroupService menuGroupService;
+    private final MenuGroupDao menuGroupDao;
     private final ProductService productService;
 
     public MenuService(
         final MenuDao menuDao,
         final MenuProductDao menuProductDao,
-        final MenuGroupService menuGroupService,
+        final MenuGroupDao menuGroupDao,
         final ProductService productService
     ) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
-        this.menuGroupService = menuGroupService;
+        this.menuGroupDao = menuGroupDao;
         this.productService = productService;
     }
 
     @Transactional
     public MenuDto create(final MenuDto menuDto) {
         BigDecimal menuPrice = menuDto.getPrice();
-        MenuGroup menuGroup = menuGroupService.findById(menuDto.getMenuGroupId());
+        Long menuGroupId = menuDto.getMenuGroupId();
         String name = menuDto.getName();
         List<MenuProduct> menuProducts = toMenuProducts(menuDto.getMenuProductDtos());
 
+        validateMenuGroupExists(menuGroupId);
+
         Menu menu = new Menu.Builder()
             .name(name)
-            .menuGroup(menuGroup)
+            .menuGroupId(menuGroupId)
             .menuProducts(menuProducts)
             .price(menuPrice)
             .build();
@@ -55,6 +58,12 @@ public class MenuService {
         Menu savedMenu = menuDao.save(menu);
 
         return MenuDto.from(savedMenu);
+    }
+
+    private void validateMenuGroupExists(Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
+            throw new CustomException(MENU_GROUP_NOT_FOUND);
+        }
     }
 
     private List<MenuProduct> toMenuProducts(List<MenuProductDto> menuProductDtos) {

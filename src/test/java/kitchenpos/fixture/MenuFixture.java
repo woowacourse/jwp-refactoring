@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuDto;
 import kitchenpos.dto.MenuProductDto;
 
@@ -52,7 +51,7 @@ public enum MenuFixture {
         return new Menu.Builder()
             .name(name)
             .price(price)
-            .menuGroup(MenuGroupFixture.LUNCH.toEntity())
+            .menuGroupId(MenuGroupFixture.LUNCH.toEntity().getId())
             .menuProducts(List.of(MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(null, ProductFixture.FRIED_CHICKEN.toEntity())))
             .build();
     }
