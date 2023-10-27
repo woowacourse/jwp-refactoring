@@ -19,9 +19,7 @@ public class MenuValidator {
     }
 
     public void validatePrice(final Menu menu, final List<MenuProduct> toSaveMenuProducts) {
-        final List<Long> productIds = toSaveMenuProducts.stream()
-                .map(MenuProduct::getProductId)
-                .collect(toList());
+        final List<Long> productIds = getProductIds(toSaveMenuProducts);
 
         final List<Product> products = productRepository.findAllById(productIds);
         validateExists(products, productIds);
@@ -31,6 +29,12 @@ public class MenuValidator {
         if (menu.hasPriceGreaterThan(sum)) {
             throw new IllegalArgumentException(String.format("메뉴의 가격은 상품의 총 가격의 합보다 비쌀 수 없습니다. 메뉴 가격 = %s, 총 상품 가격 = %s", menu.getPrice(), sum));
         }
+    }
+
+    private List<Long> getProductIds(final List<MenuProduct> toSaveMenuProducts) {
+        return toSaveMenuProducts.stream()
+                .map(MenuProduct::getProductId)
+                .collect(toList());
     }
 
     private void validateExists(final List<Product> products, final List<Long> productIds) {
