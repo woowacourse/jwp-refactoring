@@ -1,4 +1,4 @@
-package kitchenpos.response;
+package kitchenpos.menu.response;
 
 import kitchenpos.common.domain.Price;
 import kitchenpos.menu.domain.Menu;

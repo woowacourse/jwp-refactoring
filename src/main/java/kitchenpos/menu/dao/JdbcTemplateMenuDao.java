@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.menu.dao;
 
 import kitchenpos.common.domain.Price;
 import kitchenpos.menu.domain.Menu;
