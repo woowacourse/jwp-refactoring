@@ -3,6 +3,7 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.OrderStatus;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -64,9 +65,12 @@ public class OrderService {
     private void saveOrderLineItem(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests,
                                    final Order savedOrder) {
         for (final OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItemCreateRequests) {
+            final Menu orderLineMenu = menuRepository.findById(orderLineItemCreateRequest.getMenuId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당하는 메뉴가 존재하지 않습니다."));
             final OrderLineItem updatedOrderLineItem = new OrderLineItem(
                     savedOrder,
-                    orderLineItemCreateRequest.getMenuId(),
+                    orderLineMenu.getName(),
+                    orderLineMenu.getPrice(),
                     orderLineItemCreateRequest.getQuantity()
             );
             savedOrder.addOrderLineItem(orderLineItemRepository.save(updatedOrderLineItem));

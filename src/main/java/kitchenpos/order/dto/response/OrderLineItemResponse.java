@@ -1,23 +1,27 @@
 package kitchenpos.order.dto.response;
 
+import kitchenpos.common.Price;
 import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemResponse {
 
     private final Long seq;
-    private final Long menuId;
+    private final String menuName;
+    private final Price menuPrice;
     private final long quantity;
 
-    private OrderLineItemResponse(final Long seq, final Long menuId, final long quantity) {
+    public OrderLineItemResponse(final Long seq, final String menuName, final Price menuPrice, final long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = quantity;
     }
 
     public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
-                orderLineItem.getMenuId(),
+                orderLineItem.getMenuName(),
+                orderLineItem.getMenuPrice(),
                 orderLineItem.getQuantity()
         );
     }
@@ -26,8 +30,12 @@ public class OrderLineItemResponse {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public Price getMenuPrice() {
+        return menuPrice;
     }
 
     public long getQuantity() {

@@ -12,22 +12,22 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.common.OrderStatus;
+import kitchenpos.common.Price;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.order.repository.OrderLineItemRepository;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.common.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.common.Price;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.order.repository.OrderLineItemRepository;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,8 +72,8 @@ class OrderServiceTest {
 
         final Order order = new Order(1L, null, OrderStatus.COOKING.name());
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getId(), 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getName(), menu1.getPrice(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getName(), menu2.getPrice(), 1);
         order.addOrderLineItem(orderLineItem1);
         order.addOrderLineItem(orderLineItem2);
 
@@ -87,6 +87,8 @@ class OrderServiceTest {
                 order.getOrderLineItems()
         );
 
+        given(menuRepository.findById(any()))
+                .willReturn(Optional.of(menu1));
         given(orderTableRepository.findById(any()))
                 .willReturn(Optional.of(orderTable));
 
@@ -115,8 +117,12 @@ class OrderServiceTest {
                 List.of(new OrderLineItemCreateRequest(menu1.getId(), 1))
         );
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(order, 11L, 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getName(), menu1.getPrice(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(
+                order, "존재하지 않는 메뉴",
+                new Price(BigDecimal.valueOf(122)),
+                1
+        );
 
         order.addOrderLineItem(orderLineItem1);
         order.addOrderLineItem(orderLineItem2);
@@ -143,8 +149,8 @@ class OrderServiceTest {
                         new OrderLineItemCreateRequest(menu2.getId(), 1))
         );
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getId(), 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getName(), menu1.getPrice(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu1.getName(), menu1.getPrice(), 1);
 
         order.addOrderLineItem(orderLineItem1);
         order.addOrderLineItem(orderLineItem2);

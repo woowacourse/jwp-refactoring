@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.common.Price;
 
 @Entity
 public class OrderLineItem {
@@ -19,20 +20,26 @@ public class OrderLineItem {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
-    private Long menuId;
+
+    private String menuName;
+
+    private Price menuPrice;
+
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Order order, final Long menuId, final long quantity) {
-        this(null, order, menuId, quantity);
+    public OrderLineItem(final Order order, final String menuName, final Price menuPrice, final long quantity) {
+        this(null, order, menuName, menuPrice, quantity);
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long seq, final Order order, final String menuName, final Price menuPrice,
+                         final long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = quantity;
     }
 
@@ -44,8 +51,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public Price getMenuPrice() {
+        return menuPrice;
     }
 
     public long getQuantity() {
