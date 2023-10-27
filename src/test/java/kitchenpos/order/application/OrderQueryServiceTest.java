@@ -26,7 +26,7 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository, orderValidator, orderMapper);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository, orderValidator, orderMapper, publisher);
     }
 
     @DisplayName("[SUCCESS] 전체 주문 목록을 조회한다.")

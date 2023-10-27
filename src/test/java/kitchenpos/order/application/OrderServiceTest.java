@@ -31,7 +31,7 @@ class OrderServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository, orderValidator, orderMapper);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository, orderValidator, orderMapper, publisher);
     }
 
     @DisplayName("새로운 주문 등록")

@@ -3,6 +3,7 @@ package kitchenpos.order.application;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.order.application.event.OrderPreparedEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
@@ -10,6 +11,7 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,18 +27,21 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
     private final OrderValidator orderValidator;
     private final OrderMapper orderMapper;
+    private final ApplicationEventPublisher publisher;
 
     public OrderService(final MenuRepository menuRepository,
                         final OrderRepository orderRepository,
                         final OrderTableRepository orderTableRepository,
                         final OrderValidator orderValidator,
-                        final OrderMapper orderMapper
+                        final OrderMapper orderMapper,
+                        final ApplicationEventPublisher publisher
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderValidator = orderValidator;
         this.orderMapper = orderMapper;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -45,6 +50,7 @@ public class OrderService {
         newOrder.prepare(orderValidator);
         final Order savedOrder = orderRepository.save(newOrder);
 
+        publisher.publishEvent(new OrderPreparedEvent(newOrder.getId()));
         return getOrderResponse(savedOrder);
     }
 
