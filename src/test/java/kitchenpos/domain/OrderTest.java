@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -22,10 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class OrderTest {
 
-    private final MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
-    private final Menu menu = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), menuGroup);
-    private final OrderLineItem orderLineItem1 = OrderLineItem.create(menu, 1L);
-    private final OrderLineItem orderLineItem2 = OrderLineItem.create(menu, 1L);
     private final OrderTable orderTable = OrderTable.create(1, false);
 
     @DisplayName("주문을 생성할 수 있다.")
@@ -69,6 +63,8 @@ class OrderTest {
     void updateOrderLineItems() {
         // given
         Order order = Order.create(orderTable);
+        OrderLineItem orderLineItem1 = OrderLineItem.create(order, 1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), 1L);
+        OrderLineItem orderLineItem2 = OrderLineItem.create(order, 1L, "두마리메뉴 - 간1양1", BigDecimal.valueOf(32000L), 1L);
 
         // when
         order.updateOrderLineItems(List.of(orderLineItem1, orderLineItem2));

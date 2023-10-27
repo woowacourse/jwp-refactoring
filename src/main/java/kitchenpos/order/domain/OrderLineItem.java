@@ -1,9 +1,8 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.menu.domain.Menu;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -17,9 +16,8 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
+    @Embedded
+    private OrderMenu orderMenu;
 
     @NotNull
     private Long quantity;
@@ -27,24 +25,29 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    private OrderLineItem(final Long seq, final Order order, final Menu menu, final Long quantity) {
+    private OrderLineItem(
+            final Long seq,
+            final Order order,
+            final Long menuId,
+            final String menuName,
+            final BigDecimal menuPrice,
+            final Long quantity
+    ) {
         validateQuantity(quantity);
         this.seq = seq;
         this.order = order;
-        this.menu = menu;
+        this.orderMenu = OrderMenu.of(menuId, menuName, menuPrice);
         this.quantity = quantity;
     }
 
-    private OrderLineItem(final Menu menu, final Long quantity) {
-        this(null, null, menu, quantity);
-    }
-
-    public static OrderLineItem create(final Menu menu, final Long quantity) {
-        return new OrderLineItem(menu, quantity);
-    }
-
-    public static OrderLineItem create(final Order order, final Menu menu, final Long quantity) {
-        return new OrderLineItem(null, order, menu, quantity);
+    public static OrderLineItem create(
+            final Order order,
+            final Long menuId,
+            final String menuName,
+            final BigDecimal menuPrice,
+            final Long quantity
+    ) {
+        return new OrderLineItem(null, order, menuId, menuName, menuPrice, quantity);
     }
 
     private void validateQuantity(final Long quantity) {
@@ -57,19 +60,11 @@ public class OrderLineItem {
         }
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
     public Long getOrderId() {
         return order.getId();
     }
 
     public Long getMenuId() {
-        return menu.getId();
-    }
-
-    public long getQuantity() {
-        return quantity;
+        return orderMenu.getMenuId();
     }
 }
