@@ -12,10 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
-import org.springframework.util.CollectionUtils;
 
 @Table(name = "orders")
 @Entity
@@ -25,9 +22,7 @@ public class Order {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     private String orderStatus;
     private LocalDateTime orderedTime;
@@ -39,25 +34,15 @@ public class Order {
     protected Order() {
     }
 
-    public Order(
-            OrderTable orderTable,
-            List<OrderLineItem> orderLineItems
-    ) {
-        validateCreate(orderTable, orderLineItems);
-        this.orderTable = orderTable;
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
-        orderTable.order(this);
     }
 
-    private void validateCreate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new OrderException("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
-        }
-        if (orderTable.isEmpty()) {
-            throw new OrderException("비어있는 테이블에서는 주문할 수 없습니다.");
-        }
+    public void place(OrderValidator orderValidator) {
+        orderValidator.validatePlace(this);
     }
 
     public void setOrderStatus(String orderStatus) {
@@ -71,8 +56,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -82,7 +67,6 @@ public class Order {
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
-
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;

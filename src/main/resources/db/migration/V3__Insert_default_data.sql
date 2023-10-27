@@ -47,7 +47,7 @@ insert into menu_product (menu_id, product_id, quantity)
 values (6, 6, 1);
 
 insert into order_table (number_of_guests, empty)
-values (0, true);
+values (0, false);
 insert into order_table (number_of_guests, empty)
 values (0, true);
 insert into order_table (number_of_guests, empty)

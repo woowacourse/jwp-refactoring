@@ -3,6 +3,7 @@ package kitchenpos.order.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.order.domain.MenuSnapShot;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 
@@ -31,7 +32,7 @@ public class OrderResponse {
     public static OrderResponse from(Order order) {
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTable().getId(),
+                order.getOrderTableId(),
                 order.getOrderStatus(),
                 order.getOrderedTime(),
                 order.getOrderLineItems().stream()
@@ -63,19 +64,19 @@ public class OrderResponse {
     public static class OrderLineItemResponse {
 
         private Long seq;
-        private Long menuId;
+        private MenuSnapShot menuSnapShot;
         private long quantity;
 
-        public OrderLineItemResponse(Long seq, Long menuId, long quantity) {
+        public OrderLineItemResponse(Long seq, MenuSnapShot menuSnapShot, long quantity) {
             this.seq = seq;
-            this.menuId = menuId;
+            this.menuSnapShot = menuSnapShot;
             this.quantity = quantity;
         }
 
         public static OrderLineItemResponse from(OrderLineItem orderLineItem) {
             return new OrderLineItemResponse(
                     orderLineItem.getSeq(),
-                    orderLineItem.getMenu().getId(),
+                    orderLineItem.getMenuSnapShot(),
                     orderLineItem.getQuantity()
             );
         }
@@ -84,8 +85,8 @@ public class OrderResponse {
             return seq;
         }
 
-        public Long getMenuId() {
-            return menuId;
+        public MenuSnapShot getMenuSnapShot() {
+            return menuSnapShot;
         }
 
         public long getQuantity() {

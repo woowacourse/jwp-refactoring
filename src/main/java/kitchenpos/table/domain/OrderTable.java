@@ -1,19 +1,14 @@
 package kitchenpos.table.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import kitchenpos.order.domain.Order;
 
 @Entity
 public class OrderTable {
@@ -29,9 +24,6 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "orderTable")
-    private Order order;
-
     protected OrderTable() {
     }
 
@@ -40,29 +32,9 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void order(Order order) {
-        this.order = order;
-    }
-
-    public void setEmpty(boolean empty) {
-        validateChangeEmpty();
+    public void setEmpty(boolean empty, OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateChangeEmpty(this);
         this.empty = empty;
-    }
-
-    private void validateChangeEmpty() {
-        if (Objects.nonNull(getTableGroup())) {
-            throw new OrderTableException("그룹에 속한 테이블은 비어있음 상태를 변경할 수 없습니다.");
-        }
-        validateNotCookingOrMealOrder("조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
-    }
-
-    private void validateNotCookingOrMealOrder(String errorMessage) {
-        if (order == null) {
-            return;
-        }
-        if (Set.of(COOKING.name(), MEAL.name()).contains(order.getOrderStatus())) {
-            throw new OrderTableException(errorMessage);
-        }
     }
 
     public void grouping(TableGroup tableGroup) {
@@ -73,8 +45,8 @@ public class OrderTable {
         this.empty = false;
     }
 
-    public void ungroup() {
-        validateNotCookingOrMealOrder("조리 혹은 식사중 상태의 테이블이 포함되어 있어 그룹을 해제할 수 없습니다.");
+    public void ungroup(OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateUngroup(this, "조리 혹은 식사중 상태의 테이블이 포함되어 있어 그룹을 해제할 수 없습니다.");
         this.tableGroup = null;
     }
 

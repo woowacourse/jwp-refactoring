@@ -20,7 +20,15 @@ import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static kitchenpos.order.domain.OrderStatus.MEAL;
 
+import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.acceptance.AcceptanceTest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.MenuProductSnapShot;
+import kitchenpos.order.domain.MenuSnapShot;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,6 +38,10 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderAcceptanceTest {
 
+    private final Product 상품1 = new Product("상품1", BigDecimal.valueOf(10_000));
+    private final Product 상품2 = new Product("상품2", BigDecimal.valueOf(20_000));
+    private final MenuGroup 세트_상품_메뉴_그룹 = new MenuGroup("세트 상품");
+
     private Long 상품1_ID;
     private Long 상품2_ID;
     private Long 세트_상품_메뉴_그룹_ID;
@@ -38,22 +50,67 @@ public class OrderAcceptanceTest {
     private Long 테이블_1_ID;
     private Long 테이블_2_ID;
 
+    private Menu 말랑_메뉴_1;
+    private Menu 말랑_메뉴_2;
+    private MenuSnapShot 말랑_메뉴_1_스냅샷;
+    private MenuSnapShot 말랑_메뉴_2_스냅샷;
+
     private void settingData() {
         상품1_ID = 상품_등록후_생성된_ID를_가져온다("상품1", 10_000);
         상품2_ID = 상품_등록후_생성된_ID를_가져온다("상품2", 20_000);
         세트_상품_메뉴_그룹_ID = 메뉴_그릅_등록후_생성된_ID를_가져온다("세트 상품");
+        말랑_메뉴_1 = new Menu(
+                "말랑 메뉴",
+                BigDecimal.valueOf(1_000),
+                세트_상품_메뉴_그룹,
+                List.of(new MenuProduct(상품1_ID, 2))
+        );
+        말랑_메뉴_2 = new Menu(
+                "말랑 메뉴 2",
+                BigDecimal.valueOf(20_000),
+                세트_상품_메뉴_그룹,
+                List.of(new MenuProduct(상품1_ID, 2),
+                        new MenuProduct(상품2_ID, 3)
+                )
+        );
+
+        말랑_메뉴_1_스냅샷 = new MenuSnapShot(
+                세트_상품_메뉴_그룹.getName(),
+                "말랑 메뉴",
+                BigDecimal.valueOf(1_000),
+                List.of(new MenuProductSnapShot(상품1.getName(), 상품1.getPrice(), 2))
+        );
+        말랑_메뉴_2_스냅샷 = new MenuSnapShot(
+                세트_상품_메뉴_그룹.getName(),
+                "말랑 메뉴 2",
+                BigDecimal.valueOf(20_000),
+                List.of(
+                        new MenuProductSnapShot(상품1.getName(), 상품1.getPrice(), 2),
+                        new MenuProductSnapShot(상품2.getName(), 상품2.getPrice(), 3)
+                )
+        );
+
         말랑_메뉴_ID = 메뉴_등록후_생성된_ID를_받아온다(
                 세트_상품_메뉴_그룹_ID,
-                "말랑 메뉴",
-                1_000,
-                메뉴에_속한_상품(상품1_ID, 1)
+                말랑_메뉴_1.getName(),
+                말랑_메뉴_1.getPrice().intValue(),
+                메뉴에_속한_상품(
+                        상품1_ID,
+                        말랑_메뉴_1.getMenuProducts().get(0).getQuantity()
+                )
         );
         말랑_메뉴_2_ID = 메뉴_등록후_생성된_ID를_받아온다(
                 세트_상품_메뉴_그룹_ID,
-                "말랑 메뉴 2",
-                20_000,
-                메뉴에_속한_상품(상품1_ID, 2),
-                메뉴에_속한_상품(상품2_ID, 3)
+                말랑_메뉴_2.getName(),
+                말랑_메뉴_2.getPrice().intValue(),
+                메뉴에_속한_상품(
+                        상품1_ID,
+                        말랑_메뉴_2.getMenuProducts().get(0).getQuantity()
+                ),
+                메뉴에_속한_상품(
+                        상품2_ID,
+                        말랑_메뉴_2.getMenuProducts().get(1).getQuantity()
+                )
         );
         테이블_1_ID = 테이블_등록후_생성된_ID를_가져온다(2, 비어있지_않음);
         테이블_2_ID = 테이블_등록후_생성된_ID를_가져온다(3, 비어있지_않음);
@@ -131,8 +188,8 @@ public class OrderAcceptanceTest {
             주문_조회_결과를_검증한다(
                     조회_응답,
                     주문(주문_ID, 테이블_1_ID, MEAL,
-                            주문_항목(말랑_메뉴_ID, 2),
-                            주문_항목(말랑_메뉴_2_ID, 1)
+                            주문_항목(말랑_메뉴_1_스냅샷, 2),
+                            주문_항목(말랑_메뉴_2_스냅샷, 1)
                     )
             );
         }
@@ -155,8 +212,8 @@ public class OrderAcceptanceTest {
             주문_조회_결과를_검증한다(
                     조회_응답,
                     주문(주문_ID, 테이블_1_ID, COMPLETION,
-                            주문_항목(말랑_메뉴_ID, 2),
-                            주문_항목(말랑_메뉴_2_ID, 1)
+                            주문_항목(말랑_메뉴_1_스냅샷, 2),
+                            주문_항목(말랑_메뉴_2_스냅샷, 1)
                     )
             );
         }
@@ -190,12 +247,12 @@ public class OrderAcceptanceTest {
             주문_조회_결과를_검증한다(
                     응답,
                     주문(주문1_ID, 테이블_1_ID, COOKING,
-                            주문_항목(말랑_메뉴_ID, 2),
-                            주문_항목(말랑_메뉴_2_ID, 1)
+                            주문_항목(말랑_메뉴_1_스냅샷, 2),
+                            주문_항목(말랑_메뉴_2_스냅샷, 1)
                     ),
                     주문(주문2_ID, 테이블_2_ID, COOKING,
-                            주문_항목(말랑_메뉴_ID, 3),
-                            주문_항목(말랑_메뉴_2_ID, 2)
+                            주문_항목(말랑_메뉴_1_스냅샷, 3),
+                            주문_항목(말랑_메뉴_2_스냅샷, 2)
                     )
             );
         }

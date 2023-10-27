@@ -1,52 +1,56 @@
 package kitchenpos.order.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
+import kitchenpos.order.domain.MenuSnapShotCreator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
+    private final MenuSnapShotCreator menuSnapShotCreator;
     private final OrderRepository orderRepository;
+    private final MenuRepository menuRepository;
 
     public OrderService(
-            MenuRepository menuRepository,
-            OrderTableRepository orderTableRepository,
-            OrderRepository orderRepository
-    ) {
-        this.menuRepository = menuRepository;
-        this.orderTableRepository = orderTableRepository;
+            OrderValidator orderValidator,
+            MenuSnapShotCreator menuSnapShotCreator,
+            OrderRepository orderRepository,
+            MenuRepository menuRepository) {
+        this.orderValidator = orderValidator;
+        this.menuSnapShotCreator = menuSnapShotCreator;
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
     }
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-                .map(it -> new OrderLineItem(menuRepository.getById(it.getMenuId()), it.getQuantity()))
-                .toList();
-        OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
-        return OrderResponse.from(orderRepository.save(
-                new Order(orderTable, orderLineItems)
-        ));
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems()
+                .stream()
+                .map(it -> menuSnapShotCreator.create(
+                        menuRepository.getById(it.getMenuId()), it.getQuantity()
+                )).collect(Collectors.toList());
+        Order order = new Order(request.getOrderTableId(), orderLineItems);
+        order.place(orderValidator);
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     public List<OrderResponse> list() {
         return orderRepository.findAll()
                 .stream()
                 .map(OrderResponse::from)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Transactional
