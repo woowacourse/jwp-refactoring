@@ -1,12 +1,12 @@
 package kitchenpos.integration;
 
-import kitchenpos.application.MenuService;
-import kitchenpos.application.ProductService;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.menu.MenuService;
+import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menugroup.MenuGroupRepository;
+import kitchenpos.product.Product;
+import kitchenpos.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,14 +24,14 @@ class MenuIntegrationTest extends IntegrationTest {
     private ProductService productService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴가_영속화되면_메뉴프로덕트도_영속화된다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1L);
+        MenuProduct menuProduct = new MenuProduct(1L, product.getId());
         Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
         Menu saved = menuService.create(menu);
 
@@ -42,11 +42,10 @@ class MenuIntegrationTest extends IntegrationTest {
 
     @Test
     void 메뉴_조회시_메뉴프로덕트도_조회된다() {
-
         // given
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1L);
+        MenuProduct menuProduct = new MenuProduct(1L, product.getId());
         Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
         Menu saved = menuService.create(menu);
 

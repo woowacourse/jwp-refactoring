@@ -1,12 +1,12 @@
 package kitchenpos.support;
 
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.application.MenuService;
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.menu.MenuService;
+import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menugroup.MenuGroupService;
+import kitchenpos.product.Product;
+import kitchenpos.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +35,7 @@ public class FixtureFactory {
 
     public Menu 메뉴_생성(Long menuGroupId, Product product) {
         return menuService.create(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroupId, List.of(
-                new MenuProduct(product, 1)
+                new MenuProduct(1, product.getId())
         )));
     }
 }

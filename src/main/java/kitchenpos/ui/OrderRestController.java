@@ -1,9 +1,9 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.OrderService;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.request.OrderCreatedRequest;
+import kitchenpos.order.Order;
+import kitchenpos.order.OrderService;
+import kitchenpos.request.OrderCreateRequest;
+import kitchenpos.request.OrderStatusChangeRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,16 +17,17 @@ import java.util.List;
 
 @RestController
 public class OrderRestController {
+
     private final OrderService orderService;
 
-    public OrderRestController(final OrderService orderService) {
+    public OrderRestController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final OrderCreatedRequest request) {
-        final Order created = orderService.create(request.getOrderTableId(), request.getOrder());
-        final URI uri = URI.create("/api/orders/" + created.getId());
+    public ResponseEntity<Order> create(@RequestBody OrderCreateRequest request) {
+        Order created = orderService.create(request);
+        URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
@@ -41,9 +42,9 @@ public class OrderRestController {
 
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<Order> changeOrderStatus(
-            @PathVariable final Long orderId,
-            @RequestBody final OrderStatus orderStatus
+            @PathVariable Long orderId,
+            @RequestBody OrderStatusChangeRequest request
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatus));
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, request.getOrderStatus()));
     }
 }
