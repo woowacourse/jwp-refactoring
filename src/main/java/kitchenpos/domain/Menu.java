@@ -27,7 +27,7 @@ public class Menu {
 
     private String name;
 
-    public Menu() {
+    protected Menu() {
     }
 
     private Menu(

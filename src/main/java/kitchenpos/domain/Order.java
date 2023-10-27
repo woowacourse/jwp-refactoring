@@ -35,7 +35,7 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(final long orderTableId, final OrderStatus orderStatus) {

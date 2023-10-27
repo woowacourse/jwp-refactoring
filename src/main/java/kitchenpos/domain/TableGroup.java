@@ -15,7 +15,7 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(final LocalDateTime createdDate) {
@@ -30,7 +30,7 @@ public class TableGroup {
     public Long getId() {
         return id;
     }
-    
+
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
