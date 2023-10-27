@@ -1,8 +1,11 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderedMenu;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.validator.OrderValidator;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -21,11 +25,14 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
+    private final MenuRepository menuRepository;
 
     public OrderService(final OrderRepository orderRepository,
-                        final OrderValidator orderValidator) {
+                        final OrderValidator orderValidator,
+                        final MenuRepository menuRepository) {
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
+        this.menuRepository = menuRepository;
     }
 
     public OrderResponse create(final OrderRequest orderRequest) {
@@ -40,15 +47,27 @@ public class OrderService {
 
     private List<OrderLineItem> createOrderLineItems(final OrderRequest orderRequest) {
         orderRequest.validate();
-        orderValidator.validateExistMenus(orderRequest.getMenuIds());
+        final Map<Long, OrderedMenu> menus = findMenus(orderRequest);
         final List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            final Long menuId = orderLineItemRequest.getMenuId();
             final long quantity = orderLineItemRequest.getQuantity();
-            orderLineItems.add(new OrderLineItem(null, menuId, quantity));
+            final OrderedMenu orderedMenu = menus.get(orderLineItemRequest.getMenuId());
+            orderLineItems.add(new OrderLineItem(null, quantity, orderedMenu));
         }
         return orderLineItems;
+    }
+
+    private Map<Long, OrderedMenu> findMenus(final OrderRequest orderRequest) {
+        List<Long> menuIds = orderRequest.getMenuIds();
+        orderValidator.validateExistMenus(menuIds);
+        return menuRepository.findAllById(menuIds).stream()
+                .collect(Collectors.toMap(
+                        Menu::getId,
+                        menu -> new OrderedMenu(
+                                menu.getId(),
+                                menu.getName(),
+                                menu.getPrice())));
     }
 
     public OrderResponse changeOrderStatus(final Long orderId,

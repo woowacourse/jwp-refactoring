@@ -11,26 +11,27 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
-    private Long menuId;
     private long quantity;
+    @Embedded
+    private OrderedMenu orderedMenu;
 
     protected OrderLineItem() {
     }
 
     public OrderLineItem(final Order order,
-                         final Long menuId,
-                         final long quantity) {
-        this(null, order, menuId, quantity);
+                         final long quantity,
+                         final OrderedMenu orderedMenu) {
+        this(null, order, quantity, orderedMenu);
     }
 
     public OrderLineItem(final Long seq,
                          final Order order,
-                         final Long menuId,
-                         final long quantity) {
+                         final long quantity,
+                         final OrderedMenu orderedMenu) {
         this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
         this.quantity = quantity;
+        this.orderedMenu = orderedMenu;
     }
 
     public void setOrder(final Order order) {
@@ -45,12 +46,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
     public long getQuantity() {
         return quantity;
+    }
+
+    public OrderedMenu getOrderedMenu() {
+        return orderedMenu;
     }
 
     @Override
@@ -71,7 +72,6 @@ public class OrderLineItem {
         return "OrderLineItem{" +
                 "seq=" + seq +
                 ", orderId=" + order.getId() +
-                ", menuId=" + menuId +
                 ", quantity=" + quantity +
                 '}';
     }

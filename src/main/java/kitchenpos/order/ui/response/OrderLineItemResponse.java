@@ -6,21 +6,25 @@ import java.util.Objects;
 
 public class OrderLineItemResponse {
     private final Long seq;
-    private final Long menuId;
+    private final OrderedMenuResponse menu;
     private final long quantity;
 
     public OrderLineItemResponse(final Long seq,
-                                 final Long menuId,
+                                 final OrderedMenuResponse menu,
                                  final long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
+        this.menu = menu;
         this.quantity = quantity;
     }
 
     public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
-                orderLineItem.getMenuId(),
+                new OrderedMenuResponse(
+                        orderLineItem.getOrderedMenu().getMenuId(),
+                        orderLineItem.getOrderedMenu().getName(),
+                        orderLineItem.getOrderedMenu().getPrice()
+                ),
                 orderLineItem.getQuantity()
         );
     }
@@ -29,8 +33,8 @@ public class OrderLineItemResponse {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public OrderedMenuResponse getMenu() {
+        return menu;
     }
 
     public long getQuantity() {
@@ -44,19 +48,19 @@ public class OrderLineItemResponse {
         final OrderLineItemResponse that = (OrderLineItemResponse) o;
         return quantity == that.quantity
                 && Objects.equals(seq, that.seq)
-                && Objects.equals(menuId, that.menuId);
+                && Objects.equals(menu, that.menu);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(seq, menuId, quantity);
+        return Objects.hash(seq, menu, quantity);
     }
 
     @Override
     public String toString() {
         return "OrderLineItemResponse{" +
                 "seq=" + seq +
-                ", menuId=" + menuId +
+                ", menu=" + menu +
                 ", quantity=" + quantity +
                 '}';
     }
