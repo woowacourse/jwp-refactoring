@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.tablegroup.application;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -19,6 +19,7 @@ import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.dto.TableGroupRequest;
 import kitchenpos.exception.OrderTableUpdateException;
 import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.dto.TableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,13 +41,13 @@ class TableGroupServiceTest {
     private OrderRepository orderRepository;
 
     private List<OrderTable> dummyTables;
-    private List<Long> dummyTableIds;
+    private List<TableRequest> dummyTableRequests;
 
     @BeforeEach
     void setUp() {
         dummyTables = List.of(orderTableRepository.save(new OrderTable()), orderTableRepository.save(new OrderTable()));
-        dummyTableIds = dummyTables.stream()
-                .map(OrderTable::getId)
+        dummyTableRequests = dummyTables.stream()
+                .map(dummyTable -> new TableRequest(dummyTable.getId()))
                 .collect(Collectors.toList());
     }
 
@@ -58,7 +59,7 @@ class TableGroupServiceTest {
             // given
             dummyTables.forEach(table -> table.changeEmpty(true));
             orderTableRepository.saveAll(dummyTables);
-            final TableGroupRequest request = new TableGroupRequest(dummyTableIds);
+            final TableGroupRequest request = new TableGroupRequest(dummyTableRequests);
 
             // when
             final TableGroup createdTableGroup = tableGroupService.create(request);
@@ -89,7 +90,7 @@ class TableGroupServiceTest {
         @Test
         void 포함된_주문_테이블이_2개미만이면_예외가_발생한다() {
             // given
-            final TableGroupRequest request = new TableGroupRequest(List.of(dummyTableIds.get(0)));
+            final TableGroupRequest request = new TableGroupRequest(List.of(dummyTableRequests.get(0)));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -100,9 +101,8 @@ class TableGroupServiceTest {
         void 존재하지_않는_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final long nonExistTableId = 99L;
-            final OrderTable invalidTable = new OrderTable(nonExistTableId, 5, true);
             final TableGroupRequest request = new TableGroupRequest(
-                    List.of(dummyTableIds.get(0), nonExistTableId));
+                    List.of(dummyTableRequests.get(0), new TableRequest(nonExistTableId)));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -113,7 +113,7 @@ class TableGroupServiceTest {
         void 중복인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final TableGroupRequest request = new TableGroupRequest(
-                    List.of(dummyTableIds.get(0), dummyTableIds.get(0)));
+                    List.of(dummyTableRequests.get(0), dummyTableRequests.get(0)));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -125,7 +125,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 5, false));
             final TableGroupRequest request = new TableGroupRequest(
-                    List.of(dummyTableIds.get(0), invalidTable.getId()));
+                    List.of(dummyTableRequests.get(0), new TableRequest(invalidTable.getId())));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -136,7 +136,7 @@ class TableGroupServiceTest {
         void 이미_다른_그룹에_속한_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             tableGroupRepository.save(new TableGroup(LocalDateTime.now(), dummyTables));
-            final TableGroupRequest request = new TableGroupRequest(dummyTableIds);
+            final TableGroupRequest request = new TableGroupRequest(dummyTableRequests);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -177,7 +177,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, true));
             final TableGroup tableGroup = tableGroupService.create(
-                    new TableGroupRequest(List.of(invalidTable.getId(), dummyTables.get(0).getId())));
+                    new TableGroupRequest(List.of(new TableRequest(invalidTable.getId()), new TableRequest(dummyTables.get(0).getId()))));
             orderRepository.save(new Order(invalidTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1))));
 
@@ -191,7 +191,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, true));
             final TableGroup tableGroup = tableGroupService.create(
-                    new TableGroupRequest(List.of(invalidTable.getId(), dummyTables.get(0).getId())));
+                    new TableGroupRequest(List.of(new TableRequest(invalidTable.getId()), new TableRequest(dummyTables.get(0).getId()))));
             orderRepository.save(new Order(invalidTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1))));
 

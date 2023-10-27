@@ -1,12 +1,14 @@
 package kitchenpos.tablegroup.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.domain.UnGroupEvent;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.dto.TableGroupRequest;
+import kitchenpos.tablegroup.dto.TableRequest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,10 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupRequest request) {
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(request.getOrderTableIds());
+        final List<Long> orderTableIds = request.getOrderTables().stream()
+                .map(TableRequest::getId)
+                .collect(Collectors.toList());
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateOrderTablesIsExist(request, savedOrderTables);
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(savedOrderTables));
         tableGroup.bindTablesToGroup();
@@ -36,7 +41,7 @@ public class TableGroupService {
 
     private static void validateOrderTablesIsExist(final TableGroupRequest request,
                                                    final List<OrderTable> savedOrderTables) {
-        if (savedOrderTables.size() != request.getOrderTableIds().size()) {
+        if (savedOrderTables.size() != request.getOrderTables().size()) {
             throw new IllegalArgumentException("존재하지 않는 주문 테이블이 포함되어 있습니다.");
         }
     }

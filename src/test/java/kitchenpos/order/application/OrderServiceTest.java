@@ -158,7 +158,7 @@ class OrderServiceTest {
             final long nonExistTableId = 99L;
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             final OrderRequest order = new OrderRequest(
-                    null,
+                    nonExistTableId,
                     List.of(orderLineItemRequest)
             );
 
