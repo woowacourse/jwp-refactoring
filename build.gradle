@@ -4,10 +4,6 @@ plugins {
     id 'java'
 }
 
-springBoot {
-    mainClass.set("camp.nextstep.edu.kitchenpos.Application")
-}
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'

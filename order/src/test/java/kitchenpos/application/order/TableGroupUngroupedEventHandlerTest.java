@@ -1,6 +1,7 @@
 package kitchenpos.application.order;
 
 import static fixture.OrderFixture.주문;
+import static fixture.OrderLineItemFixture.주문_항목;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.fixture.MenuFixture.메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
