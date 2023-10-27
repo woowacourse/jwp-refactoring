@@ -15,6 +15,8 @@ import java.util.Objects;
 @Table(name = "order_table")
 public class OrderTable {
 
+    private static final int ZERO = 0;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,15 +47,18 @@ public class OrderTable {
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
-        if(numberOfGuests <= 0) {
+        validateNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests <= ZERO) {
             throw new NumberOfGuestsInvalidException();
         }
 
-        if(empty) {
+        if (empty) {
             throw new CannotChangeNumberOfGuestBecauseOfEmptyTableException();
         }
-
-        this.numberOfGuests = numberOfGuests;
     }
 
     public Long getId() {
