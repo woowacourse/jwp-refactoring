@@ -1,9 +1,8 @@
 package kitchenpos.menu.domain;
 
+import java.util.List;
 import kitchenpos.common.domain.Name;
 import kitchenpos.common.domain.Price;
-
-import java.util.List;
 
 public class Menu {
     private Long id;

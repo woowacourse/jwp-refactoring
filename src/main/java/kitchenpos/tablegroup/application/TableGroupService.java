@@ -1,5 +1,6 @@
 package kitchenpos.tablegroup.application;
 
+import java.util.List;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.dao.OrderTableDao;
@@ -8,12 +9,8 @@ import kitchenpos.ordertable.domain.OrderTables;
 import kitchenpos.tablegroup.dao.TableGroupDao;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.request.TableGroupCreateRequest;
-import kitchenpos.tablegroup.request.TableGroupUnitDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {

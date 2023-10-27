@@ -1,5 +1,8 @@
 package kitchenpos.menu.ui;
 
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.request.MenuCreateRequest;
@@ -9,10 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class MenuRestController {

@@ -1,5 +1,7 @@
 package kitchenpos.order.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
@@ -11,9 +13,6 @@ import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {

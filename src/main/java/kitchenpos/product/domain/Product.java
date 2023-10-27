@@ -1,9 +1,8 @@
 package kitchenpos.product.domain;
 
+import java.math.BigDecimal;
 import kitchenpos.common.domain.Name;
 import kitchenpos.common.domain.Price;
-
-import java.math.BigDecimal;
 
 public class Product {
     private Long id;

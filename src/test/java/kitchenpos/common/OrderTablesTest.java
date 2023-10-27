@@ -1,14 +1,13 @@
 package kitchenpos.common;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTables;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class OrderTablesTest {
 

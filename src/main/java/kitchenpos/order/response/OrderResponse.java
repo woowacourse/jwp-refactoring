@@ -1,9 +1,8 @@
 package kitchenpos.order.response;
 
-import kitchenpos.order.domain.Order;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.order.domain.Order;
 
 public class OrderResponse {
 

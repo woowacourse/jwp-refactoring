@@ -1,5 +1,7 @@
 package kitchenpos.ordertable.application;
 
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.dao.OrderTableDao;
@@ -9,9 +11,6 @@ import kitchenpos.ordertable.request.TableChangeEmptyRequest;
 import kitchenpos.ordertable.request.TableChangeNumberOfGuestsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class TableService {

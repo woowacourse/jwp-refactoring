@@ -1,11 +1,10 @@
 package kitchenpos.fixture;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.request.TableGroupCreateRequest;
 import kitchenpos.tablegroup.request.TableGroupUnitDto;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TableGroupFixtures {
 

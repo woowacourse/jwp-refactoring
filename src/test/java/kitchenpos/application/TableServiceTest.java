@@ -1,5 +1,13 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
+import static kitchenpos.fixture.TableGroupFixtures.getTableGroupCreateRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.common.domain.Price;
 import kitchenpos.fixture.MenuGroupFixtures;
 import kitchenpos.menu.dao.MenuDao;
@@ -24,15 +32,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
-import static kitchenpos.fixture.TableGroupFixtures.getTableGroupCreateRequest;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TableServiceTest extends ServiceTest {
 

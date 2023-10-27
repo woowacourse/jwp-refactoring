@@ -1,9 +1,8 @@
 package kitchenpos.menu.response;
 
-import kitchenpos.menu.domain.MenuProduct;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductResponse {
     private final Long seq;

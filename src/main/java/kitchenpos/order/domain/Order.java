@@ -1,9 +1,8 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.ordertable.domain.OrderTable;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public class Order {
     private Long id;

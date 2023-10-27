@@ -1,5 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFixtures.한마리_메뉴;
+import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.common.domain.Price;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
@@ -19,17 +29,6 @@ import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static kitchenpos.fixture.MenuGroupFixtures.한마리_메뉴;
-import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OrderServiceTest extends ServiceTest {
 

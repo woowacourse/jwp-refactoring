@@ -1,12 +1,11 @@
 package kitchenpos.menugroup.application;
 
+import java.util.List;
 import kitchenpos.menugroup.dao.MenuGroupDao;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.request.MenuGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class MenuGroupService {
