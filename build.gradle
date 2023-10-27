@@ -4,19 +4,18 @@ plugins {
     id 'java'
 }
 
-group = 'camp.nextstep.edu'
-sourceCompatibility = "16"
-
 test {
     useJUnitPlatform()
 }
-targetCompatibility = JavaVersion.VERSION_16
 
 allprojects {
+    group = 'camp.nextstep.edu'
+    sourceCompatibility = "16"
     version '0.0.1-SNAPSHOT'
     repositories {
         mavenCentral()
     }
+    targetCompatibility = JavaVersion.VERSION_16
 }
 
 subprojects {
