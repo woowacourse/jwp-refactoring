@@ -1,10 +1,12 @@
 package kitchenpos.menu.domain;
 
+import kitchenpos.order.domain.Quantity;
+
 public class MenuProduct {
     private Long seq;
     private Long menuId;
     private Long productId;
-    private long quantity;
+    private Quantity quantity;
 
     public MenuProduct(Long productId, long quantity) {
         this(null, null, productId, quantity);
@@ -14,7 +16,7 @@ public class MenuProduct {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
-        this.quantity = quantity;
+        this.quantity = new Quantity(quantity);
     }
 
     public Long getSeq() {
@@ -34,6 +36,6 @@ public class MenuProduct {
     }
 
     public long getQuantity() {
-        return quantity;
+        return quantity.getValue();
     }
 }

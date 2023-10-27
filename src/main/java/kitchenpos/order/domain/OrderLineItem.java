@@ -4,7 +4,7 @@ public class OrderLineItem {
     private Long seq;
     private Long orderId;
     private Long menuId;
-    private long quantity;
+    private Quantity quantity;
 
     public OrderLineItem(Long menuId, long quantity) {
         this(null, null, menuId, quantity);
@@ -14,7 +14,7 @@ public class OrderLineItem {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
-        this.quantity = quantity;
+        this.quantity = new Quantity(quantity);
     }
 
     public void assignMenuId(Long id) {
@@ -34,6 +34,6 @@ public class OrderLineItem {
     }
 
     public long getQuantity() {
-        return quantity;
+        return quantity.getValue();
     }
 }
