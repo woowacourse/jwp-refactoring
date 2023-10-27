@@ -2,6 +2,14 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.product.domain.Price;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +32,7 @@ class OrderTableTest {
         Order order = new Order(orderTable);
         OrderLineItem orderLineItem = new OrderLineItem(
                 order,
-                new Menu("로제떡볶이", Price.of(10000), new MenuGroup("분식")),
+                new Menu("로제떡볶이", Price.of(10000), new MenuGroup("분식")).getId(),
                 2
         );
         order.setOrderStatus(OrderStatus.COMPLETION);
@@ -46,19 +54,17 @@ class OrderTableTest {
     @Test
     void 주문_테이블을_합칠_수_있다() {
         OrderTable orderTable = new OrderTable(0, true);
-        TableGroup tableGroup = new TableGroup();
-        orderTable.attachTableGroup(tableGroup);
+        orderTable.attachTableGroup(1L);
         orderTable.isEmpty();
     }
 
     @Test
     void 테이블_분리_가능하다() {
         OrderTable orderTable = new OrderTable(0, true);
-        TableGroup tableGroup = new TableGroup();
-        orderTable.attachTableGroup(tableGroup);
+        orderTable.attachTableGroup(1L);
 
         orderTable.detachTableGroup();
-        Assertions.assertThat(orderTable.getTableGroup()).isNull();
+        Assertions.assertThat(orderTable.getTableGroupId()).isNull();
     }
 
     @Test

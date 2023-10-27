@@ -4,40 +4,34 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import javax.persistence.EntityManager;
-import kitchenpos.application.dto.MenuCreateRequest;
-import kitchenpos.application.dto.MenuCreateRequest.MenuProductRequest;
-import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.application.MenuMapper;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuCreateRequest.MenuProductRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class MenuServiceTest {
 
+    @Autowired
     private MenuService menuService;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
-    private MenuGroupRepository menuGroupRepository;
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
     private EntityManager manager;
-
-    @BeforeEach
-    void setUp() {
-        menuService = new MenuService(menuRepository, menuGroupRepository, menuProductRepository, productRepository);
-    }
 
     @Test
     void 메뉴_그룹_ID_가_존재하지_않은_경우_예외가_발생한다() {

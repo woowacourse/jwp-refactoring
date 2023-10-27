@@ -2,6 +2,13 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.product.domain.Price;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +44,7 @@ class OrderTest {
         Order order = new Order(orderTable);
         OrderLineItem orderLineItem = new OrderLineItem(
                 order,
-                new Menu("로제떡볶이", Price.of(10000), new MenuGroup("분식")),
+                new Menu("로제떡볶이", Price.of(10000), new MenuGroup("분식")).getId(),
                 2
         );
 

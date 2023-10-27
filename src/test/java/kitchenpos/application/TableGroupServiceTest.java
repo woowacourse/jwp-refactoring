@@ -4,19 +4,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.application.dto.OrderCreateRequest.OrderLineRequest;
-import kitchenpos.application.dto.TableGroupCreateRequest;
-import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableRequest;
-import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderLineItemRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineRequest;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest.OrderTableRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,26 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableGroupServiceTest {
 
+    @Autowired
     private TableGroupService tableGroupService;
+    @Autowired
     private OrderService orderService;
     @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
     private OrderTableRepository orderTableRepository;
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
-    @Autowired
-    private MenuRepository menuRepository;
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @BeforeEach
-    void setUp() {
-        orderService = new OrderService(
-                menuRepository, orderRepository, orderLineItemRepository, orderTableRepository
-        );
-        tableGroupService = new TableGroupService(orderTableRepository, tableGroupRepository);
-    }
 
     @Test
     void 주문_테이블_리스트는_빈값일_수_없습니다() {
@@ -101,9 +83,9 @@ public class TableGroupServiceTest {
 
         assertSoftly(softly -> {
             softly.assertThat(orderTable1.isEmpty()).isFalse();
-            softly.assertThat(orderTable1.getTableGroup()).isNotNull();
+            softly.assertThat(orderTable1.getTableGroupId()).isNotNull();
             softly.assertThat(orderTable2.isEmpty()).isFalse();
-            softly.assertThat(orderTable2.getTableGroup()).isNotNull();
+            softly.assertThat(orderTable2.getTableGroupId()).isNotNull();
         });
     }
 
@@ -141,9 +123,9 @@ public class TableGroupServiceTest {
 
         assertSoftly(softly -> {
             softly.assertThat(orderTable1.isEmpty()).isFalse();
-            softly.assertThat(orderTable1.getTableGroup()).isNull();
+            softly.assertThat(orderTable1.getTableGroupId()).isNull();
             softly.assertThat(orderTable2.isEmpty()).isFalse();
-            softly.assertThat(orderTable2.getTableGroup()).isNull();
+            softly.assertThat(orderTable2.getTableGroupId()).isNull();
         });
     }
 }
