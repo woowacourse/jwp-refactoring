@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.product.doamin;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import kitchenpos.domain.Price;
 
 @Entity
 public class Product {
