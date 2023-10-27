@@ -75,7 +75,8 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 항목이 포함되어 있지 않습니다.");
     }
 
     @DisplayName("빈 테이블의 주문을 생성하면 예외가 발생한다.")
@@ -90,7 +91,8 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("비어 있는 테이블은 주문을 생성할 수 없습니다.");
     }
 
     @DisplayName("저장된 주문 목록을 전체 조회한다.")
@@ -145,7 +147,8 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(changedOrder.getId(), OrderStatus.MEAL))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("다음 상태가 존재하지 않습니다.");
     }
 
     private Menu createMenu(String name, int price) {

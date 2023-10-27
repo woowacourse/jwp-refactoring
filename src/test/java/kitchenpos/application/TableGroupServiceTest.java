@@ -80,7 +80,8 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("2개 미만의 테이블은 단체로 지정할 수 없습니다.");
     }
 
     @DisplayName("단체 테이블로 지정하려는 테이블 중 빈 테이블이 아닌 테이블이 포함됐다면 예외가 발생한다.")

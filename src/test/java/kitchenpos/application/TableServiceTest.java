@@ -128,7 +128,8 @@ class TableServiceTest extends ServiceTest {
         // when, then
         assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTable1.getId(), new TableChangeEmptyRequest(true)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("단체로 지정된 테이블은 상태를 변경할 수 없습니다.");
     }
 
     @DisplayName("주문 상태가 조리중이거나 식사중인 테이블을 비우려고 하면 예외가 발생한다.")
@@ -183,7 +184,8 @@ class TableServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("손님 수는 0보다 작을 수 없습니다.");
     }
 
     @DisplayName("빈 테이블의 손님 수를 변경하면 예외가 발생한다.")
@@ -196,7 +198,8 @@ class TableServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changeNumberRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("빈 테이블의 손님 수는 변경할 수 없습니다.");
     }
 
     private Menu createMenu(String name, int price) {

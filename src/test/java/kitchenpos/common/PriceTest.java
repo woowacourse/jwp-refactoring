@@ -1,5 +1,6 @@
 package kitchenpos.common;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -14,10 +15,13 @@ class PriceTest {
     @Test
     void create() {
         // given
-        BigDecimal price = BigDecimal.ZERO;
+        BigDecimal value = BigDecimal.ZERO;
 
-        // when, then
-        assertDoesNotThrow(() -> new Price(price));
+        // when
+        Price price = new Price(value);
+
+        // then
+        assertThat(price.getValue()).isZero();
     }
 
     @DisplayName("값이 0보다 작으면 예외가 발생한다.")
