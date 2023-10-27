@@ -40,7 +40,7 @@ public class TableService {
                                                                .orElseThrow(IllegalArgumentException::new);
         validateCompletion(orderTableId);
         validateTableGroupInvolve(savedOrderTable);
-        savedOrderTable.setEmpty(orderTableRequest.getEmpty());
+        savedOrderTable.changeEmptyStatus(orderTableRequest.getEmpty());
         return orderTableRepository.save(savedOrderTable);
     }
 
@@ -67,7 +67,7 @@ public class TableService {
         final int numberOfGuests = orderTableGuestsNumberRequest.getNumberOfGuests();
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                                                                .orElseThrow(IllegalArgumentException::new);
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return orderTableRepository.save(savedOrderTable);
     }
 }

@@ -64,7 +64,7 @@ public class TableServiceFixture {
         final TableGroup 테이블_그룹 = new TableGroup(LocalDateTime.now());
         tableGroupRepository.save(테이블_그룹);
 
-        그룹테이블에_포함된_주문_테이블_1.setTableGroup(테이블_그룹);
+        그룹테이블에_포함된_주문_테이블_1.addToTableGroup(테이블_그룹);
         orderTableRepository.saveAll(List.of(그룹테이블에_포함된_주문_테이블_1, 주문_테이블_2));
 
         final Order 주문 = new Order(그룹테이블에_포함된_주문_테이블_1.getId(), OrderStatus.COMPLETION);

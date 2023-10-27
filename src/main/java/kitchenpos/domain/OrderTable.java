@@ -54,18 +54,18 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmptyStatus(final boolean empty) {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
         }
         this.empty = empty;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void addToTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
         final GuestsNumber guestsNumber = new GuestsNumber(numberOfGuests);
         this.numberOfGuests = guestsNumber;
     }
