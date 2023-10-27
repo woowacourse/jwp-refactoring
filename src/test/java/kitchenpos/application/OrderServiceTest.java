@@ -12,21 +12,22 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineRequest;
-import kitchenpos.dto.request.OrderStatusChangeRequest;
-import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.ordertable.application.OrderService;
+import kitchenpos.ordertable.domain.Order;
+import kitchenpos.ordertable.domain.OrderLineItem;
+import kitchenpos.ordertable.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.dto.request.OrderCreateRequest;
+import kitchenpos.ordertable.dto.request.OrderLineRequest;
+import kitchenpos.ordertable.dto.request.OrderStatusChangeRequest;
+import kitchenpos.ordertable.dto.response.OrderResponse;
+import kitchenpos.ordertable.repository.OrderLineItemRepository;
+import kitchenpos.ordertable.repository.OrderRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -43,26 +44,39 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
-    @Mock
-    private MenuRepository menuRepository;
-
-    @Mock
-    private OrderRepository orderRepository;
-
-    @Mock
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @Mock
-    private OrderTableRepository orderTableRepository;
-
     @Captor
     ArgumentCaptor<Order> orderArgumentCaptor;
-
     @Captor
     ArgumentCaptor<OrderLineItem> orderLineItemArgumentCaptor;
-
+    @Mock
+    private MenuRepository menuRepository;
+    @Mock
+    private OrderRepository orderRepository;
+    @Mock
+    private OrderLineItemRepository orderLineItemRepository;
+    @Mock
+    private OrderTableRepository orderTableRepository;
     @InjectMocks
     private OrderService orderService;
+
+    @Test
+    void 주문_목록_조회() {
+        // given
+        long orderId = 1L;
+        Order order = OrderFixture.builder()
+            .withId(orderId)
+            .build();
+        given(orderRepository.findAll())
+            .willReturn(List.of(
+                order
+            ));
+
+        // when
+        List<OrderResponse> actual = orderService.list();
+
+        // then
+        assertThat(actual).hasSize(1);
+    }
 
     @Nested
     class 주문_생성 {
@@ -196,25 +210,6 @@ class OrderServiceTest {
             });
 
         }
-    }
-
-    @Test
-    void 주문_목록_조회() {
-        // given
-        long orderId = 1L;
-        Order order = OrderFixture.builder()
-            .withId(orderId)
-            .build();
-        given(orderRepository.findAll())
-            .willReturn(List.of(
-                order
-            ));
-
-        // when
-        List<OrderResponse> actual = orderService.list();
-
-        // then
-        assertThat(actual).hasSize(1);
     }
 
     @Nested

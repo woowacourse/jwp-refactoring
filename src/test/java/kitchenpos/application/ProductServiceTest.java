@@ -7,11 +7,12 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.ProductFixture;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.apllication.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.dto.request.ProductCreateRequest;
+import kitchenpos.product.dto.response.ProductResponse;
+import kitchenpos.product.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -32,6 +33,20 @@ class ProductServiceTest {
 
     @InjectMocks
     private ProductService productService;
+
+    @Test
+    void 목록_조회() {
+        // given
+        List<Product> products = List.of(ProductFixture.builder().withName("상품이름").withPrice(1000L).build());
+        given((productRepository.findAll()))
+            .willReturn(products);
+
+        // when
+        List<ProductResponse> actual = productService.list();
+
+        // then
+        assertThat(actual).hasSize(1);
+    }
 
     @Nested
     class 생성_테스트 {
@@ -86,24 +101,10 @@ class ProductServiceTest {
             ProductResponse actual = productService.create(request);
 
             // then
-            SoftAssertions.assertSoftly(softAssertions ->{
+            SoftAssertions.assertSoftly(softAssertions -> {
                 assertThat(actual.getName()).isEqualTo(productName);
                 assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(productPrice));
             });
         }
-    }
-
-    @Test
-    void 목록_조회() {
-        // given
-        List<Product> products = List.of(ProductFixture.builder().withName("상품이름").withPrice(1000L).build());
-        given((productRepository.findAll()))
-            .willReturn(products);
-
-        // when
-        List<ProductResponse> actual = productService.list();
-
-        // then
-        assertThat(actual).hasSize(1);
     }
 }

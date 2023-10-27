@@ -3,25 +3,25 @@ package kitchenpos.repository.support;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.ProductFixture;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.repository.MenuProductRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.ordertable.domain.Order;
+import kitchenpos.ordertable.domain.OrderLineItem;
+import kitchenpos.ordertable.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderLineItemRepository;
+import kitchenpos.ordertable.repository.OrderRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.TestExecutionListeners;
@@ -97,11 +97,11 @@ public abstract class RepositoryTest {
         List<OrderTable> orderTables = prepareOrdertable();
 
         Order order = orderRepository.save(
-            new Order(null, orderTables.get(0).getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+            new Order(null, OrderStatus.COOKING.name(), orderTables.get(0).getId(), LocalDateTime.now(),
                 new ArrayList<>()));
 
-        orderLineItemRepository.save(new OrderLineItem(null, menu.getId(), order, 10));
-        orderLineItemRepository.save(new OrderLineItem(null, menu.getId(), order, 20));
+        orderLineItemRepository.save(new OrderLineItem(null, menu.getId(), order.getId(), 10));
+        orderLineItemRepository.save(new OrderLineItem(null, menu.getId(), order.getId(), 20));
 
         return orderRepository.findById(order.getId()).get();
     }

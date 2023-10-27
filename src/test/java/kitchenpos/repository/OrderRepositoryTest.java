@@ -4,9 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.domain.Order;
+import kitchenpos.ordertable.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderRepository;
 import kitchenpos.repository.support.RepositoryTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -51,8 +52,8 @@ class OrderRepositoryTest extends RepositoryTest {
 
         // when
         boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(order.getOrderTableId(), newOrderTable.get(0).getId()),
-                List.of(OrderStatus.COOKING.name()));
+            List.of(order.getOrderTableId(), newOrderTable.get(0).getId()),
+            List.of(OrderStatus.COOKING.name()));
 
         // then
         assertThat(actual).isTrue();

@@ -1,9 +1,6 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public final class OrderTableFixture {
 
@@ -42,10 +39,7 @@ public final class OrderTableFixture {
     public OrderTable build() {
         return new OrderTable(
             id,
-            tableGroupId == null ? null : new TableGroup(tableGroupId, LocalDateTime.now(), List.of(
-                OrderTableFixture.builder().build(),
-                OrderTableFixture.builder().build()
-            )),
+            tableGroupId,
             numberOfGuests,
             empty
         );
