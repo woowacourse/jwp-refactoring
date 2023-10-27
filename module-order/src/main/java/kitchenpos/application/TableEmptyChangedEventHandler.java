@@ -1,10 +1,10 @@
-package kitchenpos.order.service;
+package kitchenpos.application;
 
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.infra.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.TableEmptyChangedEvent;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableEmptyChangedEvent;
+import kitchenpos.infra.OrderRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public class TableEmptyChangedEventHandler {
     @Transactional
     public void handle(TableEmptyChangedEvent event) {
         OrderTable orderTable = event.orderTable();
-        Order order = orderRepository.getByOrderTable(orderTable);
+        Order order = orderRepository.getByOrderTableId(orderTable.id());
 
         if (order.orderStatus() == OrderStatus.COMPLETION) {
             throw new IllegalStateException("계산 완료된 주문의 테이블의 주문 가능 상태를 변경할 수 없다.");

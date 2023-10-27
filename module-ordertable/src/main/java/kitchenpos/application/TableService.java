@@ -1,9 +1,9 @@
-package kitchenpos.ordertable.service;
+package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.infra.OrderTableRepository;
-import kitchenpos.vo.NumberOfGuests;
+import kitchenpos.domain.NumberOfGuests;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.infra.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ public class TableService {
     public OrderTable changeEmpty(Long orderTableId, boolean empty) {
         OrderTable orderTable = orderTableRepository.getById(orderTableId);
         orderTable.changeEmpty(empty);
-        
+
         return orderTable;
     }
 
