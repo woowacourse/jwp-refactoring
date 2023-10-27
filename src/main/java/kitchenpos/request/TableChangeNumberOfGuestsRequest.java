@@ -2,7 +2,10 @@ package kitchenpos.request;
 
 public class TableChangeNumberOfGuestsRequest {
 
-    private final int numberOfGuests;
+    private int numberOfGuests;
+
+    private TableChangeNumberOfGuestsRequest() {
+    }
 
     public TableChangeNumberOfGuestsRequest(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;

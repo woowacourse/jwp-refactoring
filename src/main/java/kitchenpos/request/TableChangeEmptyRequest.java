@@ -2,7 +2,10 @@ package kitchenpos.request;
 
 public class TableChangeEmptyRequest {
 
-    private final boolean empty;
+    private boolean empty;
+
+    private TableChangeEmptyRequest() {
+    }
 
     public TableChangeEmptyRequest(boolean empty) {
         this.empty = empty;
