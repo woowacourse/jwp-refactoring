@@ -21,7 +21,7 @@ public class MenuValidator {
         this.menuGroupRepository = menuGroupRepository;
     }
 
-    public void validate(final Menu menu) {
+    public void validateInit(final Menu menu) {
         validateInvalidMenuGroup(menu);
         validateInvalidProduct(menu);
         validateInvalidPrice(menu);

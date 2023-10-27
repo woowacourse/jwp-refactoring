@@ -40,7 +40,7 @@ public class Menu {
     }
 
     public void place(final MenuValidator menuValidator) {
-        menuValidator.validate(this);
+        menuValidator.validateInit(this);
     }
 
     public Long getId() {
