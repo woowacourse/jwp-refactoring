@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation(project(':product'))
+    implementation(project(':ordertable'))
+    implementation(project(':tablegroup'))
+    implementation(project(':menu'))
+    implementation(project(':menugroup'))
+    implementation(project(':order'))
+}
+
+bootJar { enabled = true }
