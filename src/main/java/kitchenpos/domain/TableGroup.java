@@ -32,6 +32,10 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public boolean containEmptyOrderTable() {
+        return orderTables.containEmptyOrderTable();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

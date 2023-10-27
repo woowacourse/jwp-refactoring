@@ -42,7 +42,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        if (Objects.nonNull(orderTable.getTableGroup())) {
+        if (!Objects.nonNull(orderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
         if (isChangeEmptyUnable(orderTable)) {

@@ -9,8 +9,7 @@ import java.util.List;
 public class OrderTables {
 
     @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true, mappedBy = "tableGroup")
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "tableGroup")
     private List<OrderTable> values;
 
     public OrderTables() {
@@ -24,6 +23,17 @@ public class OrderTables {
     private void validateSize(final List<OrderTable> values) {
         if (CollectionUtils.isEmpty(values) || values.size() < 2) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    public boolean containEmptyOrderTable() {
+        return values.stream()
+                .anyMatch(OrderTable::isEmpty);
+    }
+
+    public void groupAll(final TableGroup tableGroup) {
+        for (final OrderTable value : values) {
+            value.group(tableGroup);
         }
     }
 

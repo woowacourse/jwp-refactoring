@@ -34,15 +34,20 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         final TableGroup tableGroup = mapToTableGroup(tableGroupCreateRequest);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        if (savedTableGroup.containEmptyOrderTable()) {
+            throw new IllegalArgumentException();
+        }
         return TableGroupMapper.mapToResponse(savedTableGroup);
     }
 
-    public TableGroup mapToTableGroup(final TableGroupCreateRequest tableGroupCreateRequest) {
-        final List<OrderTable> orderTables = tableGroupCreateRequest.getOrderTables()
+    private TableGroup mapToTableGroup(final TableGroupCreateRequest tableGroupCreateRequest) {
+        final OrderTables orderTables = new OrderTables(tableGroupCreateRequest.getOrderTables()
                 .stream()
                 .map(this::findOrderTableById)
-                .collect(Collectors.toList());
-        return new TableGroup(new OrderTables(orderTables));
+                .collect(Collectors.toList()));
+        final TableGroup tableGroup = new TableGroup(orderTables);
+        orderTables.groupAll(tableGroup);
+        return tableGroup;
     }
 
     private OrderTable findOrderTableById(final TableGroupCreateOrderTableRequest it) {
