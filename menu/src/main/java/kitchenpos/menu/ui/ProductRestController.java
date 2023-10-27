@@ -1,7 +1,8 @@
-package kitchenpos.menu.application;
+package kitchenpos.menu.ui;
 
 import java.net.URI;
 import java.util.List;
+import kitchenpos.menu.application.ProductService;
 import kitchenpos.menu.dto.request.ProductCreateRequest;
 import kitchenpos.menu.dto.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
