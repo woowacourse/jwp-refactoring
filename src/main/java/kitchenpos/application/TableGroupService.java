@@ -18,7 +18,6 @@ import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {

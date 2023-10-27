@@ -11,8 +11,4 @@ public interface OrderTableDao extends Repository<OrderTable, Long> {
     Optional<OrderTable> findById(Long id);
 
     List<OrderTable> findAll();
-
-    List<OrderTable> findAllByIdIn(List<Long> ids);
-
-    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

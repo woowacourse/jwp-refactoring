@@ -11,6 +11,4 @@ public interface MenuGroupDao extends Repository<MenuGroup, Long> {
     Optional<MenuGroup> findById(Long id);
 
     List<MenuGroup> findAll();
-
-    boolean existsById(Long id);
 }
