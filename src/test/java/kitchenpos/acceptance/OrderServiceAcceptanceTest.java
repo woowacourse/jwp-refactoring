@@ -4,26 +4,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.OrderService;
-import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
-import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.application.dto.OrderLineItemCreateRequest;
-import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.common.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menu_group.domain.MenuGroup;
+import kitchenpos.menu_group.repository.MenuGroupRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderChangeOrderStatusRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,13 +53,12 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)));
-        menuGroup.addMenu(menu);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
         final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), List.of(
@@ -83,11 +82,10 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)));
-        menuGroup.addMenu(menu);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
-        orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        orderTableRepository.save(OrderTable.forSave(4, false));
         final OrderCreateRequest request = new OrderCreateRequest(1L, List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L),
             new OrderLineItemCreateRequest(Long.MAX_VALUE, 1L)
@@ -107,11 +105,10 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)));
-        menuGroup.addMenu(menu);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
-        orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        orderTableRepository.save(OrderTable.forSave(4, false));
         final OrderCreateRequest request = new OrderCreateRequest(1L, List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L),
             new OrderLineItemCreateRequest(Long.MAX_VALUE, 1L)
@@ -140,20 +137,20 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     }
 
     private Order createOrder() {
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)));
-        menuGroup.addMenu(menu);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, menu);
-        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, menu);
+        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new Price(BigDecimal.valueOf(20L)),
+                                                                   menu.getId());
+        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "치킨", new Price(BigDecimal.valueOf(40L)),
+                                                                   menu.getId());
 
-        final Order order = Order.forSave(OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2));
-        orderTable.addOrder(order);
+        final Order order = Order.forSave(OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2), orderTable.getId());
         orderRepository.save(order);
 
         return order;
@@ -174,24 +171,22 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
-    @DisplayName("")
+    @DisplayName("완료된 주문을 변경하려고 시도하면 예외가 발생한다.")
     @Test
-    void func() {
+    void changeOrderStatus_failCompletionOrder() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
         final Menu menu = Menu.forSave("후라이드", List.of(MenuProduct.forSave(product1, 1L),
-                                                       MenuProduct.forSave(product2, 1L)));
-        menuGroup.addMenu(menu);
+                                                       MenuProduct.forSave(product2, 1L)), menuGroup.getId());
         menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, menu);
-        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, menu);
+        final OrderLineItem orderLineItem1 = OrderLineItem.forSave(1L, "치킨", new Price(BigDecimal.TEN), menu.getId());
+        final OrderLineItem orderLineItem2 = OrderLineItem.forSave(2L, "피자", new Price(BigDecimal.TEN), menu.getId());
 
-        final Order order = Order.forSave(OrderStatus.COMPLETION, List.of(orderLineItem1, orderLineItem2));
-        orderTable.addOrder(order);
+        final Order order = Order.forSave(OrderStatus.COMPLETION, List.of(orderLineItem1, orderLineItem2), orderTable.getId());
         orderRepository.save(order);
 
         // when

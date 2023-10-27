@@ -4,16 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
-import java.util.Collections;
-import java.util.List;
-import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.application.dto.OrderTableUpdateEmptyRequest;
-import kitchenpos.application.dto.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.order.application.TableService;
+import kitchenpos.order.application.dto.OrderTableResponse;
+import kitchenpos.order.application.dto.OrderTableUpdateEmptyRequest;
+import kitchenpos.order.application.dto.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,23 +40,6 @@ class TableServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문 테이블이 COMPLETION 상태가 아니면 예외가 발생한다.")
-    @Test
-    void changeEmpty_failNotCompletionStatus() {
-        // given
-        final Long orderTableId = 1L;
-        final int numberOfGuests = 2;
-
-        given(orderTableRepository.getById(orderTableId))
-            .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.singletonList(
-                new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, null))))));
-
-        // when
-        // then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, new OrderTableUpdateEmptyRequest(true)))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문 테이블의 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
@@ -71,7 +50,7 @@ class TableServiceTest {
         final int previousNumberOfGuests = 1;
         given(orderTableRepository.getById(orderTableId))
             .willReturn(
-                new OrderTable(orderTableId, previousNumberOfGuests, false, Collections.emptyList()));
+                new OrderTable(orderTableId, previousNumberOfGuests, false));
 
         // when
         final OrderTableResponse savedOrderTable = tableService.changeNumberOfGuests(orderTableId,
@@ -88,7 +67,7 @@ class TableServiceTest {
         // given
         final Long orderTableId = 1L;
         given(orderTableRepository.getById(orderTableId))
-            .willReturn(new OrderTable(orderTableId, 1, false, Collections.emptyList()));
+            .willReturn(new OrderTable(orderTableId, 1, false));
 
         // when
         // then
@@ -122,7 +101,7 @@ class TableServiceTest {
         final int previousNumberOfGuests = 1;
         given(orderTableRepository.getById(orderTableId))
             .willReturn(
-                new OrderTable(orderTableId, previousNumberOfGuests, true, Collections.emptyList()));
+                new OrderTable(orderTableId, previousNumberOfGuests, true));
 
         // when
         // then

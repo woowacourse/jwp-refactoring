@@ -7,17 +7,19 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.MenuCreateRequest;
-import kitchenpos.application.dto.MenuProductCreateRequest;
-import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuProductCreateRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu_group.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu_group.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.MenuProductRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,13 +55,16 @@ class MenuServiceTest {
         final long menuGroupId = 1L;
         given(menuGroupRepository.existsById(menuGroupId))
             .willReturn(true);
+        given(menuGroupRepository.getById(any()))
+            .willReturn(new MenuGroup(1L, "메뉴그룹"));
 
+        final Long menuId = 1L;
         final MenuProduct menuProduct1 = new MenuProduct(1L, product1, 1L);
         final MenuProduct menuProduct2 = new MenuProduct(2L, product2, 2L);
         given(productRepository.getById(any()))
             .willReturn(product1, product2);
 
-        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2));
+        final Menu menu = new Menu(menuId, "메뉴", List.of(menuProduct1, menuProduct2), 1L);
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
 
@@ -75,7 +80,7 @@ class MenuServiceTest {
         assertThat(created.getName()).isEqualTo(request.getName());
         assertThat(created.getPrice())
             .isEqualTo(
-                new MenuProducts(List.of(menuProduct1, menuProduct2), menu).calculatePrice().getValue().longValue());
+                new MenuProducts(List.of(menuProduct1, menuProduct2)).calculatePrice().getValue().longValue());
     }
 
     @DisplayName("메뉴의 MemberGroupId 가 존재하지 않으면 예외가 발생한다.")

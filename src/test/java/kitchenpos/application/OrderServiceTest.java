@@ -5,20 +5,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
-import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.application.dto.OrderLineItemCreateRequest;
-import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.common.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderChangeOrderStatusRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,15 +48,19 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 1L, new Menu(1L, "후라이드",
-                                                                                              Collections.emptyList())),
-                                                           new OrderLineItem(2L, 2L, null));
+        final Menu menu1 = new Menu(1L, "후라이드", Collections.emptyList(), 1L);
+        final Menu menu2 = new Menu(2L, "피자", Collections.emptyList(), 1L);
+        final List<OrderLineItem> orderLineItems = List.of(
+            new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), menu1.getId()),
+            new OrderLineItem(2L, 2L, "피자", new Price(BigDecimal.TEN), menu2.getId()));
 
-        final Order order = new Order(1L, OrderStatus.COOKING, orderLineItems);
-        final OrderTable orderTable = new OrderTable(1L, 10, false, Collections.emptyList());
+        final Order order = new Order(1L, OrderStatus.COOKING, orderLineItems, 1L);
+        final OrderTable orderTable = new OrderTable(1L, 10, false);
 
         given(menuRepository.countByIds(any()))
             .willReturn(2L);
+        given(menuRepository.getById(any()))
+            .willReturn(menu1, menu2);
         given(orderTableRepository.getById(any()))
             .willReturn(orderTable);
         given(orderRepository.save(any()))
@@ -75,6 +82,10 @@ class OrderServiceTest {
     void create_emptyOrderLineItems() {
         // given
         final OrderCreateRequest cooking = new OrderCreateRequest(1L, Collections.emptyList());
+        given(menuRepository.countByIds(any()))
+            .willReturn(0L);
+        given(orderTableRepository.getById(any()))
+            .willReturn(new OrderTable(1L, 10, true));
 
         // when
         // then
@@ -103,6 +114,9 @@ class OrderServiceTest {
         final long notExistOrderTable = 0L;
         given(menuRepository.countByIds(any()))
             .willReturn(2L);
+        given(menuRepository.getById(any()))
+            .willReturn(new Menu(1L, "후라이드", Collections.emptyList(), 1L),
+                        new Menu(2L, "양념", Collections.emptyList(), 1L));
         given(orderTableRepository.getById(notExistOrderTable))
             .willThrow(IllegalArgumentException.class);
 
@@ -119,12 +133,14 @@ class OrderServiceTest {
     void create_failEmptyOrderTable() {
         // given
         given(orderTableRepository.getById(any()))
-            .willReturn(new OrderTable(1L, 10, true, Collections.emptyList()));
+            .willReturn(new OrderTable(1L, 10, true));
         given(menuRepository.countByIds(any()))
             .willReturn(2L);
+        final Menu menu1 = new Menu(1L, "후라이드", Collections.emptyList(), 1L);
+        final Menu menu2 = new Menu(2L, "양념", Collections.emptyList(), 1L);
         given(menuRepository.getById(any()))
-            .willReturn(new Menu(1L, "후라이드", Collections.emptyList()))
-            .willReturn(new Menu(2L, "양념", Collections.emptyList()));
+            .willReturn(menu1)
+            .willReturn(menu2);
 
         // when
         // then
@@ -139,9 +155,9 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         final Order order = new Order(1L, OrderStatus.COOKING, List.of(
-            new OrderLineItem(1L, 1L, null),
-            new OrderLineItem(2L, 2L, null)
-        ));
+            new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null),
+            new OrderLineItem(2L, 2L, "치킨", new Price(BigDecimal.TEN), null)
+        ), 1L);
 
         given(orderRepository.getById(any()))
             .willReturn(order);
@@ -175,7 +191,8 @@ class OrderServiceTest {
         // given
         final Long orderTableId = 1L;
         final Order order = new Order(1L, OrderStatus.COMPLETION,
-                                      List.of(new OrderLineItem(1L, 1L, null)));
+                                      List.of(new OrderLineItem(1L, 1L, "치킨", new Price(BigDecimal.TEN), null)),
+                                      orderTableId);
 
         given(orderRepository.getById(order.getId()))
             .willReturn(order);

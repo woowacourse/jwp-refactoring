@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.order.domain.OrderLineItems;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ class OrderLineItemsTest {
         // given
         // when
         // then
-        assertThatThrownBy(() -> new OrderLineItems(List.of(), new Order()))
+        assertThatThrownBy(() -> new OrderLineItems(List.of()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

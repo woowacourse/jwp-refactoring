@@ -3,7 +3,12 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.domain.Price;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +19,7 @@ class OrderTest {
     void changeOrderStatus() {
         // given
         final Order order = new Order(1L, OrderStatus.COOKING,
-                                      List.of(new OrderLineItem(1L, 1L, null)));
+                                      List.of(new OrderLineItem(1L, 1L, "피자", new Price(BigDecimal.TEN), null)), 1L);
 
         // when
         order.changeOrderStatus(OrderStatus.COMPLETION);
@@ -28,21 +33,11 @@ class OrderTest {
     void changeOrderStatus_failAlreadyCompletion() {
         // given
         final Order order = new Order(1L, OrderStatus.COMPLETION,
-                                      List.of(new OrderLineItem(1L, 1L, null)));
+                                      List.of(new OrderLineItem(1L, 1L, "피자", new Price(BigDecimal.TEN), null)), 1L);
 
         // when
         // then
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COMPLETION))
             .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("")
-    @Test
-    void func() {
-        // given
-
-        // when
-
-        // then
     }
 }
