@@ -2,7 +2,7 @@ package kitchenpos.menu.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.common.event.ValidateMenuGroupExistsEvent;
+import kitchenpos.menu.event.ValidateMenuGroupExistsEvent;
 import kitchenpos.common.vo.Money;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;

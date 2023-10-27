@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.common.event.ValidateMenuGroupExistsEvent;
+import kitchenpos.menu.event.ValidateMenuGroupExistsEvent;
 import kitchenpos.common.vo.Money;
 import kitchenpos.common.vo.PriceIsNegativeException;
 import kitchenpos.fixture.MenuGroupFixture;

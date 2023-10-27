@@ -1,6 +1,7 @@
 package kitchenpos.common.event;
 
 import kitchenpos.menu.service.MenuService;
+import kitchenpos.order.event.ValidateMenuExistsEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package kitchenpos.common.event;
+package kitchenpos.tablegroup.event;
 
 public class UngroupOrderTablesEvent {
 

@@ -1,10 +1,10 @@
-package kitchenpos.common.event;
+package kitchenpos.order.event;
 
-public class ValidateAllOrderCompletedEvent {
+public class ValidateOrderTableIsNotEmptyEvent {
 
     private final Long orderTableId;
 
-    public ValidateAllOrderCompletedEvent(Long orderTableId) {
+    public ValidateOrderTableIsNotEmptyEvent(Long orderTableId) {
         this.orderTableId = orderTableId;
     }
 
