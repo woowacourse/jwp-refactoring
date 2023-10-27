@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,19 +34,19 @@ public class OrderService {
     }
 
     public Long order(final OrderCreateRequest request) {
-        orderValidator.validate(request.getOrderTableId());
-        final List<OrderLineItem> orderLineItems = createOrderLineItems(request);
+        final List<Menu> menus = menuRepository.findByIdIn(request.extractMenuIds());
+        orderValidator.validate(request, menus);
+        final List<OrderLineItem> orderLineItems = createOrderLineItems(menus, request);
         final Order order = Order.ofCooking(request.getOrderTableId(), orderLineItems);
         final Order saveOrder = orderRepository.save(order);
         return saveOrder.getId();
     }
 
-    private List<OrderLineItem> createOrderLineItems(final OrderCreateRequest request) {
-        return request.getOrderLineItems().stream()
-                .map(orderLineItemRequest -> {
-                    final Menu menu = menuRepository.getById(orderLineItemRequest.getMenuId());
-                    return OrderLineItem.of(menu.getName(), menu.getPrice(), orderLineItemRequest.getQuantity());
-                }).collect(Collectors.toUnmodifiableList());
+    private List<OrderLineItem> createOrderLineItems(final List<Menu> menus, final OrderCreateRequest request) {
+        final Map<Long, Long> menuIdAndQuantityMap = request.extractMenuIdAndQuantity();
+        return menus.stream()
+                .map(menu -> OrderLineItem.of(menu.getName(), menu.getPrice(), menuIdAndQuantityMap.get(menu)))
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
