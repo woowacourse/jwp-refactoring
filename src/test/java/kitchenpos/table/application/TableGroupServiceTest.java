@@ -1,6 +1,7 @@
 package kitchenpos.table.application;
 
 import kitchenpos.config.ApplicationTestConfig;
+import kitchenpos.table.application.request.OrderTableIdRequest;
 import kitchenpos.table.application.response.OrderTableResponse;
 import kitchenpos.table.application.request.TableGroupCreateRequest;
 import kitchenpos.table.application.response.TableGroupResponse;
@@ -61,7 +62,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             );
 
             // when
-            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final List<OrderTableIdRequest> savedOrderTableIds = collectOrderTableIdRequests(savedOrderTables);
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
             final TableGroupResponse actual = tableGroupService.create(request);
 
@@ -84,7 +85,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final List<OrderTable> savedOrderTables = notEnoughOrderTables.stream()
                     .map(orderTableRepository::save)
                     .collect(Collectors.toList());
-            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final List<OrderTableIdRequest> savedOrderTableIds = collectOrderTableIdRequests(savedOrderTables);
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // expect
@@ -108,7 +109,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final OrderTable unsavedOrderTable = OrderTable.withoutTableGroup(5, false);
             final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
 
-            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(unsavedOrderTable, savedOrderTable));
+            final List<OrderTableIdRequest> savedOrderTableIds = collectOrderTableIdRequests(List.of(unsavedOrderTable, savedOrderTable));
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // expect
@@ -125,7 +126,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             // when
             final OrderTable savedOrderTableNotEmpty = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
-            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(savedOrderTableEmpty, savedOrderTableNotEmpty));
+            final List<OrderTableIdRequest> savedOrderTableIds = collectOrderTableIdRequests(List.of(savedOrderTableEmpty, savedOrderTableNotEmpty));
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // then
@@ -148,7 +149,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
                     orderTableRepository.save(OrderTable.withoutTableGroup(10, true))
             );
 
-            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final List<OrderTableIdRequest> savedOrderTableIds = collectOrderTableIdRequests(savedOrderTables);
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
             final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
@@ -156,7 +157,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            final List<OrderTable> actual = orderTableRepository.findAllByIdIn(savedOrderTableIds);
+            final List<OrderTable> actual = orderTableRepository.findAllByIdIn(collectOrderTableIds(savedOrderTables));
 
             assertThat(actual).usingRecursiveComparison()
                     .ignoringExpectedNullFields()
@@ -176,7 +177,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTableWithFiveGuests = createOrder(orderStatus, savedMenu, 5);
             final OrderTable savedOrderTableWithTenGuests = createOrder(orderStatus, savedMenu, 10);
 
-            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(savedOrderTableWithTenGuests, savedOrderTableWithFiveGuests));
+            final List<OrderTableIdRequest> savedOrderTableIds = collectOrderTableIdRequests(List.of(savedOrderTableWithTenGuests, savedOrderTableWithFiveGuests));
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
             final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
@@ -216,6 +217,12 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             return savedMenu;
         }
 
+    }
+
+    private List<OrderTableIdRequest> collectOrderTableIdRequests(final List<OrderTable> orderTables) {
+        return collectOrderTableIds(orderTables).stream()
+                .map(OrderTableIdRequest::new)
+                .collect(Collectors.toList());
     }
 
     private List<Long> collectOrderTableIds(final List<OrderTable> savedOrderTables) {
