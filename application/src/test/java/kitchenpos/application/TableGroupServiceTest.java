@@ -6,6 +6,7 @@ import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableId;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.dto.TableGroupResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블_그룹을_생성한다() {
-        assertDoesNotThrow(
+        Assertions.assertDoesNotThrow(
                 () -> tableGroupService.create(createRequest)
         );
     }
