@@ -24,7 +24,7 @@ public class TableGroupEventHandler {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @EventListener(TableGroupGroupedEvent.class)
+    @EventListener
     public void handleGroup(final TableGroupGroupedEvent event) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(event.getTableGroupId());
         for (final OrderTable orderTable : orderTables) {
@@ -32,7 +32,7 @@ public class TableGroupEventHandler {
         }
     }
 
-    @EventListener(TableGroupUngroupedEvent.class)
+    @EventListener
     public void handleUngroup(final TableGroupUngroupedEvent event) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(event.getTableGroupId());
         final List<Long> orderTableIds = orderTables.stream()
