@@ -1,6 +1,5 @@
 package kitchenpos.table.persistence;
 
-import kitchenpos.order.persistence.OrderDao;
 import kitchenpos.table.application.entity.OrderTableEntity;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.repository.OrderTableRepository;
@@ -14,11 +13,9 @@ import java.util.stream.Collectors;
 public class OrderTableRepositoryImpl implements OrderTableRepository {
 
     private final OrderTableDao orderTableDao;
-    private final OrderDao orderDao;
 
-    public OrderTableRepositoryImpl(final OrderTableDao orderTableDao, final OrderDao orderDao) {
+    public OrderTableRepositoryImpl(final OrderTableDao orderTableDao) {
         this.orderTableDao = orderTableDao;
-        this.orderDao = orderDao;
     }
 
     @Override

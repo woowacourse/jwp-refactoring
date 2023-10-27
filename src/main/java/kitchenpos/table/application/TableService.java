@@ -1,14 +1,14 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.request.OrderTableEmptyModifyRequest;
 import kitchenpos.table.application.dto.request.OrderTableNumberOfGuestModifyRequest;
 import kitchenpos.table.application.dto.response.OrderTableQueryResponse;
 import kitchenpos.table.domain.NumberOfGuests;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.ValidateOrderOfTableEvent;
 import kitchenpos.table.domain.repository.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher publisher;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository,
+    public TableService(final ApplicationEventPublisher publisher,
                         final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+        this.publisher = publisher;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -46,18 +46,10 @@ public class TableService {
                                                final OrderTableEmptyModifyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        validateAllOrdersCompletion(orderTableId);
-
+        publisher.publishEvent(new ValidateOrderOfTableEvent(orderTableId));
         savedOrderTable.updateEmpty(request.isEmpty());
 
         return OrderTableQueryResponse.from(orderTableRepository.save(savedOrderTable));
-    }
-
-    private void validateAllOrdersCompletion(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                OrderStatus.NOT_COMPLETION_STATUSES)) {
-            throw new IllegalArgumentException();
-        }
     }
 
     @Transactional

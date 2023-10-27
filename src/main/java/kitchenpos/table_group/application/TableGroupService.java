@@ -1,7 +1,5 @@
 package kitchenpos.table_group.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.repository.OrderTableRepository;
@@ -9,7 +7,9 @@ import kitchenpos.table_group.application.dto.request.OrderTableReferenceRequest
 import kitchenpos.table_group.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.table_group.application.dto.response.TableGroupQueryResponse;
 import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.table_group.domain.ValidateOrderOfTablesEvent;
 import kitchenpos.table_group.domain.repository.TableGroupRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 public class TableGroupService {
 
     private static final int MIN_TABLE_GROUP_SIZE = 2;
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher publisher;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository,
+    public TableGroupService(final ApplicationEventPublisher publisher,
                              final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.publisher = publisher;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -88,18 +88,11 @@ public class TableGroupService {
 
         final List<Long> orderTableIds = orderTables.extractOrderTableIds();
 
-        validateAllOrderTablesCompletion(orderTableIds);
+        publisher.publishEvent(new ValidateOrderOfTablesEvent(orderTableIds));
 
         final List<OrderTable> ungroupedTables = orderTables.ungroup();
         for (final OrderTable orderTable : ungroupedTables) {
             orderTableRepository.save(orderTable);
-        }
-    }
-
-    private void validateAllOrderTablesCompletion(final List<Long> orderTableIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, OrderStatus.NOT_COMPLETION_STATUSES)) {
-            throw new IllegalArgumentException();
         }
     }
 }
