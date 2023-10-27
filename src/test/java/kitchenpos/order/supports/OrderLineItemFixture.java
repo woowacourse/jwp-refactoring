@@ -1,5 +1,8 @@
 package kitchenpos.order.supports;
 
+import java.math.BigDecimal;
+import kitchenpos.global.Price;
+import kitchenpos.order.domain.model.MenuSnapShot;
 import kitchenpos.order.domain.model.OrderLineItem;
 
 public class OrderLineItemFixture {
@@ -7,6 +10,7 @@ public class OrderLineItemFixture {
     private Long seq = null;
     private Long menuId = 1L;
     private long quantity = 3L;
+    private MenuSnapShot menuSnapShot = new MenuSnapShot("피자", new Price(new BigDecimal(10_000)));
 
     private OrderLineItemFixture() {
     }
@@ -31,6 +35,6 @@ public class OrderLineItemFixture {
     }
 
     public OrderLineItem build() {
-        return new OrderLineItem(seq, menuId, quantity);
+        return new OrderLineItem(seq, menuId, quantity, menuSnapShot);
     }
 }
