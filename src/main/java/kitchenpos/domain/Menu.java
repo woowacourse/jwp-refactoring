@@ -68,12 +68,6 @@ public class Menu extends BaseDate {
         }
     }
 
-    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
-        validateMenuProducts(menuProducts);
-        this.menuProducts = menuProducts;
-        menuProducts.forEach(it -> it.setMenu(this));
-    }
-
     public Long getId() {
         return id;
     }
