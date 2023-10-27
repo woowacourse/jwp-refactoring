@@ -16,6 +16,4 @@ public interface OrderTableRepository {
     List<OrderTable> findAllByIdsIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
-
-    boolean existsById(long id);
 }

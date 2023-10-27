@@ -40,9 +40,4 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
         return jpaOrderTableRepository.findAllByTableGroupId(tableGroupId);
     }
-
-    @Override
-    public boolean existsById(final long id) {
-        return jpaOrderTableRepository.existsById(id);
-    }
 }
