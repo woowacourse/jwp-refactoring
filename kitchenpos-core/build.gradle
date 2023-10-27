@@ -1,6 +1,3 @@
-plugins {
-    id 'java'
-}
 dependencies {
     implementation 'org.flywaydb:flyway-core'
 }
