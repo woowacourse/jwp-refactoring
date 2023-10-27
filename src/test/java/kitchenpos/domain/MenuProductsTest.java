@@ -1,5 +1,10 @@
 package kitchenpos.domain;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +60,7 @@ class MenuProductsTest {
         assertThat(menuProducts.isInvalidPrice(price)).isTrue();
     }
 
-    @DisplayName("메뉴 가격이 메뉴 상품들의 가격 합보다 같거나 작으면 True를 반환한다.")
+    @DisplayName("메뉴 가격이 메뉴 상품들의 가격 합보다 같거나 작으면 False를 반환한다.")
     @ParameterizedTest
     @ValueSource(longs = {32000L, 31000L})
     void isInvalidPrice_False(long validPrice) {

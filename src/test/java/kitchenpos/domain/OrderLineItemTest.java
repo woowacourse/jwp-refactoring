@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,11 +20,10 @@ class OrderLineItemTest {
     @ValueSource(longs = {-1L, -100L})
     void orderLineItem_FailWithInvalidQuantity(Long invalidQuantity) {
         // given
-        MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
-        Menu menu = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), menuGroup);
+        Order order = Order.create(OrderTable.create(0, false));
 
         // when & then
-        assertThatThrownBy(() -> OrderLineItem.create(menu, invalidQuantity))
+        assertThatThrownBy(() -> OrderLineItem.create(1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), invalidQuantity))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 항목의 수량은 0개 이상이어야 합니다.");
     }
@@ -30,10 +32,9 @@ class OrderLineItemTest {
     @Test
     void orderLineItem() {
         // given
-        MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
-        Menu menu = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), menuGroup);
+        Order order = Order.create(OrderTable.create(0, false));
 
         // then
-        assertDoesNotThrow(() -> OrderLineItem.create(menu, 1L));
+        assertDoesNotThrow(() -> OrderLineItem.create(1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), 1L));
     }
 }

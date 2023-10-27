@@ -1,13 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.ProductRepository;
-import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.menu.dto.MenuCreateRequest;
+import kitchenpos.menu.dto.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -137,6 +138,27 @@ class MenuServiceTest extends ServiceTest {
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("요청한 menuGroupId에 해당하는 MenuGroup이 존재하지 않습니다.");
+    }
+
+    @DisplayName("메뉴 등록 시 상품이 존재하지 않는 경우 예외가 발생한다.")
+    @Test
+    void create_FailWithInvalidProducts() {
+        // given
+        long invalidProductId = 1000L;
+        MenuProductCreateRequest invalidRequest1 = new MenuProductCreateRequest(invalidProductId, 1L);
+        MenuProductCreateRequest invalidRequest2 = new MenuProductCreateRequest(invalidProductId, 1L);
+
+        MenuCreateRequest request = new MenuCreateRequest(
+                "후라이드1+양념1",
+                32000L,
+                두마리메뉴.getId(),
+                List.of(invalidRequest1, invalidRequest2)
+        );
+
+        // when & then
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("요청한 상품들 중 존재하지 않는 상품이 존재합니다.");
     }
 
     @DisplayName("메뉴 목록을 조회할 수 있다.")

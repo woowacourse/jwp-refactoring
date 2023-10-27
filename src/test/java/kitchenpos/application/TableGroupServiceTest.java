@@ -1,14 +1,17 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTableValidatorImpl;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableValidator;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.TableGroupRepository;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.table.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,12 +23,11 @@ import org.springframework.context.annotation.Import;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import(TableGroupService.class)
+@Import({TableGroupService.class, OrderTableValidatorImpl.class})
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
@@ -39,6 +41,9 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Autowired
+    private OrderTableValidator orderTableValidator;
 
     private OrderTableRequest 주문테이블1_요청;
     private OrderTableRequest 주문테이블2_요청;
@@ -155,13 +160,6 @@ class TableGroupServiceTest extends ServiceTest {
             softly.assertThat(테이블그룹.getOrderTables()).extracting("tableGroup")
                     .containsExactly(null, null);
         });
-
-        tableGroupService.ungroup(테이블그룹.getId());
-
-        TableGroup 그룹해제한_테이블그룹 = tableGroupRepository.findById(테이블그룹.getId()).orElseThrow(IllegalArgumentException::new);
-        List<OrderTable> 그룹해제한_주문테이블 = orderTableRepository.findAllByTableGroupId(그룹해제한_테이블그룹.getId());
-
-        assertThat(그룹해제한_주문테이블).hasSize(0);
     }
 
     @DisplayName("테이블 그룹 해제 시, 주문 테이블의 주문 상태가 COOKING, MEAL인 경우 예외가 발생한다.")

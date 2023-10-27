@@ -1,5 +1,9 @@
 package kitchenpos.domain;
 
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,17 +13,13 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class OrderTest {
 
-    private final MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
-    private final Menu menu = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), menuGroup);
-    private final OrderLineItem orderLineItem1 = OrderLineItem.create(menu, 1L);
-    private final OrderLineItem orderLineItem2 = OrderLineItem.create(menu, 1L);
     private final OrderTable orderTable = OrderTable.create(1, false);
 
     @DisplayName("주문을 생성할 수 있다.")
@@ -63,6 +63,8 @@ class OrderTest {
     void updateOrderLineItems() {
         // given
         Order order = Order.create(orderTable);
+        OrderLineItem orderLineItem1 = OrderLineItem.create(1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), 1L);
+        OrderLineItem orderLineItem2 = OrderLineItem.create(1L, "두마리메뉴 - 간1양1", BigDecimal.valueOf(32000L), 1L);
 
         // when
         order.updateOrderLineItems(List.of(orderLineItem1, orderLineItem2));

@@ -1,13 +1,18 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.*;
-import kitchenpos.dto.request.TableCreateRequest;
-import kitchenpos.dto.request.TableEmptyStatusUpdateRequest;
-import kitchenpos.dto.request.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTableValidatorImpl;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableValidator;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.TableGroupRepository;
+import kitchenpos.table.dto.TableCreateRequest;
+import kitchenpos.table.dto.TableEmptyStatusUpdateRequest;
+import kitchenpos.table.dto.TableNumberOfGuestsUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import(TableService.class)
+@Import({TableService.class, OrderTableValidatorImpl.class})
 class TableServiceTest extends ServiceTest {
 
     @Autowired
@@ -37,6 +42,9 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private OrderTableValidator orderTableValidator;
 
 
     @DisplayName("테이블을 정상적으로 등록할 수 있다.")

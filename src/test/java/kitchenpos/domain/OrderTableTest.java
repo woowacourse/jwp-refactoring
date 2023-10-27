@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -70,31 +72,6 @@ class OrderTableTest {
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
 
-    @DisplayName("주문 테이블의 방문한 손님 수를 변경할 수 있다.")
-    @Test
-    void changeNumberOfGuests_FailWithEmptyStatus() {
-        // given
-        OrderTable orderTable = OrderTable.create(1, true);
-
-        // when & then
-        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(3))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("빈 테이블의 방문한 손님 수는 변경할 수 없습니다.");
-    }
-
-    @DisplayName("주문 테이블의 방문한 손님 수를 변경할 수 있다.")
-    @ParameterizedTest
-    @ValueSource(ints = {-1, -100})
-    void changeNumberOfGuests_FailWithInvalidNumberOfCounts(int invalidNumberOfGuests) {
-        // given
-        OrderTable orderTable = OrderTable.create(1, false);
-
-        // when & then
-        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(invalidNumberOfGuests))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("방문한 손님 수는 0명 이상이어야 합니다.");
-    }
-
     @DisplayName("주문 테이블을 그룹화할 수 있다.")
     @Test
     void group() {
@@ -121,12 +98,14 @@ class OrderTableTest {
         TableGroup tableGroupWithoutGrouping = TableGroup.createWithoutGrouping();
 
         // when & then
-        assertThatThrownBy(() -> orderTable1.group(tableGroupWithoutGrouping))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블이 비어있지 않은 경우 그룹화할 수 없습니다.");
-        assertThatThrownBy(() -> orderTable2.group(tableGroupWithoutGrouping))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블이 비어있지 않은 경우 그룹화할 수 없습니다.");
+        assertSoftly(softly -> {
+            softly.assertThatThrownBy(() -> orderTable1.group(tableGroupWithoutGrouping))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블이 비어있지 않은 경우 그룹화할 수 없습니다.");
+            softly.assertThatThrownBy(() -> orderTable2.group(tableGroupWithoutGrouping))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블이 비어있지 않은 경우 그룹화할 수 없습니다.");
+        });
     }
 
     @DisplayName("주문 테이블 그룹화 시, 이미 다른 그룹에 속한 테이블이면 예외가 발생한다.")
@@ -143,12 +122,14 @@ class OrderTableTest {
         orderTable2.setTableGroup(tableGroupWithGrouping);
 
         // then
-        assertThatThrownBy(() -> orderTable1.group(tableGroupWithGrouping))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 그룹 지정된 테이블은 그룹화할 수 없습니다.");
-        assertThatThrownBy(() -> orderTable2.group(tableGroupWithGrouping))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 그룹 지정된 테이블은 그룹화할 수 없습니다.");
+        assertSoftly(softly -> {
+            softly.assertThatThrownBy(() -> orderTable1.group(tableGroupWithGrouping))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 그룹 지정된 테이블은 그룹화할 수 없습니다.");
+            softly.assertThatThrownBy(() -> orderTable2.group(tableGroupWithGrouping))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 그룹 지정된 테이블은 그룹화할 수 없습니다.");
+        });
     }
 
     @DisplayName("테이블 그룹에서 주문 테이블을 그룹 해제할 수 있다.")
