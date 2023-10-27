@@ -7,9 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-import kitchenpos.application.TableService;
-import kitchenpos.application.response.TableResponse;
-import kitchenpos.domain.ordertable.NumberOfGuests;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.application.dto.TableResponse;
+import kitchenpos.ordertable.domain.NumberOfGuests;
+import kitchenpos.ordertable.ui.TableRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

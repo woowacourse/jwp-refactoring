@@ -1,16 +1,13 @@
 package kitchenpos.domain;
 
-import static kitchenpos.application.KitchenposFixture.메뉴그룹만들기;
-import static kitchenpos.application.KitchenposFixture.메뉴상품만들기;
-import static kitchenpos.application.KitchenposFixture.상품만들기;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.request.MenuProductRequest;
-import kitchenpos.domain.product.Price;
-import org.assertj.core.api.Assertions;
+import kitchenpos.product.domain.Price;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

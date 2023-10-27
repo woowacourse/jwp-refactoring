@@ -2,6 +2,7 @@ package kitchenpos.domain.ordertable;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.ordertable.domain.NumberOfGuests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

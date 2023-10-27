@@ -3,10 +3,11 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import kitchenpos.application.response.ProductResponse;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.product.Name;
-import kitchenpos.domain.product.Price;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.application.ProductDao;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Name;
+import kitchenpos.product.domain.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
