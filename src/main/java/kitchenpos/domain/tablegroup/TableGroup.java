@@ -1,5 +1,6 @@
-package kitchenpos.domain.ordertable;
+package kitchenpos.domain.tablegroup;
 
+import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Entity;

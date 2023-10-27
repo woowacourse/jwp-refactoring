@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.ui.request.TableGroupCreateRequest;
 import kitchenpos.ui.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
