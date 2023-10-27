@@ -28,7 +28,7 @@ public class OrderTable {
     @Column(nullable = false)
     private int numberOfGuests;
     @Column(nullable = false)
-    private boolean empty; // empty = true -> 주문 등록 불가
+    private boolean empty;
     @OneToMany(mappedBy = "orderTable")
     private List<Order> orders;
 
