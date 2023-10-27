@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dto.MenuGroupDto;
+import kitchenpos.menugroup.application.dto.MenuGroupDto;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")

@@ -1,9 +1,9 @@
-###
-POST {{host}}/api/orders
+### 해당 요청은 tables.http를 통해 empty가 false인 테이블을 추가한 후 이루어져야 합니다
+POST http://localhost:8080/api/orders
 Content-Type: application/json
 
 {
-  "orderTableId": 1,
+  "orderTableId": 9,
   "orderLineItems": [
     {
       "menuId": 1,
@@ -13,10 +13,10 @@ Content-Type: application/json
 }
 
 ###
-GET {{host}}/api/orders
+GET http://localhost:8080/api/orders
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PUT http://localhost:8080/api/orders/1/order-status
 Content-Type: application/json
 
 {
@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PUT http://localhost:8080/api/orders/1/order-status
 Content-Type: application/json
 
 {

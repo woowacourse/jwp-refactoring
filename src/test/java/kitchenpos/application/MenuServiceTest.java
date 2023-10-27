@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dto.MenuDto;
+import kitchenpos.menu.application.dto.MenuDto;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -54,7 +54,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0이상이어야 합니다.");
     }
 
     @Test
@@ -72,7 +73,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 메뉴그룹입니다.");
     }
 
     @Test
@@ -90,7 +92,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 상품입니다.");
     }
 
     @Test
@@ -108,7 +111,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴의 가격은 상품가격 * 수량의 합보다 작거나 같아야한다");
     }
 
     @Test
@@ -119,12 +123,10 @@ class MenuServiceTest extends ServiceTest {
         final var 후라이드 = productRepository.save(후라이드_16000);
         final var 양념치킨 = productRepository.save(양념치킨_16000);
 
-        final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-        후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+        final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
         menuRepository.save(후라이드메뉴);
 
-        final var 양념메뉴 = 메뉴("싼양념", 15000, 두마리메뉴);
-        양념메뉴.addMenuProducts(List.of(메뉴상품(양념치킨, 1)));
+        final var 양념메뉴 = 메뉴("싼양념", 15000, 두마리메뉴, List.of(메뉴상품(양념치킨, 1)));
         menuRepository.save(양념메뉴);
 
         final var 메뉴목록 = List.of(후라이드메뉴, 양념메뉴);

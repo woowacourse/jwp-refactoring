@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,8 +39,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // then
             assertThat(tableGroupRepository.findById(response.getId())).isPresent();
-            assertThat(테이블1.getTableGroup().getId()).isEqualTo(response.getId());
-            assertThat(테이블2.getTableGroup().getId()).isEqualTo(response.getId());
+            assertThat(테이블1.getTableGroupId()).isEqualTo(response.getId());
+            assertThat(테이블2.getTableGroupId()).isEqualTo(response.getId());
         }
 
         @Test
@@ -51,7 +51,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블이 포함되어 있습니다.");
         }
 
         @Test
@@ -63,7 +64,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("묶으려는 테이블은 2개 이상이어야 합니다.");
         }
 
         @Test
@@ -76,7 +78,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 테이블만 그룹화 할 수 있습니다.");
         }
 
         @Test
@@ -86,13 +89,16 @@ class TableGroupServiceTest extends ServiceTest {
             final var 테이블2 = orderTableRepository.save(빈테이블());
             final var 테이블3 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹());
+            테이블1.group(테이블그룹.getId());
+            테이블2.group(테이블그룹.getId());
 
             final var request = 테이블그룹_생성_요청(List.of(테이블1.getId(), 테이블3.getId()));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 테이블 그룹에 포함된 테이블입니다.");
         }
     }
 
@@ -105,7 +111,9 @@ class TableGroupServiceTest extends ServiceTest {
             final var 테이블1 = orderTableRepository.save(빈테이블());
             final var 테이블2 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹());
+            테이블1.group(테이블그룹.getId());
+            테이블2.group(테이블그룹.getId());
 
             // when
             tableGroupService.ungroup(테이블그룹.getId());
@@ -122,23 +130,24 @@ class TableGroupServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 테이블1 = orderTableRepository.save(빈테이블());
             final var 테이블2 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹());
+            테이블1.group(테이블그룹.getId());
+            테이블2.group(테이블그룹.getId());
 
-            final var order = 주문(테이블1);
-            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order = 주문(테이블1, List.of(주문상품(후라이드메뉴, 1)));
             order.changeOrderStatus(orderStatus);
             orderRepository.save(order);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(테이블그룹.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("완료되지 않은 주문입니다.");
         }
     }
 }

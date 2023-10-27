@@ -1,0 +1,1 @@
+alter table order_table drop constraint fk_order_table_to_table_group;

@@ -15,8 +15,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.OrderDto;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.application.dto.OrderDto;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -33,8 +33,7 @@ class OrderServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
@@ -47,9 +46,30 @@ class OrderServiceTest extends ServiceTest {
 
             // then
             final var findOrder = orderRepository.findById(response.getId()).get();
-            assertThat(findOrder.getOrderTable()).isEqualTo(테이블);
+            assertThat(findOrder.getOrderTableId()).isEqualTo(테이블.getId());
             assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
             assertThat(findOrder.getOrderLineItems().size()).isEqualTo(1);
+        }
+
+        @Test
+        void 존재하지_않는_메뉴면_주문할_수_없다() {
+            // given
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
+
+            final var 후라이드 = productRepository.save(후라이드_16000);
+
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
+            final var wrongMenuId = 999L;
+
+            final var 테이블 = orderTableRepository.save(비지않은_테이블());
+            final var 주문상품 = 주문상품(wrongMenuId, 후라이드메뉴, 3);
+
+            final var request = 주문_생성_요청(테이블.getId(), List.of(주문상품));
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 메뉴입니다.");
         }
 
         @Test
@@ -59,8 +79,7 @@ class OrderServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
@@ -69,7 +88,31 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 상품이 존재하지 않습니다.");
+        }
+
+        @Test
+        void 주문상품_속_메뉴는_중복될_수_없다() {
+            // given
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
+
+            final var 후라이드 = productRepository.save(후라이드_16000);
+
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
+            menuRepository.save(후라이드메뉴);
+
+            final var 테이블 = orderTableRepository.save(비지않은_테이블());
+            final var 주문상품1 = 주문상품(후라이드메뉴, 3);
+            final var 주문상품2 = 주문상품(후라이드메뉴, 3);
+            final var 주문상품3 = 주문상품(후라이드메뉴, 3);
+
+            final var request = 주문_생성_요청(테이블.getId(), List.of(주문상품1, 주문상품2, 주문상품3));
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 상품 속 메뉴는 중복되면 안됩니다");
         }
 
         @Test
@@ -79,8 +122,7 @@ class OrderServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var wrongTableId = 999L;
@@ -90,7 +132,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블입니다.");
         }
 
         @Test
@@ -100,8 +143,7 @@ class OrderServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 빈테이블 = orderTableRepository.save(빈테이블());
@@ -111,7 +153,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 테이블입니다.");
         }
     }
 
@@ -125,14 +168,12 @@ class OrderServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order = 주문(테이블);
-            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order = 주문(테이블, List.of(주문상품(후라이드메뉴, 1)));
             orderRepository.save(order);
 
             final var request = 주문상태_변경_요청(OrderStatus.MEAL);
@@ -151,8 +192,7 @@ class OrderServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var wrongOrderId = 999L;
@@ -160,7 +200,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 주문입니다.");
         }
 
         @Test
@@ -170,14 +211,12 @@ class OrderServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order = 주문(테이블);
-            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order = 주문(테이블, List.of(주문상품(후라이드메뉴, 1)));
             order.changeOrderStatus(OrderStatus.COMPLETION);
             orderRepository.save(order);
 
@@ -185,7 +224,8 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 완료된 주문입니다.");
         }
     }
 
@@ -199,18 +239,15 @@ class OrderServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order1 = 주문(테이블);
-            order1.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order1 = 주문(테이블, List.of(주문상품(후라이드메뉴, 1)));
             orderRepository.save(order1);
 
-            final var order2 = 주문(테이블);
-            order2.addOrderLineItems(List.of(주문상품(후라이드메뉴, 3)));
+            final var order2 = 주문(테이블, List.of(주문상품(후라이드메뉴, 3)));
             orderRepository.save(order2);
 
             final var 주문목록 = List.of(order1, order2);

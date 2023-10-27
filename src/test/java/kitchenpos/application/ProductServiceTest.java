@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dto.ProductDto;
+import kitchenpos.product.application.dto.ProductDto;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -34,7 +34,8 @@ class ProductServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0이상이어야 합니다.");
     }
 
     @Test

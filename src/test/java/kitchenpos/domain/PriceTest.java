@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.Price;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -20,8 +21,17 @@ class PriceTest {
         }
 
         @Test
+        void 가격은_존재해야_한다() {
+            assertThatThrownBy(() -> new Price(null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("가격은 존재해야 합니다.");
+        }
+
+        @Test
         void 가격은_0이상이어야_한다() {
-            assertThatThrownBy(() -> new Price(BigDecimal.valueOf(-1)));
+            assertThatThrownBy(() -> new Price(BigDecimal.valueOf(-1)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("가격은 0이상이어야 합니다.");
         }
     }
 

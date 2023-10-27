@@ -1,12 +1,10 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateDto;
-import kitchenpos.dto.TableIdDto;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateDto;
+import kitchenpos.tablegroup.application.dto.TableIdDto;
 
 public class TableGroupFixture {
 
@@ -17,9 +15,7 @@ public class TableGroupFixture {
         return new TableGroupCreateDto(tableIdDtos);
     }
 
-    public static TableGroup 테이블그룹(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.addOrderTables(orderTables);
-        return tableGroup;
+    public static TableGroup 테이블그룹() {
+        return new TableGroup();
     }
 }

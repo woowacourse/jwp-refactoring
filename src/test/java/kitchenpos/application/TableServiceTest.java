@@ -15,8 +15,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.TableDto;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.application.dto.TableDto;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,7 +67,8 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(wrongTableId, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블입니다.");
         }
 
         @ParameterizedTest
@@ -78,14 +79,11 @@ class TableServiceTest extends ServiceTest {
 
             final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴, List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableRepository.save(주문테이블(3, false));
-
-            final var order = 주문(테이블);
-            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            final var order = 주문(테이블, List.of(주문상품(후라이드메뉴, 1)));
             order.changeOrderStatus(orderStatus);
             orderRepository.save(order);
 
@@ -93,7 +91,8 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(테이블.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("완료되지 않은 주문입니다.");
         }
 
         @Test
@@ -101,12 +100,15 @@ class TableServiceTest extends ServiceTest {
             // given
             final var 테이블1 = orderTableRepository.save(빈테이블());
             final var 테이블2 = orderTableRepository.save(빈테이블());
-            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹());
+            테이블1.group(테이블그룹.getId());
+            테이블2.group(테이블그룹.getId());
 
             final var request = 주문테이블_EMPTY_변경_요청(false);
 
             assertThatThrownBy(() -> tableService.changeEmpty(테이블1.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블 그룹에 포함된 테이블은 empty 상태를 변경할 수 없습니다.");
         }
     }
 
@@ -136,7 +138,8 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("바꾸려는 손님 수는 0명 이상이어야 합니다.");
         }
 
         @Test
@@ -147,7 +150,8 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(wrongTableId, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블입니다.");
         }
 
         @Test
@@ -159,7 +163,8 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 테이블은 손님 수를 바꿀 수 없습니다.");
         }
     }
 

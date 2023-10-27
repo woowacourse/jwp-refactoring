@@ -3,12 +3,12 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.dto.MenuCreateDto;
-import kitchenpos.dto.MenuProductCreateDto;
-import kitchenpos.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.application.dto.MenuCreateDto;
+import kitchenpos.menu.application.dto.MenuProductCreateDto;
+import kitchenpos.Price;
 
 public class MenuFixture {
 
@@ -20,7 +20,7 @@ public class MenuFixture {
         return new MenuCreateDto(name, BigDecimal.valueOf(price), menuGroupId, menuProductDtos);
     }
 
-    public static Menu 메뉴(String name, int price, MenuGroup menuGroup) {
-        return new Menu(name, new Price(BigDecimal.valueOf(price)), menuGroup);
+    public static Menu 메뉴(final String name, final int price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
+        return new Menu(name, new Price(BigDecimal.valueOf(price)), menuGroup, menuProducts);
     }
 }
