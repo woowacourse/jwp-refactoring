@@ -17,7 +17,6 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.dto.OrderTableResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.SingleOrderTableCreateRequest;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
@@ -71,9 +70,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroupResponse response = tableGroupService.create(request);
 
             // then
-            assertThat(response.getOrderTables())
-                    .extracting(OrderTableResponse::getId)
-                    .contains(savedOrderTable1.getId(), savedOrderTable2.getId());
+            assertThat(response.getId()).isPositive();
         }
 
         @Test
@@ -126,8 +123,7 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable2 = new OrderTable(null, 15, true);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
-            TableGroup savedTableGroup = tableGroupRepository.save(
-                    new TableGroup(List.of(savedOrderTable1, savedOrderTable2)));
+            TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
             savedOrderTable1.updateTableGroup(savedTableGroup.getId());
 
             TableGroupCreateRequest request = createTableGroup(

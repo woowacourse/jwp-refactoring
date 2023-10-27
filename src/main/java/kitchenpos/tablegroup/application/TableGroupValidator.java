@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -18,15 +17,13 @@ public class TableGroupValidator {
 
     private final OrderRepository orderRepository;
 
-    public TableGroupValidator(
-            final OrderRepository orderRepository
-    ) {
+    public TableGroupValidator(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
-    public void validate(final TableGroup tableGroup) {
-        validateNumberOfOrderTable(tableGroup.getOrderTables());
-        validateOrderTableStatus(tableGroup.getOrderTables());
+    public void validate(final List<OrderTable> orderTables) {
+        validateNumberOfOrderTable(orderTables);
+        validateOrderTableStatus(orderTables);
     }
 
     private void validateNumberOfOrderTable(final List<OrderTable> orderTables) {
@@ -44,9 +41,9 @@ public class TableGroupValidator {
                 });
     }
 
-    public void validateOrderStatus(final TableGroup tableGroup) {
+    public void validateOrderStatus(final List<OrderTable> orderTables) {
         final List<OrderStatus> statuses = Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
-        final List<Long> orderTableIds = tableGroup.getOrderTables().stream()
+        final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 

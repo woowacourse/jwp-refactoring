@@ -64,11 +64,11 @@ public class OrderTable {
     }
 
     public void updateEmpty(final boolean empty) {
-        validateTableGroup();
+        validateTableGroupId();
         this.empty = empty;
     }
 
-    private void validateTableGroup() {
+    private void validateTableGroupId() {
         if (Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException("이미 속해있는 table group이 있습니다.");
         }

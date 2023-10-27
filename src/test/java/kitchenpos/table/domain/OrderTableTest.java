@@ -1,10 +1,9 @@
 package kitchenpos.table.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.util.List;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -25,12 +24,11 @@ class OrderTableTest {
     @Test
     void 테이블_그룹_수정() {
         final OrderTable orderTable = new OrderTable(null, 0, true);
-        final OrderTable orderTable2 = new OrderTable(null, 0, true);
-        final TableGroup tableGroup = new TableGroup(List.of(orderTable, orderTable2));
+        final Long updateTableId = 1L;
 
-        assertDoesNotThrow(
-                () -> orderTable.updateTableGroup(tableGroup.getId())
-        );
+        orderTable.updateTableGroup(updateTableId);
+
+        assertThat(orderTable.getTableGroupId()).isEqualTo(updateTableId);
     }
 
     @Test
