@@ -6,7 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -15,10 +14,6 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
 
     @OneToOne
     @JoinColumn(name = "menu_id")
@@ -31,18 +26,13 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Menu menu, long quantity) {
-        this.order = order;
+    public OrderLineItem(Menu menu, long quantity) {
         this.menu = menu;
         this.quantity = quantity;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public Menu getMenu() {

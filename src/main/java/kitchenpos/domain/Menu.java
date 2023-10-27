@@ -29,7 +29,7 @@ public class Menu {
     @Column(nullable = false)
     private Long menuGroupId;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts;
 

@@ -1,7 +1,9 @@
 package kitchenpos.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +32,8 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
