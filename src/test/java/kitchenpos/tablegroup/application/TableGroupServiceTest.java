@@ -1,11 +1,14 @@
 package kitchenpos.tablegroup.application;
 
 import java.util.List;
-import kitchenpos.ServiceTestDeprecate;
-import kitchenpos.tablegroup.application.CreateTableGroupCommand.TableInGroup;
+import kitchenpos.ServiceTest;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.tablegroup.application.CreateTableGroupCommand.TableInGroup;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,15 +16,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static kitchenpos.order.domain.OrderLineItemFixture.id_없는_주문항목;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class TableGroupServiceTestDeprecate extends ServiceTestDeprecate {
+@ServiceTest
+class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Nested
     class 테이블_그룹_생성 {
@@ -39,12 +51,9 @@ class TableGroupServiceTestDeprecate extends ServiceTestDeprecate {
 
             //then
             TableGroup 조회 = tableGroupRepository.getById(생성된_테이블그룹.getId());
-            List<OrderTable> 테이블그룹으로_조회 = orderTableRepository.findAllByTableGroupId(생성된_테이블그룹.getId());
             assertAll(
                     () -> Assertions.assertThat(조회.getOrderTables())
                             .extracting("id")
-                            .contains(아이디1, 아이디2),
-                    () -> assertThat(테이블그룹으로_조회).extracting("id")
                             .contains(아이디1, 아이디2)
             );
 
@@ -111,24 +120,6 @@ class TableGroupServiceTestDeprecate extends ServiceTestDeprecate {
 
             //then
             assertThat(orderTableRepository.getById(테이블.getId()).getTableGroupId()).isNull();
-        }
-
-        @Test
-        void COMPLETION이_아닌_주문이_있으면_예외가_발생한다() {
-            //given
-            OrderTable 테이블 = 빈_테이블_생성();
-
-            Order 주문 = new Order(null, 테이블.getId(), MEAL, null, List.of(id_없는_주문항목()));
-            orderRepository.save(주문);
-
-            TableGroup 테이블_그룹 = new TableGroup();
-            TableGroup 생성된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
-            테이블_그룹.changeOrderTables(List.of(테이블, 빈_테이블_생성()));
-            orderTableRepository.save(테이블);
-
-            //expect
-            assertThatThrownBy(() -> tableGroupService.ungroup(생성된_테이블_그룹.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
     }

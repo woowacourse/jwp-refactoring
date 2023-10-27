@@ -7,14 +7,19 @@ import kitchenpos.table.application.ChangeTableEmptyCommand;
 import kitchenpos.table.application.CreateTableCommand;
 import kitchenpos.table.application.OrderTableDto;
 import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.ChangeEmptyValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @ServiceTest
 class TableServiceTest {
@@ -24,6 +29,14 @@ class TableServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @MockBean(name = "changeEmptyValidator")
+    private ChangeEmptyValidator changeEmptyValidator;
+
+    @BeforeEach
+    void setUp() {
+        doNothing().when(changeEmptyValidator).validate(any(OrderTable.class));
+    }
 
 
     @Test

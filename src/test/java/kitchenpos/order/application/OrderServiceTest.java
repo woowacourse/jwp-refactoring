@@ -8,20 +8,28 @@ import kitchenpos.order.application.CreateOrderCommand.OrderLineItemRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @ServiceTest
 class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @MockBean(name = "orderValidator")
+    private OrderValidator orderValidator;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -31,6 +39,11 @@ class OrderServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @BeforeEach
+    void setUp() {
+        doNothing().when(orderValidator).validate(any(Order.class));
+    }
 
 
     @Nested
