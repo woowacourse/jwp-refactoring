@@ -8,6 +8,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Price {
 
+    private static final Price ZERO = new Price(BigDecimal.ZERO);
+
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 
@@ -24,7 +26,7 @@ public class Price {
     }
 
     public static Price createZero() {
-        return new Price(BigDecimal.ZERO);
+        return ZERO;
     }
 
     private static void validatePrice(final BigDecimal price) {
