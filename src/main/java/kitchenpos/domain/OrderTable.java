@@ -60,4 +60,9 @@ public class OrderTable {
     public Long getTableGroupId() {
         return tableGroupId;
     }
+
+    public void upgroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
 }

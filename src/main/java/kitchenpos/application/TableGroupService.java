@@ -46,10 +46,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables = new OrderTables(orderTableDao.findAllByTableGroupId(tableGroupId));
-        orderTables.validateOrderTablesUnGroupable(orderTableUpGroupValidators);
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTableDao.save(new OrderTable(orderTable.getId(), null, orderTable.getNumberOfGuests(), false));
-        }
+        orderTables.ungroup(orderTableUpGroupValidators);
+        orderTableDao.saveAll(orderTables);
     }
 }

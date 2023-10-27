@@ -52,4 +52,11 @@ public class OrderTables implements Iterable<OrderTable> {
     public Iterator<OrderTable> iterator() {
         return this.orderTables.iterator();
     }
+
+    public void ungroup(final List<OrderTableUpGroupValidator> orderTableUpGroupValidators) {
+        validateOrderTablesUnGroupable(orderTableUpGroupValidators);
+        for (OrderTable orderTable : orderTables) {
+            orderTable.upgroup();
+        }
+    }
 }
