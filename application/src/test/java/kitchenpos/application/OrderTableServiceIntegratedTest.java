@@ -1,8 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.execute.ServiceIntegrateTest;
-import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableGroup;
@@ -11,6 +8,9 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.execute.ServiceIntegrateTest;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
