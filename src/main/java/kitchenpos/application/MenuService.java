@@ -69,7 +69,7 @@ public class MenuService {
     public List<Menu> list() {
         final List<Menu> menus = menuRepository.findAll();
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            menuProductRepository.findAllByMenuId(menu.getId());
         }
         return menus;
     }
