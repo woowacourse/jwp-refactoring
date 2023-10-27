@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
@@ -48,14 +49,8 @@ public class Order {
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
-        validateOrderStatusNotNull(orderStatus);
+        Objects.requireNonNull(orderStatus);
         this.orderStatus = orderStatus;
-    }
-
-    private void validateOrderStatusNotNull(final OrderStatus orderStatus) {
-        if (orderStatus == null) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {
