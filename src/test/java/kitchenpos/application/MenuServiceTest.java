@@ -3,7 +3,6 @@ package kitchenpos.application;
 import com.sun.tools.javac.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.dto.menu.MenuRequest;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@Transactional
 @SpringBootTest
 @Sql({"/h2-truncate.sql"})
 class MenuServiceTest {
@@ -44,7 +45,6 @@ class MenuServiceTest {
 
     private Product savedProduct;
     private MenuGroup savedMenuGroup;
-    private MenuProduct savedMenuProduct;
     private Menu savedMenu;
 
     @BeforeEach

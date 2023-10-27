@@ -12,8 +12,6 @@ import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +21,6 @@ public class MenuService {
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     public MenuService(
             MenuRepository menuRepository,
@@ -47,18 +42,18 @@ public class MenuService {
         }
 
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId());
-        Menu savedMenu = menuRepository.save(menu);
 
-        List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
             Product product = productRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            MenuProduct menuProduct = new MenuProduct(savedMenu, product, menuProductRequest.getQuantity());
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
+            MenuProduct menuProduct = new MenuProduct(product, menuProductRequest.getQuantity());
+            menuProducts.add(menuProduct);
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        menu.setMenuProducts(menuProducts);
+
+        return menuRepository.save(menu);
     }
 
 
