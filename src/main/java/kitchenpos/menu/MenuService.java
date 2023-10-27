@@ -41,33 +41,44 @@ public class MenuService {
 
         Menu menu = new Menu(request.getName(), new Price(request.getPrice()), menuGroup);
 
-        List<MenuProductRequest> menuProductRequests = request.getMenuProductRequests();
-
         Menu savedMenu = jpaMenuRepository.save(menu);
+
+        List<MenuProductRequest> menuProductRequests = request.getMenuProductRequests();
 
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            Product product = jpaProductRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            menuProducts.add(new MenuProduct(savedMenu, product, menuProductRequest.getQuantity()));
+            menuProducts.add(
+                    new MenuProduct(savedMenu, menuProductRequest.getProductId(), menuProductRequest.getQuantity())
+            );
         }
 
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            savedMenuProducts.add(jpaMenuProductRepository.save(menuProduct));
-        }
-        savedMenu.addMenuProducts(savedMenuProducts);
+        validateMenuProduct(savedMenu, menuProducts);
 
-        return new MenuResponse(savedMenu);
+        return new MenuResponse(menu, menuProducts);
     }
 
-    public List<Menu> list() {
+
+    private void validateMenuProduct(final Menu menu, final List<MenuProduct> menuProducts) {
+        Price sum = new Price(0);
+        for (MenuProduct menuProduct : menuProducts) {
+            Product product = jpaProductRepository.findById(menuProduct.getProductId())
+                    .orElseThrow(IllegalArgumentException::new);
+            sum = sum.add(product.getPrice().multiply(menuProduct.getQuantity()));
+        }
+        if (menu.getPrice().isGreaterThan(sum)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public List<MenuResponse> list() {
         final List<Menu> menus = jpaMenuRepository.findAll();
 
+        List<MenuResponse> menuResponses = new ArrayList<>();
         for (final Menu menu : menus) {
-            menu.addMenuProducts(jpaMenuProductRepository.findAllByMenuId(menu.getId()));
+            List<MenuProduct> menuProducts = jpaMenuProductRepository.findAllByMenuId(menu.getId());
+            menuResponses.add(new MenuResponse(menu, menuProducts));
         }
 
-        return menus;
+        return menuResponses;
     }
 }

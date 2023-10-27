@@ -20,6 +20,9 @@ public class MenuGroup {
         this.name = name;
     }
 
+    public MenuGroup() {
+    }
+
     public Long getId() {
         return id;
     }

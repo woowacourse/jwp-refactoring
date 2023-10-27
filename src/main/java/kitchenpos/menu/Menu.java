@@ -1,7 +1,5 @@
 package kitchenpos.menu;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import kitchenpos.prodcut.Price;
 
 @Entity
@@ -31,28 +28,13 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts;
-
     public Menu(String name, Price price, MenuGroup menuGroup) {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
     }
 
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        validateSum(menuProducts);
-        this.menuProducts = new ArrayList<>(menuProducts);
-    }
-
-    private void validateSum(final List<MenuProduct> menuProducts) {
-        Price sum = new Price(0);
-        for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice().multiply(menuProduct.getQuantity()));
-        }
-        if (price.isGreaterThan(sum)) {
-            throw new IllegalArgumentException();
-        }
+    public Menu() {
     }
 
     public Long getId() {
@@ -71,7 +53,4 @@ public class Menu {
         return menuGroup;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
 }

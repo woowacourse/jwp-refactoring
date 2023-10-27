@@ -98,10 +98,10 @@ public class MenuServiceTest extends ServiceTest {
         fixtures.메뉴_상품_저장(menu, product, 1L);
 
         // when
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> result = menuService.list();
 
         // then
-        assertThat(menus.get(0)).isEqualTo(menu);
+        assertThat(result.size()).isEqualTo(1);
     }
 }
 

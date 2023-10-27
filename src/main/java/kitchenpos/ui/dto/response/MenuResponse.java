@@ -29,15 +29,15 @@ public final class MenuResponse {
         this.menuProductIds = menuProductIds;
     }
 
-    public MenuResponse(Menu menu) {
+    public MenuResponse(Menu menu, List<MenuProduct> menuProducts) {
         this(
-            menu.getId(),
-            menu.getName(),
-            menu.getPrice().getValue(),
-            menu.getMenuGroup().getId(),
-            menu.getMenuProducts().stream()
-                    .map(MenuProduct::getSeq)
-                    .collect(Collectors.toList())
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice().getValue(),
+                menu.getMenuGroup().getId(),
+                menuProducts.stream()
+                        .map(MenuProduct::getSeq)
+                        .collect(Collectors.toList())
         );
     }
 

@@ -60,7 +60,7 @@ public class Fixtures {
     }
 
     public MenuProduct 메뉴_상품_저장(Menu menu, Product product, Long quantity) {
-        MenuProduct menuProduct = new MenuProduct(menu, product, quantity);
+        MenuProduct menuProduct = new MenuProduct(menu, product.getId(), quantity);
         return jpaMenuProductRepository.save(menuProduct);
     }
 

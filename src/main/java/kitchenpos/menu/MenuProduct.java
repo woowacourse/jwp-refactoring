@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.prodcut.Product;
 
 @Entity
 public class MenuProduct {
@@ -22,17 +21,19 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
 
     @Column(nullable = false)
     private long quantity;
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
+    public MenuProduct(Menu menu, Long productId, long quantity) {
         this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public MenuProduct() {
     }
 
     public Long getSeq() {
@@ -43,8 +44,8 @@ public class MenuProduct {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {
