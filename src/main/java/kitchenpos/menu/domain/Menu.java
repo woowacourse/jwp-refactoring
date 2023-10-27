@@ -60,6 +60,10 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
+    public void addMenuProducts(final List<MenuProduct> menuProducts) {
+        this.menuProducts.addAll(menuProducts);
+    }
+
     public Long getId() {
         return id;
     }

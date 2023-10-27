@@ -47,7 +47,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = createMenuRequest.getMenuProducts().stream()
                 .map(menuProductRequest -> new MenuProduct(menu, menuProductRequest.getProductId(), menuProductRequest.getQuantity()))
                 .collect(Collectors.toList());
-        menuProductRepository.saveAll(menuProducts);
+        menu.addMenuProducts(menuProducts);
         return menu;
     }
 
