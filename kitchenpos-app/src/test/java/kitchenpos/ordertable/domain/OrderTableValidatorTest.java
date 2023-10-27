@@ -60,7 +60,8 @@ class OrderTableValidatorTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         final int orderLineItemSize = 1;
         final OrderLineItem orderLineItem = new OrderLineItem(MENU1_NAME, MENU1_PRICE, 1L);
-        final Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+        final Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize,
+                List.of(orderLineItem));
         order.changeStatus(OrderStatus.MEAL);
         orderRepository.save(order);
 

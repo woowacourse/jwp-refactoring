@@ -10,7 +10,8 @@ public class OrderTableResponse {
     private final int numberOfGuests;
     private final boolean empty;
 
-    private OrderTableResponse(final Long id, final TableGroupResponse tableGroup, final int numberOfGuests, final boolean empty) {
+    private OrderTableResponse(final Long id, final TableGroupResponse tableGroup, final int numberOfGuests,
+                               final boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;

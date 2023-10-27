@@ -13,7 +13,8 @@ public class MenuGroup {
     private Long id;
     private String name;
 
-    protected MenuGroup() {}
+    protected MenuGroup() {
+    }
 
     public MenuGroup(final String name) {
         this.name = name;

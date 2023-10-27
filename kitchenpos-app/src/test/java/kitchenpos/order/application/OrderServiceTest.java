@@ -75,9 +75,12 @@ class OrderServiceTest extends ServiceTest {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
             final Product savedProduct1 = productRepository.save(ProductFixtures.PRODUCT1());
             final Product savedProduct2 = productRepository.save(ProductFixtures.PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
-            menuRepository.save(new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(),
+                    MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(),
+                    MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
+            menuRepository.save(new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup,
+                    List.of(menuProduct1, menuProduct2)));
             orderTableRepository.save(new OrderTable(OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS, false));
 
             // when
@@ -102,13 +105,17 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("조회에 성공한다.")
         void success() {
             // given
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MenuGroupFixtures.MENU_GROUP1_NAME));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(
+                    new MenuGroup(MenuGroupFixtures.MENU_GROUP1_NAME));
             final Product savedProduct1 = productRepository.save(ProductFixtures.PRODUCT1());
             final Product savedProduct2 = productRepository.save(ProductFixtures.PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(),
+                    MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(),
+                    MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
-                    new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+                    new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup,
+                            List.of(menuProduct1, menuProduct2)));
             final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(
@@ -116,7 +123,8 @@ class OrderServiceTest extends ServiceTest {
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroup(savedTableGroup);
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
-            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize,
+                    List.of(orderLineItem));
 
             orderRepository.save(order);
 
@@ -146,13 +154,17 @@ class OrderServiceTest extends ServiceTest {
             // given
             final OrderChangeStatusRequest request = OrderFixtures.ORDER1_CHANGE_STATUS_REQUEST();
 
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MenuGroupFixtures.MENU_GROUP1_NAME));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(
+                    new MenuGroup(MenuGroupFixtures.MENU_GROUP1_NAME));
             final Product savedProduct1 = productRepository.save(ProductFixtures.PRODUCT1());
             final Product savedProduct2 = productRepository.save(ProductFixtures.PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(),
+                    MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(),
+                    MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
-                    new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+                    new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup,
+                            List.of(menuProduct1, menuProduct2)));
             final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(
@@ -160,7 +172,8 @@ class OrderServiceTest extends ServiceTest {
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroup(savedTableGroup);
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
-            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize,
+                    List.of(orderLineItem));
 
             orderRepository.save(order);
 
@@ -178,13 +191,17 @@ class OrderServiceTest extends ServiceTest {
             final Long notExistOrderId = -1L;
             final OrderChangeStatusRequest request = OrderFixtures.ORDER1_CHANGE_STATUS_REQUEST();
 
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MenuGroupFixtures.MENU_GROUP1_NAME));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(
+                    new MenuGroup(MenuGroupFixtures.MENU_GROUP1_NAME));
             final Product savedProduct1 = productRepository.save(ProductFixtures.PRODUCT1());
             final Product savedProduct2 = productRepository.save(ProductFixtures.PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(),
+                    MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(),
+                    MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
-                    new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+                    new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup,
+                            List.of(menuProduct1, menuProduct2)));
             final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(
@@ -192,7 +209,8 @@ class OrderServiceTest extends ServiceTest {
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroup(savedTableGroup);
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
-            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize,
+                    List.of(orderLineItem));
 
             orderRepository.save(order);
 
@@ -208,13 +226,17 @@ class OrderServiceTest extends ServiceTest {
             // given
             final OrderChangeStatusRequest request = OrderFixtures.ORDER1_CHANGE_STATUS_REQUEST();
 
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MenuGroupFixtures.MENU_GROUP1_NAME));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(
+                    new MenuGroup(MenuGroupFixtures.MENU_GROUP1_NAME));
             final Product savedProduct1 = productRepository.save(ProductFixtures.PRODUCT1());
             final Product savedProduct2 = productRepository.save(ProductFixtures.PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
+            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(),
+                    MenuProductFixtures.MENU_PRODUCT1_QUANTITY);
+            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(),
+                    MenuProductFixtures.MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
-                    new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+                    new Menu(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, savedMenuGroup,
+                            List.of(menuProduct1, menuProduct2)));
             final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(
@@ -222,7 +244,8 @@ class OrderServiceTest extends ServiceTest {
             TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
             savedOrderTable.updateTableGroup(savedTableGroup);
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
-            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize,
+                    List.of(orderLineItem));
 
             order.changeStatus(OrderStatus.COMPLETION);
             orderRepository.save(order);

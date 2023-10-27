@@ -38,7 +38,8 @@ class TableGroupValidatorImplTest {
             final int foundOrderTableSize = 2;
 
             // when & then
-            assertThatThrownBy(() -> tableGroupValidator.validateCreate(orderTables, orderTableSize, foundOrderTableSize))
+            assertThatThrownBy(
+                    () -> tableGroupValidator.validateCreate(orderTables, orderTableSize, foundOrderTableSize))
                     .isInstanceOf(TableGroupException.NotFoundOrderTableExistException.class)
                     .hasMessage("[ERROR] 주문 테이블 목록 중 존재하지 않는 주문 테이블이 있습니다.");
         }

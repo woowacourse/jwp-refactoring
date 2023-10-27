@@ -11,7 +11,8 @@ public class Price {
     @Column(name = "price")
     private BigDecimal value;
 
-    protected Price() {}
+    protected Price() {
+    }
 
     public Price(final BigDecimal value) {
         validate(value);

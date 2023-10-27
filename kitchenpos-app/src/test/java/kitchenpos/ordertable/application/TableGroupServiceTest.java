@@ -113,8 +113,10 @@ class TableGroupServiceTest extends ServiceTest {
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-            final OrderLineItem orderLineItem = new OrderLineItem(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE, 1L);
-            final Order order = Order.from(savedOrderTable1.getId(), orderLineItemSize, orderLineItemSize, List.of(orderLineItem));
+            final OrderLineItem orderLineItem = new OrderLineItem(MenuFixtures.MENU1_NAME, MenuFixtures.MENU1_PRICE,
+                    1L);
+            final Order order = Order.from(savedOrderTable1.getId(), orderLineItemSize, orderLineItemSize,
+                    List.of(orderLineItem));
             order.changeStatus(OrderStatus.MEAL);
             orderRepository.save(order);
 

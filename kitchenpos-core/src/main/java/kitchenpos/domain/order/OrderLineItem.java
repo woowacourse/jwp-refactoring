@@ -19,7 +19,8 @@ public class OrderLineItem {
     private BigDecimal price;
     private long quantity;
 
-    protected OrderLineItem() {}
+    protected OrderLineItem() {
+    }
 
     public OrderLineItem(final String name, final BigDecimal price, final long quantity) {
         this.name = name;
@@ -30,6 +31,7 @@ public class OrderLineItem {
     public Long getSeq() {
         return seq;
     }
+
     public String getName() {
         return name;
     }

@@ -43,7 +43,8 @@ public class OrderService {
         orderValidator.validateCreate(orderTableId);
 
         List<OrderLineItem> orderLineItems = getOrderLineItems(request);
-        final Order order = Order.from(orderTableId, orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds), orderLineItems);
+        final Order order = Order.from(orderTableId, orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds),
+                orderLineItems);
         final Order savedOrder = orderRepository.save(order);
 
         return OrderResponse.from(savedOrder);
