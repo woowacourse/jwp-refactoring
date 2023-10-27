@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.response.OrderLineItemResponse;
 import kitchenpos.application.response.OrderResponse;
@@ -73,9 +74,11 @@ class OrderRestControllerTest {
         when(orderService.changeOrderStatus(3L)).thenReturn(orderResponse);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", 3)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("orderStatus", "MEAL"))))
                 .andExpect(status().isOk())
                 .andExpect(content().string(objectMapper.writeValueAsString(orderResponse)))
                 .andDo(print());
+
     }
 }
