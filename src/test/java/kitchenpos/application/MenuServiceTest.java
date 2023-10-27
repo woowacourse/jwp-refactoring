@@ -1,16 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.MenuCreateRequest;
-import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.application.dto.MenuResponse.MenuProductResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.application.dto.MenuResponse.MenuProductResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.common.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.menu.application.MenuService;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,21 +41,21 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private MenuGroup testMenuGroup;
     private Product testProduct;
 
     @BeforeEach
     void setup() {
-        testMenuGroup = menuGroupDao.save(TEST_GROUP());
-        testProduct = productDao.save(PIZZA());
+        testMenuGroup = menuGroupRepository.save(TEST_GROUP());
+        testProduct = productRepository.save(PIZZA());
     }
 
     @Nested
@@ -153,7 +153,7 @@ class MenuServiceTest {
         final Menu menu = new Menu.MenuFactory(MENU_NAME, new Price(BigDecimal.valueOf(1900)), testMenuGroup)
                 .addProduct(testProduct, 2)
                 .create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
         final MenuResponse expectedLastResponse = MenuResponse.from(savedMenu);
 
         // when

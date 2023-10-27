@@ -1,22 +1,24 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.TableGroupCreateRequest;
-import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableId;
-import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.application.dto.TableResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.application.MenuSnapshotService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.application.TableGroupService;
+import kitchenpos.ordertable.application.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.application.dto.TableGroupCreateRequest.OrderTableId;
+import kitchenpos.ordertable.application.dto.TableGroupResponse;
+import kitchenpos.ordertable.application.dto.TableResponse;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.repoisotory.OrderTableRepository;
+import kitchenpos.ordertable.domain.repoisotory.TableGroupRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,22 +47,25 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuSnapshotService menuSnapshotService;
 
     private OrderTable emptyTable1;
     private OrderTable emptyTable2;
@@ -69,16 +74,16 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setup() {
-        emptyTable1 = orderTableDao.save(EMPTY_TABLE());
-        emptyTable2 = orderTableDao.save(EMPTY_TABLE());
-        notEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
+        emptyTable1 = orderTableRepository.save(EMPTY_TABLE());
+        emptyTable2 = orderTableRepository.save(EMPTY_TABLE());
+        notEmptyTable = orderTableRepository.save(NOT_EMPTY_TABLE());
 
-        final MenuGroup menuGroup = menuGroupDao.save(TEST_GROUP());
-        final Product product = productDao.save(PIZZA());
+        final MenuGroup menuGroup = menuGroupRepository.save(TEST_GROUP());
+        final Product product = productRepository.save(PIZZA());
         final Menu menu = new Menu.MenuFactory("test menu", product.getPrice(), menuGroup)
                 .addProduct(product, 1L)
                 .create();
-        testMenu = menuDao.save(menu);
+        testMenu = menuRepository.save(menu);
     }
 
     @Nested
@@ -144,9 +149,11 @@ class TableGroupServiceTest {
         @DisplayName("이미 그룹지정된 태이블로는 생성시 예외가 발생한다.")
         void throwExceptionWithAlreadyGroupedTable() {
             // given
-            tableGroupDao.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
+            final TableGroup savedGroup = tableGroupRepository.save(new TableGroup());
+            emptyTable1.group(savedGroup);
+            emptyTable2.group(savedGroup);
 
-            final OrderTable savedTable = orderTableDao.save(new OrderTable(0, true));
+            final OrderTable savedTable = orderTableRepository.save(new OrderTable(0, true));
 
             final TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(
@@ -169,7 +176,9 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setup() {
-            testTableGroup = tableGroupDao.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
+            testTableGroup = tableGroupRepository.save(new TableGroup());
+            emptyTable1.group(testTableGroup);
+            emptyTable2.group(testTableGroup);
         }
 
         @Test
@@ -181,8 +190,8 @@ class TableGroupServiceTest {
             tableGroupService.ungroup(testTableGroup.getId());
 
             // then
-            final OrderTable actualTable1 = orderTableDao.findById(emptyTable1.getId()).get();
-            final OrderTable actualTable2 = orderTableDao.findById(emptyTable2.getId()).get();
+            final OrderTable actualTable1 = orderTableRepository.findById(emptyTable1.getId()).get();
+            final OrderTable actualTable2 = orderTableRepository.findById(emptyTable2.getId()).get();
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(actualTable1.getTableGroupId()).isNull();
                 softly.assertThat(actualTable2.getTableGroupId()).isNull();
@@ -194,11 +203,11 @@ class TableGroupServiceTest {
         @DisplayName("완료상태가 아닌 주문이 있는경우 그룹해제시 예외가 발생한다.")
         void throwExceptionWithUncompletedOrder(final String statusValue) {
             // given
-            final Order order = new Order.OrderFactory(emptyTable1)
-                    .addMenu(testMenu, 1L)
+            final Order order = new Order.OrderFactory(emptyTable1.getId())
+                    .addMenu(menuSnapshotService.getMenuSnapshotFor(testMenu.getId()), 1L)
                     .create();
             order.changeOrderStatus(OrderStatus.valueOf(statusValue));
-            orderDao.save(order);
+            orderRepository.save(order);
 
             // when
             // then

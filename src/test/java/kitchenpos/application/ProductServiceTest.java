@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.ProductCreateRequest;
-import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.product.application.ProductCreateRequest;
+import kitchenpos.product.application.ProductResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +29,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     @DisplayName("상품 생성 테스트")
@@ -69,7 +70,7 @@ class ProductServiceTest {
     @DisplayName("모든 상품을 조회한다.")
     void getProductList() {
         // given
-        final Product testProduct = productDao.save(PIZZA());
+        final Product testProduct = productRepository.save(PIZZA());
         final ProductResponse expectedLastResponse = ProductResponse.from(testProduct);
 
         // when

@@ -1,22 +1,23 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.application.dto.OrderCreateRequest.OrderLineItemRequest;
-import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.application.dto.OrderStatusChangeRequest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.common.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.application.MenuSnapshotService;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineItemRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.dto.OrderStatusChangeRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repoisotory.OrderTableRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,34 +49,37 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuSnapshotService menuSnapshotService;
 
     private OrderTable notEmptyTable;
     private Menu testMenu;
 
     @BeforeEach
     void setup() {
-        notEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
-        final MenuGroup savedMenuGroup = menuGroupDao.save(TEST_GROUP());
-        final Product savedProduct = productDao.save(PIZZA());
+        notEmptyTable = orderTableRepository.save(NOT_EMPTY_TABLE());
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(TEST_GROUP());
+        final Product savedProduct = productRepository.save(PIZZA());
 
         final Menu menu = new Menu.MenuFactory("테스트 메뉴", new Price(BigDecimal.valueOf(10000)), savedMenuGroup)
                 .addProduct(savedProduct, 1)
                 .create();
 
-        testMenu = menuDao.save(menu);
+        testMenu = menuRepository.save(menu);
     }
 
     @Nested
@@ -127,7 +130,7 @@ class OrderServiceTest {
         @DisplayName("비어있는 테이블에서 주문 생성시 예외가 발생한다.")
         void throwExceptionWithEmptyTable() {
             // given
-            final OrderTable savedEmptyTable = orderTableDao.save(EMPTY_TABLE());
+            final OrderTable savedEmptyTable = orderTableRepository.save(EMPTY_TABLE());
 
             final OrderCreateRequest request = new OrderCreateRequest(savedEmptyTable.getId(), List.of(new OrderLineItemRequest(testMenu.getId(), 1L)));
 
@@ -146,10 +149,10 @@ class OrderServiceTest {
 
         @BeforeEach
         void setup() {
-            final Order order = new Order.OrderFactory(notEmptyTable)
-                    .addMenu(testMenu, 1L)
+            final Order order = new Order.OrderFactory(notEmptyTable.getId())
+                    .addMenu(menuSnapshotService.getMenuSnapshotFor(testMenu.getId()), 1L)
                     .create();
-            testOrder = orderDao.save(order);
+            testOrder = orderRepository.save(order);
         }
 
         @ParameterizedTest(name = "초기상태 : {0}, 변경상태 : {1}")
@@ -192,10 +195,10 @@ class OrderServiceTest {
     @DisplayName("주문들 리스트 조회 테스트")
     void getOrderList() {
         // given
-        final Order order = new Order.OrderFactory(notEmptyTable)
-                .addMenu(testMenu, 1L)
+        final Order order = new Order.OrderFactory(notEmptyTable.getId())
+                .addMenu(menuSnapshotService.getMenuSnapshotFor(testMenu.getId()), 1L)
                 .create();
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
         // when
         final List<OrderResponse> response = orderService.list();

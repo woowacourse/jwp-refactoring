@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.MenuGroupCreateRequest;
-import kitchenpos.application.dto.MenuGroupResponse;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.application.dto.MenuGroupResponse;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.application.MenuGroupService;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("메뉴그룹 등록시 등록된 메뉴 그룹 정보가 반환된다.")
@@ -46,7 +47,7 @@ class MenuGroupServiceTest {
     @DisplayName("등록된 메뉴그룹들의 리스트를 조회한다.")
     void getListOfMenuGroup() {
         // given
-        final MenuGroup savedGroup = menuGroupDao.save(TEST_GROUP());
+        final MenuGroup savedGroup = menuGroupRepository.save(TEST_GROUP());
         final MenuGroupResponse expectedLastGroup = MenuGroupResponse.from(savedGroup);
 
         // when
