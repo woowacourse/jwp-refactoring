@@ -47,12 +47,7 @@ public class OrderTable {
         if (isGrouped()) {
             throw new HasAlreadyGroupedTableException();
         }
-        System.out.println("그룹 전");
-        System.out.println(this.tableGroup);
         this.tableGroup = tableGroup;
-        System.out.println("그룹 후");
-        System.out.println(this.tableGroup);
-
     }
 
     public void unGroup(final TableGroupValidator validator) {

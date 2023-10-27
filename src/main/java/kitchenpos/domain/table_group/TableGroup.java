@@ -35,9 +35,7 @@ public class TableGroup {
         group(orderTables);
     }
 
-    private void group(
-            final List<AggregateReference<OrderTable>> orderTables
-    ) {
+    private void group(final List<AggregateReference<OrderTable>> orderTables) {
         this.tableGroupEvent = new CreateTableGroupEvent(orderTables, this);
     }
 

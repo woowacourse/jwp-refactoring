@@ -20,6 +20,7 @@ public class CustomMenuRepositoryImpl implements CustomMenuRepository {
     public List<Menu> findAllByFetch() {
         return jpaQueryFactory
                 .selectFrom(menu)
+                .distinct()
                 .leftJoin(menu.menuProducts.menuProducts, menuProduct)
                 .fetchJoin()
                 .fetch();

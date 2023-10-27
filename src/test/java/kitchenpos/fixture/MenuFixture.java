@@ -2,11 +2,16 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuCreateRequest.MenuProductRequest;
+import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.MenuResponse.MenuProductResponse;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuValidator;
+import kitchenpos.domain.menu.QMenu;
 import kitchenpos.domain.menu.menu_product.MenuProduct;
 import kitchenpos.domain.menu.menu_product.MenuProductValidator;
 import kitchenpos.domain.menu.menu_product.MenuProducts;
@@ -20,11 +25,13 @@ public class MenuFixture {
     public static Menu 메뉴(
             final String name, final Long price,
             final MenuProducts menuProducts,
-            final MenuGroup menuGroup
+            final MenuGroup menuGroup,
+            final MenuValidator menuValidator
     ) {
         final MenuName menuName = 메뉴_이름(name);
         final Price menuPrice = 메뉴_가격(price);
-        return new Menu(menuName, menuPrice, menuProducts, null, null);
+        final AggregateReference<MenuGroup> menuGroupId = new AggregateReference<>(menuGroup.getId());
+        return new Menu(menuName, menuPrice, menuProducts, menuGroupId, menuValidator);
     }
 
     public static MenuName 메뉴_이름(final String name) {
@@ -36,7 +43,8 @@ public class MenuFixture {
     }
 
     public static MenuProduct 메뉴_상품(
-            final Long productId, final Long quantity,
+            final Long productId,
+            final Long quantity,
             final MenuProductValidator menuProductValidator
     ) {
         final AggregateReference<Product> product = new AggregateReference<>(productId);
@@ -91,5 +99,9 @@ public class MenuFixture {
             public void validate(final AggregateReference<Product> productId) {
             }
         };
+    }
+
+    public static MenuResponse 메뉴_등록_응답(final Menu menu) {
+        return MenuResponse.from(menu);
     }
 }

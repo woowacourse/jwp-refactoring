@@ -11,12 +11,12 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderValidator;
+import kitchenpos.domain.order.order_lineitem.MenuInfoGenerator;
 import kitchenpos.domain.order.order_lineitem.OrderLineItem;
 import kitchenpos.domain.order.order_lineitem.OrderLineItems;
-import kitchenpos.domain.order.order_lineitem.OrderLineValidator;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.support.AggregateReference;
 import kitchenpos.repositroy.OrderRepository;
+import kitchenpos.support.AggregateReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderLineValidator orderLineValidator;
+    private final MenuInfoGenerator menuInfoGenerator;
     private final OrderValidator orderValidator;
 
     public OrderService(
             final OrderRepository orderRepository,
-            final OrderLineValidator orderLineValidator,
+            final MenuInfoGenerator menuInfoGenerator,
             final OrderValidator orderValidator
     ) {
         this.orderRepository = orderRepository;
-        this.orderLineValidator = orderLineValidator;
+        this.menuInfoGenerator = menuInfoGenerator;
         this.orderValidator = orderValidator;
     }
 
@@ -56,7 +56,7 @@ public class OrderService {
 
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
         final AggregateReference<Menu> menuId = new AggregateReference<>(request.getMenuId());
-        return new OrderLineItem(menuId, request.getQuantity(), orderLineValidator);
+        return new OrderLineItem(menuId, request.getQuantity(), menuInfoGenerator);
     }
 
     public List<OrderResponse> list() {
