@@ -58,7 +58,7 @@ public class TableGroupService {
         final TableGroup newTableGroup = tableGroupRepository.save(new TableGroup());
 
         for (final OrderTable orderTable : savedOrderTables) {
-            orderTable.groupBy(newTableGroup);
+            orderTable.groupBy(newTableGroup.getId());
         }
 
         return newTableGroup;

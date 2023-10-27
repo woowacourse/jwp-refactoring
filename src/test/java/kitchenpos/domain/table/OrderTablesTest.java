@@ -44,11 +44,11 @@ class OrderTablesTest {
         ReflectionTestUtils.setField(tableGroup, "id", 1L);
 
         final OrderTable orderTable1 = new OrderTable(4, true);
-        orderTable1.groupBy(tableGroup);
+        orderTable1.groupBy(tableGroup.getId());
         final OrderTable orderTable2 = new OrderTable(4, true);
-        orderTable2.groupBy(tableGroup);
+        orderTable2.groupBy(tableGroup.getId());
         final OrderTable orderTable3 = new OrderTable(4, true);
-        orderTable3.groupBy(tableGroup);
+        orderTable3.groupBy(tableGroup.getId());
 
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2, orderTable3));
 
@@ -57,9 +57,9 @@ class OrderTablesTest {
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(orderTable1.getTableGroup()).isNull();
-            softAssertions.assertThat(orderTable2.getTableGroup()).isNull();
-            softAssertions.assertThat(orderTable3.getTableGroup()).isNull();
+            softAssertions.assertThat(orderTable1.getTableGroupId()).isNull();
+            softAssertions.assertThat(orderTable2.getTableGroupId()).isNull();
+            softAssertions.assertThat(orderTable3.getTableGroupId()).isNull();
         });
     }
 
@@ -73,11 +73,11 @@ class OrderTablesTest {
         ReflectionTestUtils.setField(differentTableGroup, "id", 2L);
 
         final OrderTable orderTable1 = new OrderTable(4, true);
-        orderTable1.groupBy(tableGroup);
+        orderTable1.groupBy(tableGroup.getId());
         final OrderTable orderTable2 = new OrderTable(4, true);
-        orderTable2.groupBy(tableGroup);
+        orderTable2.groupBy(tableGroup.getId());
         final OrderTable orderTable3 = new OrderTable(4, true);
-        orderTable3.groupBy(differentTableGroup);
+        orderTable3.groupBy(differentTableGroup.getId());
 
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2, orderTable3));
 

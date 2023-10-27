@@ -59,7 +59,7 @@ class TableServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.getId()).isPositive();
-            softAssertions.assertThat(actual.getTableGroup()).isNull();
+            softAssertions.assertThat(actual.getTableGroupId()).isNull();
         });
     }
 
@@ -123,8 +123,8 @@ class TableServiceTest {
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
         final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
-        세명_테이블.groupBy(세명_네명_테이블_그룹);
-        네명_테이블.groupBy(세명_네명_테이블_그룹);
+        세명_테이블.groupBy(세명_네명_테이블_그룹.getId());
+        네명_테이블.groupBy(세명_네명_테이블_그룹.getId());
 
         em.flush();
         em.clear();

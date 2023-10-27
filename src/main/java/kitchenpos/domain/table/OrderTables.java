@@ -29,7 +29,7 @@ public class OrderTables {
 
     private boolean containsDifferentId() {
         final long orderTableIdCount = orderTables.stream()
-                                                  .map(OrderTable::getTableGroup)
+                                                  .map(OrderTable::getTableGroupId)
                                                   .distinct()
                                                   .count();
 
