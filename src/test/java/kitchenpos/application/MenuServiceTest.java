@@ -1,19 +1,19 @@
 package kitchenpos.application;
 
-import kitchenpos.application.menu.MenuService;
-import kitchenpos.application.menu.dto.MenuCreateRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.exception.MenuGroupNotFoundException;
-import kitchenpos.exception.MenuPriceExpensiveThanProductsPriceException;
-import kitchenpos.exception.PriceEmptyException;
-import kitchenpos.exception.ProductNotFoundException;
+import kitchenpos.common.exception.PriceEmptyException;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.helper.IntegrationTestHelper;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.exception.MenuGroupNotFoundException;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.product.exception.ProductNotFoundException;
+import kitchenpos.product.exception.ProductPriceMoreLessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -50,7 +50,7 @@ class MenuServiceTest extends IntegrationTestHelper {
     void setup() {
         menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
         product = productRepository.save(상품_생성_10000원());
-        menuProduct = 메뉴_상품_10개_생성(product);
+        menuProduct = 메뉴_상품_10개_생성(product.getId());
     }
 
     @Test
@@ -63,7 +63,7 @@ class MenuServiceTest extends IntegrationTestHelper {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getPrice().longValue()).isEqualTo(req.getPrice().longValue());
+            softly.assertThat(result.getPrice()).isEqualTo(req.getPrice().longValue());
             softly.assertThat(result.getMenuProducts()).hasSize(1);
         });
     }
@@ -94,7 +94,7 @@ class MenuServiceTest extends IntegrationTestHelper {
     void 상품이_존재하지_않는데_메뉴에_있다면_예외를_발생시킨다() {
         // given
         Product wrong = new Product(-1L, "상품", 10L);
-        menuProduct = 메뉴_상품_10개_생성(wrong);
+        menuProduct = 메뉴_상품_10개_생성(wrong.getId());
 
         MenuCreateRequest req = 메뉴_생성_요청("상품", 100L, menuGroup, List.of(menuProduct));
 
@@ -107,12 +107,12 @@ class MenuServiceTest extends IntegrationTestHelper {
     void 메뉴_가격이_메뉴_상품_가격의_합보다_크면_예외를_발생시킨다() {
         // given
         Product wrong = new Product(1L, "상품", 10L);
-        menuProduct = 메뉴_상품_10개_생성(wrong);
+        menuProduct = 메뉴_상품_10개_생성(wrong.getId());
         MenuCreateRequest req = 메뉴_생성_요청("상품", 1000000000L, menuGroup, List.of(menuProduct));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(req))
-                .isInstanceOf(MenuPriceExpensiveThanProductsPriceException.class);
+                .isInstanceOf(ProductPriceMoreLessException.class);
     }
 
     @Test
@@ -125,5 +125,18 @@ class MenuServiceTest extends IntegrationTestHelper {
 
         // then
         assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void 메뉴가_존재하는지_확인한다() {
+        // given
+        MenuCreateRequest req = 메뉴_생성_요청("상품", 10000L, menuGroup, List.of(menuProduct));
+        Menu menu = menuService.create(req);
+
+        // when
+        boolean result = menuService.isExistMenuById(menu.getId());
+
+        // then
+        assertThat(result).isTrue();
     }
 }

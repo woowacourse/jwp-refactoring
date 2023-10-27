@@ -3,12 +3,14 @@ package kitchenpos.ui.table;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
-import kitchenpos.application.table.TableService;
-import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.table.dto.OrderTableCreateRequest;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.helper.IntegrationTestHelper;
-import kitchenpos.ui.table.dto.OrderTableResponse;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.ui.dto.OrderTableResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -22,6 +24,16 @@ class TableRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    protected OrderTable 주문_테이블;
+
+    @BeforeEach
+    void setup() {
+        주문_테이블 = orderTableRepository.save(주문_테이블_생성(10, false));
+    }
 
     protected <T> ExtractableResponse 주문_테이블을_생성한다(final String url, final T request) {
         return RestAssured.given().log().all()
@@ -55,14 +67,14 @@ class TableRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
                 .getList("", OrderTableResponse.class);
 
         assertSoftly(softly -> {
-            softly.assertThat(result).hasSize(1);
+            softly.assertThat(result).hasSize(2);
             softly.assertThat(result.get(0).getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
             softly.assertThat(result.get(0).isEmpty()).isEqualTo(orderTable.isEmpty());
         });
     }
 
     protected OrderTable 주문_테이블_데이터를_생성한다() {
-        OrderTable orderTable = 주문_테이블_생성(null, 10, false);
+        OrderTable orderTable = 주문_테이블_생성(10, false);
         OrderTableCreateRequest req = 주문_테이블_생성_요청(orderTable);
 
         return tableService.create(req);

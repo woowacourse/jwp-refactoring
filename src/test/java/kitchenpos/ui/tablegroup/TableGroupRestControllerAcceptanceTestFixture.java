@@ -3,14 +3,16 @@ package kitchenpos.ui.tablegroup;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
-import kitchenpos.application.tablegroup.TableGroupService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.helper.IntegrationTestHelper;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.ui.tablegroup.dto.TableGroupResponse;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.TableGroupResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 import static kitchenpos.fixture.TableGroupFixture.단체_지정_생성_요청;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,8 +43,8 @@ class TableGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelpe
     protected void 단체가_성공적으로_지정된다(final ExtractableResponse response, final TableGroup tableGroup) {
         TableGroupResponse result = response.as(TableGroupResponse.class);
 
-        assertThat(result.getOrderTableResponses().size())
-                .isEqualTo(tableGroup.getOrderTables().size());
+        assertThat(result.getId())
+                .isEqualTo(2L);
     }
 
     protected ExtractableResponse 단체를_제거한다(final String url) {
@@ -60,7 +62,7 @@ class TableGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelpe
         assertThat(statusCode).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
-    protected TableGroup 단체_데이터_생성(final TableGroup tableGroup) {
-        return tableGroupService.create(단체_지정_생성_요청(tableGroup));
+    protected TableGroupResponse 단체_데이터_생성(final List<Long> orderTableIds) {
+        return tableGroupService.create(단체_지정_생성_요청(orderTableIds));
     }
 }

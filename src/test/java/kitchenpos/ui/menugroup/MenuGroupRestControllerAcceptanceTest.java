@@ -1,7 +1,7 @@
 package kitchenpos.ui.menugroup;
 
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

@@ -3,11 +3,11 @@ package kitchenpos.ui.menugroup;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.helper.IntegrationTestHelper;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.ui.menugroup.dto.MenuGroupResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.ui.dto.MenuGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

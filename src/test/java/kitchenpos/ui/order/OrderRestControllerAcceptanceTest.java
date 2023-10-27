@@ -1,18 +1,17 @@
 package kitchenpos.ui.order;
 
-import kitchenpos.application.order.dto.OrderUpdateRequest;
-import kitchenpos.domain.Order;
+import kitchenpos.order.application.dto.OrderUpdateRequest;
+import kitchenpos.order.domain.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성_요청;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -22,7 +21,7 @@ class OrderRestControllerAcceptanceTest extends OrderRestControllerAcceptanceTes
 
     @BeforeEach
     void setup() {
-        주문 = 주문_생성(orderTable, null, LocalDateTime.now(), List.of(orderLineItem));
+        주문 = 주문_생성(orderTable.getId(), MEAL.name(), List.of(orderLineItem));
     }
 
     @Test

@@ -1,18 +1,16 @@
 package kitchenpos.fixture;
 
-import kitchenpos.application.table.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.table.dto.OrderTableCreateRequest;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {
 
-    public static OrderTable 주문_테이블_생성(final TableGroup tableGroup,
-                                       final int numberOfGuests,
+    public static OrderTable 주문_테이블_생성(final int numberOfGuests,
                                        final boolean isEmpty) {
-        return new OrderTable(null, tableGroup, numberOfGuests, isEmpty);
+        return new OrderTable(numberOfGuests, isEmpty);
     }
 
     public static OrderTableCreateRequest 주문_테이블_생성_요청(final OrderTable orderTable) {

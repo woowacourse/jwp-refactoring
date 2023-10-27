@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.application.product.ProductService;
-import kitchenpos.application.product.dto.ProductCreateRequest;
-import kitchenpos.domain.Product;
-import kitchenpos.exception.PriceEmptyException;
+import kitchenpos.common.exception.PriceEmptyException;
 import kitchenpos.helper.IntegrationTestHelper;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

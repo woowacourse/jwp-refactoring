@@ -3,11 +3,11 @@ package kitchenpos.ui.product;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
-import kitchenpos.application.product.ProductService;
-import kitchenpos.application.product.dto.ProductCreateRequest;
-import kitchenpos.domain.Product;
 import kitchenpos.helper.IntegrationTestHelper;
-import kitchenpos.ui.product.dto.ProductResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.ui.dto.ProductResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
