@@ -2,10 +2,10 @@ package kitchenpos.dto;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderLineItemResponse {
 
@@ -27,27 +27,13 @@ public class OrderLineItemResponse {
         );
     }
 
-    public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
-        return new OrderLineItemResponse(
-                orderLineItem.getSeq(),
-                MenuResponse.from((Menu) null),
-                orderLineItem.getQuantity().getValue()
-        );
-    }
-
-    public static List<OrderLineItemResponse> from(final List<OrderLineItem> orderLineItems, final List<Menu> menus) {
+    public static List<OrderLineItemResponse> from(final OrderLineItems orderLineItems, final List<Menu> menus) {
         final List<OrderLineItemResponse> responses = new ArrayList<>();
-        for (int index = 0; index < orderLineItems.size(); index++) {
-            responses.add(from(orderLineItems.get(index), menus.get(index)));
+        for (int index = 0; index < orderLineItems.getOrderLineItems().size(); index++) {
+            responses.add(from(orderLineItems.getOrderLineItems().get(index), menus.get(index)));
         }
 
         return responses;
-    }
-
-    public static List<OrderLineItemResponse> from(final List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-                .map(OrderLineItemResponse::from)
-                .collect(Collectors.toList());
     }
 
     public long getSeq() {

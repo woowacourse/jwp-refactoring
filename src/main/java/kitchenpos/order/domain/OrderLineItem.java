@@ -19,9 +19,6 @@ public class OrderLineItem {
     @Column(name = "menu_id", nullable = false)
     private Long menuId;
 
-    @Column(name = "menu_history_id", nullable = true)
-    private Long menuHistoryId;
-
     @Embedded
     private Quantity quantity;
 
@@ -31,22 +28,20 @@ public class OrderLineItem {
     public OrderLineItem(final Long menuId,
                          final Quantity quantity
     ) {
-        this(null, menuId, null, quantity);
+        this(null, menuId, quantity);
     }
 
     protected OrderLineItem(final Long seq,
                             final Long menuId,
-                            final Long menuHistoryId,
                             final Quantity quantity
     ) {
         this.seq = seq;
         this.menuId = menuId;
-        this.menuHistoryId = menuHistoryId;
         this.quantity = quantity;
     }
 
     public static OrderLineItem withoutOrder(final Long menuId, final Quantity quantity) {
-        return new OrderLineItem(menuId,  quantity);
+        return new OrderLineItem(menuId, quantity);
     }
 
     public Long getSeq() {
@@ -55,10 +50,6 @@ public class OrderLineItem {
 
     public Long getMenuId() {
         return menuId;
-    }
-
-    public Long getMenuHistoryId() {
-        return menuHistoryId;
     }
 
     public Quantity getQuantity() {

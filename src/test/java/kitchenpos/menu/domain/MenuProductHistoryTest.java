@@ -22,7 +22,7 @@ class MenuProductHistoryTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(actual.getId()).isNull();
+            softly.assertThat(actual.getSeq()).isNull();
             softly.assertThat(actual.getName()).isEqualTo(product.getName());
             softly.assertThat(actual.getPrice()).isEqualTo(product.getPrice());
             softly.assertThat(actual.getQuantity()).isEqualTo(menuProduct.getQuantity());

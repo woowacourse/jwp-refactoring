@@ -1,7 +1,10 @@
 package kitchenpos.order.application;
 
+import kitchenpos.dto.OrderHistoryResponse;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuHistory;
+import kitchenpos.menu.domain.MenuHistoryRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.event.OrderPreparedEvent;
 import kitchenpos.order.domain.Order;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
+    private final MenuHistoryRepository menuHistoryRepository;
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
@@ -29,13 +33,15 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final ApplicationEventPublisher publisher;
 
-    public OrderService(final MenuRepository menuRepository,
+    public OrderService(final MenuHistoryRepository menuHistoryRepository,
+                        final MenuRepository menuRepository,
                         final OrderRepository orderRepository,
                         final OrderTableRepository orderTableRepository,
                         final OrderValidator orderValidator,
                         final OrderMapper orderMapper,
                         final ApplicationEventPublisher publisher
     ) {
+        this.menuHistoryRepository = menuHistoryRepository;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
@@ -50,34 +56,44 @@ public class OrderService {
         newOrder.prepare(orderValidator);
         final Order savedOrder = orderRepository.save(newOrder);
 
-        publisher.publishEvent(new OrderPreparedEvent(newOrder.getId()));
+        publisher.publishEvent(new OrderPreparedEvent(savedOrder.getId()));
         return getOrderResponse(savedOrder);
     }
 
-    private OrderResponse getOrderResponse(final Order savedOrder) {
-        final OrderTable findOrderTable = orderTableRepository.findOrderTableById(savedOrder.getOrderTableId());
-        final List<Menu> findMenus = savedOrder.getOrderLineItems().getOrderLineItems()
-                .stream()
-                .map(OrderLineItem::getMenuId)
-                .map(menuRepository::findMenuById)
-                .collect(Collectors.toList());
-        return OrderResponse.from(savedOrder, findOrderTable, findMenus);
+    private OrderResponse getOrderResponse(final Order order) {
+        final OrderTable findOrderTable = orderTableRepository.findOrderTableById(order.getOrderTableId());
+        final List<Menu> findMenus = menuRepository.findInMenuIds(getMenuIds(order));
+        return OrderResponse.from(order, findOrderTable, findMenus);
     }
 
-    public List<OrderResponse> list() {
+    private List<Long> getMenuIds(final Order order) {
+        return order.getOrderLineItems()
+                .getOrderLineItems()
+                .stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderHistoryResponse> list() {
         return orderRepository.findAll()
                 .stream()
-                .map(this::getOrderResponse)
+                .map(this::getOrderHistoryResponse)
                 .collect(Collectors.toList());
+    }
+
+    private OrderHistoryResponse getOrderHistoryResponse(final Order savedOrder) {
+        final OrderTable findOrderTable = orderTableRepository.findOrderTableById(savedOrder.getOrderTableId());
+        final List<MenuHistory> findMenuHistories = menuHistoryRepository.findByOrderId(savedOrder.getId());
+        return OrderHistoryResponse.from(savedOrder, findOrderTable, findMenuHistories);
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final String orderStatus) {
+    public OrderHistoryResponse changeOrderStatus(final Long orderId, final String orderStatus) {
         final OrderStatus findOrderStatus = OrderStatus.valueOf(orderStatus);
 
         final Order findOrder = orderRepository.findOrderById(orderId);
         findOrder.changeOrderStatus(findOrderStatus);
 
-        return getOrderResponse(findOrder);
+        return getOrderHistoryResponse(findOrder);
     }
 }

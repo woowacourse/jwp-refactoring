@@ -1,69 +1,70 @@
 package kitchenpos.order.application;
 
-import kitchenpos.config.ApplicationTestConfig;
+import kitchenpos.dto.OrderHistoryResponse;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.domain.ProductRepository;
 import kitchenpos.menu.domain.vo.Name;
 import kitchenpos.menu.domain.vo.Price;
 import kitchenpos.menu.domain.vo.Quantity;
-import kitchenpos.dto.OrderResponse;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-class OrderQueryServiceTest extends ApplicationTestConfig {
+@SpringBootTest
+class OrderQueryServiceTest {
 
+    @Autowired
     private OrderService orderService;
 
-    @BeforeEach
-    void setUp() {
-        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository, orderValidator, orderMapper, publisher);
-    }
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
 
     @DisplayName("[SUCCESS] 전체 주문 목록을 조회한다.")
     @Test
     void success_findAll() {
         // given
-        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-        final Menu menu = Menu.withEmptyMenuProducts(
-                new Name("테스트용 메뉴명"),
-                Price.from("0"),
-                savedMenuGroup
+        final Menu savedMenu = createMenu();
+        final OrderTable savedOrderTable = orderTableRepository.saveAndFlush(OrderTable.withoutTableGroup(5, true));
+        final OrderSheet requestOrderSheet = new OrderSheet(
+                savedOrderTable.getId(),
+                List.of(
+                        new OrderSheet.OrderSheetItem(savedMenu.getId(), 10L)
+                )
         );
 
-        final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000")));
-        menu.addMenuProducts(List.of(
-                MenuProduct.withoutMenu(savedProduct, new Quantity(10)),
-                MenuProduct.withoutMenu(savedProduct, new Quantity(10))
-        ));
-        final Menu savedMenu = menuRepository.save(menu);
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
-
-        final Order order = Order.ofEmptyOrderLineItems(savedOrderTable.getId());
-        order.addOrderLineItems(List.of(
-                OrderLineItem.withoutOrder(savedMenu.getId(), new Quantity(10))
-        ));
-        final Order savedOrder = orderRepository.save(order);
-        final OrderTable findOrderTable = orderTableRepository.findOrderTableById(order.getOrderTableId());
-
-        final OrderResponse expected = OrderResponse.from(savedOrder, findOrderTable, List.of(menu));
+        // when
+        final OrderResponse expected = orderService.create(requestOrderSheet);
 
         // when
-        final List<OrderResponse> actual = orderService.list();
+        final List<OrderHistoryResponse> actual = orderService.list();
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual).hasSize(1);
-            final OrderResponse actualOrder = actual.get(0);
+            final OrderHistoryResponse actualOrder = actual.get(0);
 
             softly.assertThat(actualOrder.getId()).isEqualTo(expected.getId());
             softly.assertThat(actualOrder.getOrderTable())
@@ -71,9 +72,21 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
                     .isEqualTo(expected.getOrderTable());
             softly.assertThat(actualOrder.getOrderStatus()).isEqualTo(expected.getOrderStatus());
             softly.assertThat(actualOrder.getOrderedTime()).isEqualTo(expected.getOrderedTime());
-            softly.assertThat(actualOrder.getOrderLineItems())
-                    .usingRecursiveComparison()
-                    .isEqualTo(expected.getOrderLineItems());
         });
+    }
+
+    private Menu createMenu() {
+        final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("1000")));
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
+        final Menu menu = Menu.withEmptyMenuProducts(
+                new Name("테스트용 메뉴명"),
+                Price.from("1000"),
+                savedMenuGroup
+        );
+        menu.addMenuProducts(List.of(
+                MenuProduct.withoutMenu(savedProduct, new Quantity(10))
+        ));
+
+        return menuRepository.saveAndFlush(menu);
     }
 }
