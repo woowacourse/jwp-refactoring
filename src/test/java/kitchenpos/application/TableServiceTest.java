@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
 import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;

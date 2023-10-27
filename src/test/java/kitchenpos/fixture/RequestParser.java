@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.IdForRequest;
 import kitchenpos.dto.request.MenuCreateRequest;

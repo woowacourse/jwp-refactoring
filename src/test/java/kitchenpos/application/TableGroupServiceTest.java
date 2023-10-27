@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.fixture.RequestParser;
