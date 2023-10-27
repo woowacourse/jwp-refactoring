@@ -10,11 +10,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.fixture.MenuProductFixtures;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.request.MenuCreateRequest;
-import kitchenpos.menu.request.MenuProductDto;
 import kitchenpos.menugroup.dao.MenuGroupDao;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.dao.ProductDao;
@@ -52,7 +52,7 @@ class MenuServiceTest extends ServiceTest {
                 "후라이드+양념",
                 BigDecimal.valueOf(33_000),
                 menuGroup.getId(),
-                MenuProductDto.of(menuProducts)
+                MenuProductFixtures.of(menuProducts)
         );
 
         // when
@@ -78,7 +78,7 @@ class MenuServiceTest extends ServiceTest {
                 "후라이드+양념",
                 BigDecimal.valueOf(invalidPrice),
                 menuGroup.getId(),
-                MenuProductDto.of(Collections.emptyList())
+                MenuProductFixtures.of(Collections.emptyList())
         );
 
         // when, then
@@ -96,7 +96,7 @@ class MenuServiceTest extends ServiceTest {
                 "후라이드+양념",
                 BigDecimal.valueOf(10_000),
                 nonExistMenuGroupId,
-                MenuProductDto.of(Collections.emptyList())
+                MenuProductFixtures.of(Collections.emptyList())
         );
 
         // when, then
@@ -120,7 +120,7 @@ class MenuServiceTest extends ServiceTest {
                 "후라이드+양념",
                 BigDecimal.valueOf(33_000),
                 menuGroup.getId(),
-                MenuProductDto.of(menuProducts)
+                MenuProductFixtures.of(menuProducts)
         );
 
 
@@ -147,7 +147,7 @@ class MenuServiceTest extends ServiceTest {
                 "후라이드+양념",
                 BigDecimal.valueOf(wrongCalculateResult),
                 menuGroup.getId(),
-                MenuProductDto.of(menuProducts)
+                MenuProductFixtures.of(menuProducts)
         );
 
         // when, then
@@ -171,7 +171,7 @@ class MenuServiceTest extends ServiceTest {
                 "후라이드+양념",
                 BigDecimal.valueOf(33_000),
                 menuGroup.getId(),
-                MenuProductDto.of(menuProducts1)
+                MenuProductFixtures.of(menuProducts1)
         );
 
         List<MenuProduct> menuProducts2 = List.of(
@@ -182,7 +182,7 @@ class MenuServiceTest extends ServiceTest {
                 "후라이드+후라이드",
                 BigDecimal.valueOf(32_000),
                 menuGroup.getId(),
-                MenuProductDto.of(menuProducts2)
+                MenuProductFixtures.of(menuProducts2)
         );
 
         menuService.create(request1);

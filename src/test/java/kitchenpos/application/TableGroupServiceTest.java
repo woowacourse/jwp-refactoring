@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.fixture.MenuProductFixtures;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.request.MenuCreateRequest;
-import kitchenpos.menu.request.MenuProductDto;
 import kitchenpos.menugroup.dao.MenuGroupDao;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.dao.OrderDao;
@@ -153,7 +153,7 @@ class TableGroupServiceTest extends ServiceTest {
                 name,
                 BigDecimal.valueOf(price),
                 menuGroup.getId(),
-                MenuProductDto.of(List.of(menuProduct))
+                MenuProductFixtures.of(List.of(menuProduct))
         );
     }
 }
