@@ -3,7 +3,6 @@ package kitchenpos.table.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -27,7 +26,7 @@ class OrderTableTest {
     void 테이블_그룹_수정() {
         final OrderTable orderTable = new OrderTable(null, 0, true);
         final OrderTable orderTable2 = new OrderTable(null, 0, true);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2));
+        final TableGroup tableGroup = new TableGroup(List.of(orderTable, orderTable2));
 
         assertDoesNotThrow(
                 () -> orderTable.updateTableGroup(tableGroup.getId())

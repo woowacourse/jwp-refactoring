@@ -1,6 +1,5 @@
 package kitchenpos.tablegroup.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -41,7 +40,7 @@ public class TableGroupService {
 
     private TableGroup saveTableGroup(final TableGroupCreateRequest tableGroupCreateRequest) {
         final List<OrderTable> orderTables = convertToOrderTables(tableGroupCreateRequest.getOrderTables());
-        final TableGroup tableGroup = TableGroupMapper.toTableGroup(LocalDateTime.now(), orderTables);
+        final TableGroup tableGroup = TableGroupMapper.toTableGroup(orderTables);
         tableGroupValidator.validate(tableGroup);
 
         return tableGroupRepository.save(tableGroup);

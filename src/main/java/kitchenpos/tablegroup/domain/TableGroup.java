@@ -1,25 +1,21 @@
 package kitchenpos.tablegroup.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.BaseEntity;
 import kitchenpos.table.domain.OrderTable;
 
 @Entity
-public class TableGroup {
+public class TableGroup extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroupId")
     private List<OrderTable> orderTables = new ArrayList<>();
@@ -29,19 +25,14 @@ public class TableGroup {
 
     private TableGroup(
             final Long id,
-            final LocalDateTime createdDate,
             final List<OrderTable> orderTables
     ) {
         this.id = id;
-        this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    public TableGroup(
-            final LocalDateTime createdDate,
-            final List<OrderTable> orderTables
-    ) {
-        this(null, createdDate, orderTables);
+    public TableGroup(final List<OrderTable> orderTables) {
+        this(null, orderTables);
     }
 
     public void ungroup() {
@@ -51,10 +42,6 @@ public class TableGroup {
 
     public Long getId() {
         return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
     }
 
     public List<OrderTable> getOrderTables() {

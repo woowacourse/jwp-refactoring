@@ -127,7 +127,7 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
             TableGroup savedTableGroup = tableGroupRepository.save(
-                    new TableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2)));
+                    new TableGroup(List.of(savedOrderTable1, savedOrderTable2)));
             savedOrderTable1.updateTableGroup(savedTableGroup.getId());
 
             TableGroupCreateRequest request = createTableGroup(
