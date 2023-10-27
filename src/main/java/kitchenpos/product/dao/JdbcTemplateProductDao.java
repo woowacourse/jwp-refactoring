@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.product.dao;
 
 import kitchenpos.product.domain.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
