@@ -7,33 +7,31 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.application.table.TableService;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableReseponse;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.AdditionalAnswers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class TableServiceTest {
 
-    @Mock
+    @MockBean
     private OrderDao orderDao;
 
-    @Mock
+    @MockBean
     private OrderTableDao orderTableDao;
 
-    @InjectMocks
+    @Autowired
     private TableService tableService;
 
     private OrderTable 빈_신규_테이블1;
@@ -56,7 +54,7 @@ public class TableServiceTest {
                 빈_신규_테이블1.getNumberOfGuests(), 빈_신규_테이블1.isEmpty());
 
         // when
-        OrderTableReseponse result = tableService.create(orderTableRequest);
+        OrderTableResponse result = tableService.create(orderTableRequest);
 
         //then
         assertThat(result.getId()).isNotNull();
@@ -68,7 +66,7 @@ public class TableServiceTest {
         given(orderTableDao.findAll()).willReturn(List.of(빈_신규_테이블1));
 
         //when
-        List<OrderTableReseponse> result = tableService.list();
+        List<OrderTableResponse> result = tableService.list();
 
         //then
         assertThat(result).hasSize(1);
@@ -84,7 +82,7 @@ public class TableServiceTest {
         OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
 
         //when
-        OrderTableReseponse result = tableService.changeEmpty(requestedOrderTableId, orderTableRequest);
+        OrderTableResponse result = tableService.changeEmpty(requestedOrderTableId, orderTableRequest);
 
         //then
         assertThat(result.isEmpty()).isTrue();
@@ -108,6 +106,7 @@ public class TableServiceTest {
         //given
         Long requestedOrderTableId = 단일_조리_테이블.getId();
         given(orderTableDao.findById(requestedOrderTableId)).willReturn(Optional.of(단일_조리_테이블));
+        given(orderTableDao.save(any(OrderTable.class))).willAnswer(AdditionalAnswers.returnsFirstArg());
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(requestedOrderTableId,
                 List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(true);
@@ -131,7 +130,7 @@ public class TableServiceTest {
         given(orderTableDao.save(any(OrderTable.class))).willAnswer(AdditionalAnswers.returnsFirstArg());
 
         //when
-        OrderTableReseponse result = tableService.changeNumberOfGuests(requestedOrderTableId, orderTableRequest);
+        OrderTableResponse result = tableService.changeNumberOfGuests(requestedOrderTableId, orderTableRequest);
 
         //then
         assertThat(result.getNumberOfGuests()).isEqualTo(6);

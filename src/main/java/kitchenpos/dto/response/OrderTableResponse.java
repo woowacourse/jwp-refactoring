@@ -2,14 +2,14 @@ package kitchenpos.dto.response;
 
 import kitchenpos.domain.table.OrderTable;
 
-public class OrderTableReseponse {
+public class OrderTableResponse {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public static OrderTableReseponse from(OrderTable orderTable) {
-        return new OrderTableReseponse(
+    public static OrderTableResponse from(OrderTable orderTable) {
+        return new OrderTableResponse(
                 orderTable.getId(),
                 orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),
@@ -17,11 +17,7 @@ public class OrderTableReseponse {
         );
     }
 
-    public OrderTableReseponse(Long id) {
-        this(id, null, 0, false);
-    }
-
-    public OrderTableReseponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTableResponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
