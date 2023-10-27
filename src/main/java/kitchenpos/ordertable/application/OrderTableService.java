@@ -3,6 +3,8 @@ package kitchenpos.ordertable.application;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.OrderTableRepository;
+import kitchenpos.ordertable.OrderTableValidator;
 import kitchenpos.ordertable.application.request.ChangeEmptyRequest;
 import kitchenpos.ordertable.application.request.NumberOfGuestsRequest;
 import kitchenpos.ordertable.application.request.OrderTableRequest;

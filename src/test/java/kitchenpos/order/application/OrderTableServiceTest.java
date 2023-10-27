@@ -1,10 +1,11 @@
 package kitchenpos.order.application;
 
+import kitchenpos.order.OrderRepository;
 import kitchenpos.order.OrderTableValidatorImpl;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.application.OrderTableRepository;
+import kitchenpos.ordertable.OrderTableRepository;
 import kitchenpos.ordertable.application.OrderTableService;
 import kitchenpos.ordertable.application.request.ChangeEmptyRequest;
 import kitchenpos.ordertable.application.request.NumberOfGuestsRequest;

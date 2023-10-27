@@ -3,6 +3,7 @@ package kitchenpos.product.application;
 import kitchenpos.product.Product;
 import kitchenpos.product.ProductName;
 import kitchenpos.product.ProductPrice;
+import kitchenpos.product.ProductRepository;
 import kitchenpos.product.application.request.ProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,7 +1,6 @@
 package kitchenpos.order;
 
-import kitchenpos.order.application.OrderRepository;
-import kitchenpos.ordertable.application.OrderTableValidator;
+import kitchenpos.ordertable.OrderTableValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

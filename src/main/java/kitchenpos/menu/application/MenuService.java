@@ -3,13 +3,14 @@ package kitchenpos.menu.application;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuName;
 import kitchenpos.menu.MenuPrice;
+import kitchenpos.menu.MenuRepository;
 import kitchenpos.menu.application.request.MenuRequest;
-import kitchenpos.menugroup.application.MenuGroupRepository;
+import kitchenpos.menugroup.MenuGroupRepository;
 import kitchenpos.menuproduct.MenuProduct;
 import kitchenpos.menuproduct.MenuQuantity;
-import kitchenpos.menuproduct.application.request.MenuProductRequest;
+import kitchenpos.menuproduct.request.MenuProductRequest;
 import kitchenpos.product.Product;
-import kitchenpos.product.application.ProductRepository;
+import kitchenpos.product.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

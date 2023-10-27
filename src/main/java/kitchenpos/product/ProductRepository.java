@@ -1,6 +1,5 @@
-package kitchenpos.product.application;
+package kitchenpos.product;
 
-import kitchenpos.product.Product;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;

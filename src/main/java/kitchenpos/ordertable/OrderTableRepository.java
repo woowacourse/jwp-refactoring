@@ -1,6 +1,5 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.ordertable;
 
-import kitchenpos.ordertable.OrderTable;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;

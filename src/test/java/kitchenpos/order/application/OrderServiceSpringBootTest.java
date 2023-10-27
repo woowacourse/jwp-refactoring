@@ -1,6 +1,8 @@
 package kitchenpos.order.application;
 
 import kitchenpos.order.Order;
+import kitchenpos.order.OrderLineItemRepository;
+import kitchenpos.order.OrderRepository;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
 import org.junit.jupiter.api.DisplayName;
