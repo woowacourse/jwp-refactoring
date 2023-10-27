@@ -1,35 +1,30 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixtures.한마리_메뉴;
-import static kitchenpos.fixture.OrderTableFixtures.createEmptyTable;
-import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
-import static kitchenpos.fixture.TableGroupFixtures.createTableGroup;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.time.LocalDateTime;
-import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.MenuFixtures;
-import kitchenpos.fixture.MenuProductFixtures;
-import kitchenpos.fixture.OrderFixtures;
-import kitchenpos.fixture.OrderLineItemFixtures;
+import kitchenpos.domain.*;
+import kitchenpos.request.MenuCreateRequest;
+import kitchenpos.request.MenuProductDto;
+import kitchenpos.request.OrderTableCreateRequest;
+import kitchenpos.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static kitchenpos.fixture.MenuGroupFixtures.한마리_메뉴;
+import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
+import static kitchenpos.fixture.TableGroupFixtures.getTableGroupCreateRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -39,6 +34,8 @@ class TableGroupServiceTest extends ServiceTest {
     ProductDao productDao;
     @Autowired
     OrderDao orderDao;
+    @Autowired
+    OrderTableDao orderTableDao;
 
     @Autowired
     TableGroupService tableGroupService;
@@ -51,12 +48,13 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        OrderTable orderTable1 = tableService.create(createEmptyTable());
-        OrderTable orderTable2 = tableService.create(createEmptyTable());
-        TableGroup tableGroup = createTableGroup(orderTable1, orderTable2);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable1 = tableService.create(orderTableCreateRequest);
+        OrderTable orderTable2 = tableService.create(orderTableCreateRequest);
+        TableGroupCreateRequest tableGroupCreateRequest = getTableGroupCreateRequest(List.of(orderTable1, orderTable2));
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         // then
         assertThat(savedTableGroup.getId()).isNotNull();
@@ -66,11 +64,12 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_TablesSizeLessThanTwo_ExceptionThrown() {
         // given
-        OrderTable orderTable = tableService.create(createEmptyTable());
-        TableGroup tableGroup = createTableGroup(orderTable);
+        OrderTableCreateRequest orderTableCreateReq = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable = tableService.create(orderTableCreateReq);
+        TableGroupCreateRequest tableGroupCreateRequest = getTableGroupCreateRequest(List.of(orderTable));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -78,12 +77,12 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_ContainsNotEmptyTable_ExceptionThrown() {
         // given
-        OrderTable notEmptyTable = tableService.create(new OrderTable());
-        OrderTable emptyTable = tableService.create(createEmptyTable());
-        TableGroup tableGroup = createTableGroup(notEmptyTable, emptyTable);
+        OrderTable notEmptyTable = tableService.create(new OrderTableCreateRequest(5, false));
+        OrderTable emptyTable = tableService.create(new OrderTableCreateRequest(5, true));
+        TableGroupCreateRequest tableGroupCreateRequest = getTableGroupCreateRequest(List.of(notEmptyTable, emptyTable));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -91,19 +90,21 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         // given
-        OrderTable orderTable1 = tableService.create(createEmptyTable());
-        OrderTable orderTable2 = tableService.create(createEmptyTable());
-        TableGroup savedTableGroup = tableGroupService.create(
-                createTableGroup(orderTable1, orderTable2)
-        );
+        OrderTableCreateRequest orderTableCreateReq = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable1 = tableService.create(orderTableCreateReq);
+        OrderTable orderTable2 = tableService.create(orderTableCreateReq);
+        TableGroupCreateRequest tableGroupCreateRequest = getTableGroupCreateRequest(List.of(orderTable1, orderTable2));
+        TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
+        OrderTable findOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
+        OrderTable findOrderTable2 = orderTableDao.findById(orderTable2.getId()).get();
 
         // then
         assertAll(
-                () -> assertThat(orderTable1.getTableGroupId()).isNull(),
-                () -> assertThat(orderTable2.getTableGroupId()).isNull()
+                () -> assertThat(findOrderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(findOrderTable2.getTableGroupId()).isNull()
         );
     }
 
@@ -112,14 +113,20 @@ class TableGroupServiceTest extends ServiceTest {
     @ParameterizedTest
     void ungroup_ContainsInvalidOrderProcessTable_ExceptionThrown(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable1 = tableService.create(createEmptyTable());
-        OrderTable orderTable2 = tableService.create(createEmptyTable());
-        TableGroup savedTableGroup = tableGroupService.create(
-                createTableGroup(orderTable1, orderTable2)
-        );
+        OrderTableCreateRequest orderTableCreateReq = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable1 = tableService.create(orderTableCreateReq);
+        OrderTable orderTable2 = tableService.create(orderTableCreateReq);
+        TableGroupCreateRequest tableGroupCreateRequest = getTableGroupCreateRequest(List.of(orderTable1, orderTable2));
+        TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateRequest);
 
-        Menu menu = menuService.create(createMenu("양념치킨", 17_000));
-        Order order = createOrder(orderTable1, orderStatus, menu);
+        Menu menu = menuService.create(getMenuCreateRequest("양념치킨", 17_000));
+        Order order = new Order(
+                null,
+                orderTable1.getId(),
+                orderStatus.name(),
+                LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getId(), 1))
+        );
         Order savedOrder = orderDao.save(order);
 
         // when, then
@@ -128,24 +135,15 @@ class TableGroupServiceTest extends ServiceTest {
 
     }
 
-    private Menu createMenu(String name, int price) {
+    private MenuCreateRequest getMenuCreateRequest(String name, int price) {
         Product product = productDao.save(양념치킨_17000원);
-        MenuProduct menuProduct = MenuProductFixtures.create(product, 1);
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
         MenuGroup menuGroup = menuGroupDao.save(한마리_메뉴);
-        return MenuFixtures.create(
+        return new MenuCreateRequest(
                 name,
-                price,
-                menuGroup,
-                List.of(menuProduct)
-        );
-    }
-
-    private Order createOrder(OrderTable orderTable, OrderStatus orderStatus, Menu menu) {
-        return OrderFixtures.create(
-                orderTable.getId(),
-                orderStatus.name(),
-                LocalDateTime.now(),
-                List.of(OrderLineItemFixtures.create(menu.getId(), 1))
+                BigDecimal.valueOf(price),
+                menuGroup.getId(),
+                MenuProductDto.of(List.of(menuProduct))
         );
     }
 }

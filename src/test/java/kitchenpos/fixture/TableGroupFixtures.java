@@ -1,16 +1,17 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.request.TableGroupCreateRequest;
+import kitchenpos.request.TableGroupUnitDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TableGroupFixtures {
 
-    public static TableGroup createTableGroup(OrderTable... orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(orderTables));
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroup;
+    public static TableGroupCreateRequest getTableGroupCreateRequest(List<OrderTable> orderTables) {
+        return new TableGroupCreateRequest(orderTables.stream()
+                .map(orderTable -> new TableGroupUnitDto(orderTable.getId()))
+                .collect(Collectors.toList()));
     }
 }
