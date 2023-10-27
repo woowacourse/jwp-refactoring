@@ -40,10 +40,10 @@ public class OrderTableRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/api/tables/{orderTableId}/number-of-guests")
+    @PutMapping("/api/tables/{orderTableId}")
     public ResponseEntity<Void> updateNumberOfGuest(
             @PathVariable final Long orderTableId,
-            @RequestParam final int numberOfGuests
+            @RequestParam("number-of-guests") final int numberOfGuests
     ) {
         orderTableService.changeNumberOfGuests(orderTableId, numberOfGuests);
         return ResponseEntity.ok().build();

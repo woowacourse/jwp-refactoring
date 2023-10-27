@@ -1,5 +1,5 @@
 ###
-POST {{host}}/api/tables/1
+POST {{host}}/api/tables
 Content-Type: application/json
 
 {
@@ -11,20 +11,10 @@ Content-Type: application/json
 GET {{host}}/api/tables
 
 ###
-PUT {{host}}/api/tables/1/empty
-Content-Type: application/json
-
-{
-  "empty": false
-}
+PUT {{host}}/api/tables/1/empty?isEmpty=false
 
 ###
-PUT {{host}}/api/tables/1/number-of-guests
-Content-Type: application/json
-
-{
-  "numberOfGuests": 4
-}
+PUT {{host}}/api/tables/1?number-of-guests=4
 
 ###
 PUT {{host}}/api/tables/1/empty
@@ -33,13 +23,3 @@ Content-Type: application/json
 {
   "empty": true
 }
-
-###
-PUT {{host}}/api/tables/2/empty
-Content-Type: application/json
-
-{
-  "empty": true
-}
-
-###
