@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':kitchenpos-common')
+}
+
+bootJar { enabled = false }
+jar { enabled = true }

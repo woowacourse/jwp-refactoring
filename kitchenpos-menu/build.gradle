@@ -1,0 +1,8 @@
+dependencies {
+    implementation project(':kitchenpos-menugroup')
+    implementation project(':kitchenpos-common')
+    testImplementation project(path: ':kitchenpos-common')
+}
+
+bootJar { enabled = false }
+jar { enabled = true }

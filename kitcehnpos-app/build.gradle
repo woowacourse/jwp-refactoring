@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':kitchenpos-common')
+    implementation project(':kitchenpos-menu')
+    implementation project(':kitchenpos-menugroup')
+    implementation project(':kitchenpos-order')
+    implementation project(':kitchenpos-ordertable')
+    implementation project(':kitchenpos-product')
+    implementation project(':kitchenpos-tablegroup')
+}
+
+bootJar { enabled = true }
