@@ -1,7 +1,5 @@
 package kitchenpos.menu;
 
-import kitchenpos.menuproduct.MenuProduct;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;

@@ -4,12 +4,12 @@ import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuGroupValidator;
 import kitchenpos.menu.MenuName;
 import kitchenpos.menu.MenuPrice;
+import kitchenpos.menu.MenuProduct;
 import kitchenpos.menu.MenuProductValidator;
+import kitchenpos.menu.MenuQuantity;
 import kitchenpos.menu.MenuRepository;
+import kitchenpos.menu.application.request.MenuProductRequest;
 import kitchenpos.menu.application.request.MenuRequest;
-import kitchenpos.menuproduct.MenuProduct;
-import kitchenpos.menuproduct.MenuQuantity;
-import kitchenpos.menuproduct.request.MenuProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

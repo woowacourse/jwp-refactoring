@@ -1,4 +1,4 @@
-package kitchenpos.menuproduct;
+package kitchenpos.menu;
 
 import org.springframework.data.repository.Repository;
 

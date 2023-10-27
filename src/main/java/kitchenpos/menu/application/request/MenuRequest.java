@@ -1,7 +1,5 @@
 package kitchenpos.menu.application.request;
 
-import kitchenpos.menuproduct.request.MenuProductRequest;
-
 import java.math.BigDecimal;
 import java.util.List;
 
