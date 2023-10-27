@@ -2,8 +2,8 @@ package kitchenpos.fixture;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.OrderTable;
+import kitchenpos.tablegroup.TableGroup;
 
 public class TableGroupFixture {
 
