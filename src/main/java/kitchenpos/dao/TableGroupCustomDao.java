@@ -8,23 +8,21 @@ import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TableGroupRepositoryImpl implements TableGroupRepository {
+public class TableGroupCustomDao {
 
     private final TableGroupDao tableGroupDao;
 
-    private final OrderTableRepository orderTableRepository;
+    private final OrderTableDao orderTableDao;
 
-    public TableGroupRepositoryImpl(final TableGroupDao tableGroupDao, final OrderTableRepository orderTableRepository) {
+    public TableGroupCustomDao(final TableGroupDao tableGroupDao, final OrderTableDao orderTableDao) {
         this.tableGroupDao = tableGroupDao;
-        this.orderTableRepository = orderTableRepository;
+        this.orderTableDao = orderTableDao;
     }
 
-    @Override
     public List<TableGroup> findAll() {
         return tableGroupDao.findAll();
     }
 
-    @Override
     public TableGroup save(TableGroup entity) {
         final Long tableGroupId = tableGroupDao
                 .save(new TableGroup(entity.getId(), entity.getCreatedDate(), new OrderTables(List.of())))
@@ -32,7 +30,7 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
 
         final ArrayList<OrderTable> orderTables = new ArrayList<>();
         for (OrderTable orderTable : entity.getOrderTables()) {
-            orderTables.add(orderTableRepository.save(
+            orderTables.add(orderTableDao.save(
                     new OrderTable(orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(), false)
             ));
         }

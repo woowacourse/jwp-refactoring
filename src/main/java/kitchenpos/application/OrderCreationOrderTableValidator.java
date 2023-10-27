@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Component;
@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderCreationOrderTableValidator implements OrderCreationValidator {
 
-    private final OrderTableRepository orderTableRepository;
+    private final OrderTableDao orderTableDao;
 
-    public OrderCreationOrderTableValidator(final OrderTableRepository orderTableRepository) {
-        this.orderTableRepository = orderTableRepository;
+    public OrderCreationOrderTableValidator(final OrderTableDao orderTableDao) {
+        this.orderTableDao = orderTableDao;
     }
 
     @Override
     public void validate(final Order order) {
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {

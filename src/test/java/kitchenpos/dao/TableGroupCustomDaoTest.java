@@ -16,11 +16,11 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
-@Import(TableGroupRepositoryImpl.class)
+@Import(TableGroupCustomDao.class)
 class TableGroupCustomDaoTest {
 
     @Autowired
-    private TableGroupRepository tableGroupRepository;
+    private TableGroupCustomDao tableGroupCustomDao;
 
     @Test
     @DisplayName("OrderTables에 대한 persistance cascade를 지원한다. TableGroup 저장 시 TableGroup 안에 있는 OrderTables에 대한 저장도 함께 한다.")
@@ -29,7 +29,7 @@ class TableGroupCustomDaoTest {
         final OrderTable orderTable2 = new OrderTable(new NumberOfGuests(6), true);
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new OrderTables(List.of(orderTable, orderTable2)));
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupCustomDao.save(tableGroup);
 
         assertAll(() -> {
             assertThat(savedTableGroup.getId()).as("tableGroup이 정상 저장되었음은 물론이고,").isNotNull();

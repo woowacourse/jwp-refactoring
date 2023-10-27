@@ -4,7 +4,7 @@ import java.util.List;
 import kitchenpos.domain.OrderTable;
 import org.springframework.data.repository.CrudRepository;
 
-public interface OrderTableRepository extends CrudRepository<OrderTable, Long> {
+public interface OrderTableDao extends CrudRepository<OrderTable, Long> {
     default OrderTable findMandatoryById(Long id) {
         return findById(id).orElseThrow(IllegalArgumentException::new);
     }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 
-public interface OrderRepository extends CrudRepository<Order, Long> {
+public interface OrderDao extends CrudRepository<Order, Long> {
     Optional<Order> findById(Long id);
 
     List<Order> findAll();
