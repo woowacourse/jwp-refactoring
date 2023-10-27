@@ -1,9 +1,9 @@
 package kitchenpos.order;
 
 import kitchenpos.menu.Menu;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.ordertable.TableService;
-import kitchenpos.ui.dto.OrderLineItemRequest;
-import kitchenpos.ui.dto.OrderRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

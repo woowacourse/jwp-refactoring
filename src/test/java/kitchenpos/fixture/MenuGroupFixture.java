@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
 import kitchenpos.menugroup.MenuGroup;
-import kitchenpos.ui.dto.MenuGroupRequest;
+import kitchenpos.menugroup.dto.MenuGroupRequest;
 
 import java.util.List;
 

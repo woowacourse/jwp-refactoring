@@ -1,10 +1,10 @@
 package kitchenpos.menu;
 
 import kitchenpos.common.Price;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
 import kitchenpos.menugroup.MenuGroupRepository;
 import kitchenpos.product.ProductRepository;
-import kitchenpos.ui.dto.MenuProductRequest;
-import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

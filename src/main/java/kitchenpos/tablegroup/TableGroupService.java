@@ -3,9 +3,9 @@ package kitchenpos.tablegroup;
 import kitchenpos.ordertable.NoOngoingOrderValidator;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.OrderTableRepository;
-import kitchenpos.ui.dto.OrderTableRequest;
-import kitchenpos.ui.dto.TableGroupRequest;
-import kitchenpos.ui.dto.TableGroupResponse;
+import kitchenpos.tablegroup.dto.OrderTableRequest;
+import kitchenpos.tablegroup.dto.TableGroupRequest;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

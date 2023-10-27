@@ -2,8 +2,8 @@ package kitchenpos.order;
 
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuRepository;
-import kitchenpos.ui.dto.OrderLineItemRequest;
-import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

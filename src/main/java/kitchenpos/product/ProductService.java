@@ -1,7 +1,7 @@
 package kitchenpos.product;
 
 import kitchenpos.common.Price;
-import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.product.dto.ProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
