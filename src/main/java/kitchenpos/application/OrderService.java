@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItemValidator;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.ui.dto.OrderRequest;
@@ -19,25 +19,24 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderLineItemValidator orderLineItemValidator;
+    private final OrderValidator orderValidator;
 
     public OrderService(final OrderRepository orderRepository,
                         final OrderTableRepository orderTableRepository,
-                        final OrderLineItemValidator orderLineItemValidator) {
+                        final OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderLineItemValidator = orderLineItemValidator;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다. 주문을 등록할 수 없습니다."));
-        orderLineItemValidator.validateOrderMenuExist(orderRequest.getOrderLineItems());
 
-        final Order order = new Order(orderTable, orderRequest.getOrderStatus(), orderRequest.getOrderedTime());
         final List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems();
-        order.addOrderLineItems(orderLineItems);
+        final Order order = new Order(orderTable.getId(), orderRequest.getOrderStatus(), orderRequest.getOrderedTime(), orderLineItems);
+        order.place(orderValidator);
         orderRepository.save(order);
 
         return OrderResponse.from(order);

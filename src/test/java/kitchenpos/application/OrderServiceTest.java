@@ -82,11 +82,10 @@ class OrderServiceTest {
                 softly.assertThat(response).extracting("orderTableId", "orderStatus")
                         .containsOnly(orderRequest.getOrderTableId(), orderRequest.getOrderStatus());
 
-                List<Menu> menus = response.getOrderLineItems().stream()
-                        .map(OrderLineItem::getMenu)
+                List<Long> menuIds = response.getOrderLineItems().stream()
+                        .map(OrderLineItem::getMenuId)
                         .collect(Collectors.toList());
-                softly.assertThat(menus).extracting("id")
-                        .containsOnly(orderLineItem.getMenuId());
+                softly.assertThat(menuIds).containsOnly(orderLineItem.getMenuId());
             });
         }
 
@@ -95,7 +94,7 @@ class OrderServiceTest {
             OrderRequest orderRequest = new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of());
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalStateException.class)
+                    .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 항목이 존재하지 않습니다. 주문을 등록할 수 없습니다.");
         }
 
@@ -107,7 +106,7 @@ class OrderServiceTest {
                     LocalDateTime.now(), List.of(orderLineItem, wrongOrderLineItem));
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(IllegalStateException.class)
                     .hasMessage("주문항목에 존재하지 않는 메뉴가 있습니다. 주문을 등록할 수 없습니다.");
         }
 
@@ -126,9 +125,12 @@ class OrderServiceTest {
     class 주문상태_변경 {
         @Test
         void 주문_상태를_변경할_수_있다() {
-            OrderResponse orderResponse = orderService.create(new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItem)));
+            OrderResponse orderResponse = orderService.create(
+                    new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItem))
+            );
 
-            OrderRequest orderRequest = new OrderRequest(orderResponse.getOrderTableId(), orderResponse.getOrderStatus(), orderResponse.getOrderedTime(), orderResponse.getOrderLineItems());
+            OrderRequest orderRequest = new OrderRequest(orderResponse.getOrderTableId(), orderResponse.getOrderStatus(),
+                    orderResponse.getOrderedTime(), orderResponse.getOrderLineItems());
             OrderResponse changed = orderService.changeOrderStatus(orderResponse.getId(), orderRequest);
 
             assertThat(changed.getOrderStatus()).isEqualTo(MEAL.name());

@@ -29,7 +29,7 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
-    
+
     @Autowired
     private TableGroupRepository tableGroupRepository;
 
@@ -125,7 +125,7 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
 
-        orderRepository.save(new Order(orderTable1, orderStatus.name(), LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable1.getId(), orderStatus.name(), LocalDateTime.now(), List.of()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)

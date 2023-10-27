@@ -37,7 +37,7 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableDto orderTableDto) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다. 빈 테이블로 변경할 수 없습니다."));
-        validateChangeEmptyTableOrderCondition(orderRepository.findByOrderTable(orderTable));
+        validateChangeEmptyTableOrderCondition(orderRepository.findByOrderTableId(orderTable.getId()));
 
         orderTable.changeEmpty(orderTableDto.isEmpty());
 

@@ -2,7 +2,6 @@ package kitchenpos.domain.table;
 
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,8 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REMOVE;
 
 @Entity
 public class TableGroup {
@@ -23,35 +26,30 @@ public class TableGroup {
     private Long id;
     @Column
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
-    private List<OrderTable> orderTables;
+    @OneToMany(mappedBy = "tableGroup", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
         this.createdDate = LocalDateTime.now();
     }
 
-    public TableGroup(Long id, List<OrderTable> orderTables) {
+    public TableGroup(final Long id,
+                      final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = LocalDateTime.now();
-        this.orderTables = orderTables;
+        this.orderTables.addAll(orderTables);
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
-        this.id = null;
-        this.createdDate = LocalDateTime.now();
-        this.orderTables = orderTables;
+    public TableGroup(final List<OrderTable> orderTables) {
+        this(null, orderTables);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public void unGroup() {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.setTableGroup(null);
+            orderTable.changeEmpty(true);
+        }
+        orderTables.clear();
     }
 
     public void setOrderTables(final List<OrderTable> orderTables) {
@@ -77,11 +75,15 @@ public class TableGroup {
         }
     }
 
-    public void unGroup() {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.changeEmpty(true);
-        }
-        orderTables.clear();
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
     }
 }

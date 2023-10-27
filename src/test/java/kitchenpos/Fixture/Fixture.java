@@ -22,6 +22,6 @@ public abstract class Fixture {
     }
 
     public static OrderLineItem orderLineItemFixture(Order order, Menu menu, long quantity) {
-        return new OrderLineItem(null, order, menu, quantity);
+        return new OrderLineItem(null, order, menu.getId(), quantity);
     }
 }

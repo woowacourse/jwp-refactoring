@@ -10,8 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -25,10 +23,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
-    //    private Long orderTableId;
+    private Long orderTableId;
     @Column
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -41,48 +36,41 @@ public class Order {
     }
 
     public Order(final Long id,
-                 final OrderTable orderTable,
+                 final Long orderTableId,
                  final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems.addAll(orderLineItems);
     }
 
-    public Order(Long id,
-                 OrderTable orderTable,
-                 OrderStatus orderStatus,
-                 LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
-        this.id = id;
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+    public Order(final Long orderTableId,
+                 final String orderStatusName,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, OrderStatus.valueOf(orderStatusName), orderedTime, orderLineItems);
     }
 
     public Order(final OrderTable orderTable,
                  final String orderStatus,
                  final LocalDateTime orderedTime) {
-        this(null, orderTable, OrderStatus.valueOf(orderStatus), orderedTime);
+        this(null, orderTable.getId(), OrderStatus.valueOf(orderStatus), orderedTime, List.of());
     }
 
-    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalStateException("주문 항목이 존재하지 않습니다. 주문을 등록할 수 없습니다.");
-        }
+    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems.addAll(orderLineItems);
     }
 
-//    public void place(OrderValidator orderValidator) {
-//        orderValidator.validate(this);
-//        this.orderStatus = OrderStatus.Ordered;
-//    }
+    public void place(final OrderValidator orderValidator) {
+        orderValidator.validate(this);
+    }
 
-    public void updateStatus(final Order order) {
+    public void updateStatus(final Order other) {
         validateStatus();
-        this.orderStatus = order.orderStatus;
+        this.orderStatus = other.orderStatus;
     }
 
     private void validateStatus() {
@@ -99,8 +87,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {

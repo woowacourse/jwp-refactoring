@@ -15,7 +15,6 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
@@ -27,7 +26,10 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public OrderTable(final Long id,
+                      final TableGroup tableGroup,
+                      final int numberOfGuests,
+                      final boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -35,17 +37,17 @@ public class OrderTable {
         validateNumberOfGuest(numberOfGuests);
     }
 
-    private void validateNumberOfGuest(int numberOfGuests) {
+    private void validateNumberOfGuest(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("방문한 손님 수는 0명 이상이어야 합니다.");
         }
     }
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         this(null, tableGroup, numberOfGuests, empty);
     }
 
-    public OrderTable(int numberOfGuests, boolean empty) {
+    public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
@@ -81,5 +83,4 @@ public class OrderTable {
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
-
 }

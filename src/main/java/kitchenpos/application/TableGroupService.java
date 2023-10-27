@@ -49,7 +49,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         final List<Order> orders = orderTables.stream()
-                .flatMap(orderTable -> orderRepository.findByOrderTable(orderTable).stream())
+                .flatMap(orderTable -> orderRepository.findByOrderTableId(orderTable.getId()).stream())
                 .collect(Collectors.toList());
         validateUngroupTableOrderCondition(orders);
 
