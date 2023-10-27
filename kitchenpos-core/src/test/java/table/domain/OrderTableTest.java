@@ -1,15 +1,15 @@
-package kitchenpos.table.domain;
+package table.domain;
 
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class OrderTableTest {
 
@@ -28,7 +28,7 @@ class OrderTableTest {
             final OrderTable orderTable = new OrderTable(null, guests, empty);
 
             //then
-            assertSoftly(softly -> {
+            SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(orderTable.getId()).isNull();
                 softly.assertThat(orderTable.getNumberOfGuests()).isEqualTo(guests);
                 softly.assertThat(orderTable.isEmpty()).isEqualTo(empty);
@@ -53,7 +53,7 @@ class OrderTableTest {
             orderTable.joinTableGroupById(afterTableGroup.getId());
 
             //then
-            assertSoftly(softly -> {
+            SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(orderTable.getId()).isNull();
                 softly.assertThat(orderTable.getTableGroupId()).isEqualTo(afterTableGroup.getId());
                 softly.assertThat(orderTable.getNumberOfGuests()).isEqualTo(guests);
@@ -74,7 +74,7 @@ class OrderTableTest {
             orderTable.changeEmpty(afterEmpty);
 
             //then
-            assertSoftly(softly -> {
+            SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(orderTable.getId()).isNull();
                 softly.assertThat(orderTable.getNumberOfGuests()).isEqualTo(guests);
                 softly.assertThat(orderTable.isEmpty()).isEqualTo(afterEmpty);
@@ -94,7 +94,7 @@ class OrderTableTest {
             orderTable.changeNumberOfGuests(afterGuests);
 
             //then
-            assertSoftly(softly -> {
+            SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(orderTable.getNumberOfGuests()).isEqualTo(afterGuests);
             });
         }
@@ -109,7 +109,7 @@ class OrderTableTest {
             final OrderTable orderTable = new OrderTable(null, guests, empty);
 
             // when & then
-            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(afterGuests))
+            Assertions.assertThatThrownBy(() -> orderTable.changeNumberOfGuests(afterGuests))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -123,7 +123,7 @@ class OrderTableTest {
             final OrderTable orderTable = new OrderTable(null, guests, empty);
 
             // when & then
-            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(afterGuests))
+            Assertions.assertThatThrownBy(() -> orderTable.changeNumberOfGuests(afterGuests))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -139,7 +139,7 @@ class OrderTableTest {
             final OrderTable orderTable = new OrderTable(null, 3, true);
 
             //then
-            assertSoftly(softly -> {
+            SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(orderTable.isGroupable()).isTrue();
             });
         }

@@ -1,15 +1,15 @@
-package kitchenpos.table.domain;
+package table.domain;
 
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class TableGroupTest {
 
@@ -27,7 +27,7 @@ class TableGroupTest {
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
             //then
-            assertSoftly(softly -> {
+            SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(tableGroup.getId()).isNull();
                 softly.assertThat(tableGroup.getOrderTables().size()).isEqualTo(2);
             });
@@ -40,7 +40,7 @@ class TableGroupTest {
             final List<OrderTable> orderTables = List.of(new OrderTable(null, 3, true));
 
             // when & then
-            assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), orderTables))
+            Assertions.assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), orderTables))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -51,7 +51,7 @@ class TableGroupTest {
             final List<OrderTable> orderTables = List.of(new OrderTable(null, 3, false), new OrderTable(null, 3, false));
 
             // when & then
-            assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), orderTables))
+            Assertions.assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), orderTables))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -71,7 +71,7 @@ class TableGroupTest {
             tableGroup.unGroup();
 
             //then
-            assertSoftly(softly -> {
+            SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(tableGroup.getOrderTables().get(0).getTableGroupId()).isNull();
                 softly.assertThat(tableGroup.getOrderTables().get(1).getTableGroupId()).isNull();
             });

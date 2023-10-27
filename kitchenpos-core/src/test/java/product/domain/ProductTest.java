@@ -1,13 +1,13 @@
-package kitchenpos.product.domain;
+package product.domain;
 
+import kitchenpos.product.domain.Product;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class ProductTest {
 
@@ -26,7 +26,7 @@ class ProductTest {
             final Product product = new Product(name, price);
 
             //then
-            assertSoftly(softly -> {
+            SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(product.getId()).isNull();
                 softly.assertThat(product.getName()).isEqualTo(name);
                 softly.assertThat(product.getPrice()).isEqualByComparingTo(price);
@@ -41,7 +41,7 @@ class ProductTest {
             final BigDecimal price = new BigDecimal(-1);
 
             // when & then
-            assertThatThrownBy(() -> new Product(name, price))
+            Assertions.assertThatThrownBy(() -> new Product(name, price))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -53,7 +53,7 @@ class ProductTest {
             final BigDecimal price = null;
 
             // when & then
-            assertThatThrownBy(() -> new Product(name, price))
+            Assertions.assertThatThrownBy(() -> new Product(name, price))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
