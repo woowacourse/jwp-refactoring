@@ -8,12 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -38,15 +36,14 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final long orderTableId, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+    public Order(final long orderTableId, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
-        this.orderedTime = orderedTime;
+        this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
     }
 
     public void place(final OrderValidator orderValidator) {
-        orderValidator.validate(this);
+        orderValidator.validateInit(this);
         this.orderStatus = OrderStatus.COOKING;
     }
 

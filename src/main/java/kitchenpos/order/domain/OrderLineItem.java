@@ -15,22 +15,16 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @Column(nullable = false)
-    private long menuId;
-    @Column(nullable = false)
-    private String name;
     @Embedded
-    private Price price;
+    private MenuDetails menuDetails;
     @Column(nullable = false)
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final long menuId, final String name, final Price price, final long quantity) {
-        this.menuId = menuId;
-        this.name = name;
-        this.price = price;
+    public OrderLineItem(final long menuId, final long quantity) {
+        this.menuDetails = new MenuDetails(menuId);
         this.quantity = quantity;
     }
 
@@ -39,15 +33,19 @@ public class OrderLineItem {
     }
 
     public long getMenuId() {
-        return menuId;
+        return menuDetails.getMenuId();
     }
 
     public String getName() {
-        return name;
+        return menuDetails.getName();
     }
 
     public Price getPrice() {
-        return price;
+        return menuDetails.getPrice();
+    }
+
+    public MenuDetails getMenuDetails() {
+        return menuDetails;
     }
 
     public long getQuantity() {

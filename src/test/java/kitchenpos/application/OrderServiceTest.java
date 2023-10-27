@@ -6,25 +6,27 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.menu.service.dto.MenuRequest;
-import kitchenpos.order.service.dto.OrderRequest;
-import kitchenpos.order.service.dto.OrderStatusRequest;
-import kitchenpos.menu.service.dto.MenuGroupResponse;
-import kitchenpos.menu.service.dto.MenuResponse;
-import kitchenpos.order.service.dto.OrderResponse;
-import kitchenpos.product.service.dto.ProductResponse;
-import kitchenpos.order.service.dto.TableResponse;
-import kitchenpos.menu.service.MenuService;
 import kitchenpos.menu.service.MenuGroupService;
+import kitchenpos.menu.service.MenuService;
+import kitchenpos.menu.service.dto.MenuGroupResponse;
+import kitchenpos.menu.service.dto.MenuRequest;
+import kitchenpos.menu.service.dto.MenuResponse;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.service.OrderService;
+import kitchenpos.order.service.TableService;
+import kitchenpos.order.service.dto.OrderRequest;
+import kitchenpos.order.service.dto.OrderResponse;
+import kitchenpos.order.service.dto.OrderStatusRequest;
+import kitchenpos.order.service.dto.TableResponse;
 import kitchenpos.product.service.ProductService;
+import kitchenpos.product.service.dto.ProductResponse;
 import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
-import kitchenpos.order.service.TableService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -80,7 +82,7 @@ class OrderServiceTest {
 
         @DisplayName("조리 상태로 생성된다")
         @Test
-        void success() {
+        void success(@Autowired OrderRepository orderRepository) {
             // given
             final TableResponse orderTable = tableService.create(OrderTableFixture.createNotEmpty());
             final OrderRequest order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
@@ -89,9 +91,14 @@ class OrderServiceTest {
             final OrderResponse savedOrder = orderService.create(order);
 
             // then
+            final OrderLineItem snapshotEventValidation = orderRepository.findById(savedOrder.getId()).get()
+                    .getOrderLineItems()
+                    .get(0);
             assertSoftly(softly -> {
                 assertThat(savedOrder.getId()).isPositive();
                 assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
+                assertThat(snapshotEventValidation.getName()).isNotBlank();
+                assertThat(snapshotEventValidation.getPrice()).isNotNull();
             });
         }
 
@@ -119,7 +126,7 @@ class OrderServiceTest {
             // then
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("존재하지 않는 메뉴가 포함되어 있습니다.");
+                    .hasMessage("존재하지 않는 메뉴 또는 동일한 메뉴가 포함되어 있습니다.");
         }
 
         @DisplayName("존재하지 않는 주문 테이블로 주문하면 예외처리 한다")
