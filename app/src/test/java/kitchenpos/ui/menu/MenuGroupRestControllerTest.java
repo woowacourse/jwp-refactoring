@@ -8,11 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.menu.dto.CreateMenuGroupResponse;
-import kitchenpos.application.menu.dto.SearchMenuGroupResponse;
-import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.menu.application.dto.CreateMenuGroupResponse;
+import kitchenpos.menu.application.dto.SearchMenuGroupResponse;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.ui.dto.CreateMenuGroupRequest;
 import kitchenpos.ui.ControllerTest;
-import kitchenpos.ui.menu.dto.CreateMenuGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 

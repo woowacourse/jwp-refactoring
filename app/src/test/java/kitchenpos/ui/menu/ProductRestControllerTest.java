@@ -9,12 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.menu.dto.CreateProductResponse;
-import kitchenpos.application.menu.dto.SearchProductResponse;
-import kitchenpos.domain.menu.Price;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.menu.application.dto.CreateProductResponse;
+import kitchenpos.menu.application.dto.SearchProductResponse;
+import kitchenpos.menu.domain.Price;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.ui.dto.CreateProductRequest;
 import kitchenpos.ui.ControllerTest;
-import kitchenpos.ui.menu.dto.CreateProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 

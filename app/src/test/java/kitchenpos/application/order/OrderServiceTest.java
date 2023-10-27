@@ -1,6 +1,6 @@
 package kitchenpos.application.order;
 
-import static kitchenpos.exception.menu.MenuExceptionType.MENU_NOT_FOUND;
+import static kitchenpos.menu.exception.MenuExceptionType.MENU_NOT_FOUND;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static kitchenpos.order.domain.OrderStatus.MEAL;
@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.domain.menu.Menu;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.order.application.dto.ChangeOrderStatusResponse;
 import kitchenpos.order.application.dto.CreateOrderCommand;

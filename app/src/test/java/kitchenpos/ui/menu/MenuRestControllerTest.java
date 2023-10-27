@@ -9,11 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.menu.dto.CreateMenuResponse;
-import kitchenpos.application.menu.dto.SearchMenuResponse;
+import kitchenpos.menu.application.dto.CreateMenuResponse;
+import kitchenpos.menu.application.dto.SearchMenuResponse;
+import kitchenpos.menu.ui.dto.CreateMenuRequest;
+import kitchenpos.menu.ui.dto.MenuProductRequest;
 import kitchenpos.ui.ControllerTest;
-import kitchenpos.ui.menu.dto.CreateMenuRequest;
-import kitchenpos.ui.menu.dto.MenuProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 

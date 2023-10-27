@@ -1,7 +1,7 @@
 package kitchenpos.application.menu;
 
-import static kitchenpos.exception.menu.PriceExceptionType.PRICE_CAN_NOT_NEGATIVE;
-import static kitchenpos.exception.menu.PriceExceptionType.PRICE_CAN_NOT_NULL;
+import static kitchenpos.menu.exception.PriceExceptionType.PRICE_CAN_NOT_NEGATIVE;
+import static kitchenpos.menu.exception.PriceExceptionType.PRICE_CAN_NOT_NULL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,13 +10,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.application.menu.dto.CreateProductCommand;
-import kitchenpos.application.menu.dto.CreateProductResponse;
-import kitchenpos.application.menu.dto.SearchProductResponse;
-import kitchenpos.domain.menu.Price;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.menu.application.dto.CreateProductCommand;
+import kitchenpos.menu.application.dto.CreateProductResponse;
+import kitchenpos.menu.application.dto.SearchProductResponse;
+import kitchenpos.menu.domain.Price;
+import kitchenpos.menu.domain.Product;
 import org.junit.jupiter.api.Test;
 
 class ProductServiceTest extends IntegrationTest {

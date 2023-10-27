@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.application.menu.dto.CreateMenuGroupCommand;
-import kitchenpos.application.menu.dto.CreateMenuGroupResponse;
-import kitchenpos.application.menu.dto.SearchMenuGroupResponse;
-import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.menu.application.dto.CreateMenuGroupCommand;
+import kitchenpos.menu.application.dto.CreateMenuGroupResponse;
+import kitchenpos.menu.application.dto.SearchMenuGroupResponse;
+import kitchenpos.menu.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 
 class MenuGroupServiceTest extends IntegrationTest {
