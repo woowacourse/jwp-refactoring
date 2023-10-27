@@ -11,7 +11,6 @@ import kitchenpos.product.application.ProductService;
 import kitchenpos.product.persistence.ProductRepository;
 import kitchenpos.product.request.ProductCreateRequest;
 import kitchenpos.support.ServiceTest;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -65,7 +64,7 @@ class ProductServiceTest {
         List<Product> actual = productService.list();
 
         // then
-        Assertions.assertThat(actual)
+        assertThat(actual)
             .usingRecursiveComparison()
             .isEqualTo(expected);
     }
