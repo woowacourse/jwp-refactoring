@@ -38,7 +38,7 @@ class TableServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderRepository, orderTableRepository);
+        tableService = new TableService(orderTableRepository, orderTableValidator);
     }
 
     @DisplayName("[SUCCESS] 주문 테이블을 등록한다.")
@@ -68,7 +68,7 @@ class TableServiceTest extends ApplicationTestConfig {
         void success_changeEmpty_when_order_isExists() {
             // given
             final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
-            final Order savedOrderStatus = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
+            final Order savedOrderStatus = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable.getId()));
             savedOrderStatus.changeOrderStatus(OrderStatus.COMPLETION);
 
             // when
@@ -116,7 +116,7 @@ class TableServiceTest extends ApplicationTestConfig {
             );
             tableGroupRepository.save(TableGroup.withOrderTables(savedOrderTables));
 
-            savedOrderTables.forEach(orderTable -> orderRepository.save(Order.ofEmptyOrderLineItems(orderTable)));
+            savedOrderTables.forEach(orderTable -> orderRepository.save(Order.ofEmptyOrderLineItems(orderTable.getId())));
 
             // expect
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableWithFiveGuests.getId(), new OrderTableEmptyUpdateRequest(true)))
@@ -136,9 +136,9 @@ class TableServiceTest extends ApplicationTestConfig {
                             savedMenuGroup
                     )
             );
-            final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10)));
+            final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.withoutOrder(savedMenu.getId(), new Quantity(10)));
             final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
-            final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
+            final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable.getId()));
             savedOrder.addOrderLineItems(orderLineItems);
             savedOrder.changeOrderStatus(orderStatus);
 

@@ -56,6 +56,11 @@ public class TableGroup extends BaseEntity {
         newOrderTables.assignTableGroup(id);
     }
 
+    public void ungroup(final TableGroupValidator tableGroupValidator) {
+        tableGroupValidator.validateUngroup(this);
+        orderTables = OrderTables.empty();
+    }
+
     public Long getId() {
         return id;
     }

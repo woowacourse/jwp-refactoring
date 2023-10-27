@@ -1,6 +1,5 @@
 package kitchenpos.table.application;
 
-import kitchenpos.table.application.TableService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
@@ -18,7 +17,7 @@ class TableQueryServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderRepository, orderTableRepository);
+        tableService = new TableService(orderTableRepository, orderTableValidator);
     }
 
     @DisplayName("[SUCCESS] 전체 테이블 목록을 조회한다.")

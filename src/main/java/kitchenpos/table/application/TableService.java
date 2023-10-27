@@ -1,29 +1,29 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.Order;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableEmptyUpdateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
-import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderTableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final OrderTableValidator orderTableValidator
+    ) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -40,23 +40,8 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyUpdateRequest request) {
-        final Optional<Order> maybeOrder = orderRepository.findByOrderTableId(orderTableId);
-        if (maybeOrder.isPresent()) {
-            return changeEmptyByOrder(maybeOrder.get(), request.isEmpty());
-        }
-
-        return changeEmptyByOrderTable(orderTableId, request.isEmpty());
-    }
-
-    private OrderTableResponse changeEmptyByOrder(final Order findOrder, final boolean isEmpty) {
-        findOrder.changeOrderTableEmpty(isEmpty);
-
-        return OrderTableResponse.from(findOrder.getOrderTable());
-    }
-
-    private OrderTableResponse changeEmptyByOrderTable(final Long orderTableId, final boolean isEmpty) {
         final OrderTable findOrderTable = orderTableRepository.findOrderTableById(orderTableId);
-        findOrderTable.changeOrderTableEmpty(isEmpty);
+        findOrderTable.changeOrderTableEmpty(orderTableValidator, request.isEmpty());
 
         return OrderTableResponse.from(findOrderTable);
     }
