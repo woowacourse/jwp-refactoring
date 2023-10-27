@@ -1,6 +1,6 @@
 package kitchenpos.response;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public class OrderTableResponse {
 

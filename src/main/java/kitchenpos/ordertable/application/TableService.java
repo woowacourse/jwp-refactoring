@@ -1,9 +1,9 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableChangeEmptyRequest;
 import kitchenpos.request.TableChangeNumberOfGuestsRequest;

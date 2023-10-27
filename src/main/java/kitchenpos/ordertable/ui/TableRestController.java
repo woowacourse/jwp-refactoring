@@ -1,7 +1,7 @@
-package kitchenpos.ui;
+package kitchenpos.ordertable.ui;
 
-import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableChangeEmptyRequest;
 import kitchenpos.request.TableChangeNumberOfGuestsRequest;
