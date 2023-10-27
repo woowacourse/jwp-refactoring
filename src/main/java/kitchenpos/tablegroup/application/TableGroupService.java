@@ -31,9 +31,9 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
         final List<OrderTable> savedOrderTables = getOrderTables(request.getOrderTables());
-        TableGroup tableGroup = new TableGroup(savedOrderTables);
-        updateOrderTables(tableGroup, savedOrderTables);
-        return tableGroupRepository.save(tableGroup);
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(savedOrderTables));
+        tableGroup.groupTables();
+        return tableGroup;
     }
     
     private List<OrderTable> getOrderTables(final List<Long> OrderTableIds) {
@@ -42,11 +42,6 @@ public class TableGroupService {
                                                                      .orElseThrow(() -> new NotExistOrderTable("존재하지 않는 테이블입니다")))
                             .collect(Collectors.toList());
     }
-    
-    private void updateOrderTables(final TableGroup tableGroup, final List<OrderTable> savedOrderTables) {
-        savedOrderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
-    }
-    
     @Transactional
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)

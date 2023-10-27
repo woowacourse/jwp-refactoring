@@ -94,8 +94,8 @@ class TableGroupServiceTest {
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
                 List.of(savedOrderTableInAnotherTableGroup1.getId(), savedOrderTableInAnotherTableGroup2.getId()));
         TableGroup anotherTableGroup = tableGroupService.create(tableGroupCreateRequest);
-        orderTableInAnotherTableGroup1.setTableGroup(anotherTableGroup);
-        orderTableInAnotherTableGroup2.setTableGroup(anotherTableGroup);
+        orderTableInAnotherTableGroup1.setTableGroup(anotherTableGroup.getId());
+        orderTableInAnotherTableGroup2.setTableGroup(anotherTableGroup.getId());
         
         //when & then
         TableGroupCreateRequest tableGroupWithTableInAnotherTableGroupCreateRequest = new TableGroupCreateRequest(

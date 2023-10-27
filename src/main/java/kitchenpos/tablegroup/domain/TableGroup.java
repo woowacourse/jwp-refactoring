@@ -24,8 +24,9 @@ public class TableGroup {
     
     @CreatedDate
     private LocalDateTime createdDate;
-    
-    @OneToMany(mappedBy = "tableGroup")
+
+    @JoinColumn(name = "table_group_id")
+    @OneToMany
     private List<OrderTable> orderTables;
     
     public TableGroup() {
@@ -34,7 +35,7 @@ public class TableGroup {
     public TableGroup(final List<OrderTable> orderTables) {
         this(null, null, orderTables);
     }
-    
+
     public TableGroup(final Long id,
                       final LocalDateTime createdDate,
                       final List<OrderTable> orderTables) {
@@ -44,6 +45,12 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
     
+    public TableGroup(final Long id,
+                      final LocalDateTime createdDate) {
+        validate(orderTables);
+        this.id = id;
+        this.createdDate = createdDate;
+    }
     private void validate(final List<OrderTable> orderTables) {
         validateOrderTableSize(orderTables);
         validateIfDuplicatedTableExist(orderTables);
@@ -70,7 +77,7 @@ public class TableGroup {
     
     private void validateIfOrderTableBelongsToOtherTableGroup(List<OrderTable> orderTables) {
         boolean isOrderTableBelongsToOtherTableGroup = orderTables.stream()
-                                                                  .anyMatch(orderTable -> Objects.nonNull(orderTable.getTableGroup()));
+                                                                  .anyMatch(orderTable -> Objects.nonNull(orderTable.getTableGroupId()));
         if (isOrderTableBelongsToOtherTableGroup) {
             throw new InvalidTableGroupException("다른 테이블 그룹에 속한 테이블은 단체 테이블로 만들 수 없습니다");
         }
@@ -82,6 +89,10 @@ public class TableGroup {
         if (isOrderTableNotEmpty) {
             throw new InvalidTableGroupException("비어있지 않은 테이블은 단체 테이블으로 만들 수 없습니다");
         }
+    }
+    
+    public void groupTables() {
+        this.orderTables.forEach(orderTable -> orderTable.setTableGroup(this.getId()));
     }
     
     public void ungroup(final List<OrderTable> orderTables,
