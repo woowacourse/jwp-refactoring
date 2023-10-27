@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.menugroup.service.dto.MenuGroupRequest;
-import kitchenpos.menugroup.service.dto.MenuGroupResponse;
-import kitchenpos.menugroup.service.MenuGroupService;
+import kitchenpos.menu.service.dto.MenuGroupRequest;
+import kitchenpos.menu.service.dto.MenuGroupResponse;
+import kitchenpos.menu.service.MenuGroupService;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;

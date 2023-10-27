@@ -1,6 +1,6 @@
 package kitchenpos.supports;
 
-import kitchenpos.menugroup.service.dto.MenuGroupRequest;
+import kitchenpos.menu.service.dto.MenuGroupRequest;
 
 public class MenuGroupFixture {
 
