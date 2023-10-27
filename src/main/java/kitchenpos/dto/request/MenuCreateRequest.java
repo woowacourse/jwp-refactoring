@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 
 public class MenuCreateRequest {
 
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+
+    public MenuCreateRequest() {
+    }
 
     public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId) {
         this.name = name;

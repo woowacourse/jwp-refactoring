@@ -4,7 +4,10 @@ import java.util.List;
 
 public class TableGroupCreateRequest {
 
-    private final List<Long> orderTableId;
+    private List<Long> orderTableId;
+
+    public TableGroupCreateRequest() {
+    }
 
     public TableGroupCreateRequest(List<Long> orderTableId) {
         this.orderTableId = orderTableId;

@@ -6,8 +6,11 @@ import java.math.BigDecimal;
 
 public class ProductCreateRequest {
 
-    private final String name;
-    private final BigDecimal price;
+    private String name;
+    private BigDecimal price;
+
+    public ProductCreateRequest() {
+    }
 
     public ProductCreateRequest(String name, BigDecimal price) {
         this.name = name;

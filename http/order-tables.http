@@ -1,5 +1,5 @@
 ###
-POST {{host}}/api/tables
+POST {{host}}/api/tables/1
 Content-Type: application/json
 
 {
