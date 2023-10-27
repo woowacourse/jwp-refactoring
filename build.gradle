@@ -13,11 +13,20 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation project(path: ':kitchenpos-tablegroup')
+    implementation project(path: ':kitchenpos-ordertable')
+    implementation project(path: ':kitchenpos-order')
+    implementation project(path: ':kitchenpos-menu')
+    implementation project(path: ':kitchenpos-menugroup')
+    implementation project(path: ':kitchenpos-product')
+    implementation project(path: ':kitchenpos-common')
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.flywaydb:flyway-core'
     runtimeOnly 'com.h2database:h2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
