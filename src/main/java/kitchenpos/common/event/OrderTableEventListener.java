@@ -22,4 +22,9 @@ public class OrderTableEventListener {
     public void validateOrderTableIsNotEmpty(ValidateOrderTableIsNotEmptyEvent event) {
         tableService.validateNotEmpty(event.getOrderTableId());
     }
+
+    @EventListener
+    public void groupOrderTables(GroupOrderTablesEvent event) {
+        tableService.groupOrderTables(event.getTableGroupId(), event.getOrderTableIds());
+    }
 }
