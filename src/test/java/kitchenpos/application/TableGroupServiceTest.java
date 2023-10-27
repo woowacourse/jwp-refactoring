@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.menugroup.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.order.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.menu.application.MenuService;

@@ -3,8 +3,8 @@ package kitchenpos.order.ui;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.request.OrderCreateRequest;
-import kitchenpos.response.OrderResponse;
+import kitchenpos.order.request.OrderCreateRequest;
+import kitchenpos.order.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
