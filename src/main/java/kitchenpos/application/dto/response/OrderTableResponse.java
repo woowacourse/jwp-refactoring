@@ -21,14 +21,20 @@ public class OrderTableResponse {
     }
 
     public static OrderTableResponse from(OrderTable orderTable) {
-        final TableGroup tableGroup = orderTable.getTableGroup();
-        final Long tableGroupId = Objects.isNull(tableGroup) ? null : tableGroup.getId();
         return new OrderTableResponse(
                 orderTable.getId(),
-                tableGroupId,
+                getTableGroupIdOrNull(orderTable),
                 orderTable.getNumberOfGuestsValue(),
                 orderTable.isEmpty()
         );
+    }
+
+    private static Long getTableGroupIdOrNull(final OrderTable orderTable) {
+        final TableGroup tableGroup = orderTable.getTableGroup();
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
+        return tableGroup.getId();
     }
 
     public static List<OrderTableResponse> from(List<OrderTable> orderTables) {
