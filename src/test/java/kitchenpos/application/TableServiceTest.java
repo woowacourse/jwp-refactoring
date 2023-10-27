@@ -3,38 +3,40 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.TableUpdateEmptyRequest;
-import kitchenpos.dto.request.TableUpdateGuestRequest;
-import kitchenpos.dto.request.TableCreateRequest;
-import kitchenpos.dto.response.TableResponse;
+import kitchenpos.common.event.OrderCheckEvent;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.TableCreateRequest;
+import kitchenpos.table.dto.request.TableUpdateEmptyRequest;
+import kitchenpos.table.dto.request.TableUpdateGuestRequest;
+import kitchenpos.table.dto.response.TableResponse;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
 
     @Mock
-    private OrderRepository orderRepository;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private ApplicationEventPublisher publisher;
 
     @InjectMocks
     private TableService tableService;
@@ -46,7 +48,7 @@ class TableServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
         final TableCreateRequest tableCreateRequest = new TableCreateRequest(2, true);
 
-        final OrderTable orderTable = new OrderTable(tableGroup, 2, true);
+        final OrderTable orderTable = new OrderTable(tableGroup.getId(), 2, true);
         given(orderTableRepository.save(any()))
                 .willReturn(orderTable);
 
@@ -59,8 +61,8 @@ class TableServiceTest {
     void list() {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
-        final OrderTable orderTable1 = new OrderTable(tableGroup, 2, true);
-        final OrderTable orderTable2 = new OrderTable(tableGroup, 3, true);
+        final OrderTable orderTable1 = new OrderTable(tableGroup.getId(), 2, true);
+        final OrderTable orderTable2 = new OrderTable(tableGroup.getId(), 3, true);
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
         final List<TableResponse> responses = orderTables.stream()
@@ -86,6 +88,7 @@ class TableServiceTest {
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
+        doNothing().when(publisher).publishEvent(any(OrderCheckEvent.class));
         given(orderTableRepository.save(orderTable))
                 .willReturn(orderTable);
 
@@ -101,7 +104,7 @@ class TableServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
         final TableUpdateEmptyRequest updateRequest = new TableUpdateEmptyRequest(true);
-        final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, true);
+        final OrderTable orderTable = new OrderTable(1L, tableGroup.getId(), 2, true);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, updateRequest))
@@ -115,7 +118,7 @@ class TableServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
         final TableUpdateEmptyRequest updateRequest = new TableUpdateEmptyRequest(true);
-        final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, true);
+        final OrderTable orderTable = new OrderTable(1L, tableGroup.getId(), 2, true);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
@@ -126,25 +129,6 @@ class TableServiceTest {
                 .hasMessage("할당된 그룹이 존재합니다.");
     }
 
-    @DisplayName("테이블에 할당된 주문의 상태가 조리 또는 식사이면 변경할 수 없다.")
-    @Test
-    void changeEmpty_FailWhenOrderStatusIsNotCompletion() {
-        // given
-        final TableUpdateEmptyRequest updateRequest = new TableUpdateEmptyRequest(true);
-        final OrderTable orderTable = new OrderTable(1L, null, 3, true);
-
-        given(orderTableRepository.findById(1L))
-                .willReturn(Optional.of(orderTable));
-
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
-                .willReturn(true);
-
-        // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, updateRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문이 아직 완료상태가 아닙니다.");
-    }
-
     @DisplayName("테이블에 할당된 손님의 수를 조정할 수 있다.")
     @Test
     void changeNumberOfGuests() {
@@ -152,8 +136,8 @@ class TableServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
 
         final TableUpdateGuestRequest updateRequest = new TableUpdateGuestRequest(8);
-        final OrderTable beforeTable = new OrderTable(1L, tableGroup, 1, false);
-        final OrderTable afterTable = new OrderTable(1L, tableGroup, 8, false);
+        final OrderTable beforeTable = new OrderTable(1L, tableGroup.getId(), 1, false);
+        final OrderTable afterTable = new OrderTable(1L, tableGroup.getId(), 8, false);
 
         final TableResponse tableResponse = TableResponse.from(afterTable);
 
@@ -164,7 +148,8 @@ class TableServiceTest {
                 .willReturn(afterTable);
 
         // when & then
-        assertThat(tableService.changeNumberOfGuests(1L, updateRequest)).usingRecursiveComparison().isEqualTo(tableResponse);
+        assertThat(tableService.changeNumberOfGuests(1L, updateRequest)).usingRecursiveComparison()
+                .isEqualTo(tableResponse);
         then(orderTableRepository).should(times(1)).findById(1L);
         then(orderTableRepository).should(times(1)).save(any());
     }
@@ -176,7 +161,7 @@ class TableServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
 
         final TableUpdateGuestRequest updateRequest = new TableUpdateGuestRequest(8);
-        final OrderTable orderTable = new OrderTable(1L, tableGroup, 5, true);
+        final OrderTable orderTable = new OrderTable(1L, tableGroup.getId(), 5, true);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.empty());
@@ -194,8 +179,8 @@ class TableServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
 
         final TableUpdateGuestRequest updateRequest = new TableUpdateGuestRequest(8);
-        final OrderTable beforeTable = new OrderTable(1L, tableGroup, 1, false);
-        final OrderTable afterTable = new OrderTable(1L, tableGroup, 8, true);
+        final OrderTable beforeTable = new OrderTable(1L, tableGroup.getId(), 1, false);
+        final OrderTable afterTable = new OrderTable(1L, tableGroup.getId(), 8, true);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(afterTable));

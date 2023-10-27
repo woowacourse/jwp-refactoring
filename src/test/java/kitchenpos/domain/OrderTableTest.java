@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Objects;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +39,7 @@ class OrderTableTest {
     @Test
     void checkEmptyAndTableGroups_FailWhenGroupAlreadyExist() {
         // given
-        final OrderTable orderTable = new OrderTable(new TableGroup(), 3, true);
+        final OrderTable orderTable = new OrderTable(1L, 3, true);
 
         // when & then
         assertThatThrownBy(orderTable::checkEmptyAndTableGroups)
@@ -71,25 +73,25 @@ class OrderTableTest {
     @Test
     void addGroup() {
         // given
+        final TableGroup tableGroup = new TableGroup(1L);
         final OrderTable orderTable = new OrderTable(null, 3, true);
-        final TableGroup tableGroup = new TableGroup();
 
         // when
-        orderTable.addGroup(tableGroup);
+        orderTable.addGroup(tableGroup.getId());
 
         // then
-        assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup);
+        assertThat(orderTable.getGroupId()).isEqualTo(tableGroup.getId());
     }
 
     @DisplayName("테이블에 이미 그룹이 할당되어 있다면 예외 처리한다.")
     @Test
     void addGroup_FailWhenGroupAlreadyExist() {
         // given
-        final OrderTable orderTable = new OrderTable(new TableGroup(), 3, true);
+        final OrderTable orderTable = new OrderTable(1L, 3, true);
         final TableGroup tableGroup = new TableGroup();
 
         // when & then
-        assertThatThrownBy(() -> orderTable.addGroup(tableGroup))
+        assertThatThrownBy(() -> orderTable.addGroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("할당된 그룹이 존재합니다.");
     }
@@ -98,14 +100,14 @@ class OrderTableTest {
     @Test
     void unGroup() {
         // given
-        final OrderTable orderTable = new OrderTable(new TableGroup(), 3, true);
+        final OrderTable orderTable = new OrderTable(1L, 3, true);
 
         // when
 
         // then
         assertAll(
-                () -> assertThat(Objects.nonNull(orderTable.getTableGroup())).isTrue(),
+                () -> assertThat(Objects.nonNull(orderTable.getGroupId())).isTrue(),
                 orderTable::unGroup,
-                () -> assertThat(Objects.isNull(orderTable.getTableGroup())).isTrue());
+                () -> assertThat(Objects.isNull(orderTable.getGroupId())).isTrue());
     }
 }

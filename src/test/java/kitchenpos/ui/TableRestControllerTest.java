@@ -13,12 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.TableUpdateEmptyRequest;
-import kitchenpos.dto.request.TableUpdateGuestRequest;
-import kitchenpos.dto.request.TableCreateRequest;
-import kitchenpos.dto.response.TableResponse;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.TableUpdateEmptyRequest;
+import kitchenpos.table.dto.request.TableUpdateGuestRequest;
+import kitchenpos.table.dto.request.TableCreateRequest;
+import kitchenpos.table.dto.response.TableResponse;
+import kitchenpos.table.ui.TableRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

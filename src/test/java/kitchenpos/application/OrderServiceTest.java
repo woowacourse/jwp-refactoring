@@ -12,21 +12,22 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderLineItemRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderUpdateStatusRequest;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.common.OrderStatus;
+import kitchenpos.common.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.order.dto.request.OrderUpdateStatusRequest;
+import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.order.repository.OrderLineItemRepository;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,7 +59,7 @@ class OrderServiceTest {
     void create() {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
-        final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, false);
+        final OrderTable orderTable = new OrderTable(1000L, tableGroup.getId(), 2, false);
         final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
         final Menu menu2 = new Menu(11L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
@@ -71,8 +72,8 @@ class OrderServiceTest {
 
         final Order order = new Order(1L, null, OrderStatus.COOKING.name());
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getId(), 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getName(), menu1.getPrice(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getName(), menu2.getPrice(), 1);
         order.addOrderLineItem(orderLineItem1);
         order.addOrderLineItem(orderLineItem2);
 
@@ -86,6 +87,8 @@ class OrderServiceTest {
                 order.getOrderLineItems()
         );
 
+        given(menuRepository.findById(any()))
+                .willReturn(Optional.of(menu1));
         given(orderTableRepository.findById(any()))
                 .willReturn(Optional.of(orderTable));
 
@@ -114,8 +117,12 @@ class OrderServiceTest {
                 List.of(new OrderLineItemCreateRequest(menu1.getId(), 1))
         );
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(order, 11L, 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getName(), menu1.getPrice(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(
+                order, "존재하지 않는 메뉴",
+                new Price(BigDecimal.valueOf(122)),
+                1
+        );
 
         order.addOrderLineItem(orderLineItem1);
         order.addOrderLineItem(orderLineItem2);
@@ -142,8 +149,8 @@ class OrderServiceTest {
                         new OrderLineItemCreateRequest(menu2.getId(), 1))
         );
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getId(), 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getName(), menu1.getPrice(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu1.getName(), menu1.getPrice(), 1);
 
         order.addOrderLineItem(orderLineItem1);
         order.addOrderLineItem(orderLineItem2);
@@ -152,7 +159,7 @@ class OrderServiceTest {
                 .willReturn(2L);
 
         final TableGroup tableGroup = new TableGroup(10L);
-        final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, true);
+        final OrderTable orderTable = new OrderTable(1000L, tableGroup.getId(), 2, true);
 
         final Order udpatedOrder = new Order(
                 order.getId(),
