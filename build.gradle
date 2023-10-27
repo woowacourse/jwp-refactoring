@@ -1,35 +1,25 @@
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.15'
-//    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 repositories {
     mavenCentral()
 }
 
-//subprojects {
 allprojects {
     group = 'camp.nextstep.edu'
     version = '0.0.1-SNAPSHOT'
     sourceCompatibility = '11'
 
     apply plugin: 'java'
-//    apply plugin: 'java-library'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
-//    configurations {
-//        compileOnly {
-//            extendsFrom annotationProcessor
-//        }
-//    }
 
     repositories {
         mavenCentral()
     }
-
-    // 관리하는 모듈의 공통 dependencies
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -43,45 +33,3 @@ allprojects {
         useJUnitPlatform()
     }
 }
-
-//project(':common') { // 컴파일 시 multi-module-database 로딩
-//    dependencies {
-//        compileOnly project(':common')
-//    }
-//}
-
-//project(':menu') { // 컴파일 시 multi-module-database 로딩
-//    dependencies {
-//        compileOnly project(':menu')
-//    }
-//}
-//
-//project(':menugroup') { // 컴파일 시 multi-module-database 로딩
-//    dependencies {
-//        compileOnly project(':menugroup')
-//    }
-//}
-//
-//project(':order') { // 컴파일 시 multi-module-database 로딩
-//    dependencies {
-//        compileOnly project(':order')
-//    }
-//}
-//
-//project(':product') { // 컴파일 시 multi-module-database 로딩
-//    dependencies {
-//        compileOnly project(':product')
-//    }
-//}
-//
-//project(':table') { // 컴파일 시 multi-module-database 로딩
-//    dependencies {
-//        compileOnly project(':table')
-//    }
-//}
-//
-//project(':tablegroup') { // 컴파일 시 multi-module-database 로딩
-//    dependencies {
-//        compileOnly project(':tablegroup')
-//    }
-//}
