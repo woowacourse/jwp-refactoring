@@ -8,46 +8,49 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.table.domain.service.TableGroupValidator;
+import kitchenpos.table.domain.service.TableUngroupValidator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.util.CollectionUtils;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 public class TableGroup {
 
-    private static final int MIN_ORDER_TABLE_SIZE = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany
+    @JoinColumn(name = "order_table_id")
+    private List<OrderTable> orderTables = new ArrayList<>();
+
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
-
-    public TableGroup() {
-        this(null);
+    protected TableGroup() {
     }
 
-    public TableGroup(Long id) {
+    private TableGroup(List<OrderTable> orderTables) {
+        this(null, orderTables);
+    }
+
+    public TableGroup(Long id, List<OrderTable> orderTables) {
         this.id = id;
+        this.orderTables = orderTables;
     }
 
-    public void setUpOrderTable(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_ORDER_TABLE_SIZE) {
-            throw new IllegalArgumentException("주문 테이블은 2개 이상이어야 합니다.");
-        }
-        this.orderTables.addAll(orderTables);
+    public static TableGroup create(List<OrderTable> orderTables, TableGroupValidator tableGroupValidator) {
+        TableGroup tableGroup = new TableGroup(orderTables);
+        tableGroupValidator.validate(tableGroup);
+        return tableGroup;
     }
 
-    public void ungroup() {
-        if (!orderTables.stream().allMatch(OrderTable::isAbleToUngroup)) {
-            throw new IllegalArgumentException("그룹 해제할 수 없습니다.");
-        }
+    public void ungroup(TableUngroupValidator tableUngroupValidator) {
+        tableUngroupValidator.validate(this);
         orderTables.forEach(OrderTable::ungroup);
     }
 
@@ -55,11 +58,11 @@ public class TableGroup {
         return id;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 }

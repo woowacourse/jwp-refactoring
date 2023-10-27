@@ -1,15 +1,11 @@
 package kitchenpos.table.domain.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import kitchenpos.order.domain.model.Order;
+import kitchenpos.table.domain.service.TableChangeEmptyValidator;
 
 @Entity
 public class OrderTable {
@@ -18,15 +14,12 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     private int numberOfGuests;
 
     private boolean empty;
-
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders = new ArrayList<>();
 
     protected OrderTable() {
     }
@@ -35,48 +28,24 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty, List<Order> orders) {
-        this.id = id;
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-        this.orders = orders;
-    }
-
-    public void group(TableGroup tableGroup) {
-        if (!empty || this.tableGroup != null) {
-            throw new IllegalArgumentException("올바르지 않은 주문 테이블입니다.");
-        }
-        this.tableGroup = tableGroup;
-        this.empty = false;
-    }
-
-    public void ungroup() {
-        this.tableGroup = null;
-        this.empty = false;
     }
 
     public boolean isAbleToUngroup() {
-        if (tableGroup == null || empty) {
-            return false;
-        }
-        return orders.stream().allMatch(Order::isAbleToUngroup);
+        return tableGroupId != null && !empty;
     }
 
-    public void changeEmpty() {
-        if (!orders.stream().allMatch(Order::isAbleToChangeEmpty)) {
-            throw new IllegalArgumentException("완료되지 않은 주문이 있습니다.");
-        }
-        if (tableGroup != null) {
-            throw new IllegalArgumentException("이미 단체 지정된 테이블입니다.");
-        }
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
+    public void changeEmpty(TableChangeEmptyValidator tableChangeEmptyValidator) {
+        tableChangeEmptyValidator.validate(this);
         this.empty = true;
     }
 
@@ -94,8 +63,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

@@ -29,12 +29,16 @@ public class Menu {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
-    
+
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
+    }
+
+    private Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
     }
 
     public Menu(Long id, String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
@@ -47,7 +51,7 @@ public class Menu {
 
     public static Menu create(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts,
                               MenuValidator menuValidator) {
-        Menu menu = new Menu(null, name, price, menuGroup, menuProducts);
+        Menu menu = new Menu(name, price, menuGroup, menuProducts);
         menuValidator.validate(menu);
         return menu;
     }

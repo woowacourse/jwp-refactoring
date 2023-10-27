@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.supports.MenuFixture;
 import kitchenpos.order.domain.model.Order;
@@ -41,11 +42,10 @@ class OrderValidatorTest {
     void 주문_테이블은_DB에_존재해야한다() {
         // given
         Long orderTableId = 1L;
-        given(orderTableRepository.existsById(orderTableId))
-            .willReturn(false);
+        Order order = OrderFixture.fixture().orderTableId(orderTableId).build();
 
-        OrderTable orderTable = OrderTableFixture.fixture().id(orderTableId).build();
-        Order order = OrderFixture.fixture().orderTable(orderTable).build();
+        given(orderTableRepository.findById(orderTableId))
+            .willReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> orderValidator.validate(order))
@@ -57,11 +57,11 @@ class OrderValidatorTest {
     void 빈_주문_테이블에_주문_생성_불가() {
         // given
         Long orderTableId = 1L;
+        Order order = OrderFixture.fixture().orderTableId(orderTableId).build();
         OrderTable orderTable = OrderTableFixture.fixture().id(orderTableId).empty(true).build();
-        Order order = OrderFixture.fixture().orderTable(orderTable).build();
 
-        given(orderTableRepository.existsById(orderTableId))
-            .willReturn(true);
+        given(orderTableRepository.findById(orderTableId))
+            .willReturn(Optional.of(orderTable));
 
         // when & then
         assertThatThrownBy(() -> orderValidator.validate(order))
@@ -78,10 +78,10 @@ class OrderValidatorTest {
             OrderLineItemFixture.fixture().menuId(1L).build(),
             OrderLineItemFixture.fixture().menuId(2L).build()
         );
-        Order order = OrderFixture.fixture().orderTable(orderTable).orderLineItems(orderLineItems).build();
+        Order order = OrderFixture.fixture().orderTableId(orderTableId).orderLineItems(orderLineItems).build();
 
-        given(orderTableRepository.existsById(orderTableId))
-            .willReturn(true);
+        given(orderTableRepository.findById(orderTableId))
+            .willReturn(Optional.of(orderTable));
         given(menuRepository.findAllById(eq(List.of(1L, 2L))))
             .willReturn(List.of(MenuFixture.fixture().id(1L).build()));
 
@@ -100,10 +100,10 @@ class OrderValidatorTest {
             OrderLineItemFixture.fixture().menuId(1L).build(),
             OrderLineItemFixture.fixture().menuId(2L).build()
         );
-        Order order = OrderFixture.fixture().orderTable(orderTable).orderLineItems(orderLineItems).build();
+        Order order = OrderFixture.fixture().orderTableId(orderTableId).orderLineItems(orderLineItems).build();
 
-        given(orderTableRepository.existsById(orderTableId))
-            .willReturn(true);
+        given(orderTableRepository.findById(orderTableId))
+            .willReturn(Optional.of(orderTable));
         given(menuRepository.findAllById(eq(List.of(1L, 2L))))
             .willReturn(List.of(
                 MenuFixture.fixture().id(1L).build(),

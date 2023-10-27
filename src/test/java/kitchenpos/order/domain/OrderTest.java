@@ -6,8 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import kitchenpos.order.domain.model.Order;
 import kitchenpos.order.domain.model.OrderStatus;
 import kitchenpos.order.supports.OrderFixture;
-import kitchenpos.table.domain.model.OrderTable;
-import kitchenpos.table.supports.OrderTableFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -25,8 +23,7 @@ class OrderTest {
         @Test
         void 이미_계산완료된_주문이면_예외() {
             // given
-            OrderTable orderTable = OrderTableFixture.fixture().empty(false).build();
-            Order order = OrderFixture.fixture().orderTable(orderTable).orderStatus(OrderStatus.COMPLETION).build();
+            Order order = OrderFixture.fixture().orderStatus(OrderStatus.COMPLETION).build();
 
             // when & then
             assertThatThrownBy(() -> order.changeStatus(OrderStatus.MEAL))
@@ -37,8 +34,7 @@ class OrderTest {
         @Test
         void 성공() {
             // given
-            OrderTable orderTable = OrderTableFixture.fixture().empty(false).build();
-            Order order = OrderFixture.fixture().orderTable(orderTable).orderStatus(OrderStatus.COOKING).build();
+            Order order = OrderFixture.fixture().orderStatus(OrderStatus.COOKING).build();
 
             // when
             order.changeStatus(OrderStatus.MEAL);

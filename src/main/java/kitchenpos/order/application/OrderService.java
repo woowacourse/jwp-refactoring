@@ -10,7 +10,6 @@ import kitchenpos.order.dto.request.OrderChangeStatusRequest;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
 import kitchenpos.order.dto.response.OrderResponse;
-import kitchenpos.table.domain.model.OrderTable;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +30,8 @@ public class OrderService {
     }
 
     public OrderResponse create(OrderCreateRequest request) {
-        OrderTable orderTable = orderTableRepository.findByIdOrThrow(request.getOrderTableId());
         List<OrderLineItem> orderLineItems = createOrderLineItems(request.getOrderLineItems());
-        Order order = orderRepository.save(Order.create(orderTable, orderLineItems, orderValidator));
+        Order order = orderRepository.save(Order.create(request.getOrderTableId(), orderLineItems, orderValidator));
         return OrderResponse.from(order);
     }
 

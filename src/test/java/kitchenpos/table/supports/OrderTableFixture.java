@@ -1,12 +1,11 @@
 package kitchenpos.table.supports;
 
 import kitchenpos.table.domain.model.OrderTable;
-import kitchenpos.table.domain.model.TableGroup;
 
 public class OrderTableFixture {
 
     private Long id = null;
-    private TableGroup tableGroup = TableGroupFixture.fixture().build();
+    private Long tableGroupId = 1L;
     private int numberOfGuests = 4;
     private boolean empty = false;
 
@@ -22,8 +21,8 @@ public class OrderTableFixture {
         return this;
     }
 
-    public OrderTableFixture tableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public OrderTableFixture tableGroupId(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         return this;
     }
 
@@ -38,6 +37,6 @@ public class OrderTableFixture {
     }
 
     public OrderTable build() {
-        return new OrderTable(id, tableGroup, numberOfGuests, empty);
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 }

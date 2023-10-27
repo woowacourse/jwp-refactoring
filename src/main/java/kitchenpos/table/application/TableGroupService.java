@@ -6,6 +6,8 @@ import kitchenpos.table.domain.model.OrderTable;
 import kitchenpos.table.domain.model.TableGroup;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.repository.TableGroupRepository;
+import kitchenpos.table.domain.service.TableGroupValidator;
+import kitchenpos.table.domain.service.TableUngroupValidator;
 import kitchenpos.table.dto.request.TableGroupCreateRequest;
 import kitchenpos.table.dto.request.TableGroupTableRequest;
 import kitchenpos.table.dto.response.TableGroupResponse;
@@ -18,19 +20,20 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupValidator tableGroupValidator;
+    private final TableUngroupValidator tableUngroupValidator;
 
-    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository,
+                             TableGroupValidator tableGroupValidator, TableUngroupValidator tableUngroupValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupValidator = tableGroupValidator;
+        this.tableUngroupValidator = tableUngroupValidator;
     }
 
-    public TableGroupResponse create(final TableGroupCreateRequest request) {
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
+    public TableGroupResponse group(final TableGroupCreateRequest request) {
         List<OrderTable> orderTables = findOrderTables(request.getOrderTables());
-
-        tableGroup.setUpOrderTable(orderTables);
-        orderTables.forEach(orderTable -> orderTable.group(tableGroup));
-
+        TableGroup tableGroup = TableGroup.create(orderTables, tableGroupValidator);
         return TableGroupResponse.from(tableGroup);
     }
 
@@ -38,9 +41,9 @@ public class TableGroupService {
         List<Long> orderTableIds = orderTableRequests.stream()
             .map(TableGroupTableRequest::getId)
             .collect(Collectors.toList());
-        List<OrderTable> orderTables = orderTableRepository.findAllById(orderTableIds);
-        validateOrderTablesSize(orderTableRequests, orderTables);
-        return orderTables;
+        List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
+        validateOrderTablesSize(orderTableRequests, savedOrderTables);
+        return savedOrderTables;
     }
 
     private void validateOrderTablesSize(List<TableGroupTableRequest> orderTableRequests,
@@ -52,6 +55,6 @@ public class TableGroupService {
 
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findByIdOrThrow(tableGroupId);
-        tableGroup.ungroup();
+        tableGroup.ungroup(tableUngroupValidator);
     }
 }

@@ -22,8 +22,7 @@ public class OrderValidator {
     }
 
     public void validate(Order order) {
-        OrderTable orderTable = order.getOrderTable();
-        validateOrderTableExist(orderTable);
+        OrderTable orderTable = findByOrderTable(order.getOrderTableId());
         validateOrderTableNotEmpty(orderTable);
 
         List<OrderLineItem> orderLineItems = order.getOrderLineItems();
@@ -31,10 +30,9 @@ public class OrderValidator {
         validateMenusExist(orderLineItems, savedMenus);
     }
 
-    private void validateOrderTableExist(OrderTable orderTable) {
-        if (!orderTableRepository.existsById(orderTable.getId())) {
-            throw new IllegalArgumentException("존재하지 않는 주문 테이블입니다.");
-        }
+    private OrderTable findByOrderTable(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
     }
 
     private void validateOrderTableNotEmpty(OrderTable orderTable) {

@@ -5,13 +5,11 @@ import java.util.List;
 import kitchenpos.order.domain.model.Order;
 import kitchenpos.order.domain.model.OrderLineItem;
 import kitchenpos.order.domain.model.OrderStatus;
-import kitchenpos.table.domain.model.OrderTable;
-import kitchenpos.table.supports.OrderTableFixture;
 
 public class OrderFixture {
 
     private Long id = null;
-    private OrderTable orderTable = OrderTableFixture.fixture().build();
+    private Long orderTableId = 1L;
     private OrderStatus orderStatus = OrderStatus.COOKING;
     private LocalDateTime orderedTime = LocalDateTime.of(2023, 10, 2, 10, 0);
     private List<OrderLineItem> orderLineItems = List.of(
@@ -31,8 +29,8 @@ public class OrderFixture {
         return this;
     }
 
-    public OrderFixture orderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
+    public OrderFixture orderTableId(Long orderTableId) {
+        this.orderTableId = orderTableId;
         return this;
     }
 
@@ -52,6 +50,6 @@ public class OrderFixture {
     }
 
     public Order build() {
-        return new Order(id, orderTable, orderStatus, orderLineItems);
+        return new Order(id, orderTableId, orderStatus, orderLineItems);
     }
 }
