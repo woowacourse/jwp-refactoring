@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':product-module')
+    implementation project(':menu-module')
+    implementation project(':table-module')
+}
