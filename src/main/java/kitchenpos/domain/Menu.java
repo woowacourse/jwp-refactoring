@@ -30,7 +30,7 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(
+    private Menu(
             final MenuGroup menuGroup,
             final Price price,
             final String name

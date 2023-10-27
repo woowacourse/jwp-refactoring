@@ -137,8 +137,8 @@ public class MenuServiceFixture {
         final MenuGroup 메뉴_그룹 = new MenuGroup("한식");
         final MenuGroup 저장된_메뉴_그룹 = menuGroupRepository.save(메뉴_그룹);
 
-        final Menu 저장된_메뉴_1 = new Menu(저장된_메뉴_그룹, new Price(BigDecimal.valueOf(10_000)), "저장된 메뉴 1");
-        final Menu 저장된_메뉴_2 = new Menu(저장된_메뉴_그룹, new Price(BigDecimal.valueOf(10_000)), "저장된 메뉴 2");
+        final Menu 저장된_메뉴_1 = Menu.of(저장된_메뉴_그룹, "저장된 메뉴 1", BigDecimal.valueOf(10_000));
+        final Menu 저장된_메뉴_2 = Menu.of(저장된_메뉴_그룹, "저장된 메뉴 2", BigDecimal.valueOf(10_000));
         menuRepository.saveAll(List.of(저장된_메뉴_1, 저장된_메뉴_2));
 
         final Product 상품_1 = new Product("첫_번째_상품", new Price(BigDecimal.valueOf(10_000)));

@@ -52,7 +52,7 @@ public class OrderServiceFixture {
         final MenuGroup 메뉴_그룹_1 = new MenuGroup("메뉴 그룹 1");
         menuGroupRepository.save(메뉴_그룹_1);
 
-        final Menu 메뉴 = new Menu(메뉴_그룹_1, new Price(BigDecimal.valueOf(10_000)), "치킨");
+        final Menu 메뉴 = Menu.of(메뉴_그룹_1, "치킨", BigDecimal.valueOf(10_000));
         menuRepository.save(메뉴);
 
         final OrderTable 주문_테이블 = new OrderTable(3, false);
@@ -67,7 +67,7 @@ public class OrderServiceFixture {
         final MenuGroup 메뉴_그룹_1 = new MenuGroup("메뉴 그룹 1");
         menuGroupRepository.save(메뉴_그룹_1);
 
-        final Menu 메뉴 = new Menu(메뉴_그룹_1, new Price(BigDecimal.valueOf(10_000)), "치킨");
+        final Menu 메뉴 = Menu.of(메뉴_그룹_1, "치킨", BigDecimal.valueOf(10_000));
         menuRepository.save(메뉴);
 
         final OrderTable 주문_테이블 = new OrderTable(3, false);
@@ -89,7 +89,7 @@ public class OrderServiceFixture {
         final MenuGroup 메뉴_그룹_1 = new MenuGroup("메뉴 그룹 1");
         menuGroupRepository.save(메뉴_그룹_1);
 
-        final Menu 메뉴 = new Menu(메뉴_그룹_1, new Price(BigDecimal.valueOf(10_000)), "치킨");
+        final Menu 메뉴 = Menu.of(메뉴_그룹_1, "치킨", BigDecimal.valueOf(10_000));
         menuRepository.save(메뉴);
 
         final OrderLineItemDto 주문_항목_아이템_생성_dto = new OrderLineItemDto(메뉴.getId(), 3);
@@ -101,7 +101,7 @@ public class OrderServiceFixture {
         final MenuGroup 메뉴_그룹_1 = new MenuGroup("메뉴 그룹 1");
         menuGroupRepository.save(메뉴_그룹_1);
 
-        final Menu 메뉴 = new Menu(메뉴_그룹_1, new Price(BigDecimal.valueOf(10_000)), "치킨");
+        final Menu 메뉴 = Menu.of(메뉴_그룹_1, "치킨", BigDecimal.valueOf(10_000));
         menuRepository.save(메뉴);
 
         final OrderTable 주문_테이블 = new OrderTable(3, true);
