@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.menuproduct.domain.MenuProduct;
+import kitchenpos.menuproduct.domain.MenuProducts;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
