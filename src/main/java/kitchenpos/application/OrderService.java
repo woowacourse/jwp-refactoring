@@ -80,6 +80,7 @@ public class OrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Order> list() {
         return orderRepository.findAll();
     }
