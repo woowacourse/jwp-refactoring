@@ -1,4 +1,4 @@
-package kitchenpos.dto.request;
+package kitchenpos.menugroup.dto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
