@@ -5,11 +5,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.dto.UpdateGroupOrderTableDto;
-import kitchenpos.order.dto.UpdateUngroupOrderTableDto;
-import kitchenpos.order.dto.ValidateAppendOrderTableInTableGroupDto;
-import kitchenpos.order.dto.ValidateOrderIsNotCompletionInOrderTableDto;
-import kitchenpos.order.dto.ValidateSameSizeOrderTableDto;
+import kitchenpos.order.dto.UpdateGroupOrderTableEvent;
+import kitchenpos.order.dto.UpdateUngroupOrderTableEvent;
+import kitchenpos.order.dto.ValidateAppendOrderTableInTableGroupEvent;
+import kitchenpos.order.dto.ValidateOrderIsNotCompletionInOrderTableEvent;
+import kitchenpos.order.dto.ValidateSameSizeOrderTableEvent;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import org.springframework.context.event.EventListener;
@@ -30,7 +30,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    private void validateSameSizeOrderTable(final ValidateSameSizeOrderTableDto dto) {
+    private void validateSameSizeOrderTable(final ValidateSameSizeOrderTableEvent dto) {
         final List<Long> orderTableIds = dto.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
@@ -40,7 +40,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    private void validateAppendOrderTableInTableGroup(final ValidateAppendOrderTableInTableGroupDto dto) {
+    private void validateAppendOrderTableInTableGroup(final ValidateAppendOrderTableInTableGroupEvent dto) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(dto.getOrderTableIds());
 
         validateSizeOrderTables(orderTables);
@@ -71,7 +71,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    private void updateTableGroupInOrderTable(final UpdateGroupOrderTableDto dto) {
+    private void updateTableGroupInOrderTable(final UpdateGroupOrderTableEvent dto) {
         final Long tableGroupId = dto.getTableGroupId();
         final List<Long> orderTableIds = dto.getOrderTableIds();
 
@@ -81,7 +81,7 @@ public class TableEventHandler {
 
 
     @EventListener
-    private void validateOrderIsNotCompletionInOrderTable(final ValidateOrderIsNotCompletionInOrderTableDto dto) {
+    private void validateOrderIsNotCompletionInOrderTable(final ValidateOrderIsNotCompletionInOrderTableEvent dto) {
         final Long tableGroupId = dto.getTableGroupId();
         final List<Long> orderTableIds = orderTableRepository.findAllByTableGroupId(tableGroupId).stream()
                 .map(OrderTable::getId)
@@ -97,7 +97,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    private void updateUngroupOrderTableDto(final UpdateUngroupOrderTableDto dto) {
+    private void updateUngroupOrderTableDto(final UpdateUngroupOrderTableEvent dto) {
         final Long tableGroupId = dto.getTableGroupId();
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         orderTables.forEach(OrderTable::ungroup);

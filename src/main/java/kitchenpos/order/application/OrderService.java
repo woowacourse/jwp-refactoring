@@ -2,9 +2,7 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.dto.ValidateExistMenuDto;
-import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menu.dto.ValidateExistMenuEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -53,7 +51,7 @@ public class OrderService {
 
     private OrderLineItem convertOrderLineItem(final OrderLineItemInOrderDto request) {
         final Long menuId = request.getMenuId();
-        publisher.publishEvent(new ValidateExistMenuDto(menuId));
+        publisher.publishEvent(new ValidateExistMenuEvent(menuId));
         return new OrderLineItem(menuId, request.getQuantity());
     }
 

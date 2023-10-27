@@ -3,11 +3,11 @@ package kitchenpos.tablegroup.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.dto.OrderTableInTableGroupDto;
-import kitchenpos.order.dto.UpdateGroupOrderTableDto;
-import kitchenpos.order.dto.UpdateUngroupOrderTableDto;
-import kitchenpos.order.dto.ValidateAppendOrderTableInTableGroupDto;
-import kitchenpos.order.dto.ValidateOrderIsNotCompletionInOrderTableDto;
-import kitchenpos.order.dto.ValidateSameSizeOrderTableDto;
+import kitchenpos.order.dto.UpdateGroupOrderTableEvent;
+import kitchenpos.order.dto.UpdateUngroupOrderTableEvent;
+import kitchenpos.order.dto.ValidateAppendOrderTableInTableGroupEvent;
+import kitchenpos.order.dto.ValidateOrderIsNotCompletionInOrderTableEvent;
+import kitchenpos.order.dto.ValidateSameSizeOrderTableEvent;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.dto.TableGroupResponse;
@@ -36,19 +36,19 @@ public class TableGroupService {
                 .map(OrderTableInTableGroupDto::getId)
                 .collect(Collectors.toList());
 
-        publisher.publishEvent(new ValidateSameSizeOrderTableDto(orderTableIds));
+        publisher.publishEvent(new ValidateSameSizeOrderTableEvent(orderTableIds));
 
         final TableGroup tableGroup = TableGroup.create();
         tableGroupRepository.save(tableGroup);
 
-        publisher.publishEvent(new ValidateAppendOrderTableInTableGroupDto(orderTableIds));
-        publisher.publishEvent(new UpdateGroupOrderTableDto(tableGroup.getId(), orderTableIds));
+        publisher.publishEvent(new ValidateAppendOrderTableInTableGroupEvent(orderTableIds));
+        publisher.publishEvent(new UpdateGroupOrderTableEvent(tableGroup.getId(), orderTableIds));
 
         return TableGroupResponse.from(tableGroup);
     }
 
     public void ungroup(final Long tableGroupId) {
-        publisher.publishEvent(new ValidateOrderIsNotCompletionInOrderTableDto(tableGroupId));
-        publisher.publishEvent(new UpdateUngroupOrderTableDto(tableGroupId));
+        publisher.publishEvent(new ValidateOrderIsNotCompletionInOrderTableEvent(tableGroupId));
+        publisher.publishEvent(new UpdateUngroupOrderTableEvent(tableGroupId));
     }
 }

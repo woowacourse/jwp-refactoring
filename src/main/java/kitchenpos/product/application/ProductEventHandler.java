@@ -2,8 +2,8 @@ package kitchenpos.product.application;
 
 import kitchenpos.common.vo.Price;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.dto.ValidateExistProductDto;
-import kitchenpos.product.dto.ValidateSamePriceWithMenuDto;
+import kitchenpos.product.dto.ValidateExistProductEvent;
+import kitchenpos.product.dto.ValidateSamePriceWithMenuEvent;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -18,15 +18,15 @@ public class ProductEventHandler {
     }
 
     @EventListener
-    private void validateExistProduct(final ValidateExistProductDto dto) {
+    private void validateExistProduct(final ValidateExistProductEvent dto) {
         productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다."));
     }
 
     @EventListener
-    private void validateSamePriceWithMenu(final ValidateSamePriceWithMenuDto validateSamePriceWithMenuDto) {
-        final Price menuPrice = Price.from(validateSamePriceWithMenuDto.getMenuPrice());
-        final Price sum = validateSamePriceWithMenuDto.getProductQuantityDtos().stream()
+    private void validateSamePriceWithMenu(final ValidateSamePriceWithMenuEvent validateSamePriceWithMenuEvent) {
+        final Price menuPrice = Price.from(validateSamePriceWithMenuEvent.getMenuPrice());
+        final Price sum = validateSamePriceWithMenuEvent.getProductQuantityDtos().stream()
                 .map(dto -> findProductPrice(dto.getProductId()).multiply(dto.getQuantity()))
                 .reduce(Price.createZero(), Price::plus);
         if (menuPrice.isGreaterThan(sum)) {

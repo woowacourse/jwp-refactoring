@@ -2,12 +2,12 @@ package kitchenpos.order.dto;
 
 import java.util.List;
 
-public class UpdateGroupOrderTableDto {
+public class UpdateGroupOrderTableEvent {
 
-    private Long tableGroupId;
-    private List<Long> orderTableIds;
+    private final Long tableGroupId;
+    private final List<Long> orderTableIds;
 
-    public UpdateGroupOrderTableDto(final Long tableGroupId, final List<Long> orderTableIds) {
+    public UpdateGroupOrderTableEvent(final Long tableGroupId, final List<Long> orderTableIds) {
         this.tableGroupId = tableGroupId;
         this.orderTableIds = orderTableIds;
     }

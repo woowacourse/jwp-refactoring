@@ -1,10 +1,10 @@
 package kitchenpos.menu.dto;
 
-public class ValidateExistMenuDto {
+public class ValidateExistMenuEvent {
 
-    private Long menuId;
+    private final Long menuId;
 
-    public ValidateExistMenuDto(final Long menuId) {
+    public ValidateExistMenuEvent(final Long menuId) {
         this.menuId = menuId;
     }
 

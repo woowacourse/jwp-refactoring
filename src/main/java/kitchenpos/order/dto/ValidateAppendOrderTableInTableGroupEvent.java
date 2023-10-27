@@ -2,11 +2,11 @@ package kitchenpos.order.dto;
 
 import java.util.List;
 
-public class ValidateOrderIsNotCompletionDto {
+public class ValidateAppendOrderTableInTableGroupEvent {
 
-    private List<Long> orderTableIds;
+    private final List<Long> orderTableIds;
 
-    public ValidateOrderIsNotCompletionDto(final List<Long> orderTableIds) {
+    public ValidateAppendOrderTableInTableGroupEvent(final List<Long> orderTableIds) {
         this.orderTableIds = orderTableIds;
     }
 

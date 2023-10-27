@@ -3,13 +3,13 @@ package kitchenpos.product.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class ValidateSamePriceWithMenuDto {
+public class ValidateSamePriceWithMenuEvent {
 
-    final BigDecimal menuPrice;
-    final List<ProductQuantityDto> productQuantityDtos;
+    private final BigDecimal menuPrice;
+    private final List<ProductQuantityDto> productQuantityDtos;
 
-    public ValidateSamePriceWithMenuDto(final BigDecimal menuPrice,
-                                        final List<ProductQuantityDto> productQuantityDtos) {
+    public ValidateSamePriceWithMenuEvent(final BigDecimal menuPrice,
+                                          final List<ProductQuantityDto> productQuantityDtos) {
         this.menuPrice = menuPrice;
         this.productQuantityDtos = productQuantityDtos;
     }

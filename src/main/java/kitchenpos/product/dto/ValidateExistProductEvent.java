@@ -1,10 +1,10 @@
 package kitchenpos.product.dto;
 
-public class ValidateExistProductDto {
+public class ValidateExistProductEvent {
 
-    private Long productId;
+    private final Long productId;
 
-    public ValidateExistProductDto(final Long productId) {
+    public ValidateExistProductEvent(final Long productId) {
         this.productId = productId;
     }
 

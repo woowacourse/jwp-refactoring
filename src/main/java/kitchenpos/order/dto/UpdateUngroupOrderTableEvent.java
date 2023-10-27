@@ -1,10 +1,10 @@
 package kitchenpos.order.dto;
 
-public class UpdateUngroupOrderTableDto {
+public class UpdateUngroupOrderTableEvent {
 
-    private Long tableGroupId;
+    private final Long tableGroupId;
 
-    public UpdateUngroupOrderTableDto(final Long tableGroupId) {
+    public UpdateUngroupOrderTableEvent(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 
