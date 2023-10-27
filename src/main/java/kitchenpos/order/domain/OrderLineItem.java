@@ -2,6 +2,7 @@ package kitchenpos.order.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,11 +29,8 @@ public class OrderLineItem {
     @Column(name = "quantity", nullable = false)
     private long quantity;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Column(name = "price", nullable = false)
-    private Price price;
+    @Embedded
+    private OrderLineItemSpec orderLineItemSpec;
 
     protected OrderLineItem() {
     }
@@ -41,14 +39,12 @@ public class OrderLineItem {
                          final Order order,
                          final Long menuId,
                          final long quantity,
-                         final String name,
-                         final Price price) {
+                         final OrderLineItemSpec orderLineItemSpec) {
         this.seq = seq;
         this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
-        this.name = name;
-        this.price = price;
+        this.orderLineItemSpec = orderLineItemSpec;
     }
 
     public OrderLineItem(final Order order,
@@ -56,7 +52,7 @@ public class OrderLineItem {
                          final long quantity,
                          final String name,
                          final Integer price) {
-        this(null, order, menuId, quantity, name, Price.from(price));
+        this(null, order, menuId, quantity, new OrderLineItemSpec(name, Price.from(price)));
     }
 
     public Long getSeq() {
@@ -80,10 +76,10 @@ public class OrderLineItem {
     }
 
     public String getName() {
-        return name;
+        return orderLineItemSpec.getName();
     }
 
     public int getPrice() {
-        return price.getValue().intValue();
+        return orderLineItemSpec.getPrice().intValue();
     }
 }
