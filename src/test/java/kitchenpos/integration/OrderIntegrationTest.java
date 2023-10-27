@@ -5,6 +5,7 @@ import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.*;
 import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -118,9 +119,11 @@ class OrderIntegrationTest extends IntegrationTest {
         final ProductCreateRequest product = new ProductCreateRequest(name, BigDecimal.valueOf(value));
         final HttpEntity<ProductCreateRequest> request = new HttpEntity<>(product);
 
-        return testRestTemplate
-                .postForEntity("/api/products", request, Product.class)
+        final ProductResponse response = testRestTemplate
+                .postForEntity("/api/products", request, ProductResponse.class)
                 .getBody();
+
+        return new Product(response.getId(), response.getName(), new Price(response.getPrice()));
     }
 
     private MenuGroup createMenuGroup(final String name) {

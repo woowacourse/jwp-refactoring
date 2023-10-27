@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.persistence.ProductRepository;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -40,10 +42,15 @@ class ProductServiceTest {
 
             // when
             final ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
-            final Product result = productService.create(request);
+            final ProductResponse result = productService.create(request);
+            final ProductResponse expect = new ProductResponse(1L, "상품", BigDecimal.valueOf(1000));
 
             // then
-            assertThat(result).isEqualTo(savedProduct);
+            assertAll(
+                    () -> assertThat(result.getId()).isEqualTo(1),
+                    () -> assertThat(result.getName()).isEqualTo("상품"),
+                    () -> assertThat(result.getPrice()).isEqualTo(BigDecimal.valueOf(1000))
+            );
         }
 
         @Test
@@ -74,7 +81,7 @@ class ProductServiceTest {
                 .thenReturn(Collections.emptyList());
 
         // when
-        final List<Product> result = productService.list();
+        final List<ProductResponse> result = productService.list();
 
         // then
         assertThat(result).isEmpty();

@@ -5,8 +5,10 @@ import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -82,9 +84,11 @@ class MenuIntegrationTest extends IntegrationTest {
         final ProductCreateRequest product = new ProductCreateRequest(name, BigDecimal.valueOf(value));
         final HttpEntity<ProductCreateRequest> request = new HttpEntity<>(product);
 
-        return testRestTemplate
-                .postForEntity("/api/products", request, Product.class)
+        final ProductResponse response = testRestTemplate
+                .postForEntity("/api/products", request, ProductResponse.class)
                 .getBody();
+
+        return new Product(response.getId(), response.getName(), new Price(response.getPrice()));
     }
 
     private MenuGroup createMenuGroup(final String name) {
