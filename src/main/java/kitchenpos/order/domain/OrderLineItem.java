@@ -2,13 +2,12 @@ package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.vo.Quantity;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 
 @Entity
 public class OrderLineItem {
@@ -17,8 +16,11 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @JoinColumn(name = "menu_id", nullable = false, foreignKey = @ForeignKey(name = "fk_order_line_item_to_menu"))
+    @Column(name = "menu_id", nullable = false)
     private Long menuId;
+
+    @Column(name = "menu_history_id", nullable = true)
+    private Long menuHistoryId;
 
     @Embedded
     private Quantity quantity;
@@ -26,18 +28,25 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final Quantity quantity) {
-        this(null, menuId, quantity);
+    public OrderLineItem(final Long menuId,
+                         final Quantity quantity
+    ) {
+        this(null, menuId, null, quantity);
     }
 
-    protected OrderLineItem(final Long seq, final Long menuId, final Quantity quantity) {
+    protected OrderLineItem(final Long seq,
+                            final Long menuId,
+                            final Long menuHistoryId,
+                            final Quantity quantity
+    ) {
         this.seq = seq;
         this.menuId = menuId;
+        this.menuHistoryId = menuHistoryId;
         this.quantity = quantity;
     }
 
     public static OrderLineItem withoutOrder(final Long menuId, final Quantity quantity) {
-        return new OrderLineItem(menuId, quantity);
+        return new OrderLineItem(menuId,  quantity);
     }
 
     public Long getSeq() {
@@ -46,6 +55,10 @@ public class OrderLineItem {
 
     public Long getMenuId() {
         return menuId;
+    }
+
+    public Long getMenuHistoryId() {
+        return menuHistoryId;
     }
 
     public Quantity getQuantity() {
