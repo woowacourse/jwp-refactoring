@@ -1,8 +1,10 @@
 package kitchenpos.menugroup.domain;
 
+import kitchenpos.common.domain.Name;
+
 public class MenuGroup {
     private Long id;
-    private String name;
+    private Name name;
 
     public MenuGroup(String name) {
         this(null, name);
@@ -10,7 +12,7 @@ public class MenuGroup {
 
     public MenuGroup(Long id, String name) {
         this.id = id;
-        this.name = name;
+        this.name = new Name(name);
     }
 
     public Long getId() {
@@ -18,6 +20,6 @@ public class MenuGroup {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 }

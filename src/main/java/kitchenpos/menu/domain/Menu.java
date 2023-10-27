@@ -1,12 +1,13 @@
 package kitchenpos.menu.domain;
 
+import kitchenpos.common.domain.Name;
 import kitchenpos.common.domain.Price;
 
 import java.util.List;
 
 public class Menu {
     private Long id;
-    private String name;
+    private Name name;
     private Price price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
@@ -17,7 +18,7 @@ public class Menu {
 
     public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
-        this.name = name;
+        this.name = new Name(name);
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
@@ -35,7 +36,7 @@ public class Menu {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public Price getPrice() {
