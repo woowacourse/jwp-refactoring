@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.ordertable.dao;
 
 import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;

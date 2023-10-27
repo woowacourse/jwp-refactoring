@@ -1,4 +1,4 @@
-package kitchenpos.response;
+package kitchenpos.ordertable.response;
 
 import kitchenpos.ordertable.domain.OrderTable;
 

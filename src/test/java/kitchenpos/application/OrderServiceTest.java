@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.common.domain.Price;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
@@ -14,6 +13,7 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.request.OrderCreateRequest;
 import kitchenpos.order.request.OrderLineItemDto;
+import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;

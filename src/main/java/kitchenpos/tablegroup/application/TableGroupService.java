@@ -1,9 +1,9 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTables;
 import kitchenpos.request.TableGroupCreateRequest;

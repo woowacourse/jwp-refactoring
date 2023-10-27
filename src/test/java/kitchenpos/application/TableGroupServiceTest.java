@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
@@ -14,9 +13,10 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.request.OrderTableCreateRequest;
 import kitchenpos.product.domain.Product;
-import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;

@@ -1,4 +1,4 @@
-package kitchenpos.request;
+package kitchenpos.ordertable.request;
 
 public class TableChangeNumberOfGuestsRequest {
 

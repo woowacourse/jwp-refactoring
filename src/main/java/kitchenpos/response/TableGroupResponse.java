@@ -1,5 +1,6 @@
 package kitchenpos.response;
 
+import kitchenpos.ordertable.response.OrderTableResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 
 import java.time.LocalDateTime;
