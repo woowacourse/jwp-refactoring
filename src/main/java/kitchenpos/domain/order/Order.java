@@ -29,7 +29,7 @@ public class Order {
     @NotNull
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {

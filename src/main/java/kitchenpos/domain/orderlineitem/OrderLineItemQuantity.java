@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 public class OrderLineItemQuantity {
     private long quantity;
 
-    public OrderLineItemQuantity() {
+    protected OrderLineItemQuantity() {
     }
 
     public OrderLineItemQuantity(final long quantity) {

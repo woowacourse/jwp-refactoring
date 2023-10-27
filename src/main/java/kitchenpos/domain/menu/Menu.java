@@ -27,7 +27,7 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(final MenuName name, final MenuPrice price, final MenuGroup menuGroup) {

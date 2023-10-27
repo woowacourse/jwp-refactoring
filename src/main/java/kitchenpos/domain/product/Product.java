@@ -20,7 +20,7 @@ public class Product {
     @Embedded
     private ProductPrice price;
 
-    public Product() {
+    protected Product() {
     }
 
     public Product(final ProductName name, final ProductPrice price) {

@@ -9,7 +9,7 @@ public class OrderTableNumberOfGuests {
     @Column(nullable = false)
     private int numberOfGuests;
 
-    public OrderTableNumberOfGuests() {
+    protected OrderTableNumberOfGuests() {
     }
 
     public OrderTableNumberOfGuests(final int numberOfGuests) {

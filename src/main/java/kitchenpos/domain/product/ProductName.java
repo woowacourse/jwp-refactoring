@@ -11,7 +11,7 @@ public class ProductName {
     @Column(nullable = false)
     private String name;
 
-    public ProductName() {
+    protected ProductName() {
     }
 
     public ProductName(final String name) {

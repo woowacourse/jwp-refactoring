@@ -16,7 +16,7 @@ public class MenuGroup {
     @Embedded
     private MenuGroupName name;
 
-    public MenuGroup() {
+    protected MenuGroup() {
     }
 
     public MenuGroup(final MenuGroupName name) {

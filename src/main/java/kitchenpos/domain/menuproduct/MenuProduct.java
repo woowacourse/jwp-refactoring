@@ -29,7 +29,7 @@ public class MenuProduct {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     public MenuProduct(final Menu menu, final Product product, final MenuProductQuantity quantity) {

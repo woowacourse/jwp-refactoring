@@ -8,7 +8,7 @@ public class MenuProductQuantity {
     @Column(nullable = false)
     private long quantity;
 
-    public MenuProductQuantity() {
+    protected MenuProductQuantity() {
     }
 
     public MenuProductQuantity(final long quantity) {
