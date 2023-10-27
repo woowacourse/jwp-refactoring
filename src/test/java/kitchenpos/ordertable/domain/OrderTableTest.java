@@ -1,6 +1,5 @@
 package kitchenpos.ordertable.domain;
 
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,7 @@ class OrderTableTest {
     @Test
     void validate_already_contained() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, new TableGroup(2L), 4, false);
+        final OrderTable orderTable = new OrderTable(1L, 2L, 4, false);
 
         // when
         // then
@@ -25,7 +24,7 @@ class OrderTableTest {
     @Test
     void change_empty_status() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, new TableGroup(2L), 4, false);
+        final OrderTable orderTable = new OrderTable(1L, 2L, 4, false);
 
         // when
         orderTable.changeEmptyStatus(true);
@@ -38,7 +37,7 @@ class OrderTableTest {
     @Test
     void change_number_of_guests() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, new TableGroup(2L), 4, false);
+        final OrderTable orderTable = new OrderTable(1L, 2L, 4, false);
         final int changingNumberOfGuests = 5;
 
         // when
@@ -52,7 +51,7 @@ class OrderTableTest {
     @Test
     void change_number_of_guests_fail_with_empty_orderTable() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, new TableGroup(2L), 4, true);
+        final OrderTable orderTable = new OrderTable(1L, 2L, 4, true);
         final int changingNumberOfGuests = 5;
 
         // when
@@ -66,7 +65,7 @@ class OrderTableTest {
     @Test
     void change_number_of_guests_fail_negative_input() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, new TableGroup(2L), 4, false);
+        final OrderTable orderTable = new OrderTable(1L, 2L, 4, false);
         final int changingNumberOfGuests = -1;
 
         // when

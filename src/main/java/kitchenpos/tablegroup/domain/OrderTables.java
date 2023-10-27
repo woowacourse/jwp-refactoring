@@ -6,7 +6,7 @@ import kitchenpos.ordertable.domain.OrderTable;
 
 public class OrderTables {
 
-    private List<OrderTable> orderTables;
+    private final List<OrderTable> orderTables;
 
     public OrderTables(final List<OrderTable> orderTables) {
         validateOrderTableSize(orderTables);
@@ -19,14 +19,14 @@ public class OrderTables {
         }
     }
 
-    public void join(final TableGroup tableGroup) {
+    public void join(final Long tableGroupId) {
         validateOrderTableIsNotEmptyOfAlreadyContainedOtherTableGroup(orderTables);
-        orderTables.forEach(orderTable -> orderTable.joinTableGroup(tableGroup));
+        orderTables.forEach(orderTable -> orderTable.joinTableGroup(tableGroupId));
     }
 
     private void validateOrderTableIsNotEmptyOfAlreadyContainedOtherTableGroup(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
                 throw new IllegalArgumentException("테이블이 비어있지 않거나 이미 다른 그룹에 포함된 주문 테이블은 새로운 테이블 그룹에 속할 수 없습니다.");
             }
         }

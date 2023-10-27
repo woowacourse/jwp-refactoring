@@ -1,10 +1,9 @@
-package kitchenpos.ordertable.domain;
+package kitchenpos.tablegroup.domain;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.tablegroup.domain.OrderTables;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +43,7 @@ class OrderTablesTest {
         final OrderTables orderTables = new OrderTables(inputOrderTables);
         // when
         // then
-        assertThatThrownBy(() -> orderTables.join(tableGroup))
+        assertThatThrownBy(() -> orderTables.join(tableGroup.getId()))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("테이블이 비어있지 않거나 이미 다른 그룹에 포함된 주문 테이블은 새로운 테이블 그룹에 속할 수 없습니다.");
     }
@@ -56,7 +55,7 @@ class OrderTablesTest {
                 new OrderTable(3, true)
             )),
             Arguments.of(List.of(
-                new OrderTable(1L, new TableGroup(2L), 4, false),
+                new OrderTable(1L, 2L, 4, false),
                 new OrderTable(3, true)
             ))
         );
@@ -72,12 +71,12 @@ class OrderTablesTest {
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
 
         // when
-        orderTables.join(tableGroup);
+        orderTables.join(tableGroup.getId());
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(orderTable1.getTableGroup()).isEqualTo(tableGroup);
-            softly.assertThat(orderTable2.getTableGroup()).isEqualTo(tableGroup);
+            softly.assertThat(orderTable1.getTableGroupId()).isEqualTo(tableGroup.getId());
+            softly.assertThat(orderTable2.getTableGroupId()).isEqualTo(tableGroup.getId());
         });
 
     }
@@ -90,15 +89,15 @@ class OrderTablesTest {
         final OrderTable orderTable1 = new OrderTable(2, true);
         final OrderTable orderTable2 = new OrderTable(4, true);
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
-        orderTables.join(tableGroup);
+        orderTables.join(tableGroup.getId());
 
         // when
         orderTables.ungroup();
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(orderTable1.getTableGroup()).isNull();
-            softly.assertThat(orderTable2.getTableGroup()).isNull();
+            softly.assertThat(orderTable1.getTableGroupId()).isNull();
+            softly.assertThat(orderTable2.getTableGroupId()).isNull();
         });
     }
 }

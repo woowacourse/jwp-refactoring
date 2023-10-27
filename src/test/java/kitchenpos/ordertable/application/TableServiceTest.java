@@ -121,7 +121,7 @@ class TableServiceTest {
     void change_orderTable_empty_fail_with_not_null_group() {
         // given
         final TableGroup tableGroup = tableGroupRepository.save(TableGroup.forSave());
-        final OrderTable alreadyContainedOrderTable = orderTableRepository.save(new OrderTable(null, tableGroup, 5, false));
+        final OrderTable alreadyContainedOrderTable = orderTableRepository.save(new OrderTable(null, tableGroup.getId(), 5, false));
         final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when

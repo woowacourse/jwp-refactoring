@@ -35,8 +35,8 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupRequest request) {
         final TableGroup tableGroup = TableGroup.forSave();
         final OrderTables orderTables = getOrderTables(request.getOrderTables());
-        orderTables.join(tableGroup);
         tableGroupRepository.save(tableGroup);
+        orderTables.join(tableGroup.getId());
         return TableGroupResponse.from(tableGroup, orderTables);
     }
 
@@ -50,9 +50,9 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+        tableGroupRepository.findById(tableGroupId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 그룹입니다."));
-        final OrderTables orderTables = new OrderTables(orderTableRepository.findByTableGroup(tableGroup));
+        final OrderTables orderTables = new OrderTables(orderTableRepository.findByTableGroupId(tableGroupId));
         validateOrderTableIsCompletion(orderTables);
         orderTables.ungroup();
     }

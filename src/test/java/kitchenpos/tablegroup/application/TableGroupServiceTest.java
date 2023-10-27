@@ -140,7 +140,7 @@ class TableGroupServiceTest {
         final TableGroup otherTableGroup = tableGroupRepository.save(TableGroup.forSave());
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
-        orderTable1.joinTableGroup(otherTableGroup);
+        orderTable1.joinTableGroup(otherTableGroup.getId());
 
         final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(
             new OrderTableIdRequest(orderTable1.getId()),
@@ -162,8 +162,8 @@ class TableGroupServiceTest {
         tableGroupRepository.save(tableGroup);
         final OrderTable orderTable1 = new OrderTable(5, true);
         final OrderTable orderTable2 = new OrderTable(4, true);
-        orderTable1.joinTableGroup(tableGroup);
-        orderTable2.joinTableGroup(tableGroup);
+        orderTable1.joinTableGroup(tableGroup.getId());
+        orderTable2.joinTableGroup(tableGroup.getId());
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
 
@@ -179,9 +179,9 @@ class TableGroupServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(orderTable1.getTableGroup()).isNull();
+            softly.assertThat(orderTable1.getTableGroupId()).isNull();
             softly.assertThat(orderTable1.isEmpty()).isTrue();
-            softly.assertThat(orderTable2.getTableGroup()).isNull();
+            softly.assertThat(orderTable2.getTableGroupId()).isNull();
             softly.assertThat(orderTable2.isEmpty()).isTrue();
         });
     }
@@ -194,8 +194,8 @@ class TableGroupServiceTest {
         tableGroupRepository.save(tableGroup);
         final OrderTable orderTable1 = new OrderTable(5);
         final OrderTable orderTable2 = new OrderTable(4);
-        orderTable1.joinTableGroup(tableGroup);
-        orderTable2.joinTableGroup(tableGroup);
+        orderTable1.joinTableGroup(tableGroup.getId());
+        orderTable2.joinTableGroup(tableGroup.getId());
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
         orderRepository.save(new Order(orderTable1.getId()));
