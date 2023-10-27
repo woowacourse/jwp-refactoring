@@ -1,16 +1,17 @@
 package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.ordertable.ChangeEmptyRequest;
-import kitchenpos.dto.ordertable.ChangeNumberOfGuestsRequest;
-import kitchenpos.dto.ordertable.OrderTableRequest;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.ordertable.application.dto.ChangeEmptyRequest;
+import kitchenpos.ordertable.application.dto.ChangeNumberOfGuestsRequest;
+import kitchenpos.ordertable.application.dto.OrderTableRequest;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
