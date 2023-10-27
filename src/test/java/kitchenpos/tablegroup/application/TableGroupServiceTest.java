@@ -1,4 +1,4 @@
-package kitchenpos.table_group.application;
+package kitchenpos.tablegroup.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,8 +26,8 @@ import kitchenpos.order.infrastructure.persistence.OrderTableRepositoryImpl;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.infrastructure.persistence.ProductRepositoryImpl;
 import kitchenpos.support.ServiceIntegrationTest;
-import kitchenpos.table_group.domain.TableGroup;
-import kitchenpos.table_group.infrastructure.persistence.TableGroupRepositoryImpl;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.infrastructure.persistence.TableGroupRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

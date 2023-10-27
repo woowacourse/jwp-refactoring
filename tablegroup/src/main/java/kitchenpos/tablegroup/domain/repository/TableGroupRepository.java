@@ -1,8 +1,8 @@
-package kitchenpos.table_group.domain.repository;
+package kitchenpos.tablegroup.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public interface TableGroupRepository {
 

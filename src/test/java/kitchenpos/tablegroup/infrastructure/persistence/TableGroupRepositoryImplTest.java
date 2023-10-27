@@ -1,4 +1,4 @@
-package kitchenpos.table_group.infrastructure.persistence;
+package kitchenpos.tablegroup.infrastructure.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -14,7 +14,7 @@ import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.infrastructure.persistence.OrderTableRepositoryImpl;
 import kitchenpos.support.JdbcTestHelper;
-import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

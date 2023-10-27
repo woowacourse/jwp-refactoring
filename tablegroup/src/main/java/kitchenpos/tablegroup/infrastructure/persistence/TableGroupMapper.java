@@ -1,8 +1,8 @@
-package kitchenpos.table_group.infrastructure.persistence;
+package kitchenpos.tablegroup.infrastructure.persistence;
 
 import java.util.List;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public class TableGroupMapper {
 

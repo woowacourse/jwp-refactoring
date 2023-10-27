@@ -1,4 +1,4 @@
-package kitchenpos.table_group.infrastructure.persistence;
+package kitchenpos.tablegroup.infrastructure.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.infrastructure.persistence.OrderTableDao;
 import kitchenpos.order.infrastructure.persistence.OrderTableEntity;
 import kitchenpos.order.infrastructure.persistence.OrderTableMapper;
-import kitchenpos.table_group.domain.TableGroup;
-import kitchenpos.table_group.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

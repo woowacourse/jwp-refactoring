@@ -1,4 +1,4 @@
-package kitchenpos.table_group.application;
+package kitchenpos.tablegroup.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,8 +8,8 @@ import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTables;
 import kitchenpos.order.domain.repository.OrderTableRepository;
-import kitchenpos.table_group.domain.TableGroup;
-import kitchenpos.table_group.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

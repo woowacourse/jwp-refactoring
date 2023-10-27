@@ -1,8 +1,8 @@
-package kitchenpos.table_group.api;
+package kitchenpos.tablegroup.api;
 
 import java.net.URI;
-import kitchenpos.table_group.application.TableGroupService;
-import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;

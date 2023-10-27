@@ -1,4 +1,4 @@
-package kitchenpos.table_group.infrastructure.persistence;
+package kitchenpos.tablegroup.infrastructure.persistence;
 
 import java.util.List;
 import java.util.Optional;
