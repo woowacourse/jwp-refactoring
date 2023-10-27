@@ -30,7 +30,8 @@ public class Menu extends BaseDate {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
@@ -39,7 +40,6 @@ public class Menu extends BaseDate {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        menuProducts.forEach(it -> it.setMenu(this));
         this.menuProducts = menuProducts;
         validateMenuProducts(menuProducts);
     }

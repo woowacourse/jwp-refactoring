@@ -19,23 +19,18 @@ public class MenuProduct extends BaseDate {
     private Long seq;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-
-    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
     private long quantity;
 
-    public MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
+    public MenuProduct(final Long seq, final Product product, final long quantity) {
         this.seq = seq;
-        this.menu = menu;
         this.product = product;
         this.quantity = quantity;
     }
 
     public MenuProduct(final Product product, final long quantity) {
-        this(null, null, product, quantity);
+        this(null, product, quantity);
     }
 
     protected MenuProduct() {
@@ -43,14 +38,6 @@ public class MenuProduct extends BaseDate {
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
     }
 
     public Product getProduct() {
@@ -65,7 +52,6 @@ public class MenuProduct extends BaseDate {
     public String toString() {
         return "MenuProduct{" +
                 "seq=" + seq +
-                ", menu=" + menu +
                 ", product=" + product +
                 ", quantity=" + quantity +
                 '}';
