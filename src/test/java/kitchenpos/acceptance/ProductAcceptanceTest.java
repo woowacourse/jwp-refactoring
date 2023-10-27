@@ -94,6 +94,6 @@ class ProductAcceptanceTest extends AcceptanceTest {
         List<Product> actual = response.jsonPath().getList("", Product.class);
 
         assertThat(actual).usingRecursiveComparison().ignoringFields("id")
-                .isEqualTo(List.of(new Product("김치찌개", new BigDecimal("10000.0"))));
+                .isEqualTo(List.of(Product.of("김치찌개", new BigDecimal("10000.0"))));
     }
 }

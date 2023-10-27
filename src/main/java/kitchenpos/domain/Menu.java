@@ -45,13 +45,13 @@ public class Menu {
 
     public static Menu of(String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
         Menu menu = new Menu(name, price, menuGroup, menuProducts);
-        menu.validatePrice(price);
+        menu.validatePrice();
         menu.checkProductPriceSumEqualsPrice(price, menuProducts.calculateSum());
         menuProducts.setMenu(menu);
         return menu;
     }
 
-    private void validatePrice(BigDecimal price) {
+    private void validatePrice() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }

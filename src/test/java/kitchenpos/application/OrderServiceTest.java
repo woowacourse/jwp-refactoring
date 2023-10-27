@@ -39,7 +39,7 @@ class OrderServiceTest {
     @Test
     void 주문을_생성한다() {
         // given
-        Product 치킨 = productRepository.save(new Product("후라이드", new BigDecimal("16000.00")));
+        Product 치킨 = productRepository.save(Product.of("후라이드", new BigDecimal("16000.00")));
 
         Menu menu = menuRepository.save(MENU_1(치킨));
 
@@ -63,7 +63,7 @@ class OrderServiceTest {
     @Test
     void empty_상태의_테이블에_대한_주문_생성은_예외_발생() {
         // given
-        Product 치킨 = productRepository.save(new Product("후라이드", new BigDecimal("16000.00")));
+        Product 치킨 = productRepository.save(Product.of("후라이드", new BigDecimal("16000.00")));
 
         Menu menu = menuRepository.save(MENU_1(치킨));
 
@@ -85,7 +85,7 @@ class OrderServiceTest {
     @Test
     void 같은_메뉴에_대한_주문_항목이_중복되어_존재한다면_주문_생성시_예외_발생() {
         // given
-        Product 치킨 = productRepository.save(new Product("후라이드", new BigDecimal("16000.00")));
+        Product 치킨 = productRepository.save(Product.of("후라이드", new BigDecimal("16000.00")));
 
         Menu menu = menuRepository.save(MENU_1(치킨));
 
@@ -109,7 +109,7 @@ class OrderServiceTest {
     @Test
     void 전체_주문을_조회한다() {
         // given
-        Product 치킨 = productRepository.save(new Product("후라이드", new BigDecimal("16000.00")));
+        Product 치킨 = productRepository.save(Product.of("후라이드", new BigDecimal("16000.00")));
 
         Menu menu = menuRepository.save(MENU_1(치킨));
 
@@ -135,7 +135,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_변경한다() {
         // given
-        Product 치킨 = productRepository.save(new Product("후라이드", new BigDecimal("16000.00")));
+        Product 치킨 = productRepository.save(Product.of("후라이드", new BigDecimal("16000.00")));
 
         Menu menu = menuRepository.save(MENU_1(치킨));
 
@@ -161,7 +161,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태가_완료인_주문은_주문_상태를_변경할_수_없다() {
         // given
-        Product 치킨 = productRepository.save(new Product("후라이드", new BigDecimal("16000.00")));
+        Product 치킨 = productRepository.save(Product.of("후라이드", new BigDecimal("16000.00")));
 
         Menu menu = menuRepository.save(MENU_1(치킨));
 

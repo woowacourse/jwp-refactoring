@@ -21,17 +21,22 @@ public class Product {
     }
 
     private Product(Long id, String name, BigDecimal price) {
-        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public Product(String name, BigDecimal price) {
+    private Product(String name, BigDecimal price) {
         this(null, name, price);
     }
 
-    private void validatePrice(BigDecimal price) {
+    public static Product of(String name, BigDecimal price) {
+        Product product = new Product(name, price);
+        product.validatePrice();
+        return product;
+    }
+
+    private void validatePrice() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }

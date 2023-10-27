@@ -19,7 +19,7 @@ public class ProductService {
     }
 
     public Product create(final ProductCreateRequest productCreateRequest) {
-        Product product = new Product(productCreateRequest.getName(), productCreateRequest.getPrice());
+        Product product = Product.of(productCreateRequest.getName(), productCreateRequest.getPrice());
 
         return productRepository.save(product);
     }
