@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.dto;
+package kitchenpos.tablegroup.event;
 
 public class TableGroupUngroupEvent {
 
