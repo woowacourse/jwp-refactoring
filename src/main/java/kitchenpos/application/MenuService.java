@@ -35,9 +35,7 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuGroupExists(menuRequest);
         MenuProducts menuProducts = new MenuProducts(getMenuProducts(menuRequest));
         menuProductsValidator.validateMenuProductsPrice(menuRequest.getPrice(), menuProducts);
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(), menuProducts);
@@ -45,6 +43,12 @@ public class MenuService {
                 menu,
                 menuGroupRepository.findById(menuRequest.getMenuGroupId())
                         .orElseThrow(IllegalArgumentException::new));
+    }
+
+    private void validateMenuGroupExists(MenuRequest menuRequest) {
+        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private List<MenuProduct> getMenuProducts(MenuRequest menuRequest) {
