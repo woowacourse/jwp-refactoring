@@ -1,8 +1,6 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menuproduct.domain.MenuProduct;
-import kitchenpos.menuproduct.domain.MenuProducts;
 import kitchenpos.product.domain.Product;
 
 import javax.persistence.Embedded;

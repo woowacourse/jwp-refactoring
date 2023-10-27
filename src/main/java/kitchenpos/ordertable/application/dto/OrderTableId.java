@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.application.dto;
+package kitchenpos.ordertable.application.dto;
 
 public class OrderTableId {
     private Long id;

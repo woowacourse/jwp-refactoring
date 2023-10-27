@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.orderlineitem.domain.OrderLineItem;
 import kitchenpos.ordertable.domain.OrderTable;
 
 import javax.persistence.CascadeType;

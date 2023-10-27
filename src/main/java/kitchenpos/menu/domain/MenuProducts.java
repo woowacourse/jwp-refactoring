@@ -1,4 +1,4 @@
-package kitchenpos.menuproduct.domain;
+package kitchenpos.menu.domain;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;

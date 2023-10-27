@@ -1,8 +1,7 @@
-package kitchenpos.orderlineitem.domain;
+package kitchenpos.order.domain;
 
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.domain.Order;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
