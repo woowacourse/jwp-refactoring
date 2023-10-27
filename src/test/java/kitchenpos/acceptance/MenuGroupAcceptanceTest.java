@@ -3,8 +3,8 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import kitchenpos.application.request.MenuGroupCreateRequest;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.ui.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

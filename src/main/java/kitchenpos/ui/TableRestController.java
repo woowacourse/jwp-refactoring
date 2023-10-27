@@ -1,10 +1,10 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
-import kitchenpos.ui.request.TableCreateRequest;
-import kitchenpos.ui.request.TableEmptyUpdateRequest;
-import kitchenpos.ui.request.TableGuestUpdateRequest;
-import kitchenpos.ui.response.OrderTableResponse;
+import kitchenpos.application.request.TableCreateRequest;
+import kitchenpos.application.request.TableEmptyUpdateRequest;
+import kitchenpos.application.request.TableGuestUpdateRequest;
+import kitchenpos.application.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

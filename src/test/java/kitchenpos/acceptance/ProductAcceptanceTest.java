@@ -3,8 +3,8 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.request.ProductCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

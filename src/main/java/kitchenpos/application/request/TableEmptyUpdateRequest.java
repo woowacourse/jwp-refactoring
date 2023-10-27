@@ -1,4 +1,4 @@
-package kitchenpos.ui.request;
+package kitchenpos.application.request;
 
 public class TableEmptyUpdateRequest {
 

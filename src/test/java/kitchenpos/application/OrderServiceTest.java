@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.OrderCreateRequest;
+import kitchenpos.application.request.OrderLineItemCreateRequest;
+import kitchenpos.application.response.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -9,9 +12,6 @@ import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.request.OrderCreateRequest;
-import kitchenpos.ui.request.OrderLineItemCreateRequest;
-import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

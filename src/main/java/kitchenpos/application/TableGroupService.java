@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.TableGroupCreateRequest;
+import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
@@ -7,8 +9,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.ui.request.TableGroupCreateRequest;
-import kitchenpos.ui.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

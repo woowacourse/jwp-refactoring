@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.TableGroupCreateRequest;
+import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -8,8 +10,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.ui.request.TableGroupCreateRequest;
-import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

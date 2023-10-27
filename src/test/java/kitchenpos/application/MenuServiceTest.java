@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.MenuCreateRequest;
+import kitchenpos.application.request.MenuProductCreateRequest;
+import kitchenpos.application.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -7,9 +10,6 @@ import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.request.MenuCreateRequest;
-import kitchenpos.ui.request.MenuProductCreateRequest;
-import kitchenpos.ui.response.MenuResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

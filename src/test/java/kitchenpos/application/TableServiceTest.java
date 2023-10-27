@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.TableCreateRequest;
+import kitchenpos.application.request.TableEmptyUpdateRequest;
+import kitchenpos.application.request.TableGuestUpdateRequest;
+import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
-import kitchenpos.ui.request.TableCreateRequest;
-import kitchenpos.ui.request.TableEmptyUpdateRequest;
-import kitchenpos.ui.request.TableGuestUpdateRequest;
-import kitchenpos.ui.response.OrderTableResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
