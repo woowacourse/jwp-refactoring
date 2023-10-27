@@ -41,7 +41,7 @@ public class MenuService {
         final Menu menu = new Menu(
                 request.getName(),
                 request.getPrice(),
-                menuGroupRepository.findById(request.getMenuGroupId()).get(),
+                request.getMenuGroupId(),
                 menuProducts
         );
         menu.validate(menuValidator);

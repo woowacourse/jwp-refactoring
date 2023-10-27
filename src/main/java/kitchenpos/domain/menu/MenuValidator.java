@@ -18,7 +18,7 @@ public class MenuValidator {
     }
 
     public void validate(final Menu menu) {
-        if (menu.getMenuGroup() == null) {
+        if (menu.getMenuGroupId() == null) {
             throw new IllegalArgumentException("[ERROR] 메뉴는 반드시 메뉴 그룹에 속해야 합니다");
         }
         final BigDecimal price = menu.getPrice();
