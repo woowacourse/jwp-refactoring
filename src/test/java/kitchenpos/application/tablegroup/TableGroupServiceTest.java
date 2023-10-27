@@ -156,9 +156,16 @@ class TableGroupServiceTest {
     @DisplayName("주문 상태가 조리 중이거나 식사 중인 테이블의 테이블 그룹을 해제할 경우 예외가 발생한다.")
     void failToUngroupTableWithCookingOrMealStatus(OrderStatus orderStatus) {
         // given
-        savedOrderTableA.changeEmptyStatus(false);
+        OrderTable orderTableA = new OrderTable(1, false);
+        savedOrderTableA = orderTableRepository.save(orderTableA);
+
+        OrderTable orderTableB = new OrderTable(0, true);
+        savedOrderTableB = orderTableRepository.save(orderTableB);
+
         Order order = new Order(savedOrderTableA, orderStatus.name(), LocalDateTime.now());
         orderRepository.save(order);
+
+        savedOrderTableA.changeEmptyStatus(true);
 
         // when
         TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(savedOrderTableA.getId(), savedOrderTableB.getId()));
