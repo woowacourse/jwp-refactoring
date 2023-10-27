@@ -1,7 +1,7 @@
-package kitchenpos.product.infra;
+package kitchenpos.infra;
 
 import java.util.NoSuchElementException;
-import kitchenpos.product.domain.Product;
+import kitchenpos.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {

@@ -1,4 +1,4 @@
-package kitchenpos.menu.service.dto;
+package kitchenpos.application.dto;
 
 public class MenuProductCreateCommand {
 
