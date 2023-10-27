@@ -1,16 +1,16 @@
 package kitchenpos.order.application;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.dto.ChangeOrderStatusRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
-import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +68,7 @@ public class OrderService {
         for (OrderLineItemRequest orderLineItemRequest : orderRequest.getOrderLineItems()) {
             Menu savedMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
-            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, orderLineItemRequest.getQuantity());
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), orderLineItemRequest.getQuantity());
             savedOrderLineItems.add(orderLineItem);
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
