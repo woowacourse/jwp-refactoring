@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(':product')
+    implementation project(':menugroup')
+    implementation project(':order')
+    implementation project(':menu')
+    implementation project(':table')
+    implementation project(':tablegroup')
+}
+
+bootJar { enabled = true }
