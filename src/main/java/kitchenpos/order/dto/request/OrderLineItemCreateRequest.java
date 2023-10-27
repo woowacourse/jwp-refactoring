@@ -1,4 +1,4 @@
-package kitchenpos.dto.request;
+package kitchenpos.order.dto.request;
 
 import java.util.Objects;
 import javax.validation.constraints.Min;

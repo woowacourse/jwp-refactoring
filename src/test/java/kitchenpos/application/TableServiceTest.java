@@ -12,7 +12,7 @@ import static org.mockito.Mockito.times;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderRepository;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;

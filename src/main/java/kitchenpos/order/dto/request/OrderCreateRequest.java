@@ -1,4 +1,4 @@
-package kitchenpos.dto.request;
+package kitchenpos.order.dto.request;
 
 import java.util.List;
 import javax.validation.constraints.NotNull;
