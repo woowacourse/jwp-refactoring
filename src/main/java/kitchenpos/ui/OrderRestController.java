@@ -58,8 +58,7 @@ public class OrderRestController {
                                                                           .stream()
                                                                           .map(orderLineItem ->
                                                                                   new OrderLineItemDtoInOrderResponse(
-                                                                                          orderLineItem.getMenu()
-                                                                                                       .getId()
+                                                                                          orderLineItem.getMenuId()
                                                                                   )
                                                                           ).collect(Collectors.toUnmodifiableList());
         return new OrderResponse(order.getId(), order.getOrderedTime(), order.getOrderStatus(), orderLineItems);

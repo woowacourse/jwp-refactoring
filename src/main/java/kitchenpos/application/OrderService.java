@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.request.OrderLineItemDto;
 import kitchenpos.dto.request.PutOrderStatusRequest;
@@ -57,7 +58,12 @@ public class OrderService {
         for (final OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
             final Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                                             .orElseThrow(() -> new IllegalArgumentException("잘못된 메뉴입니다."));
-            final OrderLineItem orderLineItem = new OrderLineItem(menu, orderLineItemDto.getQuantity());
+            final OrderLineItem orderLineItem = new OrderLineItem(
+                    menu.getId(),
+                    menu.getName(),
+                    new Price(menu.getPrice()),
+                    orderLineItemDto.getQuantity()
+            );
             orderLineItems.add(orderLineItem);
             menus.add(menu);
         }
