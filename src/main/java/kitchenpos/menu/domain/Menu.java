@@ -57,21 +57,11 @@ public class Menu {
             final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts
     ) {
-        validateMenuPriceSum(Price.from(price), menuProducts);
         this.id = id;
         this.name = name;
         this.price = Price.from(price);
         this.menuGroup = menuGroup;
         this.menuProducts = appendMenuProducts(menuProducts);
-    }
-
-    private void validateMenuPriceSum(final Price price, final List<MenuProduct> menuProducts) {
-        final Price sum = menuProducts.stream()
-                .map(MenuProduct::calculatePrice)
-                .reduce(Price.createZero(), Price::plus);
-        if (price.isGreaterThan(sum)) {
-            throw new IllegalArgumentException("[ERROR] 총 금액이 각 상품의 합보다 큽니다.");
-        }
     }
 
     private List<MenuProduct> appendMenuProducts(final List<MenuProduct> menuProducts) {

@@ -10,8 +10,10 @@ import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.product.dto.ProductQuantityDto;
+import kitchenpos.product.dto.ValidateExistProductDto;
+import kitchenpos.product.dto.ValidateSamePriceWithMenuDto;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,16 +23,16 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
+    private final ApplicationEventPublisher publisher;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
+            final ApplicationEventPublisher publisher
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
+        this.publisher = publisher;
     }
 
     public MenuResponse create(final MenuCreateRequest request) {
@@ -39,6 +41,11 @@ public class MenuService {
         final List<MenuProduct> convertMenuProducts = request.getMenuProducts().stream()
                 .map(this::convertMenuProduct)
                 .collect(Collectors.toList());
+
+        final List<ProductQuantityDto> productQuantityDtos = convertMenuProducts.stream()
+                .map(mp -> new ProductQuantityDto(mp.getProductId(), mp.getQuantity()))
+                .collect(Collectors.toList());
+        publisher.publishEvent(new ValidateSamePriceWithMenuDto(request.getPrice(), productQuantityDtos));
 
         final Menu menu = new Menu(request.getName(), request.getPrice(), findMenuGroup, convertMenuProducts);
         menuRepository.save(menu);
@@ -52,13 +59,9 @@ public class MenuService {
     }
 
     private MenuProduct convertMenuProduct(final MenuProductRequest request) {
-        final Product product = findProduct(request.getProductId());
-        return new MenuProduct(product, request.getQuantity());
-    }
-
-    private Product findProduct(final Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다."));
+        final Long productId = request.getProductId();
+        publisher.publishEvent(new ValidateExistProductDto(productId));
+        return new MenuProduct(productId, request.getQuantity());
     }
 
     @Transactional(readOnly = true)

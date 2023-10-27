@@ -23,9 +23,8 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Column(name = "product_id")
+    private Long productId;
 
     @Column(nullable = false)
     private long quantity;
@@ -34,16 +33,11 @@ public class MenuProduct {
     }
 
     public MenuProduct(
-            final Product product,
+            final Long productId,
             final long quantity
     ) {
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
-    }
-
-    public Price calculatePrice() {
-        final Price productPrice = this.product.getPrice();
-        return productPrice.multiply(this.quantity);
     }
 
     public Long getSeq() {
@@ -54,8 +48,8 @@ public class MenuProduct {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {
