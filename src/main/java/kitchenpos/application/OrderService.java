@@ -50,12 +50,20 @@ public class OrderService {
     }
 
     private void validateMenuExistsAndAddItems(List<OrderLineItem> items, OrderLineItemCreateRequest orderLineItem) {
-        if (!menuRepository.existsById(orderLineItem.getMenuId())) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuExists(orderLineItem);
+        addItems(items, orderLineItem);
+    }
+
+    private void addItems(List<OrderLineItem> items, OrderLineItemCreateRequest orderLineItem) {
         Menu menu = menuRepository.findById(orderLineItem.getMenuId())
                 .orElseThrow(IllegalArgumentException::new);
         items.add(new OrderLineItem(menu.getId(), orderLineItem.getQuantity(), menu.getName(), menu.getPrice()));
+    }
+
+    private void validateMenuExists(OrderLineItemCreateRequest orderLineItem) {
+        if (!menuRepository.existsById(orderLineItem.getMenuId())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateEmpty(OrderTable orderTable) {
