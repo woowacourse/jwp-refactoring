@@ -4,9 +4,9 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.Order.Builder;
@@ -24,20 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final MenuService menuService;
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderRepository orderRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
         final MenuService menuService,
-        final OrderDao orderDao,
-        final OrderLineItemDao orderLineItemDao,
-        final OrderTableDao orderTableDao
+        final OrderRepository orderRepository,
+        final OrderLineItemRepository orderLineItemRepository,
+        final OrderTableRepository orderTableRepository
     ) {
         this.menuService = menuService;
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderRepository = orderRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -48,8 +48,8 @@ public class OrderService {
                                                      .collect(toList());
 
         Long orderTableId = orderDto.getOrderTableId();
-        OrderTable foundOrderTable = orderTableDao.findById(orderTableId)
-                                                  .orElseThrow(() -> new CustomException(ExceptionType.ORDER_TABLE_NOT_FOUND, String.valueOf(orderTableId)));
+        OrderTable foundOrderTable = orderTableRepository.findById(orderTableId)
+                                                         .orElseThrow(() -> new CustomException(ExceptionType.ORDER_TABLE_NOT_FOUND, String.valueOf(orderTableId)));
 
         Order order = new Builder()
             .orderTable(foundOrderTable)
@@ -58,7 +58,7 @@ public class OrderService {
             .orderLineItems(orderLineItems)
             .build();
 
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
         return OrderDto.from(savedOrder);
     }
 
@@ -71,15 +71,15 @@ public class OrderService {
     }
 
     public List<OrderDto> list() {
-        final List<OrderDto> orderDtos = orderDao.findAll()
-                                                 .stream().map(OrderDto::from)
-                                                 .collect(toList());
+        final List<OrderDto> orderDtos = orderRepository.findAll()
+                                                        .stream().map(OrderDto::from)
+                                                        .collect(toList());
 
         for (final OrderDto orderDto : orderDtos) {
-            List<OrderLineItemDto> orderLineItemDtos = orderLineItemDao.findAllByOrderId(orderDto.getId())
-                                                                       .stream()
-                                                                       .map(OrderLineItemDto::from)
-                                                                       .collect(toList());
+            List<OrderLineItemDto> orderLineItemDtos = orderLineItemRepository.findAllByOrderId(orderDto.getId())
+                                                                              .stream()
+                                                                              .map(OrderLineItemDto::from)
+                                                                              .collect(toList());
             orderDto.setOrderLineItemDtos(orderLineItemDtos);
         }
 
@@ -88,8 +88,8 @@ public class OrderService {
 
     @Transactional
     public OrderDto changeOrderStatus(final Long orderId, final OrderDto orderDto) {
-        final Order foundOrder = orderDao.findById(orderId)
-                                         .orElseThrow(IllegalArgumentException::new);
+        final Order foundOrder = orderRepository.findById(orderId)
+                                                .orElseThrow(IllegalArgumentException::new);
         final OrderStatus orderStatus = OrderStatus.valueOf(orderDto.getOrderStatus());
 
         foundOrder.changeOrderStatus(orderStatus);
@@ -98,10 +98,10 @@ public class OrderService {
     }
 
     public List<Order> findByOrderTableIdAndOrderStatus(Long orderTableId, OrderStatus orderStatus) {
-        return orderDao.findByOrderTableIdAndOrderStatus(orderTableId, orderStatus);
+        return orderRepository.findByOrderTableIdAndOrderStatus(orderTableId, orderStatus);
     }
 
     public List<Order> findByOrderTableIdInAndOrderStatusIn(List<Long> orderTableId, List<OrderStatus> orderStatus) {
-        return orderDao.findByOrderTableIdInAndOrderStatusIn(orderTableId, orderStatus);
+        return orderRepository.findByOrderTableIdInAndOrderStatusIn(orderTableId, orderStatus);
     }
 }

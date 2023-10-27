@@ -6,7 +6,7 @@ import java.util.Optional;
 import kitchenpos.domain.OrderStatus;
 import org.springframework.data.repository.Repository;
 
-public interface OrderDao extends Repository<Order, Long> {
+public interface OrderRepository extends Repository<Order, Long> {
     Order save(Order entity);
 
     Optional<Order> findById(Long id);

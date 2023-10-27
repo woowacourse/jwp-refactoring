@@ -5,7 +5,7 @@ import static kitchenpos.exception.ExceptionType.ORDER_TABLE_CANNOT_CHANGE_STATU
 import static kitchenpos.exception.ExceptionType.ORDER_TABLE_NOT_FOUND;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderService orderService;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public TableService(
         final OrderService orderService,
-        final OrderTableDao orderTableDao
+        final OrderTableRepository orderTableRepository
     ) {
         this.orderService = orderService;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -36,14 +36,14 @@ public class TableService {
             .setEmpty(orderTableDto.isEmpty())
             .build();
 
-        return OrderTableDto.from(orderTableDao.save(orderTable));
+        return OrderTableDto.from(orderTableRepository.save(orderTable));
     }
 
     public List<OrderTableDto> list() {
-        return orderTableDao.findAll()
-                            .stream()
-                            .map(OrderTableDto::from)
-                            .collect(toList());
+        return orderTableRepository.findAll()
+                                   .stream()
+                                   .map(OrderTableDto::from)
+                                   .collect(toList());
     }
 
     @Transactional
@@ -62,8 +62,8 @@ public class TableService {
     }
 
     public OrderTable findById(Long orderTableId) {
-        return orderTableDao.findById(orderTableId)
-                            .orElseThrow(() -> new CustomException(ORDER_TABLE_NOT_FOUND));
+        return orderTableRepository.findById(orderTableId)
+                                   .orElseThrow(() -> new CustomException(ORDER_TABLE_NOT_FOUND));
     }
 
     @Transactional

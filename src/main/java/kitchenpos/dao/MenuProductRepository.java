@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-public interface MenuProductDao extends Repository<MenuProduct, Long> {
+public interface MenuProductRepository extends Repository<MenuProduct, Long> {
     MenuProduct save(MenuProduct entity);
 
     List<MenuProduct> findAll();

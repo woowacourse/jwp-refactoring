@@ -8,7 +8,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +26,6 @@ public class Menu {
     private String name;
     @Embedded
     private MenuPrice price;
-    @Column(name = "menu_group_id")
     private Long menuGroupId;
     @OneToMany(cascade = {PERSIST, MERGE, REMOVE})
     @JoinColumn(name = "menu_id", updatable = false, nullable = false)

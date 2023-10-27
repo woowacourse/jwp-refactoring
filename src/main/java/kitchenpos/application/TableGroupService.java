@@ -6,7 +6,7 @@ import static kitchenpos.exception.ExceptionType.TABLE_GROUP_NOT_FOUND;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -24,16 +24,16 @@ public class TableGroupService {
 
     private final OrderService orderService;
     private final TableService tableService;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
         final OrderService orderService,
         final TableService tableService,
-        final TableGroupDao tableGroupDao
+        final TableGroupRepository tableGroupRepository
     ) {
         this.orderService = orderService;
         this.tableService = tableService;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -49,7 +49,7 @@ public class TableGroupService {
             .orderTables(orderTables)
             .build();
 
-        return TableGroupDto.from(tableGroupDao.save(tableGroup));
+        return TableGroupDto.from(tableGroupRepository.save(tableGroup));
     }
 
     @Transactional
@@ -78,8 +78,8 @@ public class TableGroupService {
     }
 
     public TableGroup findById(Long tableGroupId) {
-        return tableGroupDao.findById(tableGroupId)
-                            .orElseThrow(() -> new CustomException(TABLE_GROUP_NOT_FOUND,
+        return tableGroupRepository.findById(tableGroupId)
+                                   .orElseThrow(() -> new CustomException(TABLE_GROUP_NOT_FOUND,
                                 String.valueOf(tableGroupId)));
     }
 }
