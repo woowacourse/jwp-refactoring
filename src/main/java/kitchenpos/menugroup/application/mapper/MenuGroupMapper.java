@@ -1,10 +1,10 @@
-package kitchenpos.menu.application.mapper;
+package kitchenpos.menugroup.application.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.dto.MenuGroupCreateRequest;
-import kitchenpos.menu.dto.MenuGroupResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.dto.MenuGroupCreateRequest;
+import kitchenpos.menugroup.dto.MenuGroupResponse;
 
 public class MenuGroupMapper {
 

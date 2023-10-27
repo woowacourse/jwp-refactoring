@@ -1,7 +1,7 @@
 package kitchenpos;
 
-import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.respository.MenuGroupRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.table.repository.OrderTableRepository;

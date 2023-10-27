@@ -47,7 +47,7 @@ public class TableGroupService {
         return tableGroupRepository.save(tableGroup);
     }
 
-    private List<OrderTable> convertToOrderTables(List<SingleOrderTableCreateRequest> requests) {
+    private List<OrderTable> convertToOrderTables(final List<SingleOrderTableCreateRequest> requests) {
         return requests.stream()
                 .map(this::convertToOrderTable)
                 .collect(Collectors.toList());

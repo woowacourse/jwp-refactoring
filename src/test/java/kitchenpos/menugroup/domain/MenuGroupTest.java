@@ -1,8 +1,7 @@
-package kitchenpos.menu.domain;
+package kitchenpos.menugroup.domain;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import kitchenpos.menu.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

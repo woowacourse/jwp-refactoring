@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menugroup.respository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.vo.Price;
