@@ -23,16 +23,16 @@ class OrderTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    void 주문항목이_비어있는_경우_예외가_발생한다() {
-        // given
-        OrderTable orderTable = new OrderTable(false);
-        Order order = new Order(orderTable, COOKING);
-
-        // when, then
-        assertThatThrownBy(() -> order.setOrderLineItems(null))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+//    @Test
+//    void 주문항목이_비어있는_경우_예외가_발생한다() {
+//        // given
+//        OrderTable orderTable = new OrderTable(false);
+//        Order order = new Order(orderTable, COOKING);
+//
+//        // when, then
+//        assertThatThrownBy(() -> order.setOrderLineItems(null))
+//                .isInstanceOf(IllegalArgumentException.class);
+//    }
 
     @Nested
     class 주문_상태_변경 {

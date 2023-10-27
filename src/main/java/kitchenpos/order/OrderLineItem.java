@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.menu.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -22,24 +21,19 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @Column(nullable = false)
+    private Long menuId;
 
     @Column(nullable = false)
     private long quantity;
 
-    public OrderLineItem(Order order, Menu menu, long quantity) {
-        validateMenu(menu);
+    public OrderLineItem(Order order, Long menuId, long quantity) {
         this.order = order;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    private void validateMenu(Menu menu) {
-        if (menu == null) {
-            throw new IllegalArgumentException();
-        }
+    public OrderLineItem() {
     }
 
     public Long getSeq() {
@@ -50,8 +44,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
     public long getQuantity() {

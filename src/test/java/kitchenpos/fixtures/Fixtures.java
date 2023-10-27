@@ -94,7 +94,7 @@ public class Fixtures {
     }
 
     public OrderLineItem 주문_항목_저장(Order order, Menu menu, Long quantity, Long seq) {
-        OrderLineItem orderLineItem = new OrderLineItem(order, menu, quantity);
+        OrderLineItem orderLineItem = new OrderLineItem(order, menu.getId(), quantity);
         return jpaOrderLineItemRepository.save(orderLineItem);
     }
 

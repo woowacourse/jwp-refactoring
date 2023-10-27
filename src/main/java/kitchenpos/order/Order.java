@@ -40,10 +40,6 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
-
-
     public Order(OrderTable orderTable, OrderStatus orderStatus) {
         validateOrderTable(orderTable);
         this.orderTable = orderTable;
@@ -67,11 +63,6 @@ public class Order {
         }
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        validateOrderLineItems(orderLineItems);
-        this.orderLineItems = orderLineItems;
-    }
-
     private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
@@ -84,10 +75,6 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 
     public Long getId() {
