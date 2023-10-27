@@ -3,13 +3,15 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -25,44 +27,29 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne
-    private MenuGroup menuGroup;
+    @Column(name = "menu_group_id")
+    private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
 
-    public Menu(final String name, final Price price, final MenuGroup menuGroup) {
+    private Menu(final String name, final Price price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
-        this.menuProducts = new ArrayList<>();
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
     }
 
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        validateMenuPrice(menuProducts);
-        this.menuProducts.addAll(menuProducts);
+    public static Menu of(final String name, final Price price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
-    private void validateMenuPrice(final List<MenuProduct> menuProducts) {
-        final Price productsPriceSum = calculateTotalPriceOfProducts(menuProducts);
-        if (price.isGreaterThan(productsPriceSum)) {
-            throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 가격 총합보다 클 수 없습니다.");
-        }
-    }
-
-    private Price calculateTotalPriceOfProducts(final List<MenuProduct> menuProducts) {
-        Price sum = Price.ZERO;
-
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = menuProduct.getProduct();
-            final Price productPrice = Price.from(product.getPrice());
-            sum = sum.add(productPrice.multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        return sum;
+    public boolean hasGreaterPriceThan(final Price other) {
+        return price.isGreaterThan(other);
     }
 
     public Long getId() {
@@ -74,15 +61,11 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
-        if (menuGroup == null) {
-            return null;
-        }
-
-        return menuGroup.getId();
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

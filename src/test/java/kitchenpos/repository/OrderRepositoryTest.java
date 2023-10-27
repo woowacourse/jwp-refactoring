@@ -7,11 +7,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
 import kitchenpos.support.DataCleaner;
 import kitchenpos.support.DataDependentIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +34,9 @@ class OrderRepositoryTest extends DataDependentIntegrationTest {
 
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private DataCleaner dataCleaner;
@@ -79,7 +84,10 @@ class OrderRepositoryTest extends DataDependentIntegrationTest {
 
     private long createMenuAndGetId() {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        final Menu menu = menuRepository.save(new Menu("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup));
+        final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 1));
+        final Menu menu = Menu.of("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup.getId(), menuProducts);
+        menuRepository.save(menu);
 
         return menu.getId();
     }

@@ -12,16 +12,19 @@ import kitchenpos.application.dto.table.TableRequest;
 import kitchenpos.application.dto.table.TableResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.support.DataDependentIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +49,9 @@ class TableServiceTest extends DataDependentIntegrationTest {
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private TableService tableService;
@@ -145,7 +151,10 @@ class TableServiceTest extends DataDependentIntegrationTest {
 
     private long createMenuAndGetId() {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        final Menu menu = menuRepository.save(new Menu("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup));
+        final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 1));
+        final Menu menu = Menu.of("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup.getId(), menuProducts);
+        menuRepository.save(menu);
 
         return menu.getId();
     }

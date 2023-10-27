@@ -11,13 +11,13 @@ public class Price {
     private static final BigDecimal MIN = BigDecimal.ZERO;
     public static final Price ZERO = Price.from(BigDecimal.ZERO);
 
-    @Column
-    private BigDecimal price;
+    @Column(name = "price")
+    private BigDecimal value;
 
     protected Price() {}
 
-    private Price(final BigDecimal price) {
-        this.price = price;
+    private Price(final BigDecimal value) {
+        this.value = value;
     }
 
     public static Price from(final BigDecimal value) {
@@ -31,18 +31,35 @@ public class Price {
     }
 
     public boolean isGreaterThan(final Price other) {
-        return this.price.compareTo(other.price) > 0;
+        return this.value.compareTo(other.value) > 0;
     }
 
     public Price multiply(final BigDecimal other) {
-        return Price.from(this.price.multiply(other));
+        return Price.from(this.value.multiply(other));
     }
 
     public Price add(final Price other) {
-        return Price.from(this.price.add(other.price));
+        return Price.from(this.value.add(other.value));
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Price price1 = (Price) o;
+        return value.equals(price1.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

@@ -19,7 +19,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
@@ -47,14 +46,12 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-
     private Menu createMenu() {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
-        final Menu menu = menuRepository.save(new Menu("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup));
-        menuProductRepository.save(new MenuProduct(menu, product, 2));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 1));
+        final Menu menu = Menu.of("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup.getId(), menuProducts);
+        menuRepository.save(menu);
 
         return menu;
     }
