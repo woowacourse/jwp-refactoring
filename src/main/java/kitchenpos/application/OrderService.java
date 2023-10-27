@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.OrderLineItemRepository;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemRepository;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
 import kitchenpos.ui.response.OrderResponse;
@@ -24,15 +25,17 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
     public OrderService(
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
+            final OrderTableRepository orderTableRepository,
+            final OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -43,15 +46,14 @@ public class OrderService {
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId()).orElseThrow();
 
-        final Order savedOrder = orderRepository.save(
-                new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)
-        );
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        order.validate(orderValidator);
+        final Order savedOrder = orderRepository.save(order);
 
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
-        savedOrder.updateOrderLineItems(savedOrderLineItems);
 
         return OrderResponse.from(savedOrder);
     }

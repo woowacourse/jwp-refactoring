@@ -2,7 +2,6 @@ package kitchenpos.domain.order;
 
 import kitchenpos.common.BaseDate;
 import kitchenpos.domain.ordertable.OrderTable;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -40,8 +39,6 @@ public class Order extends BaseDate {
     private List<OrderLineItem> orderLineItems;
 
     private Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
-        validateOrderLineItems(orderLineItems);
-        validateEmptyOrderTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -49,31 +46,15 @@ public class Order extends BaseDate {
         this.orderLineItems = orderLineItems;
     }
 
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("[ERROR] 주문할 아이템을 최소 1개 이상 선택해 주세요!");
-        }
-
-        final int distinctMenuIdNumber = (int) orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .distinct().count();
-
-        if (orderLineItems.size() != distinctMenuIdNumber) {
-            throw new IllegalArgumentException("[ERROR] 주문할 아이템이 같은 메뉴라면, 수량으로 개수를 표시해 주세요.");
-        }
-    }
-
-    private void validateEmptyOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("[ERROR] 빈 테이블에서는 주문을 할 수 없습니다.");
-        }
-    }
-
     public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
     protected Order() {
+    }
+
+    public void validate(final OrderValidator orderValidator) {
+        orderValidator.validate(this);
     }
 
     public Long getId() {
@@ -97,11 +78,6 @@ public class Order extends BaseDate {
 
     private boolean canChangeOrderStatus() {
         return orderStatus != OrderStatus.COMPLETION;
-    }
-
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        validateOrderLineItems(orderLineItems);
-        this.orderLineItems = orderLineItems;
     }
 
     public LocalDateTime getOrderedTime() {
