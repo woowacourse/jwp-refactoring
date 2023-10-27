@@ -10,7 +10,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.*;
 
 class MenuHistoryTest {
 
@@ -18,6 +17,7 @@ class MenuHistoryTest {
     @Test
     void success_create() {
         assertThatCode(() -> new MenuHistory(
+                1L,
                 new Name("테스트용 기록 메뉴명"),
                 Price.from("10000"),
                 new MenuProductHistories()
@@ -36,7 +36,7 @@ class MenuHistoryTest {
         expectedMenu.addMenuProducts(List.of(menuProduct));
 
         // when
-        final MenuHistory actual = MenuHistory.from(expectedMenu);
+        final MenuHistory actual = MenuHistory.of(1L, expectedMenu);
         final MenuProductHistories expectedMenuProductHistories = MenuProductHistories.from(new MenuProducts(List.of(
                 menuProduct
         )));
@@ -46,7 +46,7 @@ class MenuHistoryTest {
             softly.assertThat(actual.getId()).isNull();
             softly.assertThat(actual.getName()).isEqualTo(expectedMenu.getName());
             softly.assertThat(actual.getPrice()).isEqualTo(expectedMenu.getPrice());
-            softly.assertThat(actual.getOrderProductHistories())
+            softly.assertThat(actual.getMenuProductHistories())
                     .usingRecursiveComparison()
                     .isEqualTo(expectedMenuProductHistories);
         });

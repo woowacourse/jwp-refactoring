@@ -4,6 +4,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,7 @@ public class MenuProductHistories {
 
     @JoinColumn(name = "menu_history_id", nullable = false)
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<MenuProductHistory> menuProductHistories;
+    private List<MenuProductHistory> menuProductHistories = new ArrayList<>();
 
     protected MenuProductHistories() {
     }

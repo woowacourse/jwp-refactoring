@@ -9,12 +9,12 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Transactional
 @Component
 public class MenuHistoryEventListener {
 
@@ -23,7 +23,8 @@ public class MenuHistoryEventListener {
     private MenuRepository menuRepository;
 
     public MenuHistoryEventListener(final OrderRepository orderRepository,
-                                    final MenuRepository menuRepository, final MenuHistoryRepository menuHistoryRepository
+                                    final MenuRepository menuRepository,
+                                    final MenuHistoryRepository menuHistoryRepository
     ) {
         this.orderRepository = orderRepository;
         this.menuHistoryRepository = menuHistoryRepository;
@@ -31,9 +32,10 @@ public class MenuHistoryEventListener {
     }
 
     @EventListener
+    @Transactional(propagation = Propagation.REQUIRED)
     public void menuHistoryEvent(final OrderPreparedEvent orderPreparedEvent) {
         final Order findOrder = orderRepository.findOrderById(orderPreparedEvent.getOrderId());
-        menuHistoryRepository.saveAll(getMenuHistories(getMenuIds(findOrder)));
+         menuHistoryRepository.saveAllAndFlush(getMenuHistories(findOrder.getId(), getMenuIds(findOrder)));
     }
 
     private static List<Long> getMenuIds(final Order findOrder) {
@@ -44,10 +46,10 @@ public class MenuHistoryEventListener {
                 .collect(Collectors.toList());
     }
 
-    private List<MenuHistory> getMenuHistories(final List<Long> findMenuIds) {
+    private List<MenuHistory> getMenuHistories(final Long orderId, final List<Long> findMenuIds) {
         return menuRepository.findInMenuIds(findMenuIds)
                 .stream()
-                .map(MenuHistory::from)
+                .map(menu -> MenuHistory.of(orderId, menu))
                 .collect(Collectors.toList());
     }
 }

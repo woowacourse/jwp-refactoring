@@ -15,7 +15,7 @@ public class MenuProductHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long seq;
 
     @Embedded
     private Name name;
@@ -30,13 +30,11 @@ public class MenuProductHistory {
     }
 
     protected MenuProductHistory(final Name name, final Price price, final Quantity quantity) {
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
+        this(null, name, price, quantity);
     }
 
-    protected MenuProductHistory(final Long id, final Name name, final Price price, final Quantity quantity) {
-        this.id = id;
+    protected MenuProductHistory(final Long seq, final Name name, final Price price, final Quantity quantity) {
+        this.seq = seq;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -50,8 +48,8 @@ public class MenuProductHistory {
         );
     }
 
-    public Long getId() {
-        return id;
+    public Long getSeq() {
+        return seq;
     }
 
     public Name getName() {

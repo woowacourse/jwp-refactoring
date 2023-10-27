@@ -84,7 +84,7 @@ class MenuHistoryEventListenerTest extends ApplicationTestConfig {
             softly.assertThat(actualMenuHistory.getId()).isPositive();
             softly.assertThat(actualMenuHistory.getName()).isEqualTo(savedMenu.getName());
             softly.assertThat(actualMenuHistory.getPrice()).isEqualTo(savedMenu.getPrice());
-            softly.assertThat(actualMenuHistory.getOrderProductHistories())
+            softly.assertThat(actualMenuHistory.getMenuProductHistories())
                     .usingRecursiveComparison()
                     .ignoringExpectedNullFields()
                     .isEqualTo(expectedMenuProductHistories);
