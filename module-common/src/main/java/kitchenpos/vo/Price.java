@@ -30,7 +30,7 @@ public class Price {
         this.value = value;
     }
 
-    private void checkNull(BigDecimal value) {
+    private void checkNull(Object value) {
         if (value == null) {
             throw new IllegalArgumentException("가격은 NULL일 수 없습니다.");
         }
