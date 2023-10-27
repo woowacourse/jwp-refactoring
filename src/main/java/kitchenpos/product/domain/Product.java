@@ -36,6 +36,10 @@ public class Product {
         }
     }
 
+    public BigDecimal calculatePrice(final long quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
+
     public Long getId() {
         return id;
     }
