@@ -12,7 +12,7 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
     default OrderTable getById(final Long id) {
         return findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("id가 " + id + "인 OrderTable을 찾을 수 없습니다."));
     }
 
     @Query("SELECT CASE WHEN COUNT(o) > 0 THEN TRUE ELSE FALSE END FROM Order o WHERE o.orderTable.id = :orderTableId AND o.orderStatus IN :orderStatuses")

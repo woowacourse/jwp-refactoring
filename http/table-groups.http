@@ -1,6 +1,10 @@
 ###
 POST {{host}}/api/table-groups
+Content-Type: application/json
 
+{
+  "orderTableIds": [1, 2]
+}
 ###
 DELETE {{host}}/api/table-groups/1
 

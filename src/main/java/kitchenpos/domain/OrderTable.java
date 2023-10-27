@@ -30,7 +30,6 @@ public class OrderTable {
     }
 
     public void updateEmpty(boolean isEmpty) {
-        validateTableGroupIsNotNull();
         this.empty = isEmpty;
     }
 
@@ -48,12 +47,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void validateTableGroupIsNotNull() {
-        if (Objects.nonNull(orderTableGroup)) {
-            throw new IllegalArgumentException("TableGroup이 Null일 수 없습니다.");
-        }
     }
 
     public void validateNumberOfGuests() {
