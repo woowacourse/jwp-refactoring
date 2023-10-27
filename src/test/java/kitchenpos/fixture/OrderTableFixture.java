@@ -1,13 +1,12 @@
 package kitchenpos.fixture;
 
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {
 
     public static OrderTable 단체_지정이_있는_주문_테이블_생성(
-            TableGroup tableGroup,
+            Long tableGroupId,
             int numberOfGuests,
             boolean empty
     ) {
@@ -16,7 +15,7 @@ public class OrderTableFixture {
                 empty
         );
 
-        orderTable.registerTableGroup(tableGroup.getId());
+        orderTable.registerTableGroup(tableGroupId);
         return orderTable;
     }
 

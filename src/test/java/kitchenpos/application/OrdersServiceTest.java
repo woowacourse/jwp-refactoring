@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
 import static java.lang.Long.MAX_VALUE;
-import static kitchenpos.order.domain.OrderStatus.COMPLETION;
-import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
@@ -10,6 +8,8 @@ import static kitchenpos.fixture.OrderLineItemFixture.메뉴을_가진_주문_�
 import static kitchenpos.fixture.OrderLineItemFixture.존재하지_않는_메뉴를_가진_주문_항목_생성;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_없는_주문_테이블_생성;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -17,16 +17,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderUpdateRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.product.domain.Product;
-import kitchenpos.order.application.dto.OrderCreateRequest;
-import kitchenpos.order.application.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -72,8 +72,8 @@ class OrdersServiceTest extends ServiceIntegrationTest {
         // given
         Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup, menuProduct));
+        MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
+        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup.getId(), menuProduct));
         OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
         OrderCreateRequest request = new OrderCreateRequest(
                 Long.MAX_VALUE,
@@ -91,8 +91,8 @@ class OrdersServiceTest extends ServiceIntegrationTest {
         OrderTable savedOrderTable = orderTableRepository.save(단체_지정이_없는_주문_테이블_생성(1, true));
         Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup, menuProduct));
+        MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
+        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup.getId(), menuProduct));
         OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
         OrderCreateRequest request = new OrderCreateRequest(
                 savedOrderTable.getId(),

@@ -2,7 +2,6 @@ package kitchenpos.fixture;
 
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -10,13 +9,13 @@ public class MenuFixture {
 
     public static Menu 메뉴_생성(
             Long price,
-            MenuGroup savedMenuGroup,
+            Long savedMenuGroupId,
             MenuProduct menuProduct
     ) {
         Menu menu = Menu.of(
                 "메뉴",
                 price,
-                savedMenuGroup.getId()
+                savedMenuGroupId
         );
 
         menu.addAllMenuProducts(List.of(menuProduct));

@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuProductCreateRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,7 +33,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void 메뉴를_성공적으로_저장한다() {
         // given
         Product savedProduct = productRepository.save(후추_치킨_10000원());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
+        MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuCreateRequest request = new MenuCreateRequest(
                 "메뉴",
@@ -47,7 +47,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
 
         // then
         Menu actual = menuRepository.findById(savedMenuId).get();
-        Menu expected = 메뉴_생성(19000L, savedMenuGroup, menuProduct);
+        Menu expected = 메뉴_생성(19000L, savedMenuGroup.getId(), menuProduct);
         assertAll(
                 () -> assertThat(actual).usingRecursiveComparison()
                         .ignoringFieldsOfTypes(Long.class, BigDecimal.class)
@@ -60,7 +60,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void 가격이_null_이라서_메뉴_저장에_실패한다() {
         // given
         Product savedProduct = productRepository.save(후추_치킨_10000원());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
+        MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuCreateRequest request = new MenuCreateRequest(
                 "메뉴",
@@ -78,7 +78,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void 가격이_음수여서_메뉴_저장에_실패한다() {
         // given
         Product savedProduct = productRepository.save(후추_치킨_10000원());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
+        MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuCreateRequest request = new MenuCreateRequest(
                 "메뉴",
@@ -96,7 +96,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void 메뉴_그룹이_존재하지_않아_저장에_실패한다() {
         // given
         Product savedProduct = productRepository.save(후추_치킨_10000원());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
+        MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
         MenuCreateRequest request = new MenuCreateRequest(
                 "메뉴",
                 19000L,
@@ -130,7 +130,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void 메뉴_상품의_가격_합이_메뉴의_가격보다_낮으면_저장에_실패한다() {
         // given
         Product savedProduct = productRepository.save(후추_치킨_10000원());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
+        MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuCreateRequest request = new MenuCreateRequest(
                 "메뉴",
@@ -150,7 +150,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         List<Menu> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             Product savedProduct = productRepository.save(후추_치킨_10000원());
-            MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
+            MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
             MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
             MenuCreateRequest request = new MenuCreateRequest(
                     "메뉴",

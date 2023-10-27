@@ -86,7 +86,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         TableGroupCreateRequest request= new TableGroupCreateRequest(
                 List.of(
                         orderTableRepository.save(
-                                단체_지정이_있는_주문_테이블_생성(savedTableGroup, 1, true)
+                                단체_지정이_있는_주문_테이블_생성(savedTableGroup.getId(), 1, true)
                         ).getId(),
                         orderTableRepository.save(
                                 단체_지정이_없는_주문_테이블_생성(1, true)

@@ -9,15 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.TableService;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.ordertable.application.dto.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -85,7 +85,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         // given
         TableGroup savedTableGroup = tableGroupRepository.save(TableGroupFixture.빈_테이블_그룹_생성());
         OrderTable orderTable = 단체_지정이_있는_주문_테이블_생성(
-                savedTableGroup,
+                savedTableGroup.getId(),
                 1,
                 true
         );

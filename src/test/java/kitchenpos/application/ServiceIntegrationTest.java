@@ -71,8 +71,8 @@ public abstract class ServiceIntegrationTest {
     protected Order 주문을_저장하고_반환받는다(OrderTable savedOrderTable) {
         Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup, menuProduct));
+        MenuProduct menuProduct = 메뉴_상품(savedProduct.getId(), 2);
+        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup.getId(), menuProduct));
         OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
         OrderCreateRequest request = new OrderCreateRequest(
                 savedOrderTable.getId(),

@@ -1,14 +1,13 @@
 package kitchenpos.fixture;
 
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuProductFixture {
 
-    public static MenuProduct 메뉴_상품(Product savedProduct, long quantity) {
+    public static MenuProduct 메뉴_상품(Long savedProductId, long quantity) {
         return MenuProduct.of(
-                savedProduct.getId(),
+                savedProductId,
                 quantity
         );
     }

@@ -6,40 +6,39 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.ordertable.domain.OrderTable;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {
 
     public static Order 주문_생성(
-            OrderTable savedOrderTable,
+            Long savedOrderTableId,
             List<OrderLineItem> orderLineItems
     ) {
-        return Order.of(savedOrderTable.getId(), orderLineItems);
+        return Order.of(savedOrderTableId, orderLineItems);
     }
 
     public static Order 요리중인_주문_생성(
-            OrderTable savedOrderTable,
+            Long savedOrderTableId,
             List<OrderLineItem> orderLineItems
     ) {
-        return Order.of(savedOrderTable.getId(), orderLineItems);
+        return Order.of(savedOrderTableId, orderLineItems);
     }
 
     public static Order 식사중인_주문_생성(
-            OrderTable savedOrderTable,
+            Long savedOrderTableId,
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = Order.of(savedOrderTable.getId(), orderLineItems);
+        Order order = Order.of(savedOrderTableId, orderLineItems);
         order.changeOrderStatus(MEAL);
 
         return order;
     }
 
     public static Order 식사완료_한_주문_생성(
-            OrderTable savedOrderTable,
+            Long savedOrderTableId,
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = Order.of(savedOrderTable.getId(), orderLineItems);
+        Order order = Order.of(savedOrderTableId, orderLineItems);
         order.changeOrderStatus(COMPLETION);
 
         return order;

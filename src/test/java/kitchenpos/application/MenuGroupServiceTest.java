@@ -1,15 +1,15 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixture.후추와_함께하는_메뉴;
-import static kitchenpos.fixture.MenuGroupFixture.후추는_천재_메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
+import static kitchenpos.fixture.MenuGroupFixture.후추는_천재_메뉴;
+import static kitchenpos.fixture.MenuGroupFixture.후추와_함께하는_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.menugroup.application.MenuGroupService;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
