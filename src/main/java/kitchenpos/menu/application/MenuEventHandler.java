@@ -15,7 +15,7 @@ public class MenuEventHandler {
     }
 
     @EventListener
-    private void validateExistMenu(final ValidateExistMenuEvent dto) {
+    public void validateExistMenu(final ValidateExistMenuEvent dto) {
         menuRepository.findById(dto.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 메뉴입니다."));
     }

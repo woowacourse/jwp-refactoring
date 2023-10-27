@@ -30,7 +30,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    private void validateSameSizeOrderTable(final ValidateSameSizeOrderTableEvent dto) {
+    public void validateSameSizeOrderTable(final ValidateSameSizeOrderTableEvent dto) {
         final List<Long> orderTableIds = dto.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
@@ -40,7 +40,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    private void validateAppendOrderTableInTableGroup(final ValidateAppendOrderTableInTableGroupEvent dto) {
+    public void validateAppendOrderTableInTableGroup(final ValidateAppendOrderTableInTableGroupEvent dto) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(dto.getOrderTableIds());
 
         validateSizeOrderTables(orderTables);
@@ -71,7 +71,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    private void updateTableGroupInOrderTable(final UpdateGroupOrderTableEvent dto) {
+    public void updateTableGroupInOrderTable(final UpdateGroupOrderTableEvent dto) {
         final Long tableGroupId = dto.getTableGroupId();
         final List<Long> orderTableIds = dto.getOrderTableIds();
 
@@ -81,7 +81,7 @@ public class TableEventHandler {
 
 
     @EventListener
-    private void validateOrderIsNotCompletionInOrderTable(final ValidateOrderIsNotCompletionInOrderTableEvent dto) {
+    public void validateOrderIsNotCompletionInOrderTable(final ValidateOrderIsNotCompletionInOrderTableEvent dto) {
         final Long tableGroupId = dto.getTableGroupId();
         final List<Long> orderTableIds = orderTableRepository.findAllByTableGroupId(tableGroupId).stream()
                 .map(OrderTable::getId)
@@ -97,7 +97,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    private void updateUngroupOrderTableDto(final UpdateUngroupOrderTableEvent dto) {
+    public void updateUngroupOrderTableDto(final UpdateUngroupOrderTableEvent dto) {
         final Long tableGroupId = dto.getTableGroupId();
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         orderTables.forEach(OrderTable::ungroup);
