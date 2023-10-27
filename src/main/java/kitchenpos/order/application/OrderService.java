@@ -7,43 +7,39 @@ import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
+import kitchenpos.order.domain.MenuExistenceValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTableValidator;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
-    private final MenuExistenceValidator menuExistenceValidator;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final MenuExistenceValidator menuExistenceValidator;
+    private final OrderTableValidator orderTableValidator;
 
-    public OrderService(
-            final MenuExistenceValidator menuExistenceValidator,
-            final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
+    public OrderService(final MenuExistenceValidator menuExistenceValidator,
+                        final OrderRepository orderRepository,
+                        final OrderLineItemRepository orderLineItemRepository,
+                        final OrderTableValidator orderTableValidator) {
         this.menuExistenceValidator = menuExistenceValidator;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         final OrderLineItems orderLineItems = createOrderLineItems(request);
-        final OrderTable orderTable = findSavedOrderTableById(request.getOrderTableId());
-        validateOrderTableNotEmpty(orderTable);
-        final Order savedOrder = getCurrentlySavedOrder(orderTable, orderLineItems);
+        final Order savedOrder = getCurrentlySavedOrder(request.getOrderTableId(), orderLineItems);
         return OrderResponse.from(savedOrder);
     }
 
@@ -64,30 +60,22 @@ public class OrderService {
         menuExistenceValidator.validate(orderLineItems.getMenuIds());
     }
 
-    private OrderTable findSavedOrderTableById(final Long id) {
-        return orderTableRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
-    }
-
-    private void validateOrderTableNotEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private Order getCurrentlySavedOrder(final OrderTable orderTable, final OrderLineItems orderLineItems) {
-        final Order order = orderRepository.save(new Order(orderTable.getId(), LocalDateTime.now()));
-        orderLineItems.orderedBy(order);
-        final OrderLineItems savedOrderLineItems = saveOrderLineItems(orderLineItems);
+    private Order getCurrentlySavedOrder(final Long orderTableID, final OrderLineItems orderLineItems) {
+        final Order newOrder = new Order(orderTableID, LocalDateTime.now());
+        newOrder.validateOrderTable(orderTableValidator);
+        final Order order = orderRepository.save(newOrder);
+        final OrderLineItems savedOrderLineItems = saveOrderLineItems(order, orderLineItems);
         order.registerOrderLineItems(savedOrderLineItems);
         return order;
     }
 
-    private OrderLineItems saveOrderLineItems(final OrderLineItems orderLineItems) {
+    private OrderLineItems saveOrderLineItems(final Order order, final OrderLineItems orderLineItems) {
         final List<OrderLineItem> savedOrderLineItems = orderLineItems.getItems()
                 .stream()
-                .map(orderLineItemRepository::save)
-                .collect(Collectors.toList());
+                .map(orderLineItem -> {
+                    orderLineItem.orderedBy(order.getId());
+                    return orderLineItemRepository.save(orderLineItem);
+                }).collect(Collectors.toList());
         return new OrderLineItems(savedOrderLineItems);
     }
 

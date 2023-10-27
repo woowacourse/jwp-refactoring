@@ -23,6 +23,10 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
+    public void validateOrderTable(final OrderTableValidator validator) {
+        validator.validateForOrder(orderTableId);
+    }
+
     public void registerOrderLineItems(final OrderLineItems orderLineItems) {
         this.orderLineItems = orderLineItems;
         orderLineItems.orderedBy(this);

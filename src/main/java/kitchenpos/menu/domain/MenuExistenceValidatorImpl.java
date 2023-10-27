@@ -1,11 +1,9 @@
-package kitchenpos.menu.application;
+package kitchenpos.menu.domain;
 
 import java.util.List;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.order.application.MenuExistenceValidator;
-import org.springframework.stereotype.Component;
+import kitchenpos.order.domain.MenuExistenceValidator;
 
-@Component
 public class MenuExistenceValidatorImpl implements MenuExistenceValidator {
 
     private final MenuRepository menuRepository;

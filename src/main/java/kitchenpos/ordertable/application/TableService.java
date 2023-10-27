@@ -6,6 +6,7 @@ import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestsReque
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrdersInTableCompleteValidator;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

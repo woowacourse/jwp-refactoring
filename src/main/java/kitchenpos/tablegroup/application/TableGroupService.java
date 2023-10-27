@@ -8,6 +8,7 @@ import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
+import kitchenpos.tablegroup.domain.OrdersInTablesCompleteValidator;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;

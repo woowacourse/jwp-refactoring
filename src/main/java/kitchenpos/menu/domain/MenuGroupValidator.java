@@ -1,4 +1,4 @@
-package kitchenpos.menu.application;
+package kitchenpos.menu.domain;
 
 public interface MenuGroupValidator {
 

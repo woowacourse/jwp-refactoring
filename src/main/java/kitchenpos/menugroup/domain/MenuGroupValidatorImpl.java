@@ -1,10 +1,8 @@
-package kitchenpos.menugroup.application;
+package kitchenpos.menugroup.domain;
 
-import kitchenpos.menu.application.MenuGroupValidator;
+import kitchenpos.menu.domain.MenuGroupValidator;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
-import org.springframework.stereotype.Component;
 
-@Component
 public class MenuGroupValidatorImpl implements MenuGroupValidator {
 
     private final MenuGroupRepository menuGroupRepository;

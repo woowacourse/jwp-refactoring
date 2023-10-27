@@ -1,13 +1,10 @@
-package kitchenpos.order.application;
+package kitchenpos.order.domain;
 
 import java.util.List;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.application.OrdersInTableCompleteValidator;
-import kitchenpos.tablegroup.application.OrdersInTablesCompleteValidator;
-import org.springframework.stereotype.Component;
+import kitchenpos.ordertable.domain.OrdersInTableCompleteValidator;
+import kitchenpos.tablegroup.domain.OrdersInTablesCompleteValidator;
 
-@Component
 public class OrderValidatorImpl implements OrdersInTablesCompleteValidator, OrdersInTableCompleteValidator {
 
     private static final List<String> UNGROUPABLE_ORDER_STATUSES = List.of(
