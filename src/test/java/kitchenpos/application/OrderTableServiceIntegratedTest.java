@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.application.test.ServiceIntegrateTest;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableGroup;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -42,7 +42,9 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
     @Nested
     class 주문_테이블을_저장한다 {
 
-        private TableGroup tableGroup;
+        private OrderTableGroup orderTableGroup;
+        private OrderTable orderTable1;
+        private OrderTable orderTable2;
 
         @BeforeEach
         void setUp() {
@@ -51,14 +53,20 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
             orderTableRepository.save(orderTable1);
             orderTableRepository.save(orderTable2);
             final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
-            TableGroup tableGroup = new TableGroup(orderTables, now());
-            this.tableGroup = tableGroupRepository.save(tableGroup);
+            OrderTableGroup orderTableGroup = new OrderTableGroup(orderTables, now());
+            this.orderTableGroup = tableGroupRepository.save(orderTableGroup);
+            this.orderTable1 = orderTable1;
+            this.orderTable2 = orderTable2;
         }
 
         @Test
         void 주문_테이블을_저장한다() {
             // when, then
-            assertDoesNotThrow(() -> orderTableService.create(tableGroup.getId(), 3));
+            assertDoesNotThrow(() -> orderTableService.create(
+                    orderTableGroup.getId(),
+                    3,
+                    true
+            ));
         }
 
     }
@@ -71,11 +79,11 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
             OrderTable orderTable1 = 주문_테이블_생성();
             OrderTable orderTable2 = 주문_테이블_생성();
             final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
-            TableGroup tableGroup = new TableGroup(orderTables, now());
-            TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+            OrderTableGroup orderTableGroup = new OrderTableGroup(orderTables, now());
+            OrderTableGroup savedOrderTableGroup = tableGroupRepository.save(orderTableGroup);
 
-            orderTable1.updateTableGroup(savedTableGroup);
-            orderTable2.updateTableGroup(savedTableGroup);
+            orderTable1.updateTableGroup(savedOrderTableGroup);
+            orderTable2.updateTableGroup(savedOrderTableGroup);
             orderTableRepository.save(orderTable1);
             orderTableRepository.save(orderTable2);
         }
@@ -123,8 +131,9 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
         void 주문_테이블의_tableGroupId가_존재한다면_예외가_발생한다() {
             // given
             OrderTables orderTables = new OrderTables(List.of(orderTable));
-            TableGroup tableGroup = new TableGroup(orderTables, now());
-            orderTable.updateTableGroup(tableGroup);
+            OrderTableGroup orderTableGroup = new OrderTableGroup(orderTables, now());
+            tableGroupRepository.save(orderTableGroup);
+            orderTable.updateTableGroup(orderTableGroup);
             orderTableRepository.save(orderTable);
 
             // when

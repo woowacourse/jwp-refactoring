@@ -1,13 +1,11 @@
 package kitchenpos.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import static javax.persistence.CascadeType.REMOVE;
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -18,26 +16,15 @@ public class Menu {
     private Long id;
     private String name;
     private BigDecimal price;
-    @ManyToOne(fetch = LAZY)
-    private MenuGroup menuGroup;
-    @OneToMany(mappedBy = "menu", cascade = REMOVE)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private Long menuGroupId;
 
     protected Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        this.id = id;
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
-    }
-
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
     }
 
     public void validatePriceIsNullOrMinus() {
@@ -58,11 +45,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
 }

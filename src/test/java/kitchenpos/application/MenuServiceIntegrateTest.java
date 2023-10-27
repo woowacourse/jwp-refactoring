@@ -82,7 +82,7 @@ class MenuServiceIntegrateTest extends ServiceIntegrateTest {
         @BeforeEach
         void setUp() {
             MenuGroup menuGroup = menuGroupRepository.save(인기_메뉴_생성());
-            Menu menu = new Menu("치킨", BigDecimal.valueOf(20000), menuGroup);
+            Menu menu = new Menu("치킨", BigDecimal.valueOf(20000), menuGroup.getId());
             menuRepository.save(menu);
         }
 

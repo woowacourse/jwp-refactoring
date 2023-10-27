@@ -2,15 +2,14 @@ package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableGroup;
 import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -19,12 +18,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class TableGroupService {
+public class OrderTableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
+    public OrderTableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
@@ -45,8 +44,8 @@ public class TableGroupService {
         orderTables.validateOrderTablesSizeEqualToSavedOrderTablesSize(savedOrderTables);
         validateSavedOrderIsEmpty(savedOrderTables);
 
-        TableGroup tableGroup = new TableGroup(orderTables, LocalDateTime.now());
-        return tableGroupRepository.save(tableGroup).getId();
+        OrderTableGroup orderTableGroup = new OrderTableGroup(orderTables, LocalDateTime.now());
+        return tableGroupRepository.save(orderTableGroup).getId();
     }
 
     private static void validateSavedOrderIsEmpty(List<OrderTable> savedOrderTables) {
@@ -62,7 +61,7 @@ public class TableGroupService {
         final OrderTables orderTables = tableGroupRepository.getById(tableGroupId).getOrderTables();
         final List<Long> orderTableIds = orderTables.getValuesId();
         validateOrderTableStatus(orderTableIds);
-        orderTables.updateInfo();
+        orderTables.ungroupOrderTables();
     }
 
     private void validateOrderTableStatus(final List<Long> orderTableIds) {

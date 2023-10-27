@@ -1,16 +1,5 @@
 ###
-POST {{host}}/api/order
-Content-Type: application/json
-
-{
-  "orderTableId": 1,
-  "orderLineItems": [
-    {
-      "menuId": 1,
-      "quantity": 1
-    }
-  ]
-}
+POST {{host}}/api/order/1
 
 ###
 GET {{host}}/api/order

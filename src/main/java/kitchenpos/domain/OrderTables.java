@@ -14,7 +14,7 @@ public class OrderTables {
 
     private static final int MIN_TABLE_GROUP_SIZE = 2;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = REMOVE)
+    @OneToMany(mappedBy = "orderTableGroup", cascade = REMOVE)
     private List<OrderTable> values;
 
     protected OrderTables() {
@@ -46,7 +46,7 @@ public class OrderTables {
         }
     }
 
-    public void updateInfo() {
+    public void ungroupOrderTables() {
         for (final OrderTable orderTable : values) {
             orderTable.updateEmpty(false);
             orderTable.updateTableGroup(null);

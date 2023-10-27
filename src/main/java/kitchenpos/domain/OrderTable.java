@@ -13,26 +13,26 @@ public class OrderTable {
     private Long id;
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private OrderTableGroup orderTableGroup;
     private int numberOfGuests;
     private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this.id = id;
-        this.tableGroup = tableGroup;
+    public OrderTable(OrderTableGroup orderTableGroup, int numberOfGuests) {
+        this.orderTableGroup = orderTableGroup;
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public OrderTable(OrderTableGroup orderTableGroup, int numberOfGuests, boolean empty) {
+        this.orderTableGroup = orderTableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests) {
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public void updateEmpty(boolean isEmpty) {
+        validateTableGroupIsNotNull();
         this.empty = isEmpty;
     }
 
@@ -40,8 +40,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public OrderTableGroup getTableGroup() {
+        return orderTableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -53,7 +53,7 @@ public class OrderTable {
     }
 
     public void validateTableGroupIsNotNull() {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(orderTableGroup)) {
             throw new IllegalArgumentException("TableGroup이 Null일 수 없습니다.");
         }
     }
@@ -74,8 +74,8 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void updateTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void updateTableGroup(final OrderTableGroup orderTableGroup) {
+        this.orderTableGroup = orderTableGroup;
     }
 
 }

@@ -1,8 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.OrderTableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.response.OrderTableResponse;
@@ -13,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.domain.OrderStatus.*;
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 
 @Service
 public class OrderTableService {
@@ -28,9 +27,9 @@ public class OrderTableService {
     }
 
     @Transactional
-    public Long create(final Long tableGroupId, final int numberOfGuests) {
-        TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        OrderTable orderTable = new OrderTable(tableGroup, numberOfGuests);
+    public Long create(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        OrderTableGroup orderTableGroup = tableGroupRepository.getById(tableGroupId);
+        OrderTable orderTable = new OrderTable(orderTableGroup, numberOfGuests, empty);
         return orderTableRepository.save(orderTable).getId();
     }
 
@@ -44,13 +43,15 @@ public class OrderTableService {
     @Transactional
     public void changeIsEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
-        savedOrderTable.validateTableGroupIsNotNull();
+        validateOrderStatusIsCookingAndMeal(orderTableId);
+        savedOrderTable.updateEmpty(isEmpty);
+    }
+
+    private void validateOrderStatusIsCookingAndMeal(Long orderTableId) {
         if (orderTableRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(COOKING, MEAL))) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.updateEmpty(isEmpty);
-        orderTableRepository.save(savedOrderTable);
     }
 
     @Transactional

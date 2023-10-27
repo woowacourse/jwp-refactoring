@@ -28,7 +28,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
         MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
-        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup.getId());
         menu.validatePriceIsNullOrMinus();
         return menuRepository.save(menu).getId();
     }

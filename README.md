@@ -88,3 +88,53 @@
 | 단체 지정    | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목    | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사    | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+## 의존성 리팩터링
+* 변경 전 : Menu(N) -> (1)MenuGroup (단방향, 직접 참조)
+* 변경 후 : Menu(N) -> (1)MenuGroup (단방향, 간접 참조)
+  * Menu는 MenuGroup을 간접 참조한다.
+    * Menu가 생성될 때 MenuGroup이 생성되지 않는다. 
+    * Menu가 삭제될 때 MenuGroup이 삭제되지 않아야 한다.
+    * Menu가 속한 MenuGroup을 알 수 있어야 한다.
+
+* 변경 전 : Menu(1) <-> (N)MenuProduct (양방향, 직접 참조)
+* 변경 후 : Menu(1) <- (N)MenuProduct (단방향, 직접 참조)
+  * 양방향 사이클(Cycle) 제거
+    * Menu가 MenuProduct를 의존하지 않는다.
+  * MenuProduct는 Menu를 직접 참조한다.
+    * MenuProduct 매핑 테이블은 Menu가 생성될 때 같이 생성된다.
+    * MenuProduct 매핑 테이블은 Menu가 삭제될 때 같이 삭제된다.
+
+* 변경 전 : MenuProduct(N) -> (1)Product (단방향, 직접 참조)
+* 변경 후 : MenuProduct(N) -> (1)Product (단방향, 간접 참조)
+  * MenuProduct는 Product를 간접 참조한다.
+    * MenuProduct가 생성될 때 Product가 생성되지 않는다.
+    * MenuProduct가 삭제될 때 Product가 삭제되지 않는다.
+    * 메뉴와는 별도의 도메인이기 때문에 지연 로딩을 사용하여 트랜잭션의 깊이(depth)를 늘리지 않는다.
+
+* 변경 전 : OrderTable(1) <-> (N)Order (양방향, 직접 참조)
+* 변경 후 : OrderTable(1) <- (N)Order (단방향, 직접 참조)
+  * Order는 OrderTable을 직접 참조한다.
+    * 같은 도메인이므로 Order는 OrderTable을 직접 가지고 있는게 좋다고 판단.
+      * 1. 트랜잭션의 깊이가 깊지 않음
+      * 2. 단방향이기 때문에 OrderTable이 삭제될 때 Order가 삭제되는 이벤트를 만들지 않으면 삭제에 대한 걱정 X
+  * Order는 OrderTable을 단방향으로 참조한다.
+    * OrderTable이 Order를 참조하면 다중성이 생김
+      * 쿼리 또는 비즈니스 로직을 수행할 때 복잡해질 수 밖에 없음
+
+* 변경 전 : Order(1) <-> (N)OrderLineItem (양방향, 직접 참조)
+* 변경 후 : Order(1) <- (N)OrderLineItem (단방향, 직접 참조)
+  * OrderLineItem은 Order를 직접 참조한다.
+  * 같은 도메인이므로 OrderLineItem은 Order를 직접 가지고 있는게 좋다고 판단.
+    * 1. 트랜잭션의 깊이가 깊지 않음
+    * 2. 단방향이기 때문에 Order가 삭제될 때 OrderLineItem가 삭제되는 이벤트를 만들지 않으면 삭제에 대한 걱정 X
+  * OrderLineItem는 Order를 단방향으로 참조한다.
+    * Order가 OrderLineItem을 참조하면 다중성이 생김
+      * 쿼리 또는 비즈니스 로직을 수행할 때 복잡해질 수 밖에 없음
+
+* 변경 전 : OrderLineItem(N) -> (1)Menu (단방향, 직접 참조)
+* 변경 후 : OrderLineItem(N) -> (1)Menu (단방향, 간접 참조)
+  * OrderLineItem은 Menu를 간접 참조 한다.
+    * OrderLineItem이 생성될 때 Menu가 생성되지 않는다.
+    * OrderLineItem이 삭제될 때 Menu가 삭제되지 않는다.
+    * 메뉴와는 별도의 도메인이기 때문에 지연 로딩을 사용하여 트랜잭션의 깊이(depth)를 늘리지 않는다.
