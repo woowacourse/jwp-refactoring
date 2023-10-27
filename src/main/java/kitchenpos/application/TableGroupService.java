@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -66,30 +66,19 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final List<OrderTable> findOrderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final OrderTables orderTables = new OrderTables(findOrderTables);
 
-        validateCanUngroup(getOrderTableIds(orderTables));
+        validateCanUngroup(orderTables);
 
-        ungroupOrderTables(orderTables);
+        orderTables.ungroupOrderTables();
     }
 
-    private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
-        return orderTables.stream()
-                          .map(OrderTable::getId)
-                          .collect(Collectors.toList());
-    }
-
-    private void validateCanUngroup(final List<Long> orderTableIds) {
-        final List<Order> findOrders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
+    private void validateCanUngroup(final OrderTables orderTables) {
+        final List<Order> findOrders = orderRepository.findAllByOrderTableIdIn(orderTables.getOrderTableIds());
         final Orders orders = new Orders(findOrders);
         if (orders.containsNotCompleteOrder()) {
             throw new IllegalArgumentException("테이블 그룹을 해제하려면 그룹화된 테이블의 모든 주문이 완료 상태이어야 합니다.");
-        }
-    }
-
-    private void ungroupOrderTables(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
         }
     }
 }
