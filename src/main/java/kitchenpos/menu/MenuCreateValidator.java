@@ -15,10 +15,10 @@ public class MenuCreateValidator {
     }
 
     public void validate(Menu menu) {
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
+        if (menuGroupRepository.existsById(menu.getMenuGroupId())) {
+            menu.validateMenuProductsPrice(menuProductPriceMultiplier);
+            return;
         }
-
-        menu.validateMenuProductsPrice(menuProductPriceMultiplier);
+        throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
     }
 }

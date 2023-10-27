@@ -2,7 +2,6 @@ package kitchenpos.menu;
 
 import kitchenpos.product.Price;
 import kitchenpos.product.PriceConverter;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
@@ -16,7 +15,7 @@ import java.util.List;
 
 @Table(name = "menu")
 @Entity
-public class Menu extends AbstractAggregateRoot<Menu> {
+public class Menu {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -41,6 +40,11 @@ public class Menu extends AbstractAggregateRoot<Menu> {
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = new MenuProducts(menuProducts);
+    }
+
+    public static Menu createWithValidation(Menu menu, MenuCreateValidator menuCreateValidator) {
+        menuCreateValidator.validate(menu);
+        return menu;
     }
 
     public void validateMenuProductsPrice(MenuProductPriceMultiplier multiplier) {

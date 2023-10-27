@@ -21,9 +21,7 @@ public class MenuService {
 
     @Transactional
     public Menu create(Menu menu) {
-        menuCreateValidator.validate(menu);
-
-        return menuRepository.save(menu);
+        return menuRepository.save(Menu.createWithValidation(menu, menuCreateValidator));
     }
 
     @Transactional(readOnly = true)
