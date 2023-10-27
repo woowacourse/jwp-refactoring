@@ -36,7 +36,7 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(final Long id, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems,
