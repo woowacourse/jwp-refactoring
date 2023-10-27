@@ -1,6 +1,11 @@
 package kitchenpos.domain;
 
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 import static javax.persistence.EnumType.STRING;
