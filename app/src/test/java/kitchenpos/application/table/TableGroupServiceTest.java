@@ -1,11 +1,11 @@
 package kitchenpos.application.table;
 
-import static kitchenpos.exception.table.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
-import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLES_CAN_NOT_LESS_THAN_TWO;
-import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP;
-import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_MUST_EMPTY;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static kitchenpos.order.exception.OrderExceptionType.ORDER_STATUS_IS_COOKING_OR_MEAL;
+import static kitchenpos.table.exception.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
+import static kitchenpos.table.exception.TableGroupExceptionType.ORDER_TABLES_CAN_NOT_LESS_THAN_TWO;
+import static kitchenpos.table.exception.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP;
+import static kitchenpos.table.exception.TableGroupExceptionType.ORDER_TABLE_MUST_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.application.table.dto.CreateTableGroupCommand;
-import kitchenpos.application.table.dto.CreateTableGroupResponse;
-import kitchenpos.application.table.dto.UngroupTableGroupCommand;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.table.application.dto.CreateTableGroupCommand;
+import kitchenpos.table.application.dto.CreateTableGroupResponse;
+import kitchenpos.table.application.dto.UngroupTableGroupCommand;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

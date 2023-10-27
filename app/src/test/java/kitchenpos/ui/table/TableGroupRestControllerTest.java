@@ -9,12 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.table.dto.CreateTableGroupResponse;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.table.application.dto.CreateTableGroupResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.ui.dto.CreateTableGroupRequest;
+import kitchenpos.table.ui.dto.OrderTableIdRequest;
 import kitchenpos.ui.ControllerTest;
-import kitchenpos.ui.table.dto.CreateTableGroupRequest;
-import kitchenpos.ui.table.dto.OrderTableIdRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 

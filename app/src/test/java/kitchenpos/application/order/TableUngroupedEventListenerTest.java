@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.event.TableUngroupedEvent;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
 class TableUngroupedEventListenerTest extends IntegrationTest {

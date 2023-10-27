@@ -8,10 +8,10 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.event.TableEmptyChangedEvent;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
 class TableEmptyChangedEventListenerTest extends IntegrationTest {

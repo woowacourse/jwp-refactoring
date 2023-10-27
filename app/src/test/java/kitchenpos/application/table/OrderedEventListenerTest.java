@@ -1,15 +1,15 @@
 package kitchenpos.application.table;
 
-import static kitchenpos.order.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
+import static kitchenpos.table.exception.OrderTableExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import kitchenpos.application.IntegrationTest;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.event.OrderedEvent;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
 class OrderedEventListenerTest extends IntegrationTest {

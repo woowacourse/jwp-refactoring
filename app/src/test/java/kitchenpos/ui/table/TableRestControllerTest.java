@@ -9,15 +9,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.table.dto.ChangeOrderTableEmptyResponse;
-import kitchenpos.application.table.dto.ChangeOrderTableNumberOfGuestsResponse;
-import kitchenpos.application.table.dto.CreateOrderTableResponse;
-import kitchenpos.application.table.dto.SearchOrderTableResponse;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.table.application.dto.ChangeOrderTableEmptyResponse;
+import kitchenpos.table.application.dto.ChangeOrderTableNumberOfGuestsResponse;
+import kitchenpos.table.application.dto.CreateOrderTableResponse;
+import kitchenpos.table.application.dto.SearchOrderTableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.ui.dto.ChangeOrderTableEmptyRequest;
+import kitchenpos.table.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
+import kitchenpos.table.ui.dto.CreateOrderTableRequest;
 import kitchenpos.ui.ControllerTest;
-import kitchenpos.ui.table.dto.ChangeOrderTableEmptyRequest;
-import kitchenpos.ui.table.dto.ChangeOrderTableNumberOfGuestsRequest;
-import kitchenpos.ui.table.dto.CreateOrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
