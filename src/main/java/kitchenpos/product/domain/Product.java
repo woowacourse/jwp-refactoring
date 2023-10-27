@@ -20,6 +20,7 @@ public class Product {
     }
 
     public Product(final Long id, final String name, final BigDecimal price) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;

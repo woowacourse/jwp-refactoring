@@ -9,6 +9,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.ordertable.application.OrderValidatorImpl;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -35,7 +36,7 @@ class OrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderValidatorImpl orderValidatorImpl;
 
     @Test
     @DisplayName("주문한다.")
@@ -46,28 +47,24 @@ class OrderServiceTest {
                 new OrderLineItemRequest(1L, 1L),
                 new OrderLineItemRequest(2L, 2L)
         ));
-        OrderTable orderTable = mock(OrderTable.class);
         Menu menu1 = mock(Menu.class);
         Menu menu2 = mock(Menu.class);
         Order order = mock(Order.class);
 
-        given(menu1.getId()).willReturn(1L);
-        given(menu2.getId()).willReturn(2L);
-        given(orderTableRepository.getById(anyLong())).willReturn(orderTable);
-        given(menuRepository.findByIdIn(anyList())).willReturn(List.of(menu1, menu2));
+        given(menuRepository.getById(1L)).willReturn(menu1);
+        given(menuRepository.getById(2L)).willReturn(menu2);
+
         given(order.getId()).willReturn(expectedOrderId);
         given(orderRepository.save(any(Order.class))).willReturn(order);
+        willDoNothing().given(orderValidatorImpl).validate(any());
 
         // when
         Long result = orderService.order(request);
 
         // then
         assertThat(result).isEqualTo(expectedOrderId);
-        verify(orderTableRepository).getById(anyLong());
-        verify(menuRepository).findByIdIn(anyList());
         verify(orderRepository).save(any(Order.class));
     }
-
 
     @Test
     @DisplayName("주문를 조회한다.")

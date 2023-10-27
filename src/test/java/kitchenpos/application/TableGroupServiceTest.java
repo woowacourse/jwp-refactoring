@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.application.TableGroupValidator;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
@@ -33,6 +34,8 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
     @Mock
     private TableGroupRepository tableGroupRepository;
+    @Mock
+    private TableGroupValidator tableGroupValidator;
 
     @Test
     @DisplayName("테이블 그룹 생성")
@@ -48,6 +51,7 @@ class TableGroupServiceTest {
 
         when(tableGroupRepository.save(any(TableGroup.class)))
                 .thenReturn(new TableGroup(1L, LocalDateTime.now(), null));
+        doNothing().when(tableGroupValidator).validate(anyList(), anyList());
 
         //when
         Long createdTableGroupId = tableGroupService.create(request);

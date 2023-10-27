@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -22,7 +21,7 @@ public class Menu {
     private Long menuGroupId;
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "menu_id")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private List<MenuProduct> menuProducts;
 
     protected Menu() {
     }
