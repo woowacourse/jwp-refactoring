@@ -42,6 +42,11 @@ public class OrderService {
         return OrderResponse.from(order);
     }
 
+    private OrderTable findOrderTableById(final long id) {
+        return orderTableRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
+    }
+
     private List<OrderLineItem> extractOrderLineItems(final OrderRequest request) {
         return request.getOrderLineItems().stream()
                 .map(each -> {
@@ -54,11 +59,6 @@ public class OrderService {
                     );
                 })
                 .collect(Collectors.toList());
-    }
-
-    private OrderTable findOrderTableById(final long id) {
-        return orderTableRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }
 
     private Menu findMenuById(final long id) {
