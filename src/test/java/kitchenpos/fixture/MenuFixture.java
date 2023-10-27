@@ -3,8 +3,8 @@ package kitchenpos.fixture;
 import kitchenpos.common.Price;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuProduct;
-import kitchenpos.ui.dto.MenuProductRequest;
-import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;

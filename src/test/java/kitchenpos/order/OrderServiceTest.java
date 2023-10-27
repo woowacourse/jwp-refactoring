@@ -1,9 +1,9 @@
 package kitchenpos.order;
 
 import kitchenpos.menu.Menu;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.ordertable.TableService;
-import kitchenpos.ui.dto.OrderLineItemRequest;
-import kitchenpos.ui.dto.OrderRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -108,6 +108,16 @@ class OrderServiceTest {
         var order = orderOneFromTable1(후라이드치킨());
 
         assertThat(order.getOrderedTime()).isBetween(startedTime, LocalDateTime.now());
+    }
+
+    @Test
+    void 주문당시의_메뉴_이름과_가격을_저장한다() {
+        Order ordered = orderOneFromTable1(후라이드치킨());
+
+        var firstLineItem = ordered.getOrderLineItems().get(0);
+
+        assertThat(firstLineItem.getOrderedName()).isEqualTo(후라이드치킨().getName());
+        assertThat(firstLineItem.getOrderedPrice().isEqualTo(후라이드치킨().getPrice())).isTrue();
     }
 
     @Test
