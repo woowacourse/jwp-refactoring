@@ -36,7 +36,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         validateMenuGroupExists(menuRequest);
-        MenuProducts menuProducts = new MenuProducts(getMenuProducts(menuRequest));
+        MenuProducts menuProducts = convertToMenuProducts(menuRequest);
         menuProductsValidator.validateMenuProductsPrice(menuRequest.getPrice(), menuProducts);
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(), menuProducts);
         return MenuResponse.toResponse(
@@ -51,7 +51,7 @@ public class MenuService {
         }
     }
 
-    private List<MenuProduct> getMenuProducts(MenuRequest menuRequest) {
+    private MenuProducts convertToMenuProducts(MenuRequest menuRequest) {
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
             Product product = productRepository
@@ -60,7 +60,7 @@ public class MenuService {
             MenuProduct menuProduct = new MenuProduct(product.getId(), menuProductRequest.getQuantity());
             menuProducts.add(menuProduct);
         }
-        return menuProducts;
+        return new MenuProducts(menuProducts);
     }
 
     public List<MenuResponse> list() {
