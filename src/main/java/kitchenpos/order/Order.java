@@ -20,8 +20,7 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public static Order of(Long orderTableId, List<OrderLineItem> orderLineItems, OrderValidator validator) {
-        validator.validate(orderTableId, orderLineItems);
+    public static Order of(Long orderTableId) {
         return new Order(null, orderTableId, COOKING.name(), LocalDateTime.now());
     }
 

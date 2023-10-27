@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,7 +30,9 @@ public class OrderService {
     @Transactional
     public Order create(OrderCreateRequest request) {
         List<OrderLineItemCreateRequest> orderLineItemCreateRequests = request.getOrderLineItems();
-        Order order = OrderMapper.mapToOrder(request, orderValidator);
+
+        orderValidator.validate(request.getOrderTableId(), mapToOrderLineItems(orderLineItemCreateRequests));
+        Order order = OrderMapper.mapToOrder(request);
         Order savedOrder = orderRepository.save(order);
 
         List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
@@ -41,6 +44,14 @@ public class OrderService {
         return orderRepository.save(savedOrder);
     }
 
+    private static List<OrderLineItem> mapToOrderLineItems(List<OrderLineItemCreateRequest> orderLineItems) {
+        return orderLineItems.stream()
+                .map(orderLineItem -> OrderLineItem.of(
+                        orderLineItem.getMenuId(),
+                        orderLineItem.getQuantity()
+                ))
+                .collect(Collectors.toList());
+    }
 
     private OrderLineItem mapToOrderLineItem(OrderLineItemCreateRequest orderLineItem, Long orderId) {
         Long menuId = orderLineItem.getMenuId();
