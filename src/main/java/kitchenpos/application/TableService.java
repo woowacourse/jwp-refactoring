@@ -3,8 +3,8 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.request.OrderTableUpdateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,25 +29,14 @@ public class TableService {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.getEmtpy());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Long tableGroupId = null;
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            tableGroupId = savedOrderTable.getTableGroup().getId();
-        }
-        return new OrderTableResponse(savedOrderTable.getId(), tableGroupId,
+        return new OrderTableResponse(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
     }
 
     public List<OrderTableResponse> list() {
         return orderTableRepository.findAll()
                 .stream()
-                .map(orderTable -> {
-                    Long tableGroupId = null;
-                    if (Objects.nonNull(orderTable.getTableGroup())) {
-                        tableGroupId = orderTable.getTableGroup().getId();
-                    }
-                    return new OrderTableResponse(orderTable.getId(), tableGroupId,
-                            orderTable.getNumberOfGuests(), orderTable.isEmpty());
-                })
+                .map(orderTable -> new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty()))
                 .collect(Collectors.toList());
     }
 
@@ -58,12 +46,7 @@ public class TableService {
         checkOrderStatusInTableGroup(orderTable);
         orderTable.changeEmpty(request.getEmpty());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-
-        Long tableGroupId = null;
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            tableGroupId = savedOrderTable.getTableGroup().getId();
-        }
-        return new OrderTableResponse(savedOrderTable.getId(), tableGroupId,
+        return new OrderTableResponse(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
     }
 
@@ -85,11 +68,7 @@ public class TableService {
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Long tableGroupId = null;
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            tableGroupId = savedOrderTable.getTableGroup().getId();
-        }
-        return new OrderTableResponse(savedOrderTable.getId(), tableGroupId,
+        return new OrderTableResponse(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
     }
 }

@@ -7,13 +7,11 @@ import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

@@ -1,24 +1,18 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
-import javax.persistence.OneToMany;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Embeddable
+@Component
 public class OrderTables {
 
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
-
-    public OrderTables() {
-    }
 
     public OrderTables(final List<OrderTable> orderTables) {
         validate(orderTables);
         this.orderTables = orderTables;
-        joinGroup();
     }
 
     private void validate(final List<OrderTable> orderTables) {
@@ -35,9 +29,10 @@ public class OrderTables {
                 .collect(Collectors.toList());
     }
 
-    public void joinGroup() {
+    public void joinGroup(final Long tableGroupId) {
         for (final OrderTable orderTable : orderTables) {
             orderTable.changeEmpty(false);
+            orderTable.registerGroup(tableGroupId);
         }
     }
 

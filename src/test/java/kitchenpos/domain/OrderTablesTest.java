@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -37,7 +40,7 @@ class OrderTablesTest {
     void OrderTables_생성_시_받은_OrderTable_중_다른_TableGroup에_속한_테이블이_있다면_예외가_발생한다() {
         // given
         final TableGroup tableGroup = new TableGroup();
-        final OrderTable hasGroupOrderTable = new OrderTable(1L, tableGroup, 0, false);
+        final OrderTable hasGroupOrderTable = new OrderTable(1L, tableGroup.getId(), 0, false);
         final OrderTable notGroupOrderTable = new OrderTable(0, true);
 
         // when, then
@@ -72,7 +75,7 @@ class OrderTablesTest {
 
         // then
         for (OrderTable orderTable : orderTableList) {
-            assertThat(orderTable.getTableGroup()).isNull();
+            assertThat(orderTable.getTableGroupId()).isNull();
         }
     }
 }

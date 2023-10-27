@@ -4,7 +4,12 @@ import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.*;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.OrderLineItemRepository;
 import kitchenpos.persistence.OrderRepository;
@@ -16,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +57,8 @@ class OrderServiceTest {
             // given
             final OrderTable savedOrderTable = new OrderTable(1L, null, 0, false);
             final Order savedOrder = new Order(1L, savedOrderTable, OrderStatus.COOKING);
-            final Menu savedMenu = new Menu();
-            final OrderLineItem savedOrderLineItem = new OrderLineItem(savedOrder, savedMenu, 1);
+            final Menu savedMenu = new Menu(1L, "신메뉴", new Price(BigDecimal.valueOf(1000)), null, null);
+            final OrderLineItem savedOrderLineItem = new OrderLineItem(savedOrder, savedMenu.getId(), 1);
 
             when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);

@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -12,10 +15,10 @@ class MenuTest {
     @Test
     void Menu를_생성한다() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
+        final MenuGroup menuGroup = new MenuGroup("한식");
 
         // when
-        final Menu menu = new Menu("상품", new Price(BigDecimal.valueOf(1000)), menuGroup);
+        final Menu menu = new Menu("상품", new Price(BigDecimal.valueOf(1000)), menuGroup, null);
 
         // then
         assertThat(menu.getPrice().getValue()).isEqualTo(BigDecimal.valueOf(1000));
@@ -24,22 +27,22 @@ class MenuTest {
     @Test
     void Menu_생성_시_입력된_가격이_null이면_예외가_발생한다() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
+        final MenuGroup menuGroup = new MenuGroup("한식");
         final BigDecimal value = null;
 
         // when, then
-        assertThatThrownBy(() -> new Menu("상품", new Price(value), menuGroup))
+        assertThatThrownBy(() -> new Menu("상품", new Price(value), menuGroup, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void Product_생성_시_입력된_가격이_0보다_작으면_예외가_발생한다() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
+        final MenuGroup menuGroup = new MenuGroup("한식");
         final BigDecimal value = BigDecimal.valueOf(-1000);
 
         // when, then
-        assertThatThrownBy(() -> new Menu("상품", new Price(value), menuGroup))
+        assertThatThrownBy(() -> new Menu("상품", new Price(value), menuGroup, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

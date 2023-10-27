@@ -3,8 +3,7 @@ package kitchenpos.integration;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -39,12 +38,15 @@ class TableGroupIntegrationTest extends IntegrationTest {
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                 () -> assertThat(response.getHeaders().get("Location"))
-                        .contains("/api/table-groups/" + createdTableGroup.getId())
+                        .contains("/api/table-groups/" + createdTableGroup.getId()),
+                () -> assertThat(createdTableGroup.getId()).isEqualTo(1L),
+                () -> assertThat(createdTableGroup.getOrderTables()).hasSize(2),
+                () -> assertThat(createdTableGroup.getOrderTables().get(0).isEmpty()).isFalse()
         );
     }
 
     @Test
-    void 테이블_그룹을_삭제요청한다() {
+    void 테이블_그룹을_해제요청한다() {
         // given
         final OrderTable orderTable = new OrderTable(0, true);
         final HttpEntity<OrderTable> createTableRequest = new HttpEntity<>(orderTable);

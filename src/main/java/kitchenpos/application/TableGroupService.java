@@ -3,10 +3,10 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.TableGroupRepository;
@@ -36,9 +36,9 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = findOrderTables(request);
         checkSavedOrderTablesHasSameSizeWithRequest(request, savedOrderTables);
 
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
         final OrderTables orderTables = new OrderTables(savedOrderTables);
-        final TableGroup tableGroup = new TableGroup(orderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        orderTables.joinGroup(savedTableGroup.getId());
 
         return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
                 orderTables.getOrderTables()
@@ -70,13 +70,14 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = findTableGroupById(tableGroupId);
-        validateOrderStatusInTableGroup(tableGroup.getOrderTables());
-        tableGroup.ungroup();
-        tableGroupRepository.save(tableGroup);
+        final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroup.getId()));
+        validateOrderStatusInTableGroup(orderTables);
+        orderTables.leaveGroup();
+        orderTableRepository.saveAll(orderTables.getOrderTables());
     }
 
     private TableGroup findTableGroupById(final Long tableGroupId) {
-        return tableGroupRepository.findByIdWithOrderTables(tableGroupId)
+        return tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 

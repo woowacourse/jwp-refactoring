@@ -1,12 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -16,9 +14,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -33,10 +29,10 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         checkNumberOfGuestsSameOrGraterThanZero(numberOfGuests);
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -56,7 +52,7 @@ public class OrderTable {
     }
 
     private void checkTableGroupIsNull() {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }
@@ -75,23 +71,23 @@ public class OrderTable {
     }
 
     public boolean canBeGroup() {
-        return empty && Objects.isNull(tableGroup);
+        return empty && Objects.isNull(tableGroupId);
     }
 
-    public void registerGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void registerGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void leaveGroup() {
-        tableGroup = null;
+        tableGroupId = null;
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

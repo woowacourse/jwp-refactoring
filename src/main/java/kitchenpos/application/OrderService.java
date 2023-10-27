@@ -5,11 +5,11 @@ import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.response.OrderLineItemResponse;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.OrderLineItemRepository;
 import kitchenpos.persistence.OrderRepository;
@@ -53,7 +53,7 @@ public class OrderService {
         return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTable().getId(), savedOrder.getOrderStatus().name(), savedOrder.getOrderedTime(),
                 savedOrderLineItems.stream()
                         .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
-                                orderLineItem.getMenu().getId(), orderLineItem.getQuantity()))
+                                orderLineItem.getMenuId(), orderLineItem.getQuantity()))
                         .collect(Collectors.toList()));
     }
 
@@ -88,7 +88,7 @@ public class OrderService {
         for (final OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
             final Menu savedMenu = menuRepository.findById(orderLineItemDto.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
-            orderLineItems.add(new OrderLineItem(order, savedMenu, orderLineItemDto.getQuantity()));
+            orderLineItems.add(new OrderLineItem(order, savedMenu.getId(), orderLineItemDto.getQuantity()));
         }
         return orderLineItemRepository.saveAll(orderLineItems);
     }
@@ -101,7 +101,7 @@ public class OrderService {
                     return new OrderResponse(order.getId(), order.getOrderTable().getId(), order.getOrderStatus().name(), order.getOrderedTime(),
                             savedOrderLineItems.stream()
                                     .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
-                                            orderLineItem.getMenu().getId(), orderLineItem.getQuantity()))
+                                            orderLineItem.getMenuId(), orderLineItem.getQuantity()))
                                     .collect(Collectors.toList()));
                 })
                 .collect(Collectors.toList());
@@ -117,7 +117,7 @@ public class OrderService {
         return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTable().getId(), savedOrder.getOrderStatus().name(), savedOrder.getOrderedTime(),
                 savedOrderLineItems.stream()
                         .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
-                                orderLineItem.getMenu().getId(), orderLineItem.getQuantity()))
+                                orderLineItem.getMenuId(), orderLineItem.getQuantity()))
                         .collect(Collectors.toList()));
     }
 

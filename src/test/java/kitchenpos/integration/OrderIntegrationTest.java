@@ -13,13 +13,14 @@ import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -29,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -126,7 +128,12 @@ class OrderIntegrationTest extends IntegrationTest {
         final MenuResponse response = testRestTemplate.postForEntity("/api/menus", request, MenuResponse.class)
                 .getBody();
 
-        return new Menu(response.getId(), response.getName(), new Price(response.getPrice()), null);
+        final MenuProducts menuProducts = new MenuProducts(response.getMenuProducts()
+                .stream()
+                .map(it -> new MenuProduct(it.getSeq(), null, it.getQuantity()))
+                .collect(Collectors.toList()));
+
+        return new Menu(response.getId(), response.getName(), new Price(response.getPrice()), null, menuProducts);
     }
 
     private Product createProduct(final String name, final int value) {

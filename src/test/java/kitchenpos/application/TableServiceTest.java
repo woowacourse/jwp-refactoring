@@ -3,8 +3,8 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.request.OrderTableUpdateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -95,8 +94,8 @@ class TableServiceTest {
         @Test
         void 주문_테이블의_빈_상태를_변경할_때_주문_테이블이_어떤_테이블_그룹에_속해_있을_때_실패한다() {
             // given
-            final TableGroup tableGroup = new TableGroup(1L, null);
-            final OrderTable savedOrderTable = new OrderTable(1L, tableGroup, 0, true);
+            final TableGroup tableGroup = new TableGroup(1L);
+            final OrderTable savedOrderTable = new OrderTable(1L, tableGroup.getId(), 0, true);
 
             when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
