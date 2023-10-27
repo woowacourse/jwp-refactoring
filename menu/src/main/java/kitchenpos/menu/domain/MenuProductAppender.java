@@ -1,8 +1,9 @@
-package kitchenpos.product.domain;
+package kitchenpos.menu.domain;
 
 import java.util.List;
 import java.util.Map;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Component;
 
 @Component
