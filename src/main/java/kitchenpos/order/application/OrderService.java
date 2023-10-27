@@ -20,20 +20,20 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderValidatorImpl orderValidatorImpl;
+    private final OrderValidator orderValidator;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderValidatorImpl orderValidatorImpl
+            final OrderValidatorImpl orderValidator
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderValidatorImpl = orderValidatorImpl;
+        this.orderValidator = orderValidator;
     }
 
     public Long order(final OrderCreateRequest request) {
-        orderValidatorImpl.validate(request.getOrderTableId());
+        orderValidator.validate(request.getOrderTableId());
         final List<OrderLineItem> orderLineItems = createOrderLineItems(request);
         final Order order = Order.ofCooking(request.getOrderTableId(), orderLineItems);
         final Order saveOrder = orderRepository.save(order);
