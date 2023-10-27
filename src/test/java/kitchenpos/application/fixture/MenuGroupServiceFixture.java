@@ -2,7 +2,7 @@ package kitchenpos.application.fixture;
 
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.infrastructure.persistence.JpaMenuGroupRepository;
-import kitchenpos.ui.dto.CreateMenuGroupRequest;
+import kitchenpos.dto.request.CreateMenuGroupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

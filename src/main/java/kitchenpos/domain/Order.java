@@ -1,15 +1,14 @@
 package kitchenpos.domain;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +21,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id", nullable = false)
+    private long orderTableId;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
@@ -37,8 +35,8 @@ public class Order {
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
-        this.orderTable = orderTable;
+    public Order(final long orderTableId, final OrderStatus orderStatus) {
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
     }
@@ -55,12 +53,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {

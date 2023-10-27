@@ -6,12 +6,11 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.ui.dto.CreateOrderRequest;
-import kitchenpos.ui.dto.OrderLineItemDto;
-import kitchenpos.ui.dto.PutOrderStatusRequest;
+import kitchenpos.dto.request.CreateOrderRequest;
+import kitchenpos.dto.request.OrderLineItemDto;
+import kitchenpos.dto.request.PutOrderStatusRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,29 +23,25 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public Order create(final CreateOrderRequest orderRequest) {
-        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                                                          .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
+        final Long orderTableId = orderRequest.getOrderTableId();
+        if (Objects.isNull(orderTableId) || !orderTableRepository.existsById(orderTableId)) {
             throw new IllegalArgumentException();
         }
-        final Order order = new Order(orderTable, OrderStatus.COOKING);
+        final Order order = new Order(orderTableId, OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
 
         final List<OrderLineItem> orderLineItems = new ArrayList<>();

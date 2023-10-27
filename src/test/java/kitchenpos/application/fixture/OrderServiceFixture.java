@@ -10,9 +10,9 @@ import kitchenpos.infrastructure.persistence.JpaMenuGroupRepository;
 import kitchenpos.infrastructure.persistence.JpaMenuRepository;
 import kitchenpos.infrastructure.persistence.JpaOrderRepository;
 import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
-import kitchenpos.ui.dto.CreateOrderRequest;
-import kitchenpos.ui.dto.OrderLineItemDto;
-import kitchenpos.ui.dto.PutOrderStatusRequest;
+import kitchenpos.dto.request.CreateOrderRequest;
+import kitchenpos.dto.request.OrderLineItemDto;
+import kitchenpos.dto.request.PutOrderStatusRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

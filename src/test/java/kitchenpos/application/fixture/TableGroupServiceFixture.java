@@ -7,8 +7,8 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.infrastructure.persistence.JpaOrderRepository;
 import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
 import kitchenpos.infrastructure.persistence.JpaTableGroupRepository;
-import kitchenpos.ui.dto.CreateTableGroupRequest;
-import kitchenpos.ui.dto.OrderTableDto;
+import kitchenpos.dto.request.CreateTableGroupRequest;
+import kitchenpos.dto.request.OrderTableDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

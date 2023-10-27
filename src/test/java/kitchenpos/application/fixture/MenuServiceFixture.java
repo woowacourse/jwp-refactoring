@@ -9,8 +9,8 @@ import kitchenpos.infrastructure.persistence.JpaMenuGroupRepository;
 import kitchenpos.infrastructure.persistence.JpaMenuProductRepository;
 import kitchenpos.infrastructure.persistence.JpaMenuRepository;
 import kitchenpos.infrastructure.persistence.JpaProductRepository;
-import kitchenpos.ui.dto.CreateMenuRequest;
-import kitchenpos.ui.dto.MenuProductDto;
+import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.request.MenuProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
