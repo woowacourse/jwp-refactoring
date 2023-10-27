@@ -1,6 +1,6 @@
 package kitchenpos.ui.menu.response;
 
-import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.menu.MenuProduct;
 
 import java.util.List;
 import java.util.stream.Collectors;
