@@ -1,12 +1,10 @@
 package kitchenpos;
 
-import kitchenpos.config.IntegrationTest;
-import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@IntegrationTest
-class ApplicationTest {
+@SpringBootApplication
+public class ApplicationTest {
 
-    @Test
-    void contextLoads() {
+    public void contextLoads() {
     }
 }

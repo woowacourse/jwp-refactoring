@@ -1,4 +1,4 @@
 rootProject.name = 'kitchenpos'
 include 'core'
 include 'api'
-
+include 'app'
