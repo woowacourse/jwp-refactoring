@@ -67,9 +67,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_항목이_없으면_등록할_수_없다() {
-        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(주문_테이블.getId(), List.of());
-
-        assertThatThrownBy(() -> orderService.create(주문_생성_요청))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(주문_테이블.getId(), List.of())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

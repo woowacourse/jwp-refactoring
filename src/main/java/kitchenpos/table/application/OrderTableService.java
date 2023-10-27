@@ -35,21 +35,23 @@ public class OrderTableService {
 
     public OrderTable changeEmpty(final Long orderTableId,
                                   final OrderTableUpdateEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
-        publisher.publishEvent(new OrderTableChangeEmptyEvent(savedOrderTable.getId()));
+        final OrderTable orderTable = orderTableRepository.getById(orderTableId);
+        if (request.isEmpty()) {
+            orderTable.validateChangeEmpty();
+            publisher.publishEvent(new OrderTableChangeEmptyEvent(orderTable.getId()));
+        }
 
-        savedOrderTable.changeEmpty(request.isEmpty());
-
-        return savedOrderTable;
+        orderTable.changeEmpty(request.isEmpty());
+        return orderTable;
     }
 
     public OrderTable changeNumberOfGuests(final Long orderTableId,
                                            final OrderTableUpdateNumberOfGuestsRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
-        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
-        savedOrderTable.changeNumberOfGuests(numberOfGuests);
+        final OrderTable orderTable = orderTableRepository.getById(orderTableId);
+        orderTable.changeNumberOfGuests(numberOfGuests);
 
-        return savedOrderTable;
+        return orderTable;
     }
 }

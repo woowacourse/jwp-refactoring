@@ -72,12 +72,14 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void validateChangeEmpty() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException("단체로 지정된 테이블을 비울 수 없습니다.");
+        }
+    }
+
     public void changeEmpty(final boolean empty) {
         if (empty) {
-            if (tableGroup != null) {
-                throw new IllegalArgumentException("단체로 지정된 테이블을 비울 수 없습니다.");
-            }
-
             this.empty = true;
             this.numberOfGuests = 0;
             return;
