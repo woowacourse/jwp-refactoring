@@ -37,7 +37,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            publisher.publishEvent(new TableGroupCreateEvent(this, savedOrderTable.getId()));
+            publisher.publishEvent(new TableGroupCreateEvent(savedOrderTable.getId()));
             savedOrderTable.group(savedTableGroup);
         }
 
@@ -47,7 +47,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (final OrderTable orderTable : orderTables) {
-            publisher.publishEvent(new TableGroupCreateEvent(this, orderTable.getId()));
+            publisher.publishEvent(new TableGroupCreateEvent(orderTable.getId()));
             orderTable.unGroup();
         }
     }

@@ -2,17 +2,10 @@ package kitchenpos.table.application;
 
 public class TableGroupCreateEvent {
 
-    private final Object source;
     private final Long orderTableId;
 
-    public TableGroupCreateEvent(Object source,
-                                 Long orderTableId) {
-        this.source = source;
+    public TableGroupCreateEvent(final Long orderTableId) {
         this.orderTableId = orderTableId;
-    }
-
-    public Object getSource() {
-        return source;
     }
 
     public Long getOrderTableId() {

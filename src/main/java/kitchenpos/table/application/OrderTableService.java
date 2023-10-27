@@ -1,10 +1,10 @@
 package kitchenpos.table.application;
 
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.presentation.dto.OrderTableCreateRequest;
 import kitchenpos.table.presentation.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.table.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.table.domain.OrderTable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +37,7 @@ public class OrderTableService {
                                   final OrderTableUpdateEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        publisher.publishEvent(new OrderTableChangeEmptyEvent(this, savedOrderTable.getId()));
+        publisher.publishEvent(new OrderTableChangeEmptyEvent(savedOrderTable.getId()));
 
         savedOrderTable.changeEmpty(request.isEmpty());
 
