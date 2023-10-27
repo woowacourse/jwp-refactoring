@@ -1,11 +1,12 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderRepository;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.ui.dto.OrderTableDto;
+import kitchenpos.table.OrderTable;
+import kitchenpos.table.OrderTableRepository;
+import kitchenpos.table.TableService;
+import kitchenpos.table.ui.OrderTableDto;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

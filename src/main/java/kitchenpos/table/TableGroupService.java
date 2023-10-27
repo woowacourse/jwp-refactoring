@@ -1,31 +1,23 @@
-package kitchenpos.application;
+package kitchenpos.table;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.domain.table.TableGroup;
-import kitchenpos.domain.table.TableGroupRepository;
-import kitchenpos.order.Order;
-import kitchenpos.order.OrderRepository;
-import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.table.ui.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static kitchenpos.domain.table.TableGroupValidator.validateGroupOrderTableExist;
-import static kitchenpos.domain.table.TableGroupValidator.validateUngroupTableOrderCondition;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
+
+    private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository,
+    public TableGroupService(final TableValidator tableValidator,
                              final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -35,9 +27,8 @@ public class TableGroupService {
         final List<Long> requestOrderTableIds = request.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllById(requestOrderTableIds);
 
-        validateGroupOrderTableExist(orderTables, requestOrderTableIds);
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.setOrderTables(tableValidator, requestOrderTableIds, orderTables);
 
         return tableGroup;
     }
@@ -46,13 +37,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 단체 지정입니다. 단체 지정을 삭제할 수 없습니다."));
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
-        final List<Order> orders = orderTables.stream()
-                .flatMap(orderTable -> orderRepository.findByOrderTableId(orderTable.getId()).stream())
-                .collect(Collectors.toList());
-        validateUngroupTableOrderCondition(orders);
-
-        tableGroup.unGroup();
+        tableGroup.unGroup(tableValidator);
     }
 }

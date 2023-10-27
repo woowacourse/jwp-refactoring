@@ -40,18 +40,6 @@ public class MenuService {
         return MenuResponse.from(savedMenu);
     }
 
-//    private List<MenuProduct> getMenuProducts(final MenuRequest menuRequest, final Menu menu) {
-//        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
-//        final List<MenuProduct> menuProducts = new ArrayList<>();
-//
-//        for (MenuProductRequest request : menuProductRequests) {
-//            final Product product = productRepository.findById(request.getProductId())
-//                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴상품입니다. 메뉴를 등록할 수 없습니다."));
-//            menuProducts.add(new MenuProduct(menu, product.getId(), request.getQuantity()));
-//        }
-//        return menuProducts;
-//    }
-
     @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();

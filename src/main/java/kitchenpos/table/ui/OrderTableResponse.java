@@ -1,19 +1,21 @@
-package kitchenpos.ui.dto;
+package kitchenpos.table.ui;
 
-public class OrderTableDto {
+public class OrderTableResponse {
 
+    private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTableDto(Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTableResponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public OrderTableDto(int numberOfGuests, boolean empty) {
-        this(null, numberOfGuests, empty);
+    public Long getId() {
+        return id;
     }
 
     public Long getTableGroupId() {

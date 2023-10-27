@@ -1,4 +1,4 @@
-package kitchenpos.domain.table;
+package kitchenpos.table;
 
 import org.springframework.util.CollectionUtils;
 
@@ -44,15 +44,18 @@ public class TableGroup {
         this(null, orderTables);
     }
 
-    public void unGroup() {
+    public void unGroup(TableValidator tableValidator) {
+        tableValidator.validateUngroupTableOrderCondition(this.orderTables);
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(null);
-            orderTable.changeEmpty(true);
+            orderTable.changeEmpty(tableValidator);
         }
         orderTables.clear();
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void setOrderTables(final TableValidator tableValidator, final List<Long> requestOrderTableIds, final List<OrderTable> orderTables) {
+        tableValidator.validateGroupOrderTableExist(orderTables, requestOrderTableIds);
+
         validateOrderTableSize(orderTables);
         validateOrderTableCondition(orderTables);
         this.orderTables = orderTables;

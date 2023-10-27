@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

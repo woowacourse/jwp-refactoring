@@ -1,6 +1,6 @@
 package kitchenpos.order;
 
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.table.OrderTable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
