@@ -17,6 +17,8 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderedItem;
+import kitchenpos.order.domain.OrderedItemGenerator;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.product.domain.Product;
@@ -49,6 +51,9 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private OrderedItemGenerator orderedItemGenerator;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -164,20 +169,20 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(request);
         final Long tableGroupId = tableGroupResponse.getId();
 
-        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1))));
+        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1))));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private long createMenuAndGetId() {
+    private OrderedItem createMenuAndGetOrderedItem() {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
         final List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 1));
         final Menu menu = Menu.of("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup.getId(), menuProducts);
         menuRepository.save(menu);
 
-        return menu.getId();
+        return orderedItemGenerator.generate(menu.getId());
     }
 }

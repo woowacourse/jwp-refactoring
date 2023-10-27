@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.order.domain.OrderedItem;
+import kitchenpos.order.domain.OrderedItemGenerator;
 import kitchenpos.ordertable.application.dto.TableEmptyChangeRequest;
 import kitchenpos.ordertable.application.dto.TableGuestChangeRequest;
 import kitchenpos.ordertable.application.dto.TableRequest;
@@ -41,6 +43,9 @@ class TableServiceTest extends DataDependentIntegrationTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderedItemGenerator orderedItemGenerator;
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
@@ -140,7 +145,7 @@ class TableServiceTest extends DataDependentIntegrationTest {
         final TableRequest tableRequest = new TableRequest(3, false);
         final TableResponse savedOrderTable = tableService.create(tableRequest);
         final OrderTable orderTable = orderTableRepository.findById(savedOrderTable.getId()).get();
-        orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetId(), 1))));
+        orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1))));
         final Long orderTableId = orderTable.getId();
 
         final TableEmptyChangeRequest request = new TableEmptyChangeRequest(true);
@@ -150,14 +155,14 @@ class TableServiceTest extends DataDependentIntegrationTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private long createMenuAndGetId() {
+    private OrderedItem createMenuAndGetOrderedItem() {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
         final List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 1));
         final Menu menu = Menu.of("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup.getId(), menuProducts);
         menuRepository.save(menu);
 
-        return menu.getId();
+        return orderedItemGenerator.generate(menu.getId());
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경한다.")

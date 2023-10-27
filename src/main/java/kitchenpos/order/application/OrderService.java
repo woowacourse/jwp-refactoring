@@ -12,6 +12,8 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderedItem;
+import kitchenpos.order.domain.OrderedItemGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +22,14 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
+    private final OrderedItemGenerator orderedItemGenerator;
 
-    public OrderService(final OrderRepository orderRepository, final OrderValidator orderValidator) {
+    public OrderService(final OrderRepository orderRepository,
+                        final OrderValidator orderValidator,
+                        final OrderedItemGenerator orderedItemGenerator) {
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
+        this.orderedItemGenerator = orderedItemGenerator;
     }
 
     @Transactional
@@ -38,8 +44,15 @@ public class OrderService {
     private List<OrderLineItem> convertToOrderLineItems(final List<MenuQuantityDto> menuQuantities) {
         return menuQuantities
             .stream()
-            .map(menuIdWithQuantity -> new OrderLineItem(menuIdWithQuantity.getMenuId(), menuIdWithQuantity.getQuantity()))
+            .map(menuIdWithQuantity -> new OrderLineItem(
+                createOrderedItemFromOrderedMenu(menuIdWithQuantity.getMenuId()),
+                menuIdWithQuantity.getQuantity())
+            )
             .collect(Collectors.toList());
+    }
+
+    private OrderedItem createOrderedItemFromOrderedMenu(final Long menuId) {
+        return orderedItemGenerator.generate(menuId);
     }
 
     @Transactional(readOnly = true)
