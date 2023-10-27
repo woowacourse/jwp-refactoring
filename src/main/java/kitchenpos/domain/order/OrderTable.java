@@ -1,7 +1,6 @@
-package kitchenpos.domain.ordertable;
+package kitchenpos.domain.order;
 
 import kitchenpos.common.BaseDate;
-import kitchenpos.domain.tablegroup.TableGroupValidator;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
