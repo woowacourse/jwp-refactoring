@@ -31,7 +31,7 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final MenuCreateRequest request) {
+    public Long create(final MenuCreateRequest request) {
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(it -> new MenuProduct(
                                 productRepository.findById(it.getProductId()).get(),
@@ -47,8 +47,7 @@ public class MenuService {
                         menuProducts
                 )
         );
-
-        return MenuResponse.from(savedMenu);
+        return savedMenu.getId();
     }
 
     public List<MenuResponse> list() {

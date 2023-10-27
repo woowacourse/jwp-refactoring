@@ -2,7 +2,6 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.request.MenuProductCreateRequest;
 import kitchenpos.ui.response.MenuGroupResponse;
 import kitchenpos.ui.response.MenuResponse;
@@ -17,7 +16,7 @@ import static kitchenpos.step.MenuGroupStep.MENU_GROUP_REQUEST_일식;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_메뉴_그룹_반환;
 import static kitchenpos.step.MenuStep.MENU_CREATE_REQUEST_스키야키;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청;
-import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_메뉴_반환;
+import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_아이디_반환;
 import static kitchenpos.step.MenuStep.메뉴_조회_요청;
 import static kitchenpos.step.ProductStep.PRODUCT_CREATE_REQUEST_스키야키;
 import static kitchenpos.step.ProductStep.상품_생성_요청하고_상품_반환;
@@ -45,10 +44,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            assertAll(
-                    () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
-                    () -> assertThat(response.jsonPath().getString("name")).isEqualTo("스키야키")
-            );
+            assertThat(response.statusCode()).isEqualTo(CREATED.value());
         }
 
         @Test
@@ -91,7 +87,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
         final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-        final MenuResponse menu = 메뉴_생성_요청하고_메뉴_반환(
+        final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                 MENU_CREATE_REQUEST_스키야키(
                         BigDecimal.valueOf(11_900),
                         menuGroup.getId(),
@@ -105,10 +101,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
                 () -> assertThat(result).hasSize(1),
-                () -> assertThat(result.get(0))
-                        .usingRecursiveComparison()
-                        .ignoringFields("price", "menuProducts")
-                        .isEqualTo(menu)
+                () -> assertThat(result.get(0).getId()).isEqualTo(menuId)
         );
     }
 }
