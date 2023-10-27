@@ -1,9 +1,8 @@
-package kitchenpos.order.infra;
+package kitchenpos.infra;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import kitchenpos.order.domain.Order;
-import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -12,9 +11,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         return findById(id).orElseThrow(() -> new NoSuchElementException("주문이 존재하지 않습니다."));
     }
 
-    default Order getByOrderTable(OrderTable orderTable) {
-        return findByOrderTable(orderTable).orElseThrow(() -> new NoSuchElementException("주문이 존재하지 않습니다."));
+    default Order getByOrderTableId(Long orderTableId) {
+        return findByOrderTableId(orderTableId).orElseThrow(() -> new NoSuchElementException("주문이 존재하지 않습니다."));
     }
 
-    Optional<Order> findByOrderTable(OrderTable orderTable);
+    Optional<Order> findByOrderTableId(Long orderTableId);
 }

@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.domain;
 
 public enum OrderStatus {
 

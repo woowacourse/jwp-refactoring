@@ -1,8 +1,7 @@
-package kitchenpos.order.domain;
+package kitchenpos.domain;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
-import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
@@ -10,7 +9,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -51,7 +49,7 @@ public class Order {
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        if (this.orderStatus.equals(COMPLETION)) {
+        if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
             throw new IllegalStateException("이미 계산이 끝난 상태입니다.");
         }
         this.orderStatus = orderStatus;

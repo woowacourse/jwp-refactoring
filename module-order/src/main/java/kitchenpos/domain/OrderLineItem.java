@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.domain;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;

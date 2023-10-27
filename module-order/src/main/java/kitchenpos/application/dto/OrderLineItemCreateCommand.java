@@ -1,4 +1,4 @@
-package kitchenpos.order.service.dto;
+package kitchenpos.application.dto;
 
 public class OrderLineItemCreateCommand {
 
