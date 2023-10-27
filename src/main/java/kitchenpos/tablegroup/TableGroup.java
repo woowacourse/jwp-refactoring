@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.tablegroup;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -10,6 +10,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.ordertable.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;

@@ -3,8 +3,8 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.table.OrderTable;
-import kitchenpos.table.TableGroup;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.tablegroup.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

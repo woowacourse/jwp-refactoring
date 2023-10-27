@@ -1,7 +1,7 @@
 package kitchenpos.order;
 
 import java.util.Arrays;
-import kitchenpos.table.OrderTableEvent;
+import kitchenpos.ordertable.OrderTableEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;

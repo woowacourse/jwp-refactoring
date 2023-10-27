@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.table.OrderTable;
+import kitchenpos.ordertable.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

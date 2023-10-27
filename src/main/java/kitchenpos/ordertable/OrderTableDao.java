@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.ordertable;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.tablegroup;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,8 +6,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.order.JpaOrderRepository;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.table.dto.TableGroupRequest;
-import kitchenpos.table.dto.TableGroupResponse;
+import kitchenpos.ordertable.JpaOrderTableRepository;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.tablegroup.dto.TableGroupRequest;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

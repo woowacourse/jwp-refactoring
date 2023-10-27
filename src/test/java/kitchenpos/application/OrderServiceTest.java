@@ -7,7 +7,7 @@ import java.util.List;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.order.OrderService;
-import kitchenpos.table.OrderTable;
+import kitchenpos.ordertable.OrderTable;
 import kitchenpos.product.Product;
 import kitchenpos.fixtures.Fixtures;
 import kitchenpos.order.dto.OrderLineRequest;

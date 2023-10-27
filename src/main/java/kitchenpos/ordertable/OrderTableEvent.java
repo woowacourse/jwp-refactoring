@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.ordertable;
 
 public class OrderTableEvent {
     private final Long orderTableId;

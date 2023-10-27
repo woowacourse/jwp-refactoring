@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.table.OrderTable;
-import kitchenpos.table.TableGroup;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.tablegroup.TableGroup;
 import org.junit.jupiter.api.Test;
 
 class TableGroupTest {

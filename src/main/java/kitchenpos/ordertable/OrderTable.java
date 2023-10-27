@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.ordertable;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.tablegroup.TableGroup;
 
 @Entity
 public class OrderTable {
