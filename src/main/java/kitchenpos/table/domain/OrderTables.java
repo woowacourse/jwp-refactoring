@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.table.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ public class OrderTables {
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> tables = new ArrayList<>();
 
-    protected OrderTables() {
+    public OrderTables() {
     }
 
     public OrderTables(final List<OrderTable> tables) {

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.table.domain;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -29,7 +30,7 @@ public class OrderTable {
     private boolean empty;
 
 
-    protected OrderTable() {
+    public OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {

@@ -8,6 +8,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
 
 @Entity
 public class TableGroup {
