@@ -35,8 +35,8 @@ public class TableGroupServiceFixture {
     protected TableGroup 식사중인_단체_테이블;
 
     protected void 단체_테이블을_등록할_수_있다_픽스처_생성() {
-        final OrderTable 주문_테이블1 = new OrderTable(null, 1, false);
-        final OrderTable 주문_테이블2 = new OrderTable(null, 2, false);
+        final OrderTable 주문_테이블1 = new OrderTable(1, false);
+        final OrderTable 주문_테이블2 = new OrderTable(2, false);
         orderTableRepository.saveAll(List.of(주문_테이블1, 주문_테이블2));
 
         final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_1 = new OrderTableDto(주문_테이블1.getId());
@@ -45,8 +45,8 @@ public class TableGroupServiceFixture {
     }
 
     protected void 주문_테이블_아이디가_입력되지_않은_경우_예외가_발생한다_픽스처_생성() {
-        final OrderTable 주문_테이블1 = new OrderTable(null, 1, false);
-        final OrderTable 주문_테이블2 = new OrderTable(null, 2, false);
+        final OrderTable 주문_테이블1 = new OrderTable(1, false);
+        final OrderTable 주문_테이블2 = new OrderTable(2, false);
         orderTableRepository.saveAll(List.of(주문_테이블1, 주문_테이블2));
 
         final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_1 = new OrderTableDto(주문_테이블1.getId());
@@ -54,7 +54,7 @@ public class TableGroupServiceFixture {
     }
 
     protected void 주문_테이블_아이디가_1개인_경우_예외가_발생한다_픽스처_생성() {
-        final OrderTable 주문_테이블1 = new OrderTable(null, 1, false);
+        final OrderTable 주문_테이블1 = new OrderTable(1, false);
         orderTableRepository.save(주문_테이블1);
 
         final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_1 = new OrderTableDto(주문_테이블1.getId());
@@ -62,8 +62,8 @@ public class TableGroupServiceFixture {
     }
 
     protected void 주문_테이블이_사용가능한_테이블인_경우_예외가_발생한다_픽스처_생성() {
-        final OrderTable 주문_테이블1 = new OrderTable(null, 1, false);
-        final OrderTable 주문_테이블2 = new OrderTable(null, 2, true);
+        final OrderTable 주문_테이블1 = new OrderTable(1, false);
+        final OrderTable 주문_테이블2 = new OrderTable(2, true);
         orderTableRepository.saveAll(List.of(주문_테이블1, 주문_테이블2));
 
         final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_1 = new OrderTableDto(주문_테이블1.getId());
@@ -72,8 +72,8 @@ public class TableGroupServiceFixture {
     }
 
     protected void 단체_테이블을_삭제할_수_있다_픽스처_생성() {
-        final OrderTable 삭제할_주문_테이블_1 = new OrderTable(null, 1, false);
-        final OrderTable 삭제할_주문_테이블_2 = new OrderTable(null, 2, false);
+        final OrderTable 삭제할_주문_테이블_1 = new OrderTable(1, false);
+        final OrderTable 삭제할_주문_테이블_2 = new OrderTable(2, false);
         삭제할_주문테이블에_포함된_주문_테이블_리스트 = List.of(삭제할_주문_테이블_1, 삭제할_주문_테이블_2);
         orderTableRepository.saveAll(삭제할_주문테이블에_포함된_주문_테이블_리스트);
 
@@ -86,8 +86,8 @@ public class TableGroupServiceFixture {
     }
 
     protected void 단체_테이블에_포함된_주문_테이블_중_주문_상태가_조리_또는_식사인_경우_예외가_발생한다_픽스처_생성() {
-        final OrderTable 주문_테이블1 = new OrderTable(null, 1, false);
-        final OrderTable 주문_테이블2 = new OrderTable(null, 2, false);
+        final OrderTable 주문_테이블1 = new OrderTable(1, false);
+        final OrderTable 주문_테이블2 = new OrderTable(2, false);
         orderTableRepository.saveAll(List.of(주문_테이블1, 주문_테이블2));
 
         final Order 주문_1 = new Order(주문_테이블1.getId(), OrderStatus.COOKING);

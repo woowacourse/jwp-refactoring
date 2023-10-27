@@ -30,12 +30,6 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = new GuestsNumber(numberOfGuests);
-        this.empty = empty;
-    }
-
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = new GuestsNumber(numberOfGuests);
         this.empty = empty;
