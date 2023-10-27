@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.product.dao.ProductDao;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
@@ -8,6 +7,7 @@ import kitchenpos.menu.request.MenuCreateRequest;
 import kitchenpos.menu.request.MenuProductDto;
 import kitchenpos.menugroup.dao.MenuGroupDao;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

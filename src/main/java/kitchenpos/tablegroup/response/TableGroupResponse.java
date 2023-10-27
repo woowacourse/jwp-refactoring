@@ -1,4 +1,4 @@
-package kitchenpos.response;
+package kitchenpos.tablegroup.response;
 
 import kitchenpos.ordertable.response.OrderTableResponse;
 import kitchenpos.tablegroup.domain.TableGroup;

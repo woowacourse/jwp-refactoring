@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.product.dao.ProductDao;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
@@ -16,10 +15,11 @@ import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.request.OrderTableCreateRequest;
+import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
-import kitchenpos.request.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

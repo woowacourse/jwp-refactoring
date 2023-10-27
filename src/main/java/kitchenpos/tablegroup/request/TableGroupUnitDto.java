@@ -1,4 +1,4 @@
-package kitchenpos.request;
+package kitchenpos.tablegroup.request;
 
 public class TableGroupUnitDto {
 
