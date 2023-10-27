@@ -91,7 +91,7 @@ class TableServiceTest extends ServiceTest {
         Order order = new Order(
                 null,
                 orderTable.getId(),
-                OrderStatus.COMPLETION.name(),
+                OrderStatus.COMPLETION,
                 LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 1))
         );
@@ -120,7 +120,7 @@ class TableServiceTest extends ServiceTest {
         Order order = new Order(
                 null,
                 orderTable1.getId(),
-                OrderStatus.COMPLETION.name(),
+                OrderStatus.COMPLETION,
                 LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 1))
         );
@@ -145,7 +145,7 @@ class TableServiceTest extends ServiceTest {
         Order order = new Order(
                 null,
                 orderTable.getId(),
-                orderStatus.name(),
+                orderStatus,
                 LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 1))
         );

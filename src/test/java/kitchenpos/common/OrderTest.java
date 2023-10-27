@@ -26,7 +26,7 @@ class OrderTest {
         Order order = Order.create(orderTable, orderLineItems);
 
         // then
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @DisplayName("주문 항목이 포함되어 있지 않은 주문을 생성하면 예외가 발생한다.")

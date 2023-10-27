@@ -134,7 +134,7 @@ class TableGroupServiceTest extends ServiceTest {
         Order order = new Order(
                 null,
                 orderTable1.getId(),
-                orderStatus.name(),
+                orderStatus,
                 LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 1))
         );

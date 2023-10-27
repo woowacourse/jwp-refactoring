@@ -8,14 +8,14 @@ import java.util.List;
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
     public Order(
             Long id,
             Long orderTableId,
-            String orderStatus,
+            OrderStatus orderStatus,
             LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems
     ) {
@@ -33,7 +33,7 @@ public class Order {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("비어 있는 테이블은 주문을 생성할 수 없습니다.");
         }
-        return new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public void assignOrderToTable() {
@@ -43,12 +43,11 @@ public class Order {
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        OrderStatus nowOrderStatus = OrderStatus.from(this.orderStatus);
-        OrderStatus nextOrderStatus = OrderStatus.nextOf(nowOrderStatus);
+        OrderStatus nextOrderStatus = OrderStatus.nextOf(this.orderStatus);
         if (orderStatus != nextOrderStatus) {
             throw new IllegalArgumentException("해당 주문 상태로 변경할 수 없습니다.");
         }
-        this.orderStatus = nextOrderStatus.name();
+        this.orderStatus = nextOrderStatus;
     }
 
     public Long getId() {
@@ -59,7 +58,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

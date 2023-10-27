@@ -60,7 +60,7 @@ class OrderServiceTest extends ServiceTest {
         // then
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(savedOrder.getOrderLineItems()).allMatch(
                         item -> item.getOrderId() != null
                 )
@@ -128,7 +128,7 @@ class OrderServiceTest extends ServiceTest {
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
 
         // then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
     @DisplayName("계산 완료된 주문의 상태를 변경하면 예외가 발생한다.")
