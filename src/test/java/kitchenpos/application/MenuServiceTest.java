@@ -16,8 +16,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuDto;
-import kitchenpos.dto.MenuProductDto;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
@@ -60,8 +61,8 @@ public class MenuServiceTest {
         given(menuDao.save(any(Menu.class))).willReturn(메뉴_후라이드);
         given(menuProductDao.save(any(MenuProduct.class))).willReturn(후라이드_강정치킨);
 
-        MenuProductDto menuProductRequest = new MenuProductDto(상품_강정치킨.getId(), 2L);
-        MenuDto menuRequest = new MenuDto(
+        MenuProductRequest menuProductRequest = new MenuProductRequest(상품_강정치킨.getId(), 2L);
+        MenuRequest menuRequest = new MenuRequest(
                 메뉴_후라이드.getName(),
                 메뉴_후라이드.getPrice(),
                 추천메뉴.getId(),
@@ -69,7 +70,7 @@ public class MenuServiceTest {
         );
 
         //when
-        MenuDto response = menuService.create(menuRequest);
+        MenuResponse response = menuService.create(menuRequest);
 
         //then
         assertThat(response.getId()).isEqualTo(메뉴_후라이드.getId());
@@ -87,8 +88,8 @@ public class MenuServiceTest {
         Menu 메뉴_후라이드 = MenuFixture.메뉴_후라이드();
         Product 상품_강정치킨 = ProductFixture.상품_강정치킨();
 
-        MenuProductDto menuProductRequest = new MenuProductDto(상품_강정치킨.getId(), 2L);
-        MenuDto menuRequest = new MenuDto(
+        MenuProductRequest menuProductRequest = new MenuProductRequest(상품_강정치킨.getId(), 2L);
+        MenuRequest menuRequest = new MenuRequest(
                 메뉴_후라이드.getName(),
                 null,
                 추천메뉴.getId(),
@@ -107,8 +108,8 @@ public class MenuServiceTest {
         Menu 메뉴_후라이드 = MenuFixture.메뉴_후라이드();
         Product 상품_강정치킨 = ProductFixture.상품_강정치킨();
 
-        MenuProductDto menuProductRequest = new MenuProductDto(상품_강정치킨.getId(), 2L);
-        MenuDto menuRequest = new MenuDto(
+        MenuProductRequest menuProductRequest = new MenuProductRequest(상품_강정치킨.getId(), 2L);
+        MenuRequest menuRequest = new MenuRequest(
                 메뉴_후라이드.getName(),
                 BigDecimal.valueOf(0),
                 추천메뉴.getId(),
@@ -126,8 +127,8 @@ public class MenuServiceTest {
         Menu 메뉴_후라이드 = MenuFixture.메뉴_후라이드();
         Product 상품_강정치킨 = ProductFixture.상품_강정치킨();
 
-        MenuProductDto menuProductRequest = new MenuProductDto(상품_강정치킨.getId(), 2L);
-        MenuDto menuRequest = new MenuDto(
+        MenuProductRequest menuProductRequest = new MenuProductRequest(상품_강정치킨.getId(), 2L);
+        MenuRequest menuRequest = new MenuRequest(
                 메뉴_후라이드.getName(),
                 메뉴_후라이드.getPrice(),
                 -1L,
@@ -148,8 +149,8 @@ public class MenuServiceTest {
 
         given(productDao.findById(상품_강정치킨.getId())).willReturn(Optional.of(상품_강정치킨));
 
-        MenuProductDto menuProductRequest = new MenuProductDto(상품_강정치킨.getId(), 2L);
-        MenuDto menuRequest = new MenuDto(
+        MenuProductRequest menuProductRequest = new MenuProductRequest(상품_강정치킨.getId(), 2L);
+        MenuRequest menuRequest = new MenuRequest(
                 메뉴_후라이드.getName(),
                 BigDecimal.valueOf(50000),
                 추천메뉴.getId(),
@@ -172,7 +173,7 @@ public class MenuServiceTest {
                 List.of(후라이드_강정치킨));
 
         //when
-        List<MenuDto> result = menuService.list();
+        List<MenuResponse> result = menuService.list();
 
         //then
         assertThat(result).hasSize(1);
