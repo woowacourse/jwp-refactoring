@@ -1,22 +1,15 @@
 package kitchenpos.application;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.ordertable.application.OrderValidatorImpl;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.order.domain.Order;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.order.application.dto.OrderStatusRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.dto.OrderStatusRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.application.OrderValidatorImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +19,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.mock;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.willDoNothing;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {

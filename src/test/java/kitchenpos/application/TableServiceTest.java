@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.application.TableService;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
