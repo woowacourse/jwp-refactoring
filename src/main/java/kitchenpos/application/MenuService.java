@@ -35,7 +35,7 @@ public class MenuService {
 
         MenuProducts menuProducts = getMenuProducts(menuCreateRequest);
 
-        Menu menu = new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuGroup, menuProducts);
+        Menu menu = Menu.of(menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuGroup, menuProducts);
 
         return menuRepository.save(menu);
     }

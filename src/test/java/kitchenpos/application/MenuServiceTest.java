@@ -60,7 +60,7 @@ class MenuServiceTest {
                 List.of(menuProductCreateRequest));
 
         MenuProduct menuProduct = new MenuProduct(product, 3);
-        Menu menu = new Menu("치킨메뉴", new BigDecimal("48000.00"), menuGroup,
+        Menu menu = Menu.of("치킨메뉴", new BigDecimal("48000.00"), menuGroup,
                 new MenuProducts(List.of(menuProduct)));
 
         // when

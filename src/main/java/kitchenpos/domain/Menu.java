@@ -31,23 +31,24 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
-        validatePrice(price);
-        checkProductPriceSumEqualsPrice(price, menuProducts.calculateSum());
+    private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-        menuProducts.setMenu(this);
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
+    private Menu(String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public void addMenuProduct(MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
+    public static Menu of(String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
+        Menu menu = new Menu(name, price, menuGroup, menuProducts);
+        menu.validatePrice(price);
+        menu.checkProductPriceSumEqualsPrice(price, menuProducts.calculateSum());
+        menuProducts.setMenu(menu);
+        return menu;
     }
 
     private void validatePrice(BigDecimal price) {
