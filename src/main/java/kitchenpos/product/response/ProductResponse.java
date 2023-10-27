@@ -1,6 +1,8 @@
 package kitchenpos.product.response;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.product.domain.Product;
 
 public class ProductResponse {
@@ -17,6 +19,16 @@ public class ProductResponse {
 
     public static ProductResponse from(Product product) {
         return new ProductResponse(product.getId(), product.getName(), product.getPrice());
+    }
+
+    public static List<ProductResponse> from(List<Product> products) {
+        return products.stream()
+                       .map(product -> new ProductResponse(
+                               product.getId(),
+                               product.getName(),
+                               product.getPrice()
+                       ))
+                       .collect(Collectors.toList());
     }
 
     public Long getId() {

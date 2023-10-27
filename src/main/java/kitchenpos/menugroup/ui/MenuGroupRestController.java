@@ -30,9 +30,7 @@ public class MenuGroupRestController {
 
     @GetMapping("/api/menu-groups")
     public ResponseEntity<List<MenuGroupResponse>> list() {
-        List<MenuGroupResponse> response = menuGroupService.list().stream()
-                .map(menuGroup -> new MenuGroupResponse(menuGroup.getId(), menuGroup.getName()))
-                .collect(Collectors.toList());
+        List<MenuGroupResponse> response = MenuGroupResponse.from(menuGroupService.list());
         return ResponseEntity.ok().body(response);
     }
 }

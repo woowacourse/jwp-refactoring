@@ -1,5 +1,7 @@
 package kitchenpos.ordertable.response;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.ordertable.domain.OrderTable;
 
 public class OrderTableResponse {
@@ -23,6 +25,17 @@ public class OrderTableResponse {
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );
+    }
+
+    public static List<OrderTableResponse> from(List<OrderTable> orderTables) {
+        return orderTables.stream()
+                          .map(orderTable -> new OrderTableResponse(
+                                  orderTable.getId(),
+                                  orderTable.getTableGroupId(),
+                                  orderTable.getNumberOfGuests(),
+                                  orderTable.isEmpty()
+                          ))
+                          .collect(Collectors.toList());
     }
 
     public Long getId() {

@@ -31,9 +31,7 @@ public class MenuRestController {
 
     @GetMapping("/api/menus")
     public ResponseEntity<List<MenuResponse>> list() {
-        List<MenuResponse> response = menuService.list().stream()
-                .map(MenuResponse::from)
-                .collect(Collectors.toList());
+        List<MenuResponse> response = MenuResponse.from(menuService.list());
         return ResponseEntity.ok().body(response);
     }
 }

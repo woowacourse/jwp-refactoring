@@ -1,6 +1,7 @@
 package kitchenpos.menu.response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.common.domain.Price;
 import kitchenpos.menu.domain.Menu;
 
@@ -34,6 +35,18 @@ public class MenuResponse {
                 menu.getMenuGroupId(),
                 MenuProductResponse.from(menu.getMenuProducts())
         );
+    }
+
+    public static List<MenuResponse> from(List<Menu> menus) {
+        return menus.stream()
+                .map(menu -> new MenuResponse(
+                        menu.getId(),
+                        menu.getName(),
+                        menu.getPrice(),
+                        menu.getMenuGroupId(),
+                        MenuProductResponse.from(menu.getMenuProducts())
+                ))
+                .collect(Collectors.toList());
     }
 
     public Long getId() {

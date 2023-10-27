@@ -33,9 +33,7 @@ public class OrderRestController {
 
     @GetMapping("/api/orders")
     public ResponseEntity<List<OrderResponse>> list() {
-        List<OrderResponse> response = orderService.list().stream()
-                .map(OrderResponse::from)
-                .collect(Collectors.toList());
+        List<OrderResponse> response = OrderResponse.from(orderService.list());
         return ResponseEntity.ok().body(response);
     }
 

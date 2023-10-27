@@ -30,9 +30,7 @@ public class ProductRestController {
 
     @GetMapping("/api/products")
     public ResponseEntity<List<ProductResponse>> list() {
-        List<ProductResponse> response = productService.list().stream()
-                .map(ProductResponse::from)
-                .collect(Collectors.toList());
+        List<ProductResponse> response = ProductResponse.from(productService.list());
         return ResponseEntity.ok().body(response);
     }
 }

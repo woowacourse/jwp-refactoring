@@ -34,9 +34,7 @@ public class TableRestController {
 
     @GetMapping("/api/tables")
     public ResponseEntity<List<OrderTableResponse>> list() {
-        List<OrderTableResponse> response = tableService.list().stream()
-                .map(OrderTableResponse::from)
-                .collect(Collectors.toList());
+        List<OrderTableResponse> response = OrderTableResponse.from(tableService.list());
         return ResponseEntity.ok().body(response);
     }
 
