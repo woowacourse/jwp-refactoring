@@ -87,8 +87,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+            orderTable.ungroup();
             orderTableDao.save(orderTable);
         }
     }
