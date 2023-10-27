@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
@@ -58,7 +59,7 @@ class TableGroupServiceTest {
 
             // when
             final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
-            final TableGroup result = tableGroupService.create(request);
+            final TableGroupResponse result = tableGroupService.create(request);
 
             // then
             assertThat(result.getId()).isEqualTo(1);
