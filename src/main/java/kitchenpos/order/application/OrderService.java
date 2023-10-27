@@ -8,6 +8,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.common.vo.OrderStatus;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderLineItemRepository;
@@ -51,7 +52,7 @@ public class OrderService {
         final OrderTable orderTable =
                 orderTableRepository.findById(orderRequest.getOrderTableId())
                                     .orElseThrow(() -> new NotFoundOrderTableException("해당 주문 테이블이 존재하지 않습니다."));
-        final List<OrderLineItem> orderLineItems = convertToOrderLineItem(orderRequest);
+        final OrderLineItems orderLineItems = convertToOrderLineItem(orderRequest);
         final Order order = orderRequest.toEntity(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderRepository.save(order);
 
@@ -64,7 +65,7 @@ public class OrderService {
         }
     }
 
-    private List<OrderLineItem> convertToOrderLineItem(final OrderRequest orderRequest) {
+    private OrderLineItems convertToOrderLineItem(final OrderRequest orderRequest) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         for (final OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
@@ -74,7 +75,7 @@ public class OrderService {
             orderLineItems.add(orderLineItem);
         }
 
-        return orderLineItems;
+        return new OrderLineItems(orderLineItems);
     }
 
     private List<Long> convertToIds(final List<OrderLineItemDto> orderLineItemDtos) {
@@ -88,12 +89,18 @@ public class OrderService {
         final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
-            order.updateOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
+            order.updateOrderLineItems(findAllOrderListItems(order.getId()));
         }
 
         return orders.stream()
                      .map(OrderResponse::from)
                      .collect(Collectors.toList());
+    }
+
+    private OrderLineItems findAllOrderListItems(final Long orderId) {
+        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
+
+        return new OrderLineItems(orderLineItems);
     }
 
     @Transactional

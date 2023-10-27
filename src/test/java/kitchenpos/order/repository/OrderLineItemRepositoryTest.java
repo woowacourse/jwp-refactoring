@@ -5,6 +5,7 @@ import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.common.vo.OrderStatus;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.product.domain.Product;
 import kitchenpos.fixture.MenuFixture;
@@ -66,7 +67,7 @@ class OrderLineItemRepositoryTest {
     @Test
     void 주문_아이디를_통해_모든_주문_항목을_조회한다() {
         // given
-        final List<OrderLineItem> orderLineItems = OrderLineItemFixture.주문_상품들_생성(menus);
+        final OrderLineItems orderLineItems = OrderLineItemFixture.주문_상품들_생성(menus);
         final Order order = orderRepository.save(Order.of(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
 
         // when
@@ -75,9 +76,11 @@ class OrderLineItemRepositoryTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(3);
-            softAssertions.assertThat(actual.get(0)).isEqualTo(orderLineItems.get(0));
-            softAssertions.assertThat(actual.get(1)).isEqualTo(orderLineItems.get(1));
-            softAssertions.assertThat(actual.get(2)).isEqualTo(orderLineItems.get(2));
+
+            final List<OrderLineItem> orderLineItemValues = orderLineItems.getValues();
+            softAssertions.assertThat(actual.get(0)).isEqualTo(orderLineItemValues.get(0));
+            softAssertions.assertThat(actual.get(1)).isEqualTo(orderLineItemValues.get(1));
+            softAssertions.assertThat(actual.get(2)).isEqualTo(orderLineItemValues.get(2));
         });
     }
 }

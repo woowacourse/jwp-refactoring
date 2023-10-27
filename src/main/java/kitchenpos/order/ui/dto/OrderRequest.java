@@ -1,8 +1,8 @@
 package kitchenpos.order.ui.dto;
 
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.common.vo.OrderStatus;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.ordertable.domain.OrderTable;
 
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public class OrderRequest {
             final OrderTable orderTable,
             final OrderStatus orderStatus,
             final LocalDateTime now,
-            final List<OrderLineItem> orderLineItems
+            final OrderLineItems orderLineItems
     ) {
         return Order.of(orderTable, OrderStatus.valueOf(orderStatus.name()), now, orderLineItems);
     }

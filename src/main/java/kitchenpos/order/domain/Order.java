@@ -3,11 +3,11 @@ package kitchenpos.order.domain;
 import kitchenpos.common.vo.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.exception.InvalidOrderStatusToChangeException;
-import kitchenpos.exception.InvalidOrderLineItemsToOrder;
 import kitchenpos.exception.InvalidOrderTableToOrder;
-import org.springframework.util.CollectionUtils;
 
-import javax.persistence.CascadeType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -18,7 +18,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -39,8 +38,9 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    @AttributeOverride(name = "values", column = @Column(name = "orderLineItems"))
+    private OrderLineItems orderLineItems;
 
     protected Order() {}
 
@@ -48,7 +48,7 @@ public class Order {
             final OrderTable orderTable,
             final OrderStatus orderStatus,
             final LocalDateTime now,
-            final List<OrderLineItem> orderLineItems
+            final OrderLineItems orderLineItems
     ) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -60,13 +60,13 @@ public class Order {
             final OrderTable orderTable,
             final OrderStatus orderStatus,
             final LocalDateTime now,
-            final List<OrderLineItem> orderLineItems
+            final OrderLineItems orderLineItems
     ) {
         validateOrderTable(orderTable);
-        validateOrderLineItems(orderLineItems);
+        orderLineItems.validateOrderLineItems();
 
         final Order order = new Order(orderTable, orderStatus, now, orderLineItems);
-        addOrderLineItems(orderLineItems, order);
+        orderLineItems.addOrderLineItems(order);
 
         return order;
     }
@@ -74,18 +74,6 @@ public class Order {
     private static void validateOrderTable(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new InvalidOrderTableToOrder("주문 테이블이 비어 있어 주문이 불가능합니다.");
-        }
-    }
-
-    private static void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new InvalidOrderLineItemsToOrder("주문 항목이 없습니다.");
-        }
-    }
-
-    private static void addOrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.updateOrder(order);
         }
     }
 
@@ -117,10 +105,10 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getValues();
     }
 
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void updateOrderLineItems(final OrderLineItems orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 
