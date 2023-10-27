@@ -1,0 +1,18 @@
+allprojects {
+    bootJar {
+        enabled = false
+    }
+}
+
+jar {
+    enabled = false
+}
+
+subprojects {
+    dependencies {
+        testImplementation project(':kitchenpos-test')
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.flywaydb:flyway-core'
+        runtimeOnly 'com.h2database:h2'
+    }
+}

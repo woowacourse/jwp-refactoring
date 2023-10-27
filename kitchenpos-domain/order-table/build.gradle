@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(':kitchenpos-domain:core')
+    implementation project(':kitchenpos-domain:table-group')
+}

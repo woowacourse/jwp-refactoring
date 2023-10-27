@@ -1,0 +1,15 @@
+jar {
+    enabled = false
+}
+
+dependencies {
+    implementation project(':kitchenpos-domain:core')
+    implementation project(':kitchenpos-domain:menu')
+    implementation project(':kitchenpos-domain:menu-group')
+    implementation project(':kitchenpos-domain:order')
+    implementation project(':kitchenpos-domain:order-table')
+    implementation project(':kitchenpos-domain:product')
+    implementation project(':kitchenpos-domain:table-group')
+    testImplementation project(':kitchenpos-test')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}

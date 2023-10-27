@@ -1,1 +1,12 @@
 rootProject.name = 'kitchenpos'
+include 'kitchenpos-api'
+include 'kitchenpos-test'
+include 'kitchenpos-domain'
+include 'kitchenpos-domain:core'
+include 'kitchenpos-domain:menu'
+include 'kitchenpos-domain:product'
+include 'kitchenpos-domain:order'
+include 'kitchenpos-domain:order-table'
+include 'kitchenpos-domain:table-group'
+include 'kitchenpos-domain:menu-group'
+
