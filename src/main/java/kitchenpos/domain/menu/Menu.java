@@ -26,27 +26,21 @@ public class Menu {
     private Long menuGroupId;
 
     @Embedded
-    private final MenuProducts menuProducts = new MenuProducts();
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId, final MenuProducts menuProducts) {
         this.name = name;
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+
+        validatePrice();
     }
 
-    public void addMenuProducts(final MenuProducts menuProducts) {
-        validatePrice(menuProducts);
-
-        for (final MenuProduct menuProduct : menuProducts.getMenuProducts()) {
-            this.menuProducts.add(menuProduct);
-            menuProduct.initMenu(this);
-        }
-    }
-
-    private void validatePrice(final MenuProducts menuProducts) {
+    private void validatePrice() {
         final Price menuProductsTotalPrice = menuProducts.calculateTotalPrice();
         if (price == null || price.biggerThan(menuProductsTotalPrice)) {
             throw new IllegalArgumentException("메뉴 가격은 메뉴를 구성하는 상품의 가격 합보다 작아야 합니다.");

@@ -1,11 +1,8 @@
 package kitchenpos.domain.order;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,12 +27,11 @@ class OrderLineItemsTest {
     @DisplayName("주문 항목에 중복된 메뉴가 있으면 예외가 발생한다")
     void orderLineItems_duplicateMenu() {
         // given
-        final MenuGroup 두마리_메뉴 = new MenuGroup("두마리 메뉴");
-        final Menu 후라이드_후라이드 = new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리_메뉴.getId());
-        final Menu 후라이드_양념치킨 = new Menu("후라이드+양념치킨", BigDecimal.valueOf(32000), 두마리_메뉴.getId());
-        final OrderLineItem 후라이드_후라이드_1개 = new OrderLineItem(후라이드_후라이드.getId(), 1);
-        final OrderLineItem 후라이드_후라이드_2개 = new OrderLineItem(후라이드_후라이드.getId(), 2);
-        final OrderLineItem 후라이드_양념치킨_1개 = new OrderLineItem(후라이드_양념치킨.getId(), 1);
+        final Long 후라이드_후라이드_메뉴_아이디 = 1L;
+        final Long 후라이드_양념치킨_메뉴_아이디 = 2L;
+        final OrderLineItem 후라이드_후라이드_1개 = new OrderLineItem(후라이드_후라이드_메뉴_아이디, 1);
+        final OrderLineItem 후라이드_후라이드_2개 = new OrderLineItem(후라이드_후라이드_메뉴_아이디, 2);
+        final OrderLineItem 후라이드_양념치킨_1개 = new OrderLineItem(후라이드_양념치킨_메뉴_아이디, 1);
 
         // when
         assertThatThrownBy(() -> new OrderLineItems(List.of(후라이드_후라이드_1개, 후라이드_후라이드_2개, 후라이드_양념치킨_1개)))

@@ -43,9 +43,8 @@ public class MenuService {
     }
 
     private Menu saveMenu(final CreateMenuRequest request, final Long menuGroupId) {
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroupId);
         final MenuProducts menuProducts = getMenuProducts(request);
-        menu.addMenuProducts(menuProducts);
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroupId, menuProducts);
 
         return menuRepository.save(menu);
     }

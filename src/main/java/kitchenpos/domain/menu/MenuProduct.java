@@ -17,10 +17,6 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne
-    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "menu_product_menu"))
-    private Menu menu;
-
-    @ManyToOne
     @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "menu_product_product"))
     private Product product;
 
@@ -36,10 +32,6 @@ public class MenuProduct {
 
     public Price calculateMenuProductPrice() {
         return product.calculatePriceWithCount(quantity);
-    }
-
-    public void initMenu(final Menu menu) {
-        this.menu = menu;
     }
 
     @Override
