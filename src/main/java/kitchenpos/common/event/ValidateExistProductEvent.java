@@ -1,4 +1,4 @@
-package kitchenpos.product.dto;
+package kitchenpos.common.event;
 
 public class ValidateExistProductEvent {
 

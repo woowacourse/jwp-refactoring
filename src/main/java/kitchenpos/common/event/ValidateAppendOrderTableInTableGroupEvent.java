@@ -1,12 +1,12 @@
-package kitchenpos.order.dto;
+package kitchenpos.common.event;
 
 import java.util.List;
 
-public class ValidateSameSizeOrderTableEvent {
+public class ValidateAppendOrderTableInTableGroupEvent {
 
     private final List<Long> orderTableIds;
 
-    public ValidateSameSizeOrderTableEvent(final List<Long> orderTableIds) {
+    public ValidateAppendOrderTableInTableGroupEvent(final List<Long> orderTableIds) {
         this.orderTableIds = orderTableIds;
     }
 

@@ -2,8 +2,8 @@ package kitchenpos.product.application;
 
 import kitchenpos.common.vo.Price;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.dto.ValidateExistProductEvent;
-import kitchenpos.product.dto.ValidateSamePriceWithMenuEvent;
+import kitchenpos.common.event.ValidateExistProductEvent;
+import kitchenpos.common.event.ValidateSamePriceWithMenuEvent;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

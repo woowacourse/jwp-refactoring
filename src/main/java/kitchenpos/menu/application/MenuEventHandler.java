@@ -1,6 +1,6 @@
 package kitchenpos.menu.application;
 
-import kitchenpos.menu.dto.ValidateExistMenuEvent;
+import kitchenpos.common.event.ValidateExistMenuEvent;
 import kitchenpos.menu.repository.MenuRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

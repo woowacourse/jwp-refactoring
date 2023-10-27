@@ -10,9 +10,9 @@ import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.product.dto.ProductQuantityDto;
-import kitchenpos.product.dto.ValidateExistProductEvent;
-import kitchenpos.product.dto.ValidateSamePriceWithMenuEvent;
+import kitchenpos.common.event.ProductQuantityEventDto;
+import kitchenpos.common.event.ValidateExistProductEvent;
+import kitchenpos.common.event.ValidateSamePriceWithMenuEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,10 +42,10 @@ public class MenuService {
                 .map(this::convertMenuProduct)
                 .collect(Collectors.toList());
 
-        final List<ProductQuantityDto> productQuantityDtos = convertMenuProducts.stream()
-                .map(mp -> new ProductQuantityDto(mp.getProductId(), mp.getQuantity()))
+        final List<ProductQuantityEventDto> productQuantityEventDtos = convertMenuProducts.stream()
+                .map(mp -> new ProductQuantityEventDto(mp.getProductId(), mp.getQuantity()))
                 .collect(Collectors.toList());
-        publisher.publishEvent(new ValidateSamePriceWithMenuEvent(request.getPrice(), productQuantityDtos));
+        publisher.publishEvent(new ValidateSamePriceWithMenuEvent(request.getPrice(), productQuantityEventDtos));
 
         final Menu menu = new Menu(request.getName(), request.getPrice(), findMenuGroup, convertMenuProducts);
         menuRepository.save(menu);

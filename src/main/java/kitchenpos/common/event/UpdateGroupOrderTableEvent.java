@@ -1,4 +1,4 @@
-package kitchenpos.order.dto;
+package kitchenpos.common.event;
 
 import java.util.List;
 

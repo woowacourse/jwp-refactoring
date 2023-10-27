@@ -1,4 +1,4 @@
-package kitchenpos.menu.dto;
+package kitchenpos.common.event;
 
 public class ValidateExistMenuEvent {
 

@@ -1,11 +1,11 @@
-package kitchenpos.product.dto;
+package kitchenpos.common.event;
 
-public class ProductQuantityDto {
+public class ProductQuantityEventDto {
 
     private Long productId;
     private long quantity;
 
-    public ProductQuantityDto(final Long productId, final long quantity) {
+    public ProductQuantityEventDto(final Long productId, final long quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
