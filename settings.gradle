@@ -4,4 +4,4 @@ include 'order'
 include 'product'
 include 'application'
 include 'common'
-
+include 'order_table'

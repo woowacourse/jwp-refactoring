@@ -1,15 +1,11 @@
-package kitchenpos.application;
+package kitchenpos;
 
-import kitchenpos.execute.ServiceIntegrateTest;
-import kitchenpos.fixture.MenuGroupFixture;
+import execute.ServiceIntegrateTest;
+import fixture.MenuGroupFixture;
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.dto.response.MenuGroupResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -51,8 +47,8 @@ class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
 
             // then
             Assertions.assertAll(
-                    () -> org.assertj.core.api.Assertions.assertThat(menuGroups).hasSize(1),
-                    () -> org.assertj.core.api.Assertions.assertThat(menuGroups).extracting(MenuGroupResponse::getName)
+                    () -> Assertions.assertThat(menuGroups).hasSize(1),
+                    () -> Assertions.assertThat(menuGroups).extracting(MenuGroupResponse::getName)
                             .contains("인기 메뉴")
             );
         }

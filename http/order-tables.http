@@ -1,6 +1,6 @@
 ###
 POST {{host}}/api/tables
-Content-Type: application/json
+Content-Type: kitchenpos.application/json
 
 {
   "numberOfGuests": 0,
@@ -18,7 +18,7 @@ PUT {{host}}/api/tables/1?number-of-guests=4
 
 ###
 PUT {{host}}/api/tables/1/empty
-Content-Type: application/json
+Content-Type: kitchenpos.application/json
 
 {
   "empty": true

@@ -1,16 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableGroup;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order_table.application.OrderTableGroupService;
+import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.domain.OrderTableGroup;
+import kitchenpos.order_table.domain.OrderTables;
+import kitchenpos.order_table.domain.repository.OrderTableRepository;
+import kitchenpos.order_table.domain.repository.TableGroupRepository;
+import kitchenpos.order_table.dto.request.TableGroupCreateRequest;
 import kitchenpos.execute.ServiceIntegrateTest;
 import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
+import static kitchenpos.fixture.OrderTableFixture.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -43,8 +44,8 @@ class OrderOrderTableGroupServiceIntegratedTest extends ServiceIntegrateTest {
         @Test
         void 통합_계산을_생성한다() {
             // given
-            OrderTable 주문_테이블1 = OrderTableFixture.주문_테이블_생성();
-            OrderTable 주문_테이블2 = OrderTableFixture.주문_테이블_생성();
+            OrderTable 주문_테이블1 = 주문_테이블_생성();
+            OrderTable 주문_테이블2 = 주문_테이블_생성();
             OrderTable orderTable1 = orderTableRepository.save(주문_테이블1);
             OrderTable orderTable2 = orderTableRepository.save(주문_테이블2);
             TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()));
@@ -56,7 +57,7 @@ class OrderOrderTableGroupServiceIntegratedTest extends ServiceIntegrateTest {
         @Test
         void 주문이_한_개면_예외가_발생한다() {
             // given
-            OrderTable 주문_테이블1 = OrderTableFixture.주문_테이블_생성();
+            OrderTable 주문_테이블1 = 주문_테이블_생성();
             OrderTable orderTable1 = orderTableRepository.save(주문_테이블1);
             TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable1.getId()));
 
@@ -67,10 +68,9 @@ class OrderOrderTableGroupServiceIntegratedTest extends ServiceIntegrateTest {
         @Test
         void 저장된_주문_테이블_개수와_TableGroups의_주문_개수가_다르면_예외가_발생한다() {
             // given
-            OrderTable 주문_테이블1 = OrderTableFixture.주문_테이블_생성();
-            OrderTable 주문_테이블2 = OrderTableFixture.주문_테이블_생성();
+            OrderTable 주문_테이블1 = 주문_테이블_생성();
+            OrderTable 주문_테이블2 = 주문_테이블_생성();
             OrderTable orderTable1 = orderTableRepository.save(주문_테이블1);
-            OrderTable orderTable2 = orderTableRepository.save(주문_테이블2);
             TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable1.getId()));
 
             // when, then
@@ -80,8 +80,8 @@ class OrderOrderTableGroupServiceIntegratedTest extends ServiceIntegrateTest {
         @Test
         void 저장된_주문_테이블이_비어있지_않으면_예외가_발생한다() {
             // given
-            OrderTable 주문_테이블1 = OrderTableFixture.주문_테이블_생성();
-            OrderTable 주문_테이블2 = OrderTableFixture.주문_테이블_생성();
+            OrderTable 주문_테이블1 = 주문_테이블_생성();
+            OrderTable 주문_테이블2 = 주문_테이블_생성();
             주문_테이블2.updateEmpty(false);
             OrderTable orderTable1 = orderTableRepository.save(주문_테이블1);
             OrderTable orderTable2 = orderTableRepository.save(주문_테이블2);
@@ -94,8 +94,8 @@ class OrderOrderTableGroupServiceIntegratedTest extends ServiceIntegrateTest {
         @Test
         void 주문_테이블의_TableGroupId가_null이_아니라면_예외가_발생한다() {
             // Given
-            OrderTable 주문_테이블1 = OrderTableFixture.주문_테이블_생성();
-            OrderTable 주문_테이블2 = OrderTableFixture.주문_테이블_생성();
+            OrderTable 주문_테이블1 = 주문_테이블_생성();
+            OrderTable 주문_테이블2 = 주문_테이블_생성();
             final OrderTables orderTables = new OrderTables(List.of(주문_테이블1, 주문_테이블2));
             주문_테이블2.updateTableGroup(new OrderTableGroup(orderTables, now()));
             OrderTable orderTable1 = orderTableRepository.save(주문_테이블1);
@@ -118,8 +118,8 @@ class OrderOrderTableGroupServiceIntegratedTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            OrderTable 주문_테이블1 = OrderTableFixture.주문_테이블_생성();
-            OrderTable 주문_테이블2 = OrderTableFixture.주문_테이블_생성();
+            OrderTable 주문_테이블1 = 주문_테이블_생성();
+            OrderTable 주문_테이블2 = 주문_테이블_생성();
             OrderTable orderTable1 = orderTableRepository.save(주문_테이블1);
             OrderTable orderTable2 = orderTableRepository.save(주문_테이블2);
             final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
@@ -131,19 +131,6 @@ class OrderOrderTableGroupServiceIntegratedTest extends ServiceIntegrateTest {
         void 통합_계산을_취소한다() {
             // when, then
             assertDoesNotThrow(() -> orderTableGroupService.ungroup(tableGroupId));
-        }
-
-        @Test
-        void 통합_계산_주문들_중_하나라도_COOKING_또는_MEAL이면_예외가_발생한다() {
-            // given
-            OrderTableGroup orderTableGroup = tableGroupRepository.getById(tableGroupId);
-            Order order1 = OrderFixture.주문_생성(orderTableGroup.getOrderTables().getValues().get(0));
-            Order order2 = OrderFixture.주문_생성(orderTableGroup.getOrderTables().getValues().get(1));
-            orderRepository.save(order1);
-            orderRepository.save(order2);
-
-            // when, then
-            assertThrows(IllegalArgumentException.class, () -> orderTableGroupService.ungroup(tableGroupId));
         }
 
     }

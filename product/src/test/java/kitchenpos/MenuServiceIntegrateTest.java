@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos;
 
 import kitchenpos.execute.ServiceIntegrateTest;
 import kitchenpos.fixture.MenuGroupFixture;
@@ -94,8 +94,8 @@ class MenuServiceIntegrateTest extends ServiceIntegrateTest {
 
             // then
             Assertions.assertAll(
-                    () -> assertThat(menus).hasSize(1),
-                    () -> assertThat(menus).extracting(MenuResponse::getName)
+                    () -> Assertions.assertThat(menus).hasSize(1),
+                    () -> Assertions.assertThat(menus).extracting(MenuResponse::getName)
                             .contains("치킨")
             );
         }

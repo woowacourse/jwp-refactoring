@@ -1,24 +1,26 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.execute.ServiceIntegrateTest;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.fixture.OrderFixture.주문_생성;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,14 +50,7 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
             // when, then
             orderTable.updateEmpty(false);
             orderTableRepository.save(orderTable);
-            assertDoesNotThrow(() -> orderService.create(orderTable.getId()));
-        }
-
-        @Test
-        void 주문_테이블이_존재하지_않는다면_예외가_발생한다() {
-            // when, then
-            assertThrows(InvalidDataAccessApiUsageException.class,
-                    () -> orderService.create(orderTable.getId() + 1));
+            assertDoesNotThrow(() -> orderService.create());
         }
 
         @Test
@@ -63,7 +58,7 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
             // when
             orderTable.updateEmpty(false);
             orderTableRepository.save(orderTable);
-            Long savedOrderId = orderService.create(orderTable.getId());
+            Long savedOrderId = orderService.create();
             Order order = orderRepository.findById(savedOrderId)
                     .orElseThrow(IllegalArgumentException::new);
 
@@ -76,7 +71,7 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
             // when
             orderTable.updateEmpty(false);
             orderTableRepository.save(orderTable);
-            Long savedOrderId = orderService.create(orderTable.getId());
+            Long savedOrderId = orderService.create();
             Order order = orderRepository.findById(savedOrderId)
                     .orElseThrow(IllegalArgumentException::new);
 
@@ -89,7 +84,7 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
             // when
             orderTable.updateEmpty(false);
             orderTableRepository.save(orderTable);
-            Long savedOrderId = orderService.create(orderTable.getId());
+            Long savedOrderId = orderService.create();
             Order order = orderRepository.findById(savedOrderId)
                     .orElseThrow(IllegalArgumentException::new);
 
@@ -106,7 +101,7 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
         void setUp() {
             OrderTable orderTable = OrderTableFixture.주문_테이블_생성();
             orderTableRepository.save(orderTable);
-            orderRepository.save(OrderFixture.주문_생성(orderTable));
+            orderRepository.save(주문_생성());
         }
 
         @Test
@@ -132,7 +127,7 @@ class OrderServiceIntegrateTest extends ServiceIntegrateTest {
         void setUp() {
             OrderTable orderTable = OrderTableFixture.주문_테이블_생성();
             orderTableRepository.save(orderTable);
-            order = orderRepository.save(OrderFixture.주문_생성(orderTable));
+            order = orderRepository.save(주문_생성());
         }
 
         @Test

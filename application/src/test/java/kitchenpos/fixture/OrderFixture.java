@@ -1,15 +1,14 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.order.domain.Order;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 
 public class OrderFixture {
 
-    public static Order 주문_생성(OrderTable orderTable) {
-        Order order = new Order(orderTable, COOKING, now());
+    public static Order 주문_생성() {
+        Order order = new Order(COOKING, now());
         return order;
     }
 

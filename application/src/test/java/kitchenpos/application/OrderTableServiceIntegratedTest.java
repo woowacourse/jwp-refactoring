@@ -1,13 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableGroup;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order_table.application.OrderTableService;
+import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.domain.OrderTableGroup;
+import kitchenpos.order_table.domain.OrderTables;
+import kitchenpos.order_table.domain.repository.OrderTableRepository;
+import kitchenpos.order_table.domain.repository.TableGroupRepository;
+import kitchenpos.order_table.dto.response.OrderTableResponse;
 import kitchenpos.execute.ServiceIntegrateTest;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -20,7 +21,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -124,16 +125,6 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
             // when
             assertThrows(InvalidDataAccessApiUsageException.class,
                     () -> orderTableService.changeIsEmpty(orderTable.getId() + 1L, true));
-        }
-
-        @Test
-        void 주문_상태가_COOKING_또는_MEAL이라면_예외가_발생한다() {
-            // given
-            Order order = orderRepository.save(OrderFixture.주문_생성(orderTable));
-            order.updateOrderStatus(COOKING);
-
-            // when
-            assertThrows(IllegalArgumentException.class, () -> orderTableService.changeIsEmpty(orderTable.getId(), true));
         }
 
     }
