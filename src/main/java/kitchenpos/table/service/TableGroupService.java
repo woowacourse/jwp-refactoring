@@ -1,15 +1,14 @@
 package kitchenpos.table.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.repository.TableGroupRepository;
-import kitchenpos.table.service.dto.TableIdRequest;
 import kitchenpos.table.service.dto.TableGroupRequest;
 import kitchenpos.table.service.dto.TableGroupResponse;
+import kitchenpos.table.service.dto.TableIdRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +30,11 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateInvalidOrderTable(orderTableIds, savedOrderTables);
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+        final TableGroup tableGroup = new TableGroup(orderTableIds.size());
+        for (OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.groupBy(tableGroup);
+        }
+        return TableGroupResponse.from(tableGroupRepository.save(tableGroup), savedOrderTables);
     }
 
     private List<Long> convertToLong(List<TableIdRequest> requests) {
@@ -51,6 +53,9 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId).
                 orElseThrow(() -> new IllegalArgumentException("단체 지정 내역을 찾을 수 없습니다."));
-        tableGroup.ungroup();
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByTableGroup_Id(tableGroupId);
+        for (OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.ungroupBy(tableGroup);
+        }
     }
 }
