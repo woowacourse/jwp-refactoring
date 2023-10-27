@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -19,6 +20,16 @@ public class Order {
     @MappedCollection(idColumn = "ORDER_ID")
     private Set<OrderLineItem> orderLineItems;
 
+    @PersistenceCreator
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = new HashSet<>(orderLineItems);
+    }
+
+    // FIXME : 이거 테스트에서만 사용중..
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;

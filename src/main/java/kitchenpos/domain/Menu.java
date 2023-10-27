@@ -28,6 +28,13 @@ public class Menu {
         this.menuProducts = new HashSet<>(menuProducts.getMenuProducts());
     }
 
+    public Menu(final String name, final Price price, final Long menuGroupId, final MenuProducts menuProducts) {
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = new HashSet<>(menuProducts.getMenuProducts());
+    }
+
     public Long getId() {
         return id;
     }

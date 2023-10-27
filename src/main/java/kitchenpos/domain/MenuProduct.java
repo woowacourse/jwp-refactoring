@@ -22,6 +22,12 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public MenuProduct(final Price price, final Long productId, final long quantity) {
+        this.price = price;
+        this.productId = () -> productId;
+        this.quantity = quantity;
+    }
+
     public Long getSeq() {
         return seq;
     }

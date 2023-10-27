@@ -26,7 +26,7 @@ public class OrderService {
     public OrderResponse create(final Long orderTableId, final List<OrderLineItemsRequest> orderLineItemRequests) {
         final List<OrderLineItem> orderLineItems = convertToLineItems(orderLineItemRequests);
 
-        final Order order = new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         for (OrderCreationValidator orderCreationValidator : orderCreationValidators) {
             orderCreationValidator.validate(order);
         }

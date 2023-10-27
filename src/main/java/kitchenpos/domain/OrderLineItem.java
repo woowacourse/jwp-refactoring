@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 
 public class OrderLineItem {
@@ -9,8 +10,15 @@ public class OrderLineItem {
     private AggregateReference<Menu, Long> menuId;
     private long quantity;
 
+    @PersistenceCreator
+    // FIXME : 이거 테스트에서만 사용중..
     public OrderLineItem(final Long seq, final Long menuId, final long quantity) {
         this.seq = seq;
+        this.menuId = AggregateReference.to(menuId);
+        this.quantity = quantity;
+    }
+
+    public OrderLineItem(final Long menuId, final long quantity) {
         this.menuId = AggregateReference.to(menuId);
         this.quantity = quantity;
     }

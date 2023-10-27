@@ -43,7 +43,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        return MenuResponse.from(menuDao.save(new Menu(null, name, price, menuGroupId, menuProducts)));
+        return MenuResponse.from(menuDao.save(new Menu(name, price, menuGroupId, menuProducts)));
     }
 
     private void validateMenuGroupIdExists(final Long menuGroupId) {
@@ -54,7 +54,7 @@ public class MenuService {
 
     private MenuProduct getMenuProduct(final MenuProductRequest menuProductRequest) {
         final Product product = productDao.findMandatoryById(menuProductRequest.getProductId());
-        return new MenuProduct(null, product.getPrice(), product.getId(), menuProductRequest.getQuantity());
+        return new MenuProduct(product.getPrice(), product.getId(), menuProductRequest.getQuantity());
     }
 
     public List<MenuResponse> list() {

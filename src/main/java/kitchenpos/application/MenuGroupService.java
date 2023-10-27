@@ -19,7 +19,7 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final Name menuGroupName) {
-        return MenuGroupResponse.from(menuGroupDao.save(new MenuGroup(null, menuGroupName)));
+        return MenuGroupResponse.from(menuGroupDao.save(new MenuGroup(menuGroupName)));
     }
 
     public List<MenuGroupResponse> list() {
