@@ -37,7 +37,7 @@ public class TableGroupValidatorImpl implements TableGroupValidator {
 
     @Override
     public void validateUnGroup(final AggregateReference<OrderTable> orderTable) {
-        final Orders orders = new Orders(orderRepository.findByOrderTable(orderTable.getId()));
+        final Orders orders = new Orders(orderRepository.findByOrderTableId(orderTable.getId()));
 
         if (orders.hasStatusOf(OrderStatus.COOKING) || orders.hasStatusOf(OrderStatus.MEAL)) {
             throw new CannotUngroupException();

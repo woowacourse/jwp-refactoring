@@ -11,7 +11,7 @@ Content-Type: application/json
 GET {{host}}/api/tables
 
 ###
-PUT {{host}}/api/tables/1/empty
+PUT {{host}}/api/tables/2/empty
 Content-Type: application/json
 
 {

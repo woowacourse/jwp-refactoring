@@ -17,6 +17,7 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
     private final LocalDateTime createdDate;
+    private transient TableGroupEvent tableGroupEvent;
 
     public TableGroup() {
         this.id = null;
@@ -31,20 +32,22 @@ public class TableGroup {
         id = null;
         this.createdDate = createdDate;
         tableGroupValidator.validate(orderTables);
-        this.group(orderTables);
+        group(orderTables);
     }
 
-    @DomainEvents
-    public TableGroupEvent group(
+    private void group(
             final List<AggregateReference<OrderTable>> orderTables
     ) {
-        final AggregateReference<TableGroup> tableGroupId = new AggregateReference<>(id);
-        return new TableGroupEvent(orderTables, tableGroupId);
+        this.tableGroupEvent = new CreateTableGroupEvent(orderTables, this);
+    }
+
+    public void ungroup() {
+        this.tableGroupEvent =  new DeleteTableGroupEvent(this);
     }
 
     @DomainEvents
-    public TableUnGroupEvent ungroup() {
-        return new TableUnGroupEvent(new AggregateReference<>(this.id));
+    private TableGroupEvent publishEvent() {
+        return tableGroupEvent;
     }
 
     public Long getId() {
