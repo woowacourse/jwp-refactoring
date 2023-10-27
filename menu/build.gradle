@@ -1,6 +1,0 @@
-dependencies {
-    implementation project(':generic')
-    implementation project(':product')
-
-    testImplementation project(':testsupport')
-}

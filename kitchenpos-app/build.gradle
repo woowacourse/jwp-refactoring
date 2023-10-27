@@ -1,0 +1,12 @@
+dependencies {
+    implementation project(':kitchenpos-generic')
+    implementation project(':kitchenpos-menu')
+    implementation project(':kitchenpos-order')
+    implementation project(':kitchenpos-product')
+    implementation project(':kitchenpos-table')
+    implementation project(':kitchenpos-tablegroup')
+}
+
+tasks.processResources() {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

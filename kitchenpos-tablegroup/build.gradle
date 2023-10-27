@@ -1,0 +1,5 @@
+dependencies {
+    testImplementation project(':kitchenpos-testsupport')
+    testImplementation project(':kitchenpos-table')
+    testImplementation project(':kitchenpos-order')
+}

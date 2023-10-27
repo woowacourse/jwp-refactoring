@@ -1,5 +1,0 @@
-dependencies {
-    testImplementation project(':testsupport')
-    testImplementation project(':table')
-    testImplementation project(':order')
-}
