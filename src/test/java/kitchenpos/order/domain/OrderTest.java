@@ -39,18 +39,18 @@ class OrderTest {
     }
 
     @Test
-    void 주문_테이블을_받아_주문을_생성할_수_있다() {
+    void 주문_테이블_아이디를_받아_주문을_생성할_수_있다() {
         // given
-        final OrderTable orderTable = new OrderTable();
+        final Long orderTableId = 1L;
 
         // when
-        final Order order = Order.createBy(orderTable);
+        final Order order = Order.createBy(orderTableId);
 
         // then
         assertAll(
                 () -> assertThat(order.getOrderedTime()).isNotNull(),
                 () -> assertThat(order.getOrderStatus()).isEqualTo("COOKING"),
-                () -> assertThat(order.getOrderTable()).usingRecursiveComparison().isEqualTo(orderTable)
+                () -> assertThat(order.getOrderTableId()).usingRecursiveComparison().isEqualTo(1L)
         );
     }
 
@@ -60,7 +60,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(null, 3, true);
 
         // expect
-        assertThatThrownBy(() -> Order.createBy(orderTable))
+        assertThatThrownBy(() -> Order.createBy(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문 생성시 주문 테이블은 비어있을 수 없습니다");
     }

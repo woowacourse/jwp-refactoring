@@ -45,7 +45,7 @@ public class MenuService {
 
         final Menu menu = menuRepository.save(createMenuRequest.toDomainWith(menuGroup));
         final List<MenuProduct> menuProducts = createMenuRequest.getMenuProducts().stream()
-                .map(menuProductRequest -> new MenuProduct(menu.getId(), menuProductRequest.getProductId(), menuProductRequest.getQuantity()))
+                .map(menuProductRequest -> new MenuProduct(menu, menuProductRequest.getProductId(), menuProductRequest.getQuantity()))
                 .collect(Collectors.toList());
         menuProductRepository.saveAll(menuProducts);
         return menu;

@@ -32,7 +32,7 @@ public class Product {
         this(null, name, price);
     }
 
-    public Product(final Long id, final String name, final BigDecimal price) {
+    private Product(final Long id, final String name, final BigDecimal price) {
         final Money money = Money.valueOf(price);
         validate(money);
         this.id = id;

@@ -127,7 +127,7 @@ class TableGroupServiceTest {
         // given
         final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 1, true));
         final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 2, true));
-        final Order order = new Order(firstOrderTable, OrderStatus.MEAL, LocalDateTime.now());
+        final Order order = new Order(firstOrderTable.getId(), OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order);
 
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(

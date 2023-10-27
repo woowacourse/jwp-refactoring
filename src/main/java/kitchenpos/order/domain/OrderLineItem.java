@@ -4,9 +4,12 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import kitchenpos.common.vo.Money;
 
 @Entity
@@ -16,7 +19,9 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    private Long orderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     private Long menuId;
 
@@ -31,25 +36,25 @@ public class OrderLineItem {
     }
 
     public OrderLineItem(
-            final Long orderId,
+            final Order order,
             final Long menuId,
             final long quantity,
             final String menuName,
             final Money price
     ) {
-        this(null, orderId, menuId, quantity, menuName, price);
+        this(null, order, menuId, quantity, menuName, price);
     }
 
-    public OrderLineItem(
+    private OrderLineItem(
             final Long seq,
-            final Long orderId,
+            final Order order,
             final Long menuId,
             final long quantity,
             final String menuName,
             final Money price
     ) {
         this.seq = seq;
-        this.orderId = orderId;
+        this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
         this.menuName = menuName;

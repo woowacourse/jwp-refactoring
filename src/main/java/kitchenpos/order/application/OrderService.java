@@ -11,8 +11,6 @@ import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.dto.CreateOrderRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.UpdateOrderRequest;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,36 +20,30 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderLineItemRepository orderLineItemRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public Order create(final CreateOrderRequest createOrderRequest) {
         validateMenuIds(createOrderRequest.getMenuIds());
 
-        final OrderTable orderTable = orderTableRepository.findById(createOrderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        final Order order = orderRepository.save(Order.createBy(orderTable));
-        saveOrderLineItems(createOrderRequest, order.getId());
+        final Order order = orderRepository.save(Order.createBy(createOrderRequest.getOrderTableId()));
+        saveOrderLineItems(createOrderRequest, order);
         return order;
     }
 
-    private void saveOrderLineItems(final CreateOrderRequest createOrderRequest, final Long orderId) {
+    private void saveOrderLineItems(final CreateOrderRequest createOrderRequest, final Order order) {
         for (final OrderLineItemRequest orderLineItemRequest : createOrderRequest.getOrderLineItems()) {
             final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId()).orElseThrow();
-            final OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity(), menu.getName(), menu.getPrice());
+            final OrderLineItem orderLineItem = new OrderLineItem(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity(), menu.getName(), menu.getPrice());
             orderLineItemRepository.save(orderLineItem);
         }
     }
