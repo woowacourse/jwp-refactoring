@@ -7,7 +7,8 @@ import static org.mockito.BDDMockito.given;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.response.MenuGroupDto;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,13 +28,13 @@ public class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹_이름을_받아서_메뉴_그룹_정보를_등록할_수_있다() {
         //given
-        MenuGroupDto menuGroupRequest = new MenuGroupDto("추천메뉴");
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("추천메뉴");
 
         MenuGroup savedMenuGroup = new MenuGroup(1L, "추천메뉴");
         given(menuGroupDao.save(any(MenuGroup.class))).willReturn(savedMenuGroup);
 
         //when
-        MenuGroupDto result = menuGroupService.create(menuGroupRequest);
+        MenuGroupResponse result = menuGroupService.create(menuGroupRequest);
 
         //then
         assertThat(result.getId()).isEqualTo(1L);
@@ -48,7 +49,7 @@ public class MenuGroupServiceTest {
         given(menuGroupDao.findAll()).willReturn(List.of(savedMenuGroup1, savedMenuGroup2));
 
         //when
-        List<MenuGroupDto> result = menuGroupService.list();
+        List<MenuGroupResponse> result = menuGroupService.list();
 
         //then
         assertThat(result).hasSize(2);
