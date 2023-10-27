@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.tablegroup.domain;
 
+import kitchenpos.domain.OrderTables;
 import kitchenpos.ordertable.domain.OrderTable;
 
 import java.time.LocalDateTime;

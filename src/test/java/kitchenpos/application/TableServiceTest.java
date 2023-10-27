@@ -17,6 +17,7 @@ import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableChangeEmptyRequest;
 import kitchenpos.request.TableChangeNumberOfGuestsRequest;
 import kitchenpos.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.TableGroupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
