@@ -96,7 +96,8 @@ public class OrderTable {
     }
 
     public void unGroup() {
+        validateOrdersCompleted();
         tableGroup = null;
-        updateEmpty(false);
+        this.empty = false;
     }
 }

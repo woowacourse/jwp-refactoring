@@ -7,6 +7,7 @@ import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -29,8 +30,11 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        tableGroup.updateOrderTables(findAllOrderTableByIdIn(extractOrderTableIds(request.getOrderTables())));
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+
+        final OrderTables orderTables = findAllOrderTableByIdIn(
+                extractOrderTableIds(request.getOrderTables()));
+        orderTables.group(tableGroup);
+        return TableGroupResponse.of(tableGroupRepository.save(tableGroup), orderTables.getItems());
     }
 
     private List<Long> extractOrderTableIds(List<OrderTableRequest> orderTableRequests) {
@@ -39,18 +43,19 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    private List<OrderTable> findAllOrderTableByIdIn(List<Long> orderTableIds) {
+    private OrderTables findAllOrderTableByIdIn(List<Long> orderTableIds) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         if (orderTableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException("잘못된 테이블 정보가 포함되어 있습니다.");
         }
-        return orderTables;
+        return OrderTables.from(orderTables);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = findTableGroupById(tableGroupId);
-        tableGroup.ungroup();
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        orderTables.forEach(OrderTable::unGroup);
         tableGroupRepository.save(tableGroup);
     }
 

@@ -15,23 +15,19 @@
 
 - OrderTables
   - -> OrderTable
-  - [ ] <-> TableGroup
+  - -> TableGroup
 
 - OrderLineItems
   - -> OrderLineItem
 
 - OrderTable
   - [ ] <-> Order
-  - [ ] <-> TableGroup
+  - -> TableGroup
   - -> NumberOfGuests
 
 - OrderLineItem
   - [ ] <-> Order
   - -> Menu
-
-- TableGroup
-  - [ ] <-> OrderTables
-  - [ ] <-> OrderTable
 
 - Menu
   - -> MenuProducts
