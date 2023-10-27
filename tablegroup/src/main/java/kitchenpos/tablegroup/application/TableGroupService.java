@@ -3,7 +3,6 @@ package kitchenpos.tablegroup.application;
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table.dto.response.TableResponse;
 import kitchenpos.tablegroup.domain.GroupedTables;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
@@ -39,19 +38,13 @@ public class TableGroupService {
         GroupedTables groupedTables = createGroupedOrderTable(request.getOrderTableIds());
         groupedTables.group(tableGroup.getId());
 
-        return mapToTableGroupResponse(tableGroup, groupedTables);
+        return TableGroupResponse.from(tableGroup, groupedTables.getOrderTables());
     }
 
     private GroupedTables createGroupedOrderTable(List<Long> orderTableIds) {
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         return GroupedTables.createForGrouping(orderTables);
-    }
-
-    private TableGroupResponse mapToTableGroupResponse(TableGroup tableGroup, GroupedTables groupedTables) {
-        List<TableResponse> tableResponses = TableResponse.from(groupedTables.getOrderTables());
-
-        return TableGroupResponse.from(tableGroup, tableResponses);
     }
 
     @Transactional
