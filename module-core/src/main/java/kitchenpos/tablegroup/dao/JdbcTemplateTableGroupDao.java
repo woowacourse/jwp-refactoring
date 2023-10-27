@@ -1,6 +1,6 @@
-package kitchenpos.order.dao;
+package kitchenpos.tablegroup.dao;
 
-import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -9,21 +9,23 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
-    private static final String TABLE_NAME = "order_line_item";
-    private static final String KEY_COLUMN_NAME = "seq";
+public class JdbcTemplateTableGroupDao implements TableGroupDao {
+    private static final String TABLE_NAME = "table_group";
+    private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderLineItemDao(final DataSource dataSource) {
+    public JdbcTemplateTableGroupDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
@@ -32,14 +34,14 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     @Override
-    public OrderLineItem save(final OrderLineItem entity) {
+    public TableGroup save(final TableGroup entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<OrderLineItem> findById(final Long id) {
+    public Optional<TableGroup> findById(final Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -48,31 +50,21 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     @Override
-    public List<OrderLineItem> findAll() {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
+    public List<TableGroup> findAll() {
+        final String sql = "SELECT id, created_date FROM table_group";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    @Override
-    public List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+    private TableGroup select(final Long id) {
+        final String sql = "SELECT id, created_date FROM table_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderId", orderId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
-    }
-
-    private OrderLineItem select(final Long id) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("seq", id);
+                .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
-        Long seq = resultSet.getLong(KEY_COLUMN_NAME);
-        Long orderId = resultSet.getLong("order_id");
-        Long orderedMenuId = resultSet.getLong("ordered_menu_id");
-        Long quantity = resultSet.getLong("quantity");
-        return new OrderLineItem(seq, orderId, orderedMenuId, quantity);
+    private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong(KEY_COLUMN_NAME);
+        LocalDateTime createdDate = resultSet.getObject("created_date", LocalDateTime.class);
+        return new TableGroup(id, createdDate);
     }
 }

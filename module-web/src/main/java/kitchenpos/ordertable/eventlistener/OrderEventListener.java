@@ -1,8 +1,8 @@
 package kitchenpos.ordertable.eventlistener;
 
 import kitchenpos.order.dto.OrderCreatedEvent;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.dao.OrderTableDao;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
