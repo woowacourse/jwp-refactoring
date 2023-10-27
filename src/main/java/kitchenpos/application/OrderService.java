@@ -37,14 +37,9 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        for (OrderLineItemCreateRequest orderLineItem : request.getOrderLineItems()) {
-            validateMenuExists(orderLineItem);
-        }
         List<OrderLineItem> items = new ArrayList<>();
         for (OrderLineItemCreateRequest orderLineItem : request.getOrderLineItems()) {
-            Menu menu = menuRepository.findById(orderLineItem.getMenuId())
-                    .orElseThrow(IllegalArgumentException::new);
-            items.add(new OrderLineItem(menu.getId(), orderLineItem.getQuantity(), menu.getName(), menu.getPrice()));
+            validateMenuExistsAndAddItems(items, orderLineItem);
         }
         OrderLineItems orderLineItems = new OrderLineItems(items);
         validateSize(request, orderLineItems);
@@ -54,10 +49,13 @@ public class OrderService {
         return OrderResponse.toResponse(orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)));
     }
 
-    private void validateMenuExists(OrderLineItemCreateRequest orderLineItem) {
+    private void validateMenuExistsAndAddItems(List<OrderLineItem> items, OrderLineItemCreateRequest orderLineItem) {
         if (!menuRepository.existsById(orderLineItem.getMenuId())) {
             throw new IllegalArgumentException();
         }
+        Menu menu = menuRepository.findById(orderLineItem.getMenuId())
+                .orElseThrow(IllegalArgumentException::new);
+        items.add(new OrderLineItem(menu.getId(), orderLineItem.getQuantity(), menu.getName(), menu.getPrice()));
     }
 
     private void validateEmpty(OrderTable orderTable) {
