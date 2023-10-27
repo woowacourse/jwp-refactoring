@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.dto.ValidateOrderIsNotCompletionDto;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.order.dto.OrderTableInTableGroupDto;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
@@ -12,26 +13,25 @@ import kitchenpos.tablegroup.dto.TableGroupResponse;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
 
-    private static final List<OrderStatus> INCLUDE_ORDER_STATUS = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
-
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher publisher;
 
     public TableGroupService(
-            final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final TableGroupRepository tableGroupRepository,
+            final ApplicationEventPublisher publisher
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -73,13 +73,7 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-        final List<Order> orders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
-        orders.forEach(this::validateCompletion);
-    }
 
-    private void validateCompletion(final Order order) {
-        if (order.isNotCompletion()) {
-            throw new IllegalArgumentException("[ERROR] 아직 모든 주문이 완료되지 않았습니다.");
-        }
+        publisher.publishEvent(new ValidateOrderIsNotCompletionDto(orderTableIds));
     }
 }
