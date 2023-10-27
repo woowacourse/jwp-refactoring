@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +21,7 @@ public class CreateTableGroupRequest {
     public List<Long> getOrderTableIds() {
         return orderTables.stream()
                           .map(CreateTableGroupOrderTableRequest::getId)
+                          .distinct()
                           .collect(Collectors.toList());
     }
 }

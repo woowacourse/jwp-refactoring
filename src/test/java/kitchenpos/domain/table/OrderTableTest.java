@@ -1,11 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,7 +18,7 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(5, true);
 
         // when
-        orderTable.groupBy(tableGroup);
+        orderTable.groupBy(tableGroup.getId());
 
         // then
         assertThat(orderTable.isEmpty()).isFalse();
@@ -35,7 +32,7 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(5, false);
 
         // when & then
-        assertThatThrownBy(() -> orderTable.groupBy(tableGroup))
+        assertThatThrownBy(() -> orderTable.groupBy(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블을 그룹화하려면 테이블이 비어있고 그룹화되어있지 않아야 합니다.");
     }
@@ -83,8 +80,10 @@ class OrderTableTest {
         // given
         final OrderTable 두명_테이블 = new OrderTable(2, true);
         final OrderTable 세명_테이블 = new OrderTable(3, true);
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.initOrderTables(List.of(두명_테이블, 세명_테이블));
+        final TableGroup 두명_세명_테이블_그룹 = new TableGroup();
+        ReflectionTestUtils.setField(두명_세명_테이블_그룹, "id", 1L);
+        두명_테이블.groupBy(두명_세명_테이블_그룹.getId());
+        세명_테이블.groupBy(두명_세명_테이블_그룹.getId());
 
         // when & then
         assertThatThrownBy(() -> 두명_테이블.changeEmpty(true))

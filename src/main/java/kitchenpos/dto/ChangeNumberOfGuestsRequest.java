@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.dto;
 
 public class ChangeNumberOfGuestsRequest {
 

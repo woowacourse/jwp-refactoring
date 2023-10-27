@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.dto;
 
 import kitchenpos.domain.menu.Product;
 
@@ -25,7 +25,7 @@ public class CreateProductRequest {
         return price;
     }
 
-    public Product toEntity() {
+    public Product toProduct() {
         return new Product(name, price);
     }
 }

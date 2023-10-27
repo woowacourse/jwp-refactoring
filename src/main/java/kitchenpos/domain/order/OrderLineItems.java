@@ -31,7 +31,7 @@ public class OrderLineItems {
 
     private void validateDuplicateMenu(final List<OrderLineItem> orderLineItems) {
         final long menuCount = orderLineItems.stream()
-                                             .map(OrderLineItem::getMenu)
+                                             .map(OrderLineItem::getMenuId)
                                              .distinct()
                                              .count();
 

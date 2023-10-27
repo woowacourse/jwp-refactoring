@@ -38,7 +38,7 @@ public class MenuProduct {
         return product.calculatePriceWithCount(quantity);
     }
 
-    public void setMenu(final Menu menu) {
+    public void initMenu(final Menu menu) {
         this.menu = menu;
     }
 

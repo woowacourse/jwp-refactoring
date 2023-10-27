@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.dto;
 
 import kitchenpos.domain.table.OrderTable;
 
@@ -19,7 +19,7 @@ public class CreateOrderTableRequest {
         return empty;
     }
 
-    public OrderTable toEntity() {
+    public OrderTable toOrderTable() {
         return new OrderTable(numberOfGuests, empty);
     }
 }

@@ -1,9 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItems;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +33,9 @@ class OrderLineItemsTest {
         final MenuGroup 두마리_메뉴 = new MenuGroup("두마리 메뉴");
         final Menu 후라이드_후라이드 = new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리_메뉴);
         final Menu 후라이드_양념치킨 = new Menu("후라이드+양념치킨", BigDecimal.valueOf(32000), 두마리_메뉴);
-        final OrderLineItem 후라이드_후라이드_1개 = new OrderLineItem(후라이드_후라이드, 1);
-        final OrderLineItem 후라이드_후라이드_2개 = new OrderLineItem(후라이드_후라이드, 2);
-        final OrderLineItem 후라이드_양념치킨_1개 = new OrderLineItem(후라이드_양념치킨, 1);
+        final OrderLineItem 후라이드_후라이드_1개 = new OrderLineItem(후라이드_후라이드.getId(), 1);
+        final OrderLineItem 후라이드_후라이드_2개 = new OrderLineItem(후라이드_후라이드.getId(), 2);
+        final OrderLineItem 후라이드_양념치킨_1개 = new OrderLineItem(후라이드_양념치킨.getId(), 1);
 
         // when
         assertThatThrownBy(() -> new OrderLineItems(List.of(후라이드_후라이드_1개, 후라이드_후라이드_2개, 후라이드_양념치킨_1개)))

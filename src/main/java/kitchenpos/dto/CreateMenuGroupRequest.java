@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.dto;
 
 import kitchenpos.domain.menu.MenuGroup;
 
@@ -17,7 +17,7 @@ public class CreateMenuGroupRequest {
         return name;
     }
 
-    public MenuGroup toEntity() {
+    public MenuGroup toMenuGroup() {
         return new MenuGroup(name);
     }
 }

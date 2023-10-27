@@ -4,12 +4,9 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -19,9 +16,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id", foreignKey = @ForeignKey(name = "order_table_table_group"))
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "number_of_guests"))
@@ -37,12 +32,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void groupBy(final TableGroup tableGroup) {
-        if (isNotEmpty() || this.tableGroup != null) {
+    public void groupBy(final Long tableGroupId) {
+        if (isNotEmpty() || isGrouped()) {
             throw new IllegalArgumentException("테이블을 그룹화하려면 테이블이 비어있고 그룹화되어있지 않아야 합니다.");
         }
 
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         full();
     }
 
@@ -55,7 +50,7 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
-        if (tableGroup != null) {
+        if (isGrouped()) {
             throw new IllegalArgumentException("그룹화된 테이블의 상태를 변경할 수 없습니다.");
         }
 
@@ -63,8 +58,12 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         full();
+    }
+
+    public boolean isGrouped() {
+        return this.tableGroupId != null;
     }
 
     public boolean isNotEmpty() {
@@ -79,8 +78,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public NumberOfGuests getNumberOfGuests() {

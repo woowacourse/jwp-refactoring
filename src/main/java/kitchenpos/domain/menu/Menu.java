@@ -47,7 +47,7 @@ public class Menu {
 
         for (final MenuProduct menuProduct : menuProducts.getMenuProducts()) {
             this.menuProducts.add(menuProduct);
-            menuProduct.setMenu(this);
+            menuProduct.initMenu(this);
         }
     }
 

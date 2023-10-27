@@ -7,8 +7,8 @@ import kitchenpos.domain.table.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.ui.dto.CreateTableGroupOrderTableRequest;
-import kitchenpos.ui.dto.CreateTableGroupRequest;
+import kitchenpos.dto.CreateTableGroupOrderTableRequest;
+import kitchenpos.dto.CreateTableGroupRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +17,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +31,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -48,6 +53,9 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
+
+        em.flush();
+        em.clear();
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
@@ -77,6 +85,10 @@ class TableGroupServiceTest {
     void create_oneOrderTable() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
+
+        em.flush();
+        em.clear();
+
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디));
 
@@ -92,9 +104,11 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
 
+        em.flush();
+        em.clear();
+
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 존재하지_않는_테이블_아이디 = new CreateTableGroupOrderTableRequest(10L);
-
         final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 존재하지_않는_테이블_아이디));
 
         // when & then
@@ -109,6 +123,9 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 네명_테이블_사용중 = orderTableRepository.save(new OrderTable(4, false));
+
+        em.flush();
+        em.clear();
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 사용중인_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블_사용중.getId());
@@ -127,8 +144,12 @@ class TableGroupServiceTest {
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
-        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+        final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
+        세명_테이블.groupBy(세명_네명_테이블_그룹.getId());
+        네명_테이블.groupBy(세명_네명_테이블_그룹.getId());
+
+        em.flush();
+        em.clear();
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 그룹화된_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
@@ -146,19 +167,23 @@ class TableGroupServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
-        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+        final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
+        세명_테이블.groupBy(세명_네명_테이블_그룹.getId());
+        네명_테이블.groupBy(세명_네명_테이블_그룹.getId());
+
+        em.flush();
+        em.clear();
 
         // when
-        tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId());
+        tableGroupService.ungroup(세명_네명_테이블_그룹.getId());
 
         // then
         final List<OrderTable> actual = orderTableRepository.findAllByIdIn(List.of(세명_테이블.getId(), 네명_테이블.getId()));
 
         SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual.get(0).getTableGroup()).isNull();
+            softAssertions.assertThat(actual.get(0).getTableGroupId()).isNull();
             softAssertions.assertThat(actual.get(0).isEmpty()).isFalse();
-            softAssertions.assertThat(actual.get(1).getTableGroup()).isNull();
+            softAssertions.assertThat(actual.get(1).getTableGroupId()).isNull();
             softAssertions.assertThat(actual.get(1).isEmpty()).isFalse();
         });
     }
@@ -170,14 +195,20 @@ class TableGroupServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
-        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+        final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
+        final Long 세명_네명_테이블_그룹_아이디 = 세명_네명_테이블_그룹.getId();
+        세명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
+        네명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
 
-        orderRepository.save(new Order(세명_테이블, orderStatus));
-        orderRepository.save(new Order(네명_테이블, orderStatus));
+        orderRepository.save(new Order(세명_테이블.getId()));
+        final Order 네명_테이블_미완료_주문 = orderRepository.save(new Order(네명_테이블.getId()));
+        네명_테이블_미완료_주문.changeOrderStatus(orderStatus);
+
+        em.flush();
+        em.clear();
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(세명_네명_테이블_그룹_아이디))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블 그룹을 해제하려면 그룹화된 테이블의 모든 주문이 완료 상태이어야 합니다.");
     }

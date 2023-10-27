@@ -1,18 +1,14 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.common.BaseCreateTimeEntity;
-import kitchenpos.domain.table.OrderTable;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -20,13 +16,13 @@ import java.util.Objects;
 @Table(name = "orders")
 public class Order extends BaseCreateTimeEntity {
 
+    private static final OrderStatus INITIAL_ORDER_STATUS = OrderStatus.COOKING;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "order_order_table"))
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
@@ -37,24 +33,20 @@ public class Order extends BaseCreateTimeEntity {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블에는 주문을 생성할 수 없습니다.");
-        }
-
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-    }
-
-    public static Order createNewOrder(final OrderTable orderTable) {
-        return new Order(orderTable, OrderStatus.COOKING);
+    public Order(final Long orderTableId) {
+        this.orderTableId = orderTableId;
+        this.orderStatus = INITIAL_ORDER_STATUS;
     }
 
     public void addOrderLineItems(final OrderLineItems orderLineItems) {
         for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
             this.orderLineItems.add(orderLineItem);
-            orderLineItem.setOrder(this);
+            orderLineItem.initOrder(this);
         }
+    }
+
+    public boolean isNotComplete() {
+        return orderStatus != OrderStatus.COMPLETION;
     }
 
     public void changeOrderStatus(final OrderStatus newOrderStatus) {
@@ -67,6 +59,10 @@ public class Order extends BaseCreateTimeEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
