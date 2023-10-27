@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.request.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,9 +27,10 @@ class ProductServiceTest extends ServiceTest {
         // given
         String name = "후라이드치킨";
         BigDecimal price = BigDecimal.valueOf(16_000);
+        ProductCreateRequest request = new ProductCreateRequest(name, price);
 
         // when
-        Product actual = productService.create(name, price);
+        Product actual = productService.create(request);
 
         // then
         assertThat(actual.getId()).isNotNull();
@@ -41,9 +43,10 @@ class ProductServiceTest extends ServiceTest {
         // given
         String name = "후라이드치킨";
         BigDecimal price = BigDecimal.valueOf(invalidPrice);
+        ProductCreateRequest request = new ProductCreateRequest(name, price);
 
         // when, then
-        assertThatThrownBy(() -> productService.create(name, price))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -51,8 +54,8 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        productService.create("후라이드치킨", BigDecimal.valueOf(16_000));
-        productService.create("양념치킨", BigDecimal.valueOf(17_000));
+        productService.create(new ProductCreateRequest("후라이드치킨", BigDecimal.valueOf(16_000)));
+        productService.create(new ProductCreateRequest("양념치킨", BigDecimal.valueOf(17_000)));
 
         // when
         List<Product> products = productService.list();

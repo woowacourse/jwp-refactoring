@@ -1,12 +1,11 @@
 package kitchenpos.product.application;
 
+import java.util.List;
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.request.ProductCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 public class ProductService {
@@ -17,8 +16,8 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(String name, BigDecimal price) {
-        Product product = new Product(name, price);
+    public Product create(ProductCreateRequest request) {
+        Product product = new Product(request.getName(), request.getPrice());
         return productDao.save(product);
     }
 
