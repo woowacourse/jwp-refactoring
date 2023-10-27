@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.execute.ServiceIntegrateTest;
 import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.menu.application.MenuGroupService;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.dto.response.MenuGroupResponse;
+import kitchenpos.menu_group.application.MenuGroupService;
+import kitchenpos.menu_group.domain.MenuGroup;
+import kitchenpos.menu_group.domain.repository.MenuGroupRepository;
+import kitchenpos.menu_group.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

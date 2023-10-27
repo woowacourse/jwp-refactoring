@@ -21,6 +21,11 @@ public class Menu {
     protected Menu() {
     }
 
+    public Menu(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public Menu(String name, BigDecimal price, Long menuGroupId) {
         this.name = name;
         this.price = price;
