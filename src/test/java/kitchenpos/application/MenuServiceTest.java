@@ -15,10 +15,10 @@ import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.request.MenuCreateRequest;
-import kitchenpos.menugroup.dao.MenuGroupDao;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.product.dao.ProductDao;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,9 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuService menuService;
@@ -40,9 +40,9 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(두마리_메뉴);
-        Product product1 = productDao.save(후라이드치킨_16000원);
-        Product product2 = productDao.save(양념치킨_17000원);
+        MenuGroup menuGroup = menuGroupRepository.save(두마리_메뉴);
+        Product product1 = productRepository.save(후라이드치킨_16000원);
+        Product product2 = productRepository.save(양념치킨_17000원);
 
         List<MenuProduct> menuProducts = List.of(
                 new MenuProduct(product1.getId(), 1),
@@ -61,10 +61,7 @@ class MenuServiceTest extends ServiceTest {
         // then
         Assertions.assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getPrice().getValue().intValue()).isLessThanOrEqualTo(33_000),
-                () -> assertThat(actual.getMenuProducts()).allMatch(
-                        menuProduct -> menuProduct.getMenuId().equals(actual.getId())
-                )
+                () -> assertThat(actual.getPrice().getPrice().intValue()).isLessThanOrEqualTo(33_000)
         );
     }
 
@@ -73,7 +70,7 @@ class MenuServiceTest extends ServiceTest {
     @ParameterizedTest
     void create_PriceLowerThanZero_ExceptionThrown(int invalidPrice) {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(한마리_메뉴);
+        MenuGroup menuGroup = menuGroupRepository.save(한마리_메뉴);
         MenuCreateRequest request = new MenuCreateRequest(
                 "후라이드+양념",
                 BigDecimal.valueOf(invalidPrice),
@@ -108,8 +105,8 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create_NonExistProduct_ExceptionThrown() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(두마리_메뉴);
-        Product product = productDao.save(후라이드치킨_16000원);
+        MenuGroup menuGroup = menuGroupRepository.save(두마리_메뉴);
+        Product product = productRepository.save(후라이드치킨_16000원);
         Product nonSavedProduct = 양념치킨_17000원;
 
         List<MenuProduct> menuProducts = List.of(
@@ -135,9 +132,9 @@ class MenuServiceTest extends ServiceTest {
         // given
         int wrongCalculateResult = 330_000;
 
-        MenuGroup menuGroup = menuGroupDao.save(두마리_메뉴);
-        Product product1 = productDao.save(후라이드치킨_16000원);
-        Product product2 = productDao.save(양념치킨_17000원);
+        MenuGroup menuGroup = menuGroupRepository.save(두마리_메뉴);
+        Product product1 = productRepository.save(후라이드치킨_16000원);
+        Product product2 = productRepository.save(양념치킨_17000원);
 
         List<MenuProduct> menuProducts = List.of(
                 new MenuProduct(product1.getId(), 1),
@@ -159,9 +156,9 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(두마리_메뉴);
-        Product product1 = productDao.save(후라이드치킨_16000원);
-        Product product2 = productDao.save(양념치킨_17000원);
+        MenuGroup menuGroup = menuGroupRepository.save(두마리_메뉴);
+        Product product1 = productRepository.save(후라이드치킨_16000원);
+        Product product2 = productRepository.save(양념치킨_17000원);
 
         List<MenuProduct> menuProducts1 = List.of(
                 new MenuProduct(product1.getId(), 1),

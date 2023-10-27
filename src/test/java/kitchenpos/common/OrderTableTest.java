@@ -75,7 +75,7 @@ class OrderTableTest {
     void group() {
         // given
         Long tableGroupId = 5L;
-        OrderTable orderTable = new OrderTable();
+        OrderTable orderTable = new OrderTable(5, true);
 
         // when
         orderTable.group(tableGroupId);

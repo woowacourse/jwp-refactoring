@@ -2,7 +2,6 @@ package kitchenpos.ordertable.ui;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.request.OrderTableCreateRequest;

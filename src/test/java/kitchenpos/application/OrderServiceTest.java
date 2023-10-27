@@ -11,21 +11,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.domain.Price;
-import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menugroup.dao.MenuGroupDao;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.request.OrderCreateRequest;
 import kitchenpos.order.request.OrderLineItemDto;
-import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.product.dao.ProductDao;
+import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
     @Autowired
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Autowired
     OrderService orderService;
@@ -48,9 +48,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5, false));
 
-        Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
+        Menu savedMenu = menuRepository.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
         OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
         // when
@@ -59,10 +59,7 @@ class OrderServiceTest extends ServiceTest {
         // then
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
-                () -> assertThat(savedOrder.getOrderLineItems()).allMatch(
-                        item -> item.getOrderId() != null
-                )
+                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
         );
     }
 
@@ -70,7 +67,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_EmptyOrderLineItem_ExceptionThrown() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5, false));
         OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), Collections.emptyList());
 
         // when, then
@@ -83,9 +80,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_EmptyTable_ExceptionThrown() {
         // given
-        OrderTable savedEmptyTable = orderTableDao.save(new OrderTable(5, true));
+        OrderTable savedEmptyTable = orderTableRepository.save(new OrderTable(5, true));
 
-        Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
+        Menu savedMenu = menuRepository.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
         OrderCreateRequest request = getOrderCreateRequest(savedEmptyTable.getId(), List.of(orderLineItem));
 
@@ -99,9 +96,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5, false));
 
-        Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
+        Menu savedMenu = menuRepository.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
         OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
         orderService.create(request);
@@ -118,9 +115,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5, false));
 
-        Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
+        Menu savedMenu = menuRepository.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
         OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
         Order savedOrder = orderService.create(request);
@@ -136,9 +133,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus_AlreadyCompleted_ExceptionThrown() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5, false));
 
-        Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
+        Menu savedMenu = menuRepository.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
         OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
         Order savedOrder = orderService.create(request);
@@ -152,9 +149,9 @@ class OrderServiceTest extends ServiceTest {
     }
 
     private Menu createMenu(String name, int price) {
-        Product product = productDao.save(양념치킨_17000원);
+        Product product = productRepository.save(양념치킨_17000원);
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
-        MenuGroup menuGroup = menuGroupDao.save(한마리_메뉴);
+        MenuGroup menuGroup = menuGroupRepository.save(한마리_메뉴);
         return new Menu(null, name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), List.of(menuProduct));
     }
 

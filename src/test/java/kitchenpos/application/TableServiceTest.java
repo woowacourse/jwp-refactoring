@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.domain.Price;
 import kitchenpos.fixture.MenuGroupFixtures;
-import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menugroup.dao.MenuGroupDao;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -36,11 +36,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private TableService tableService;
@@ -85,7 +85,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = tableService.create(request);
 
         Menu menu = createMenu("양념1마리", 17_000);
-        menuDao.save(menu);
+        menuRepository.save(menu);
 
         Order order = new Order(
                 null,
@@ -94,7 +94,7 @@ class TableServiceTest extends ServiceTest {
                 LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 1))
         );
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when
         OrderTable savedOrderTable = tableService.changeEmpty(orderTable.getId(), new TableChangeEmptyRequest(true));
@@ -115,7 +115,7 @@ class TableServiceTest extends ServiceTest {
         tableGroupService.create(tableGroupCreateRequest);
 
         Menu menu = createMenu("양념1마리", 17_000);
-        menuDao.save(menu);
+        menuRepository.save(menu);
         Order order = new Order(
                 null,
                 orderTable1.getId(),
@@ -123,7 +123,7 @@ class TableServiceTest extends ServiceTest {
                 LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 1))
         );
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when, then
         assertThatThrownBy(
@@ -141,7 +141,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = tableService.create(request);
 
         Menu menu = createMenu("양념1마리", 17_000);
-        menuDao.save(menu);
+        menuRepository.save(menu);
         Order order = new Order(
                 null,
                 orderTable.getId(),
@@ -149,7 +149,7 @@ class TableServiceTest extends ServiceTest {
                 LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 1))
         );
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when, then
         assertThatThrownBy(
@@ -204,7 +204,7 @@ class TableServiceTest extends ServiceTest {
 
     private Menu createMenu(String name, int price) {
         MenuProduct menuProduct = new MenuProduct(양념치킨_17000원.getId(), 1);
-        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixtures.한마리_메뉴);
+        MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixtures.한마리_메뉴);
         return new Menu(null, name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), List.of(menuProduct));
     }
 }

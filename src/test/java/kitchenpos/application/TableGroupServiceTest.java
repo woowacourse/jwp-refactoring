@@ -15,18 +15,18 @@ import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.request.MenuCreateRequest;
-import kitchenpos.menugroup.dao.MenuGroupDao;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.TableService;
-import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.request.OrderTableCreateRequest;
-import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.request.TableGroupCreateRequest;
@@ -39,13 +39,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepository;
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Autowired
     TableGroupService tableGroupService;
@@ -109,8 +109,8 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
-        OrderTable findOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
-        OrderTable findOrderTable2 = orderTableDao.findById(orderTable2.getId()).get();
+        OrderTable findOrderTable1 = orderTableRepository.findById(orderTable1.getId()).get();
+        OrderTable findOrderTable2 = orderTableRepository.findById(orderTable2.getId()).get();
 
         // then
         assertAll(
@@ -138,7 +138,7 @@ class TableGroupServiceTest extends ServiceTest {
                 LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 1))
         );
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -147,9 +147,9 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     private MenuCreateRequest getMenuCreateRequest(String name, int price) {
-        Product product = productDao.save(양념치킨_17000원);
+        Product product = productRepository.save(양념치킨_17000원);
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
-        MenuGroup menuGroup = menuGroupDao.save(한마리_메뉴);
+        MenuGroup menuGroup = menuGroupRepository.save(한마리_메뉴);
         return new MenuCreateRequest(
                 name,
                 BigDecimal.valueOf(price),

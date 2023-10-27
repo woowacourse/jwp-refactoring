@@ -2,7 +2,6 @@ package kitchenpos.product.ui;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.request.ProductCreateRequest;

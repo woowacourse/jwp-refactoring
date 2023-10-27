@@ -2,7 +2,6 @@ package kitchenpos.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import kitchenpos.common.domain.Price;
@@ -21,7 +20,7 @@ class PriceTest {
         Price price = new Price(value);
 
         // then
-        assertThat(price.getValue()).isZero();
+        assertThat(price.getPrice()).isZero();
     }
 
     @DisplayName("값이 0보다 작으면 예외가 발생한다.")
