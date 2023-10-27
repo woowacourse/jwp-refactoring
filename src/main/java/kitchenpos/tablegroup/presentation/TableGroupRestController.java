@@ -1,7 +1,7 @@
 package kitchenpos.tablegroup.presentation;
 
-import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.ordertable.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

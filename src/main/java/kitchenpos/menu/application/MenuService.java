@@ -34,7 +34,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = createMenuProducts(request);
         menuValidator.validate(request.getPrice(), menuProducts);
         final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
-        final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup, menuProducts);
+        final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup.getId(), menuProducts);
         final Menu saveMenu = menuRepository.save(menu);
         return saveMenu.getId();
     }

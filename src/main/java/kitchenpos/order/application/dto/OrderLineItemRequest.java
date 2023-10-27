@@ -4,7 +4,7 @@ public class OrderLineItemRequest {
     private Long menuId;
     private Long quantity;
 
-    public OrderLineItemRequest() {
+    private OrderLineItemRequest() {
     }
 
     public OrderLineItemRequest(final Long menuId, final Long quantity) {

@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static kitchenpos.order.domain.OrderStatus.*;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 @Component
 public class OrderTableValidator {

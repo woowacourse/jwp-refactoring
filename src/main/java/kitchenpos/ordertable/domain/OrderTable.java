@@ -3,7 +3,6 @@ package kitchenpos.ordertable.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -13,7 +12,6 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @JoinColumn(name = "table_group_id")
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;

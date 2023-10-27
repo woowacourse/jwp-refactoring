@@ -3,7 +3,7 @@ package kitchenpos.order.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import java.math.BigDecimal;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -12,21 +12,22 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @JoinColumn(name = "menu_id")
-    private Long menuId;
+    private String name;
+    private BigDecimal price;
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    private OrderLineItem(final Long id, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long id, final String name, final BigDecimal price, final long quantity) {
         this.id = id;
-        this.menuId = menuId;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
-    public static OrderLineItem of(final Long menuId, final long quantity) {
-        return new OrderLineItem(null, menuId, quantity);
+    public static OrderLineItem of(final String name, final BigDecimal price, final long quantity) {
+        return new OrderLineItem(null, name, price, quantity);
     }
 
 

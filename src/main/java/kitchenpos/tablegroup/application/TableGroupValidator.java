@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.order.domain.OrderStatus.*;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 @Component
 public class TableGroupValidator {

@@ -1,15 +1,13 @@
 package kitchenpos.order.application.dto;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class OrderCreateRequest {
 
     private Long orderTableId;
     private List<OrderLineItemRequest> orderLineItems;
 
-    public OrderCreateRequest() {
+    private OrderCreateRequest() {
     }
 
     public OrderCreateRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {

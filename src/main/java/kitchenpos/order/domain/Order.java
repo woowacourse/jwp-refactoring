@@ -20,7 +20,6 @@ public class Order {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @JoinColumn(name = "order_table_id")
     private Long orderTableId;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;

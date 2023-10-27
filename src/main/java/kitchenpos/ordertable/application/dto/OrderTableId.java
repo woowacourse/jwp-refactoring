@@ -3,7 +3,7 @@ package kitchenpos.ordertable.application.dto;
 public class OrderTableId {
     private Long id;
 
-    public OrderTableId() {
+    private OrderTableId() {
     }
 
     public OrderTableId(final Long id) {

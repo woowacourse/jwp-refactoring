@@ -28,4 +28,12 @@ public class OrderResponse {
     public Long getId() {
         return id;
     }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
 }

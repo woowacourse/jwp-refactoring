@@ -8,7 +8,6 @@ import kitchenpos.order.application.dto.OrderStatusRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +42,7 @@ public class OrderService {
         return request.getOrderLineItems().stream()
                 .map(orderLineItemRequest -> {
                     final Menu menu = menuRepository.getById(orderLineItemRequest.getMenuId());
-                    return OrderLineItem.of(menu.getId(), orderLineItemRequest.getQuantity());
+                    return OrderLineItem.of(menu.getName(), menu.getPrice(), orderLineItemRequest.getQuantity());
                 }).collect(Collectors.toUnmodifiableList());
     }
 

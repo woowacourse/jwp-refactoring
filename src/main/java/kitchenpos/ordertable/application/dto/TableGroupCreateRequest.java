@@ -7,7 +7,7 @@ public class TableGroupCreateRequest {
 
     private List<OrderTableId> orderTables;
 
-    public TableGroupCreateRequest() {
+    private TableGroupCreateRequest() {
     }
 
     public TableGroupCreateRequest(final List<OrderTableId> orderTables) {
