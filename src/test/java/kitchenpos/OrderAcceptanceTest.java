@@ -11,7 +11,6 @@ import kitchenpos.ui.request.TableGroupCreateRequest;
 import kitchenpos.ui.response.MenuGroupResponse;
 import kitchenpos.ui.response.OrderResponse;
 import kitchenpos.ui.response.ProductResponse;
-import kitchenpos.ui.response.TableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +29,7 @@ import static kitchenpos.step.ProductStep.PRODUCT_CREATE_REQUEST_스키야키;
 import static kitchenpos.step.ProductStep.상품_생성_요청하고_상품_반환;
 import static kitchenpos.step.TableGroupStep.테이블_그룹_삭제_요청;
 import static kitchenpos.step.TableGroupStep.테이블_그룹_생성_요청하고_아이디_반환;
-import static kitchenpos.step.TableStep.테이블_생성_요청하고_테이블_반환;
+import static kitchenpos.step.TableStep.테이블_생성_요청하고_아이디_반환;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -44,7 +43,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문을_생성한다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final Long orderTableId = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(5, false));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -57,7 +56,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final Long orderTableId = savedOrderTable.getId();
             final ExtractableResponse<Response> response = 주문_생성_요청(
                     new OrderCreateRequest(
                             orderTableId,
@@ -66,17 +64,17 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
-                    () -> assertThat(response.jsonPath().getLong("orderTableId")).isEqualTo(savedOrderTable.getId())
+                    () -> assertThat(response.jsonPath().getLong("orderTableId")).isEqualTo(orderTableId)
             );
         }
 
         @Test
         void 주문_항목은_반드시_1개_이상이어야_한다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final Long orderTableId = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(5, false));
 
             final ExtractableResponse<Response> response = 주문_생성_요청(
                     new OrderCreateRequest(
-                            savedOrderTable.getId(),
+                            orderTableId,
                             List.of()
                     )
             );
@@ -86,7 +84,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 동일한_메뉴는_1개의_주문항목으로_표시되어야_한다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final Long orderTableId = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(5, false));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -99,7 +97,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final Long orderTableId = savedOrderTable.getId();
             final ExtractableResponse<Response> response = 주문_생성_요청(new OrderCreateRequest(
                     orderTableId,
                     List.of(
@@ -138,7 +135,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문을_조회한다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final Long orderTableId = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(5, false));
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
@@ -152,7 +149,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
-                            savedOrderTable.getId(),
+                            orderTableId,
                             List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     )
             );
@@ -175,7 +172,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_상태를_변경한다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final Long orderTableId = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(5, false));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -190,7 +187,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
-                            savedOrderTable.getId(),
+                            orderTableId,
                             List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     )
             );
@@ -206,7 +203,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_상태가_COMPLETION인_테이블_상태는_변경할_수_없다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final Long orderTableId = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(5, false));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -221,7 +218,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
-                            savedOrderTable.getId(),
+                            orderTableId,
                             List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     )
             );
@@ -235,10 +232,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_상태가_식사중이거나_조리중인_테이블은_그룹을_해제할_수_없다() {
-            final TableResponse table1 = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, true));
-            final TableResponse table2 = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, true));
+            final Long table1Id = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(5, true));
+            final Long table2Id = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(5, true));
 
-            final Long tableGroupId = 테이블_그룹_생성_요청하고_아이디_반환(new TableGroupCreateRequest(List.of(table1.getId(), table2.getId())));
+            final Long tableGroupId = 테이블_그룹_생성_요청하고_아이디_반환(new TableGroupCreateRequest(List.of(table1Id, table2Id)));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -253,7 +250,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             주문_생성_요청(
                     new OrderCreateRequest(
-                            table1.getId(),
+                            table1Id,
                             List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     )
             );

@@ -29,6 +29,7 @@ public class Order extends BaseDate {
     @Enumerated(STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
+
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;

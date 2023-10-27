@@ -6,15 +6,15 @@ import io.restassured.response.Response;
 import kitchenpos.ui.request.TableCreateRequest;
 import kitchenpos.ui.request.TableUpdateEmptyRequest;
 import kitchenpos.ui.request.TableUpdateNumberOfGuestsRequest;
-import kitchenpos.ui.response.TableResponse;
 
 import static io.restassured.http.ContentType.JSON;
 
 public class TableStep {
 
-    public static TableResponse 테이블_생성_요청하고_테이블_반환(final TableCreateRequest request) {
+    public static Long 테이블_생성_요청하고_아이디_반환(final TableCreateRequest request) {
         final ExtractableResponse<Response> response = 테이블_생성_요청(request);
-        return response.jsonPath().getObject("", TableResponse.class);
+        String location = response.header("Location");
+        return Long.valueOf(location.split("/")[2]);
     }
 
     public static ExtractableResponse<Response> 테이블_생성_요청(final TableCreateRequest request) {

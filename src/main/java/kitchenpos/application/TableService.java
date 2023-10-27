@@ -27,13 +27,13 @@ public class TableService {
     }
 
     @Transactional
-    public TableResponse create(final TableCreateRequest request) {
+    public Long create(final TableCreateRequest request) {
         final OrderTable orderTable = new OrderTable(
                 request.getNumberOfGuests(),
                 request.getEmpty()
         );
 
-        return TableResponse.from(orderTableRepository.save(orderTable));
+        return orderTableRepository.save(orderTable).getId();
     }
 
     public List<TableResponse> list() {

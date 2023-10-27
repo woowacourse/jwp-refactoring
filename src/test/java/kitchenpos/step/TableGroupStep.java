@@ -24,7 +24,8 @@ public class TableGroupStep {
 
     public static Long 테이블_그룹_생성_요청하고_아이디_반환(final TableGroupCreateRequest request) {
         final ExtractableResponse<Response> response = 테이블_그룹_생성_요청(request);
-        return response.jsonPath().getLong("id");
+        String location = response.header("Location");
+        return Long.valueOf(location.split("/")[2]);
     }
 
     public static ExtractableResponse<Response> 테이블_그룹_생성_요청(final TableGroupCreateRequest reuest) {

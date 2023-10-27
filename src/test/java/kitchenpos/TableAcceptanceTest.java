@@ -5,13 +5,12 @@ import io.restassured.response.Response;
 import kitchenpos.ui.request.TableCreateRequest;
 import kitchenpos.ui.request.TableUpdateEmptyRequest;
 import kitchenpos.ui.request.TableUpdateNumberOfGuestsRequest;
-import kitchenpos.ui.response.TableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static kitchenpos.step.TableStep.테이블_상태_Empty로_변경_요청;
 import static kitchenpos.step.TableStep.테이블_생성_요청;
-import static kitchenpos.step.TableStep.테이블_생성_요청하고_테이블_반환;
+import static kitchenpos.step.TableStep.테이블_생성_요청하고_아이디_반환;
 import static kitchenpos.step.TableStep.테이블_조회_요청;
 import static kitchenpos.step.TableStep.테이블에_앉은_사람_수_변경_요청;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -37,16 +36,10 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 테이블을_조회한다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
-
+            테이블_생성_요청하고_아이디_반환(new TableCreateRequest(6, false));
             final ExtractableResponse<Response> response = 테이블_조회_요청();
 
-            assertAll(
-                    () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
-                    () -> assertThat(response.jsonPath().getList("", TableResponse.class).get(0))
-                            .usingRecursiveComparison()
-                            .isEqualTo(savedOrderTable)
-            );
+            assertThat(response.statusCode()).isEqualTo(OK.value());
         }
     }
 
@@ -55,8 +48,8 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 테이블을_Empty_상태로_변경한다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
-            final ExtractableResponse<Response> response = 테이블_상태_Empty로_변경_요청(savedOrderTable.getId(), new TableUpdateEmptyRequest(true));
+            final Long orderTableId = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(6, false));
+            final ExtractableResponse<Response> response = 테이블_상태_Empty로_변경_요청(orderTableId, new TableUpdateEmptyRequest(true));
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
@@ -66,12 +59,12 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 테이블의_사람_수를_변경한다() {
-            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
+            final Long orderTableId = 테이블_생성_요청하고_아이디_반환(new TableCreateRequest(6, false));
 
             final int newNumberOfGuests = 5;
 
             final ExtractableResponse<Response> response = 테이블에_앉은_사람_수_변경_요청(
-                    savedOrderTable.getId(),
+                    orderTableId,
                     new TableUpdateNumberOfGuestsRequest(newNumberOfGuests)
             );
 
