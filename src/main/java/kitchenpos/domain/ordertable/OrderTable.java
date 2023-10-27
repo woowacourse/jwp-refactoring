@@ -1,8 +1,6 @@
 package kitchenpos.domain.ordertable;
 
 import kitchenpos.common.BaseDate;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.tablegroup.TableGroupValidator;
 
 import javax.persistence.Entity;
@@ -53,10 +51,6 @@ public class OrderTable extends BaseDate {
         tableGroupValidator.validate(this);
         this.tableGroupId = null;
         notEmpty();
-    }
-
-    private static boolean canUngroupOrChangeEmpty(final Order it) {
-        return it.getOrderStatus() == OrderStatus.COOKING || it.getOrderStatus() == OrderStatus.MEAL;
     }
 
     public boolean isEmpty() {
