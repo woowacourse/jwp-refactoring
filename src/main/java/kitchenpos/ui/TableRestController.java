@@ -4,6 +4,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableChangeEmptyRequest;
+import kitchenpos.request.TableChangeNumberOfGuestsRequest;
 import kitchenpos.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +48,9 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable Long orderTableId,
-            @RequestBody int numberOfGuests
+            @RequestBody TableChangeNumberOfGuestsRequest request
     ) {
-        OrderTableResponse response = OrderTableResponse.from(tableService.changeNumberOfGuests(orderTableId, numberOfGuests));
+        OrderTableResponse response = OrderTableResponse.from(tableService.changeNumberOfGuests(orderTableId, request));
         return ResponseEntity.ok().body(response);
     }
 }

@@ -7,6 +7,7 @@ import kitchenpos.domain.*;
 import kitchenpos.fixture.MenuGroupFixtures;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableChangeEmptyRequest;
+import kitchenpos.request.TableChangeNumberOfGuestsRequest;
 import kitchenpos.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -154,9 +155,10 @@ class TableServiceTest extends ServiceTest {
         OrderTableCreateRequest request = new OrderTableCreateRequest(3, false);
         OrderTable orderTable = tableService.create(request);
         int expected = 5;
+        TableChangeNumberOfGuestsRequest changeNumberRequest = new TableChangeNumberOfGuestsRequest(expected);
 
         // when
-        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), expected);
+        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), changeNumberRequest);
 
         // then
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(expected);
@@ -169,9 +171,10 @@ class TableServiceTest extends ServiceTest {
         // given
         OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
         OrderTable orderTable = tableService.create(request);
+        TableChangeNumberOfGuestsRequest changeNumberRequest = new TableChangeNumberOfGuestsRequest(invalidNumberOfGuests);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), invalidNumberOfGuests))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -181,9 +184,10 @@ class TableServiceTest extends ServiceTest {
         // given
         OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
         OrderTable savedOrderTable = tableService.create(request);
+        TableChangeNumberOfGuestsRequest changeNumberRequest = new TableChangeNumberOfGuestsRequest(8);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), 8))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changeNumberRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

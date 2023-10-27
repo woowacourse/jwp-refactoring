@@ -6,6 +6,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableChangeEmptyRequest;
+import kitchenpos.request.TableChangeNumberOfGuestsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,10 +50,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
+    public OrderTable changeNumberOfGuests(Long orderTableId, TableChangeNumberOfGuestsRequest request) {
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrderTable.changeNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return orderTableDao.save(savedOrderTable);
     }
 }
