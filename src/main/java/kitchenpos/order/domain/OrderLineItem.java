@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +15,9 @@ public class OrderLineItem {
     private Long menuId;
     private long quantity;
 
+    @Embedded
+    private OrderLineItemSpec orderLineItemSpec;
+
     public OrderLineItem() {
     }
 
@@ -25,6 +29,10 @@ public class OrderLineItem {
         this.seq = seq;
         this.menuId = menuId;
         this.quantity = quantity;
+    }
+
+    public void createOrderSpec(final OrderLineItemSpec orderLineItemSpec) {
+        this.orderLineItemSpec = orderLineItemSpec;
     }
 
     public Long getMenuId() {

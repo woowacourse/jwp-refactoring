@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.order.domain.PlaceOrderService;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderStatusChangeRequest;
@@ -16,19 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OrderValidator orderValidator;
+    private final PlaceOrderService placeOrderService;
 
     public OrderService(
             final OrderRepository orderRepository,
-            final OrderValidator orderValidator) {
+            final PlaceOrderService placeOrderService) {
         this.orderRepository = orderRepository;
-        this.orderValidator = orderValidator;
+        this.placeOrderService = placeOrderService;
     }
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
         final List<OrderLineItem> orderLineItems = createOrderLineItemsByOrderRequest(orderRequest);
-        final Order order = Order.of(orderRequest.getOrderTableId(), orderLineItems, orderValidator);
+        final Order order = Order.of(orderRequest.getOrderTableId(), orderLineItems, placeOrderService);
         return orderRepository.save(order);
     }
 

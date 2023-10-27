@@ -23,9 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class OrderValidatorTest {
+public class PlaceOrderServiceTest {
     @Autowired
-    private OrderValidator orderValidator;
+    private PlaceOrderService placeOrderService;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -66,7 +66,7 @@ public class OrderValidatorTest {
         final Order order = new Order(1L, List.of(orderLineItem1, orderLineItem2));
 
         // when & then
-        assertThatThrownBy(() -> orderValidator.validate(order))
+        assertThatThrownBy(() -> placeOrderService.place(order))
                 .isInstanceOf(InvalidOrderException.class);
     }
 
@@ -78,7 +78,7 @@ public class OrderValidatorTest {
         final Order order = new Order(nonExistTableId, List.of(orderLineItem));
 
         // when & then
-        assertThatThrownBy(() -> orderValidator.validate(order))
+        assertThatThrownBy(() -> placeOrderService.place(order))
                 .isInstanceOf(InvalidOrderException.class);
     }
 
@@ -91,7 +91,7 @@ public class OrderValidatorTest {
         final Order order = new Order(orderTable.getId(), List.of(orderLineItem));
 
         // when & then
-        assertThatThrownBy(() -> orderValidator.validate(order))
+        assertThatThrownBy(() -> placeOrderService.place(order))
                 .isInstanceOf(InvalidOrderException.class);
     }
 }

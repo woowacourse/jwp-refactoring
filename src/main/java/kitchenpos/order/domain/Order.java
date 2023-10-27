@@ -59,9 +59,9 @@ public class Order {
     }
 
     public static Order of(final Long orderTableId, final List<OrderLineItem> orderLineItems,
-                           final OrderValidator orderValidator) {
+                           final PlaceOrderService placeOrderService) {
         final Order order = new Order(orderTableId, orderLineItems);
-        orderValidator.validate(order);
+        placeOrderService.place(order);
         return order;
     }
 
