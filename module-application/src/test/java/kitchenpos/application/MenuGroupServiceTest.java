@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
+import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.dto.MenuGroupCreateRequest;
 import kitchenpos.menu.application.dto.MenuGroupResponse;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.application.MenuGroupService;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
