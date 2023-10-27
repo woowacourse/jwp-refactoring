@@ -1,7 +1,7 @@
 package kitchenpos.product.application;
 
 import java.math.BigDecimal;
-import kitchenpos.Money;
+import kitchenpos.common.Money;
 import kitchenpos.product.domain.Product;
 
 public class CreateProductCommand {

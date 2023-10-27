@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.ordertable.domain;
 
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Nested;

@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos;
 
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-public abstract class ServiceTest {
+public abstract class ServiceTestDeprecate {
 
     @Autowired
     protected MenuRepository menuRepository;

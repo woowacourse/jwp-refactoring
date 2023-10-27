@@ -1,10 +1,7 @@
-package kitchenpos.menu;
+package kitchenpos.menu.domain;
 
 import java.util.List;
-import kitchenpos.Money;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.common.Money;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;

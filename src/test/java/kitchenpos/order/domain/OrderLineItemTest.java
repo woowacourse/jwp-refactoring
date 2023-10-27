@@ -1,7 +1,6 @@
-package kitchenpos.order;
+package kitchenpos.order.domain;
 
-import kitchenpos.Money;
-import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.common.Money;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

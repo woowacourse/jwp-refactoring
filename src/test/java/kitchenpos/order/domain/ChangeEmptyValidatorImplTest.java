@@ -1,7 +1,11 @@
 package kitchenpos.order.domain;
 
 import java.util.List;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.ChangeEmptyValidator;
+import kitchenpos.order.domain.ChangeEmptyValidatorImpl;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
@@ -21,9 +25,6 @@ class ChangeEmptyValidatorImplTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
     private OrderTableRepository orderTableRepository;
 
     private ChangeEmptyValidator changeEmptyValidator;
@@ -36,10 +37,8 @@ class ChangeEmptyValidatorImplTest {
     @Test
     void 포함된_그룹이_있는_경우_예외가_발생한다() {
         //given
-        TableGroup 테이블_그룹 = tableGroupRepository.save(new TableGroup());
         OrderTable 테이블 = orderTableRepository.save(new OrderTable(0, true));
-        OrderTable 테이블_2 = orderTableRepository.save(new OrderTable(0, true));
-        테이블_그룹.changeOrderTables(List.of(테이블, 테이블_2));
+        테이블.changeTableGroup(1L);
 
         //expect
         assertThatThrownBy(() -> 테이블.changeEmpty(changeEmptyValidator))

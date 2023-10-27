@@ -1,26 +1,24 @@
-package kitchenpos.application;
+package kitchenpos.tablegroup.application;
 
 import java.util.List;
-import kitchenpos.tablegroup.application.CreateTableGroupCommand;
+import kitchenpos.ServiceTestDeprecate;
 import kitchenpos.tablegroup.application.CreateTableGroupCommand.TableInGroup;
-import kitchenpos.tablegroup.application.TableGroupDto;
 import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static kitchenpos.order.OrderLineItemFixture.id_없는_주문항목;
+import static kitchenpos.order.domain.OrderLineItemFixture.id_없는_주문항목;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class TableGroupServiceTest extends ServiceTest {
+class TableGroupServiceTestDeprecate extends ServiceTestDeprecate {
 
     @Autowired
     private TableGroupService tableGroupService;

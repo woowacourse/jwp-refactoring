@@ -1,29 +1,36 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.application.ChangeOrderStatusCommand;
-import kitchenpos.order.application.CreateOrderCommand;
+import kitchenpos.ServiceTest;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.CreateOrderCommand.OrderLineItemRequest;
-import kitchenpos.order.application.OrderDto;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-class OrderServiceTest extends ServiceTest {
+@ServiceTest
+class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
 
     @Nested
@@ -42,59 +49,6 @@ class OrderServiceTest extends ServiceTest {
 
             //then
             assertThat(orderRepository.existsById(실제주문.getId())).isTrue();
-        }
-
-        @Test
-        void 빈_테이블일_경우_예외가_발생한다() {
-            //given
-            OrderLineItemRequest 주문상품 = 주문_상품_초기화();
-            long 빈_테이블_아이디 = 1L;
-
-            CreateOrderCommand 커맨드 = new CreateOrderCommand(빈_테이블_아이디, List.of(주문상품));
-
-            //expect
-            assertThatThrownBy(() -> orderService.create(커맨드))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 테이블이_존재하지_않는경우_예외가_발생한다() {
-            //given
-            OrderLineItemRequest 주문상품 = 주문_상품_초기화();
-            OrderTable 삭제된_테이블 = 비어있지_않은_테이블_생성();
-            orderTableRepository.delete(삭제된_테이블);
-
-            CreateOrderCommand 커맨드 = new CreateOrderCommand(삭제된_테이블.getId(), List.of(주문상품));
-
-            //expect
-            assertThatThrownBy(() -> orderService.create(커맨드))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-        }
-        @Test
-        void 주문에_포함된_상품이_없으면_예외가_발생한다() {
-            //given
-            OrderTable 테이블 = 비어있지_않은_테이블_생성();
-            CreateOrderCommand 커맨드 = mock(CreateOrderCommand.class);
-            when(커맨드.getOrderLineItemRequests()).thenReturn(emptyList());
-            when(커맨드.getOrderTableId()).thenReturn(테이블.getId());
-
-            //expect
-            assertThatThrownBy(() -> orderService.create(커맨드))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 같은_상품이_있으면_예외가_발생한다() {
-            //given
-            OrderLineItemRequest 주문상품 = 주문_상품_초기화();
-            OrderTable 테이블 = 비어있지_않은_테이블_생성();
-
-            CreateOrderCommand 커맨드 = new CreateOrderCommand(테이블.getId(), List.of(주문상품, 주문상품));
-
-            //expect
-            assertThatThrownBy(() -> orderService.create(커맨드))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
     }

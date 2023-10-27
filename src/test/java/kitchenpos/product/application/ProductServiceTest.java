@@ -1,11 +1,11 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.product.application.CreateProductCommand;
-import kitchenpos.product.application.ProductDto;
-import kitchenpos.product.application.ProductService;
+import kitchenpos.ServiceTest;
+import kitchenpos.ServiceTestDeprecate;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,11 +17,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-
-class ProductServiceTest extends ServiceTest {
+@ServiceTest
+class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductRepository productRepository;
 
 
     @Nested

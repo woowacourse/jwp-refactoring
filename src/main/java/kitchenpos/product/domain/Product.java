@@ -6,7 +6,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.Money;
+import kitchenpos.common.Money;
 
 import static java.util.Objects.isNull;
 import static javax.persistence.GenerationType.IDENTITY;

@@ -1,34 +1,40 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.application.CreateMenuCommand;
+import kitchenpos.ServiceTest;
 import kitchenpos.menu.application.CreateMenuCommand.CreateMenuProductCommand;
-import kitchenpos.menu.application.MenuDto;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-
-class MenuServiceTest extends ServiceTest {
+@ServiceTest
+class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Nested
     class 메뉴_생성 {
@@ -63,8 +69,7 @@ class MenuServiceTest extends ServiceTest {
         void 그룹이_존재하지_않으면_예외가_발생한다() {
             //given
             MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
-            jdbcTemplate.update("DELETE FROM menu_group WHERE id = ?", ps -> ps.setLong(1, 메뉴_그룹.getId()));
-
+            menuGroupRepository.deleteById(메뉴_그룹.getId());
             CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(1_000), 메뉴_그룹.getId(), 상품_요청_만들기());
 
             //expect

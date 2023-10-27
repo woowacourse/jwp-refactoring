@@ -1,7 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.product.domain;
 
-import kitchenpos.Money;
-import kitchenpos.product.domain.Product;
+import kitchenpos.common.Money;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

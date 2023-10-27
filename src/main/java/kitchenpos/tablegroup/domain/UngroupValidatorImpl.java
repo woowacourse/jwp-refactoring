@@ -1,10 +1,10 @@
-package kitchenpos.order.domain;
+package kitchenpos.tablegroup.domain;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.UngroupValidator;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import org.springframework.stereotype.Component;
 
 @Component

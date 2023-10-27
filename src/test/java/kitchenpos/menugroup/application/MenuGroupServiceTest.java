@@ -1,22 +1,25 @@
-package kitchenpos.application;
+package kitchenpos.menugroup.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menugroup.application.CreateMenuGroupCommand;
-import kitchenpos.menugroup.application.MenuGroupDto;
-import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.ServiceTest;
+import kitchenpos.ServiceTestDeprecate;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-
-class MenuGroupServiceTest extends ServiceTest {
+@ServiceTest
+class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
 
     @Test

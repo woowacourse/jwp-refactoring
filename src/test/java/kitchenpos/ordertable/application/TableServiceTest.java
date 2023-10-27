@@ -1,16 +1,14 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.application;
 
 import java.util.List;
-import kitchenpos.Money;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.ServiceTest;
 import kitchenpos.table.application.ChangeNumberOfGuestsCommand;
 import kitchenpos.table.application.ChangeTableEmptyCommand;
 import kitchenpos.table.application.CreateTableCommand;
 import kitchenpos.table.application.OrderTableDto;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-
-class TableServiceTest extends ServiceTest {
-
+@ServiceTest
+class TableServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
 
     @Test
@@ -128,53 +128,6 @@ class TableServiceTest extends ServiceTest {
 
             //then
             assertThat(변경된_테이블.isEmpty()).isTrue();
-        }
-
-        @Test
-        void 테이블에_COMPLETION_상태가_아닌_주문이_있으면_예외가_발생한다() {
-            //given
-            OrderTable 테이블 = new OrderTable(2, false);
-            OrderTable 생성된_테이블 = orderTableRepository.save(테이블);
-            주문만들기(생성된_테이블);
-            ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
-
-            //expect
-            assertThatThrownBy(() -> tableService.changeEmpty(테이블_비우기_요청))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        private void 주문만들기(final OrderTable 생성된_테이블) {
-            OrderLineItem 주문상품 = 주문_상품_만들기();
-            Order 주문 = new Order(생성된_테이블.getId(), List.of(주문상품));
-            주문.startCooking();
-            orderRepository.save(주문);
-        }
-
-        private OrderLineItem 주문_상품_만들기() {
-            final var 메뉴 = menuRepository.findAll().get(0);
-            return OrderLineItem.of(null, 메뉴.getId(), "메뉴이름", Money.of(10_000), 1);
-        }
-
-        @Test
-        void 그룹에속한_테이블이면_예외가_발생한다() {
-            //given
-            OrderTable 그룹있는_테이블 = orderTableRepository.save(new OrderTable(0, true));
-            TableGroup 생성된_그룹 = 그룹_생성하기(그룹있는_테이블);
-            그룹있는_테이블.changeTableGroup(생성된_그룹.getId());
-            orderTableRepository.save(그룹있는_테이블);
-
-            //expect
-            ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(그룹있는_테이블.getId(), true);
-            assertThatThrownBy(() -> tableService.changeEmpty(테이블_비우기_요청))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        private TableGroup 그룹_생성하기(final OrderTable 포함할_테이블) {
-            List<OrderTable> 테이블_목록 = List.of(포함할_테이블, new OrderTable(0, true));
-            TableGroup 테이블_그룹 = new TableGroup();
-            tableGroupRepository.save(테이블_그룹);
-            테이블_그룹.changeOrderTables(테이블_목록);
-            return 테이블_그룹;
         }
 
     }

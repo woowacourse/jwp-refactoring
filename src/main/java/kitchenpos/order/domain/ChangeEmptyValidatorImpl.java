@@ -1,6 +1,8 @@
 package kitchenpos.order.domain;
 
 import java.util.Arrays;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.ChangeEmptyValidator;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Component;

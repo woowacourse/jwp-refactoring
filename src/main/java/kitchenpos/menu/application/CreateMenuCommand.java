@@ -3,7 +3,7 @@ package kitchenpos.menu.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.Money;
+import kitchenpos.common.Money;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 

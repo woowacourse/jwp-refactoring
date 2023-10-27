@@ -2,11 +2,11 @@ package kitchenpos.table.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.ChangeNumberOfGuestsCommand;
 import kitchenpos.table.application.ChangeTableEmptyCommand;
 import kitchenpos.table.application.CreateTableCommand;
 import kitchenpos.table.application.OrderTableDto;
+import kitchenpos.table.application.TableService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

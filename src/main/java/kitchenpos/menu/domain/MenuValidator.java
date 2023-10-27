@@ -1,6 +1,6 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.Money;
+import kitchenpos.common.Money;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;

@@ -5,7 +5,7 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import kitchenpos.Money;
+import kitchenpos.common.Money;
 
 @Embeddable
 @AttributeOverrides({

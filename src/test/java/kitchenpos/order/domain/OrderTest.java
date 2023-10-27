@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -9,8 +9,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.platform.commons.util.ReflectionUtils;
 
-import static kitchenpos.order.OrderLineItemFixture.id_없는_주문항목;
-import static kitchenpos.order.OrderLineItemFixture.주문항목;
+import static kitchenpos.order.domain.OrderLineItemFixture.id_없는_주문항목;
+import static kitchenpos.order.domain.OrderLineItemFixture.주문항목;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.platform.commons.util.ReflectionUtils.HierarchyTraversalMode.TOP_DOWN;

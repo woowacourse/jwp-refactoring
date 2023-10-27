@@ -1,7 +1,6 @@
-package kitchenpos.order;
+package kitchenpos.order.domain;
 
-import kitchenpos.Money;
-import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.common.Money;
 
 public class OrderLineItemFixture {
     public static OrderLineItem id_없는_주문항목() {

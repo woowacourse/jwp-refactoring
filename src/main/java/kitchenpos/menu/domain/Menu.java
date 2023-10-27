@@ -12,7 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.Money;
+import kitchenpos.common.Money;
 import org.springframework.util.CollectionUtils;
 
 import static java.util.Objects.requireNonNull;

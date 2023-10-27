@@ -1,10 +1,14 @@
-package kitchenpos.order.domain;
+package kitchenpos.tablegroup.domain;
 
 import java.util.List;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
+import kitchenpos.tablegroup.domain.UngroupValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
