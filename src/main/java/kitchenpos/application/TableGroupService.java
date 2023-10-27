@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
+import kitchenpos.domain.tablegroup.TableGroupValidator;
 import kitchenpos.ui.request.TableGroupCreateRequest;
 import kitchenpos.ui.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,15 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupValidator tableGroupValidator;
 
     public TableGroupService(
             final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
-    ) {
+            final TableGroupRepository tableGroupRepository,
+            final TableGroupValidator tableGroupValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupValidator = tableGroupValidator;
     }
 
     @Transactional
@@ -53,6 +56,6 @@ public class TableGroupService {
         orderTables.stream()
                 .map(OrderTable::getId)
                 .map(it -> orderTableRepository.findById(it).get())
-                .forEach(OrderTable::ungroup);
+                .forEach(orderTable -> orderTable.ungroup(tableGroupValidator));
     }
 }

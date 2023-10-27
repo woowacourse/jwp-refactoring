@@ -27,6 +27,7 @@ public class Order extends BaseDate {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    // TODO: 간접참조로
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;

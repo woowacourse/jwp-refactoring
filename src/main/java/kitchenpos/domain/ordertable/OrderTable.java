@@ -3,13 +3,11 @@ package kitchenpos.domain.ordertable;
 import kitchenpos.common.BaseDate;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.tablegroup.TableGroupValidator;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -22,9 +20,6 @@ public class OrderTable extends BaseDate {
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
-
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders = new ArrayList<>();
 
     public OrderTable(final Long id, final Long tableGroupId, final Integer numberOfGuests, final boolean empty) {
         this.id = id;
@@ -40,13 +35,8 @@ public class OrderTable extends BaseDate {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void changeEmpty(final Boolean empty) {
-        if (tableGroupId != null && empty) {
-            throw new IllegalArgumentException("[ERROR] 테이블 그룹이 존재하는 경우에 혼자 테이블을 비울 수 없습니다.");
-        }
-        if (orders.stream().anyMatch(OrderTable::canUngroupOrChangeEmpty)) {
-            throw new IllegalArgumentException("[ERROR] 조리중이거나, 식사중인 테이블을 비울 수 없습니다.");
-        }
+    public void changeEmpty(final Boolean empty, final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateChangeEmpty(this);
         if (empty) {
             empty();
             return;
@@ -54,21 +44,13 @@ public class OrderTable extends BaseDate {
         notEmpty();
     }
 
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("[ERROR] 손님의 숫자는 항상 0보다 커야 합니다.");
-        }
-        if (isEmpty()) {
-            throw new IllegalArgumentException("[ERROR] 빈 테이블의 손님 수는 변경할 수 없습니다.");
-        }
-
+    public void changeNumberOfGuests(final int numberOfGuests, final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateChangeNumberOfGuests(this);
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void ungroup() {
-        if (orders.stream().anyMatch(OrderTable::canUngroupOrChangeEmpty)) {
-            throw new IllegalArgumentException("[ERROR] 조리중이거나, 식사중인 테이블은 그룹을 해제할 수 없습니다.");
-        }
+    public void ungroup(final TableGroupValidator tableGroupValidator) {
+        tableGroupValidator.validate(this);
         this.tableGroupId = null;
         notEmpty();
     }
