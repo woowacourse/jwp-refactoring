@@ -182,6 +182,5 @@ public class OrderTableTest {
 
     @Nested
     class findTableGroupId_실패_테스트 {
-
     }
 }

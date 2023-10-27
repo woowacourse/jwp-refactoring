@@ -96,7 +96,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 모든_테이블_주문이_완료할_수_있다() {
             // given
-            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            tableGroupRepository.save(TableGroup.create());
             orderTableRepository.save(new OrderTable(1L, 3, false));
             orderTableRepository.save(new OrderTable(1L, 4, false));
 
@@ -121,11 +121,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 아직_완료되지_않은_테이블_주문이_존재하면_에러를_반환한다() {
             // given
-            final var tableGroup = tableGroupRepository.save(TableGroup.create());
+            tableGroupRepository.save(TableGroup.create());
             final var orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
-            final var menu = menuRepository.save(
-                    new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
+            menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
             final var orderLineItem = new OrderLineItem(1L, 5L);
             orderRepository.save(new Order(orderTable, OrderStatus.MEAL, List.of(orderLineItem)));
 
