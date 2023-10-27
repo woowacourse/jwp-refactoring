@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import kitchenpos.common.BaseDate;
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -33,7 +34,8 @@ public class Order extends BaseDate {
     @Enumerated(STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     private Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {

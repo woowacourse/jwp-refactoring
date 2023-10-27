@@ -1,5 +1,6 @@
 package kitchenpos.ui.response;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
 import java.util.List;
@@ -19,10 +20,10 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static List<OrderLineItemResponse> from(final List<OrderLineItem> orderLineItems) {
+    public static List<OrderLineItemResponse> from(final List<OrderLineItem> orderLineItems, final Order order) {
         return orderLineItems.stream().map(it -> new OrderLineItemResponse(
                 it.getSeq(),
-                it.getOrder().getId(),
+                order.getId(),
                 it.getMenuId(),
                 it.getQuantity()
         )).collect(Collectors.toList());
