@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.integration.helper.InitIntegrationTest;
-import kitchenpos.product.application.dto.response.ProductResponse;
+import kitchenpos.menu.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.util.List;

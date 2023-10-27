@@ -1,17 +1,17 @@
-package kitchenpos.product.domain;
+package kitchenpos.menu.domain;
 
 import javax.persistence.Column;
 import java.math.BigDecimal;
 
-public class ProductPrice {
+public class Price {
 
     @Column(name = "price")
     private BigDecimal value;
 
-    protected ProductPrice() {
+    protected Price() {
     }
 
-    private ProductPrice(final BigDecimal value) {
+    private Price(final BigDecimal value) {
         validateMoreThanZero(value);
         this.value = value;
     }
@@ -22,8 +22,12 @@ public class ProductPrice {
         }
     }
 
-    public static ProductPrice of(final BigDecimal value) {
-        return new ProductPrice(value);
+    public static Price of(final BigDecimal value) {
+        return new Price(value);
+    }
+
+    public boolean isMoreThan(final Price otherPrice) {
+        return value.compareTo(otherPrice.getValue()) > 0;
     }
 
     public BigDecimal getValue() {

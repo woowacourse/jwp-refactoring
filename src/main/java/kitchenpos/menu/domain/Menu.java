@@ -18,7 +18,7 @@ public class Menu {
     private String name;
 
     @Embedded
-    private MenuPrice price;
+    private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
@@ -29,11 +29,11 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(final String name, final MenuPrice price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+    public Menu(final String name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(final Long id, final String name, final MenuPrice price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+    public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
         validatePrice(price, menuProducts);
         this.id = id;
         this.name = name;
@@ -42,8 +42,8 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    private void validatePrice(final MenuPrice price, final MenuProducts menuProducts) {
-        final MenuPrice totalPrice = menuProducts.calculateTotalPrice();
+    private void validatePrice(final Price price, final MenuProducts menuProducts) {
+        final Price totalPrice = menuProducts.calculateTotalPrice();
         if (price.isMoreThan(totalPrice)) {
             throw new IllegalArgumentException();
         }
@@ -70,7 +70,7 @@ public class Menu {
         return name;
     }
 
-    public MenuPrice getPrice() {
+    public Price getPrice() {
         return price;
     }
 

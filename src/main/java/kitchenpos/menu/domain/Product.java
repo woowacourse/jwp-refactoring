@@ -1,4 +1,4 @@
-package kitchenpos.product.domain;
+package kitchenpos.menu.domain;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -14,16 +14,16 @@ public class Product {
     private Long id;
     private String name;
     @Embedded
-    private ProductPrice price;
+    private Price price;
 
     public Product() {
     }
 
-    public Product(final String name, final ProductPrice price) {
+    public Product(final String name, final Price price) {
         this(null, name, price);
     }
 
-    public Product(final Long id, final String name, final ProductPrice price) {
+    public Product(final Long id, final String name, final Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -37,7 +37,7 @@ public class Product {
         return name;
     }
 
-    public ProductPrice getPrice() {
+    public Price getPrice() {
         return price;
     }
 }

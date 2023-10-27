@@ -10,8 +10,7 @@ public class MenuMapper {
 
     private MenuMapper() {
     }
-
-
+    
     public static MenuResponse mapToResponse(final Menu menu) {
         final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
                 .getValues()

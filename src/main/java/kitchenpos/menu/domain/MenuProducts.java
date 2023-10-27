@@ -22,14 +22,14 @@ public class MenuProducts {
         this.values = values;
     }
 
-    public MenuPrice calculateTotalPrice() {
+    public Price calculateTotalPrice() {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct value : values) {
             final BigDecimal price = value.getProductPrice()
                     .multiply(BigDecimal.valueOf(value.getQuantity()));
             sum = sum.add(price);
         }
-        return MenuPrice.of(sum);
+        return Price.of(sum);
     }
 
     public List<MenuProduct> getValues() {

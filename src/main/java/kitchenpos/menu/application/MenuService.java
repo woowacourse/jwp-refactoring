@@ -5,13 +5,13 @@ import kitchenpos.menu.application.dto.response.MenuResponse;
 import kitchenpos.menu.application.mapper.MenuMapper;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.Price;
+import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.menu.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -46,7 +46,7 @@ public class MenuService {
                 .stream()
                 .map(it -> new MenuProduct(findProduct(it.getProductId()), it.getQuantity()))
                 .collect(Collectors.toList()));
-        return new Menu(menuCreateRequest.getName(), MenuPrice.of(menuCreateRequest.getPrice()),
+        return new Menu(menuCreateRequest.getName(), Price.of(menuCreateRequest.getPrice()),
                 menuGroup, menuProducts);
     }
 
