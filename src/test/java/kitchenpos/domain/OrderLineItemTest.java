@@ -23,7 +23,7 @@ class OrderLineItemTest {
         Order order = Order.create(OrderTable.create(0, false));
 
         // when & then
-        assertThatThrownBy(() -> OrderLineItem.create(order, 1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), invalidQuantity))
+        assertThatThrownBy(() -> OrderLineItem.create(1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), invalidQuantity))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 항목의 수량은 0개 이상이어야 합니다.");
     }
@@ -35,6 +35,6 @@ class OrderLineItemTest {
         Order order = Order.create(OrderTable.create(0, false));
 
         // then
-        assertDoesNotThrow(() -> OrderLineItem.create(order, 1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), 1L));
+        assertDoesNotThrow(() -> OrderLineItem.create(1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), 1L));
     }
 }

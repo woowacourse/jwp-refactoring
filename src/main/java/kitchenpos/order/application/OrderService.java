@@ -59,7 +59,7 @@ public class OrderService {
             final Long menuId = orderLineItemRequest.getMenuId();
             final Long quantity = orderLineItemRequest.getQuantity();
             final Menu menu = menusById.get(menuId);
-            orderLineItems.add(OrderLineItem.create(order, menuId, menu.getName(), menu.getPrice(), quantity));
+            orderLineItems.add(OrderLineItem.create(menuId, menu.getName(), menu.getPrice(), quantity));
         }
         order.updateOrderLineItems(orderLineItems);
         orderRepository.save(order);

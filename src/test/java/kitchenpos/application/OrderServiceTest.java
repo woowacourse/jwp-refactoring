@@ -111,8 +111,6 @@ class OrderServiceTest extends ServiceTest {
         assertSoftly(softly -> {
             softly.assertThat(orderRepository.findById(actual.getId())).isPresent();
             softly.assertThat(actual.getOrderLineItems()).hasSize(2);
-            softly.assertThat(actual.getOrderLineItems()).extracting("orderId")
-                    .containsExactly(actual.getId(), actual.getId());
             softly.assertThat(actual.getOrderLineItems()).extracting("menuId")
                     .contains(후1양1_메뉴.getId(), 간1양1_메뉴.getId());
             softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);

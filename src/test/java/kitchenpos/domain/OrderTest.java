@@ -63,8 +63,8 @@ class OrderTest {
     void updateOrderLineItems() {
         // given
         Order order = Order.create(orderTable);
-        OrderLineItem orderLineItem1 = OrderLineItem.create(order, 1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), 1L);
-        OrderLineItem orderLineItem2 = OrderLineItem.create(order, 1L, "두마리메뉴 - 간1양1", BigDecimal.valueOf(32000L), 1L);
+        OrderLineItem orderLineItem1 = OrderLineItem.create(1L, "두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), 1L);
+        OrderLineItem orderLineItem2 = OrderLineItem.create(1L, "두마리메뉴 - 간1양1", BigDecimal.valueOf(32000L), 1L);
 
         // when
         order.updateOrderLineItems(List.of(orderLineItem1, orderLineItem2));
