@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "numberOfGuests": 0,
-  "empty": true
+  "empty": false
 }
 
 ###
