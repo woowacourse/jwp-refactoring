@@ -1,0 +1,13 @@
+dependencies {
+    implementation project(path: ':menu')
+    implementation project(path: ':table')
+    implementation project(path: ':common')
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
+}
