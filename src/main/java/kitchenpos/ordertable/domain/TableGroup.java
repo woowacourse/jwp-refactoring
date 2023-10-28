@@ -37,7 +37,7 @@ public class TableGroup {
         this.createdDate = createdDate;
         this.orderTables = orderTables;
         for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(id);
+            orderTable.group(id);
         }
     }
 

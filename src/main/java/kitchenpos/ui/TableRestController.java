@@ -56,8 +56,9 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestBody final OrderTableDto orderTableDto
     ) {
+        OrderTable orderTable = orderTableService.changeEmpty(orderTableId, orderTableMapper.toEntity(orderTableDto));
         return ResponseEntity.ok()
-                             .body(orderTableService.changeEmpty(orderTableId, orderTableMapper.toEntity(orderTableDto)))
+                             .body(OrderTableDto.from(orderTable))
             ;
     }
 
@@ -66,8 +67,9 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestBody final OrderTableDto orderTableDto
     ) {
+        OrderTable orderTable = orderTableService.changeNumberOfGuests(orderTableId, orderTableMapper.toEntity(orderTableDto));
         return ResponseEntity.ok()
-                             .body(orderTableService.changeNumberOfGuests(orderTableId, orderTableMapper.toEntity(orderTableDto)))
+                             .body(OrderTableDto.from(orderTable))
             ;
     }
 }

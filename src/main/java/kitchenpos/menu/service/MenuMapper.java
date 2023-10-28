@@ -22,12 +22,14 @@ public class MenuMapper {
 
     @Transactional(readOnly = true)
     public Menu toEntity(MenuDto menuDto) {
+        Long id = menuDto.getId();
         BigDecimal menuPrice = menuDto.getPrice();
         Long menuGroupId = menuDto.getMenuGroupId();
         String name = menuDto.getName();
         List<MenuProduct> menuProducts = toMenuProducts(menuDto.getMenuProductDtos());
 
         return new Menu.Builder()
+            .id(id)
             .name(name)
             .menuGroupId(menuGroupId)
             .menuProducts(menuProducts)

@@ -37,9 +37,17 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTableDto changeEmpty(final Long orderTableId, final OrderTable otherOrderTable) {
-        final OrderTable foundOrderTable = getById(orderTableId);
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTable otherOrderTable) {
+        final OrderTable orderTable = getById(orderTableId);
 
+        validateOrderNotProcessing(orderTableId);
+
+        orderTable.changeEmpty(otherOrderTable.isEmpty());
+
+        return orderTable;
+    }
+
+    private void validateOrderNotProcessing(Long orderTableId) {
         List<Order> cookingOrders = orderRepository.findByOrderTableIdAndOrderStatus(orderTableId,
             OrderStatus.COOKING);
         List<Order> mealOrders = orderRepository.findByOrderTableIdAndOrderStatus(orderTableId,
@@ -48,14 +56,10 @@ public class OrderTableService {
         if (!cookingOrders.isEmpty() || !mealOrders.isEmpty()) {
             throw new CustomException(ORDER_TABLE_CANNOT_CHANGE_STATUS);
         }
-
-        foundOrderTable.changeEmpty(otherOrderTable.isEmpty());
-
-        return OrderTableDto.from(foundOrderTable);
     }
 
     @Transactional
-    public OrderTableDto changeNumberOfGuests(
+    public OrderTable changeNumberOfGuests(
         final Long orderTableId,
         final OrderTable otherOrderTable
     ) {
@@ -63,7 +67,7 @@ public class OrderTableService {
 
         orderTable.changeNumberOfGuests(otherOrderTable.getNumberOfGuests());
 
-        return OrderTableDto.from(orderTable);
+        return orderTable;
     }
 
     public OrderTable getById(Long orderTableId) {

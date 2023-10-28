@@ -50,9 +50,13 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void ungroup() {
-        tableGroupId = null;
+    public void group(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
     }
 
     public Long getId() {
@@ -69,11 +73,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setTableGroupId(Long tableGroupId) {
-        this.empty = false;
-        this.tableGroupId = tableGroupId;
     }
 
     public static class Builder {

@@ -29,6 +29,7 @@ public class OrderMapper {
                                                      .collect(toList());
 
         return new Order.Builder()
+            .id(orderDto.getId())
             .orderStatus(OrderStatus.valueOf(orderDto.getOrderStatus()))
             .orderTableId(orderDto.getOrderTableId())
             .orderedTime(LocalDateTime.now())
