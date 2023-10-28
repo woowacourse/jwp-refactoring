@@ -35,7 +35,7 @@ public class MenuValidator {
         final Map<Long, Product> products = findAllProducts(menuProducts);
         final Price totalPrice = calculateTotalPrice(menuProducts, products);
 
-        if (menuPrice.isHigherThen(totalPrice)) {
+        if (menuPrice.isHigherThan(totalPrice)) {
             throw new InvalidMenuPriceException("메뉴 가격이 상품들의 가격 합보다 클 수 없습니다.");
         }
     }

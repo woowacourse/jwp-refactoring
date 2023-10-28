@@ -24,7 +24,7 @@ public class Price {
         }
     }
 
-    public boolean isHigherThen(final Price other) {
+    public boolean isHigherThan(final Price other) {
         return this.value.compareTo(other.value) > 0;
     }
 
