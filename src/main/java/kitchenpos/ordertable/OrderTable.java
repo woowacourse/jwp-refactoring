@@ -82,7 +82,7 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean isEmpty) {
-        if (isEmpty == true && Objects.nonNull(tableGroupId)) {
+        if (isEmpty == true && tableGroupId != null) {
             throw new IllegalArgumentException();
         }
         this.isEmpty = isEmpty;

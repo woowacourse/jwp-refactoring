@@ -2,7 +2,6 @@ package kitchenpos.ordertable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.order.JpaOrderRepository;
 import kitchenpos.order.OrderStatus;
@@ -43,7 +42,7 @@ public class OrderTableGrouping implements TableGrouping {
                 throw new IllegalArgumentException();
             }
 
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || savedOrderTable.getTableGroupId() != null) {
                 throw new IllegalArgumentException();
             }
 
@@ -56,7 +55,9 @@ public class OrderTableGrouping implements TableGrouping {
     public void ungroup(TableGroup tableGroup) {
 
         List<OrderTable> savedOrderTables = jpaOrderTableRepository.findAllByTableGroupId(tableGroup.getId());
-        List<Long> orderTableIds = savedOrderTables.stream().map(OrderTable::getId).collect(Collectors.toList());
+        List<Long> orderTableIds = savedOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
 
         if (jpaOrderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
