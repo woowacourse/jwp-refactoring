@@ -1,6 +1,7 @@
 package kitchenpos.application.order;
 
 import kitchenpos.domain.common.Quantity;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItems;
@@ -35,24 +36,27 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final CreateOrderRequest request) {
-        final List<Long> menus = request.getMenuIds();
+        final List<Long> menuIds = request.getMenuIds();
         final List<Quantity> quantities = convertToQuantityList(request.getQuantities());
-        menus.forEach(this::validateMenuExist);
-        final OrderLineItems orderLineItems = OrderLineItems.from(menus, quantities);
+        validateMenusExist(menuIds);
+        final OrderLineItems orderLineItems = OrderLineItems.from(menuIds, quantities);
 
         validateOrderTable(request.getOrderTableId());
         final Order order = Order.of(request.getOrderTableId(), orderLineItems);
         return OrderResponse.of(orderRepository.save(order));
     }
 
-    private void validateMenuExist(final Long menuId) {
-        if (!menuRepository.existsById(menuId)) {
-            throw new MenuNotFoundException(menuId);
+    private void validateMenusExist(final List<Long> menuIds) {
+        final List<Menu> allMenus = menuRepository.findAllById(menuIds);
+        if (allMenus.size() != menuIds.size()) {
+            throw new MenuNotFoundException();
         }
     }
 
     private List<Quantity> convertToQuantityList(final List<Long> quantities) {
-        return quantities.stream().map(Quantity::of).collect(Collectors.toList());
+        return quantities.stream()
+                .map(Quantity::of)
+                .collect(Collectors.toList());
     }
 
     private void validateOrderTable(final Long orderTableId) {

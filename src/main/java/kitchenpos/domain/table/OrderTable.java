@@ -14,11 +14,11 @@ public class OrderTable {
     public static final String NUMBER_OF_GUESTS_IS_BELOW_ZERO_ERROR_MESSAGE = "손님 수는 0보다 작을 수 없습니다.";
     public static final String CHANGE_UNORDERABLE_TABLE_NUMBER_OF_TABLE_ERROR_MESSAGE = "주문 불가능한 테이블의 손님 수는 변경할 수 없습니다.";
     public static final String CHANGE_UNORDERABLE_TABLE_WHEN_IN_TABLE_GROUP_ERROR_MESSAGE = "그룹 지정된 테이블은 주문 불가능 상태로 변경할 수 없습니다.";
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = true, name = "table_group_id")
+    @Column(name = "table_group_id")
     private Long tableGroupId;
     @NotNull
     private int numberOfGuests;
