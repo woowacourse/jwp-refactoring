@@ -1,15 +1,12 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
+import kitchenpos.domain.OrderValidator;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
@@ -19,14 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
+    private final OrderValidator orderValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository,
-                             final OrderTableRepository orderTableRepository,
+    public TableGroupService(final OrderValidator orderValidator, final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.orderValidator = orderValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -53,17 +49,7 @@ public class TableGroupService {
         tableGroupRepository.findById(tableGroupId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 그룹입니다."));
         final OrderTables orderTables = new OrderTables(orderTableRepository.findByTableGroupId(tableGroupId));
-        validateOrderTableIsCompletion(orderTables);
+        orderValidator.validateOrderStatusInCookingOrMeal(orderTables);
         orderTables.ungroup();
-    }
-
-    private void validateOrderTableIsCompletion(final OrderTables orderTables) {
-        final List<Long> orderTableIds = orderTables.getOrderTables().stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("현재 요리중이거나 식사 중인 경우 그룹해제를 할 수 없습니다.");
-        }
     }
 }

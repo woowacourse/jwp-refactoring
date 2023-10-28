@@ -3,4 +3,5 @@ dependencies {
     implementation(project(':common'))
     implementation(project(':menu'))
     implementation(project(':ordertable'))
+    implementation(project(':tablegroup'))
 }
