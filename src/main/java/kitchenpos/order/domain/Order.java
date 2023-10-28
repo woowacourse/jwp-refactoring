@@ -45,7 +45,19 @@ public class Order {
     }
 
     public static Order ofCooking(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        validate(orderTableId, orderLineItems);
         return new Order(orderTableId, COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    private static void validate(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        Objects.requireNonNull(orderTableId);
+        validateOrderLineItemsSize(orderLineItems);
+    }
+
+    private static void validateOrderLineItemsSize(final List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
@@ -63,5 +75,9 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }
