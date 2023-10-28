@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.application.MenuGroupService;
 import kitchenpos.dto.menugroup.request.MenuGroupCreateRequest;
 import kitchenpos.dto.menugroup.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
