@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "orders")
 public class Order {
     public static final String CHANGE_COMPLETED_ORDER_STATUS_ERROR_MESSAGE = "이미 완료된 주문은 변경할 수 없습니다.";
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,8 +41,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order of(final Long orderTable, final OrderLineItems orderLineItems) {
-        return new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public static Order of(final Long orderTableId, final OrderLineItems orderLineItems) {
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public boolean isNotCompleted() {

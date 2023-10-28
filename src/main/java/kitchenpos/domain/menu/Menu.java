@@ -44,12 +44,12 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public static Menu of(final Name name, final Money price, final Long menuGroup, final MenuProducts menuProducts) {
-        return new Menu(null, name, price, menuGroup, menuProducts);
+    public static Menu of(final Name name, final Money price, final Long menuGroupId, final MenuProducts menuProducts) {
+        return new Menu(null, name, price, menuGroupId, menuProducts);
     }
 
-    public static Menu of(final String name, final long price, final Long menuGroup, final MenuProducts menuProducts) {
-        return new Menu(null, Name.of(name), Money.valueOf(price), menuGroup, menuProducts);
+    public static Menu of(final String name, final long price, final Long menuGroupId, final MenuProducts menuProducts) {
+        return new Menu(null, Name.of(name), Money.valueOf(price), menuGroupId, menuProducts);
     }
 
     private void validateMenuProductsSize(final MenuProducts menuProducts) {
