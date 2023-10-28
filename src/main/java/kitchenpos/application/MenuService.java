@@ -70,7 +70,7 @@ public class MenuService {
         List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (MenuProductDto menuProductDto : menuProductDtos) {
-            Product product = productService.findById(menuProductDto.getProductId());
+            Product product = productService.getById(menuProductDto.getProductId());
             MenuProduct menuProduct = new MenuProduct.Builder()
                 .product(product)
                 .quantity(menuProductDto.getQuantity())

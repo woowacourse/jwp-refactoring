@@ -26,7 +26,7 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product findById(Long productId) {
+    public Product getById(Long productId) {
         return productRepository.findById(productId)
                                 .orElseThrow(() -> new CustomException(ExceptionType.PRODUCT_NOT_FOUND, String.valueOf(productId)));
     }
