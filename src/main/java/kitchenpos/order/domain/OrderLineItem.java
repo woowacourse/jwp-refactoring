@@ -12,7 +12,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private Long seq;
     private String name;
     private BigDecimal price;
     private long quantity;
@@ -20,8 +20,8 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long id, final String name, final BigDecimal price, final long quantity) {
-        this.id = id;
+    public OrderLineItem(final Long seq, final String name, final BigDecimal price, final long quantity) {
+        this.seq = seq;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -56,8 +56,8 @@ public class OrderLineItem {
         }
     }
 
-    public Long getId() {
-        return id;
+    public Long getSeq() {
+        return seq;
     }
 
     public String getName() {

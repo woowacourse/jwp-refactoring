@@ -44,7 +44,7 @@ public class OrderService {
     private List<OrderLineItem> createOrderLineItems(final List<Menu> menus, final OrderCreateRequest request) {
         final Map<Long, Long> menuIdAndQuantityMap = request.extractMenuIdAndQuantity();
         return menus.stream()
-                .map(menu -> OrderLineItem.of(menu.getName(), menu.getPrice(), menuIdAndQuantityMap.get(menu)))
+                .map(menu -> OrderLineItem.of(menu.getName(), menu.getPrice(), menuIdAndQuantityMap.get(menu.getId())))
                 .collect(Collectors.toList());
     }
 

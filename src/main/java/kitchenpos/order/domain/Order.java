@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -16,11 +18,12 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 
 @Entity
+@Table(name = "orders")
 public class Order {
-
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @Column(name = "order_table_id")
     private Long orderTableId;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;

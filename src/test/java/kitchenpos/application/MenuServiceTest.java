@@ -53,7 +53,6 @@ class MenuServiceTest {
                 menuGroupRepository.findAll().get(0).getId(),
                 createMenuProductRequests()
         );
-        System.out.println(":sdf;asmf;amdfalmdlasmasldf");
         // When
         Long createdMenuId = menuService.create(createRequest);
 

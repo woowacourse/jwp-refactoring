@@ -16,10 +16,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @Transactional
 class OrderTableServiceTest {
-
     @Autowired
     private OrderTableService orderTableService;
-
     @Autowired
     private OrderTableRepository orderTableRepository;
 
