@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 @Entity
 public class OrderLineItem {
@@ -20,7 +19,7 @@ public class OrderLineItem {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
     @Embedded
