@@ -18,11 +18,12 @@ public class OrderTableValidator {
 
     public void validate(final OrderCreateRequest request, final List<Menu> menus) {
         final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+        final List<Long> menuIds = request.extractMenuIds();
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (request.extractMenuIds().size() != menus.size()) {
+        if (menuIds.size() != menus.size()) {
             throw new IllegalArgumentException();
         }
     }
