@@ -7,10 +7,8 @@ import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.ui.dto.MenuProductDto;
 import kitchenpos.menu.ui.dto.MenuRequest;
@@ -52,9 +50,6 @@ class MenuServiceTest extends ServiceTestConfig {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    @Autowired
     private ProductRepository productRepository;
 
     @Nested
@@ -62,19 +57,16 @@ class MenuServiceTest extends ServiceTestConfig {
 
         private MenuGroup menuGroup;
         private List<Product> products;
-        private Menu menu;
         private List<MenuProductDto> menuProductDtos;
 
         @BeforeEach
         void setUp() {
             menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
-            menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
-            menuProductRepository.save(MenuProductFixture.메뉴_상품_생성(products.get(0), menu));
-            menuProductRepository.save(MenuProductFixture.메뉴_상품_생성(products.get(1), menu));
             menuProductDtos = products.stream()
                                       .map(product -> new MenuProductDto(product.getId(), 1L))
                                       .collect(Collectors.toList());
+            menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
         }
 
         @Test

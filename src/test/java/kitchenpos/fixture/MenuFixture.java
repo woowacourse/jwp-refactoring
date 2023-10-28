@@ -28,9 +28,8 @@ public class MenuFixture {
         }
 
         final MenuProducts 메뉴_상품들 = 메뉴_상품_엔티티들_생성(products);
-        final Menu 메뉴 = Menu.of(메뉴_이름, new Price(메뉴_가격_계산(products)), menuGroup.getId(), 메뉴_상품들);
 
-        return 메뉴;
+        return new Menu(메뉴_이름, new Price(메뉴_가격_계산(products)), menuGroup.getId(), 메뉴_상품들);
     }
 
     public static Menu 메뉴_엔티티_생성(final MenuGroup menuGroup, final List<Product> products) {
@@ -58,15 +57,13 @@ public class MenuFixture {
 
     private static MenuProducts 메뉴_상품_엔티티들_생성(final List<Product> products) {
         final List<MenuProduct> menuProducts = products.stream()
-                                                       .map(product -> 메뉴_상품_엔티티_생성(product))
+                                                       .map(MenuFixture::메뉴_상품_엔티티_생성)
                                                        .collect(Collectors.toList());
         return new MenuProducts(menuProducts);
     }
 
     private static MenuProduct 메뉴_상품_엔티티_생성(final Product product) {
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), DEFAULT_QUANTITY);
-
-        return menuProduct;
+        return new MenuProduct(product.getId(), DEFAULT_QUANTITY);
     }
 
     private static MenuRequest 메뉴_요청_dto_생성(final MenuGroup menuGroup, final List<Product> products, @Nullable final Integer number) {

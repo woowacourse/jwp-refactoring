@@ -32,7 +32,7 @@ public class Menu {
 
     protected Menu() {}
 
-    private Menu(
+    public Menu(
             final String name,
             final Price price,
             final Long menuGroupId,
@@ -42,18 +42,6 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public static Menu of(
-            final String name,
-            final Price price,
-            final Long menuGroupId,
-            final MenuProducts menuProducts
-    ) {
-        final Menu menu = new Menu(name, price, menuGroupId, menuProducts);
-        menuProducts.addMenuProducts(menu);
-
-        return menu;
     }
 
     public Long getId() {
@@ -74,10 +62,6 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts.getMenuProducts();
-    }
-
-    public void updateMenuProducts(final MenuProducts menuProducts) {
-        this.menuProducts = menuProducts;
     }
 
     @Override

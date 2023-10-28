@@ -4,7 +4,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuValidator;
-import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.ui.dto.MenuProductDto;
 import kitchenpos.menu.ui.dto.MenuRequest;
@@ -19,15 +18,12 @@ import java.util.stream.Collectors;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuProductRepository menuProductRepository;
     private final MenuValidator menuValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
-            final MenuProductRepository menuProductRepository,
             final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
-        this.menuProductRepository = menuProductRepository;
         this.menuValidator = menuValidator;
     }
 
@@ -55,19 +51,9 @@ public class MenuService {
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
-        for (final Menu menu : menus) {
-            final MenuProducts menuProducts = findAllMenuProducts(menu);
-            menu.updateMenuProducts(menuProducts);
-        }
 
         return menus.stream()
                     .map(MenuResponse::from)
                     .collect(Collectors.toList());
-    }
-
-    private MenuProducts findAllMenuProducts(final Menu menu) {
-        final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
-
-        return new MenuProducts(menuProducts);
     }
 }
