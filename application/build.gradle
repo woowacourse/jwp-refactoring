@@ -6,15 +6,15 @@ plugins{
 
 dependencies {
     implementation project(path: ':menu')
-    implementation project(path: ':menu_group')
+    implementation project(path: ':menu-group')
     implementation project(path: ':order')
-    implementation project(path: ':order_table')
+    implementation project(path: ':order-table')
     implementation project(path: ':product')
 
     implementation 'org.flywaydb:flyway-core'
 
     testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation project(path: ':menu_group')
+    testImplementation project(path: ':menu-group')
     runtimeOnly 'com.h2database:h2'
 }
 

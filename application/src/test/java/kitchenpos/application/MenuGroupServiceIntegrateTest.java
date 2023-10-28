@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.execute.ServiceIntegrateTest;
-import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.menu_group.application.MenuGroupService;
 import kitchenpos.menu_group.domain.MenuGroup;
 import kitchenpos.menu_group.domain.repository.MenuGroupRepository;
