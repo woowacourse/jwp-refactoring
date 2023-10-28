@@ -9,8 +9,8 @@ import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.request.OrderCreateRequest;
+import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,18 +20,19 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+
+    private final TableService tableService;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
+            final TableService tableService
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableService = tableService;
     }
 
     /**
@@ -45,8 +46,7 @@ public class OrderService {
                 .collect(Collectors.toList());
         validateOrderLineItemsSize(orderLineItems);
 
-        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        OrderTable orderTable = tableService.getById(request.getOrderTableId());
         return orderRepository.save(Order.create(orderTable, orderLineItems));
     }
 

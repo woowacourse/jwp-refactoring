@@ -38,20 +38,15 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(Long orderTableId, TableChangeEmptyRequest request) {
-        OrderTable savedOrderTable = getOrderTableById(orderTableId);
+        OrderTable savedOrderTable = getById(orderTableId);
         orderTableService.checkOrderStatusInCookingOrMeal(orderTableId);
         savedOrderTable.changeEmpty(request.isEmpty());
         return orderTableRepository.save(savedOrderTable);
     }
 
-    private OrderTable getOrderTableById(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                            .orElseThrow(IllegalArgumentException::new);
-    }
-
     @Transactional
     public OrderTable changeNumberOfGuests(Long orderTableId, TableChangeNumberOfGuestsRequest request) {
-        OrderTable savedOrderTable = getOrderTableById(orderTableId);
+        OrderTable savedOrderTable = getById(orderTableId);
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return orderTableRepository.save(savedOrderTable);
     }
@@ -70,5 +65,11 @@ public class TableService {
     public void checkOrdersStatusInCookingOrMeal(OrderTables orderTables) {
         List<Long> orderTableIds = orderTables.getIds();
         orderTableService.checkOrdersStatusInCookingOrMeal(orderTableIds);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderTable getById(Long id) {
+        return orderTableRepository.findById(id)
+                                   .orElseThrow(IllegalArgumentException::new);
     }
 }
