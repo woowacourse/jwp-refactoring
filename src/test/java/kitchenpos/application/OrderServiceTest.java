@@ -9,7 +9,7 @@ import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.application.OrderValidatorImpl;
+import kitchenpos.order.application.OrderTableValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +40,7 @@ class OrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
     @Mock
-    private OrderValidatorImpl orderValidatorImpl;
+    private OrderTableValidator orderTableValidator;
 
     @Test
     @DisplayName("주문한다.")
@@ -51,16 +51,15 @@ class OrderServiceTest {
                 new OrderLineItemRequest(1L, 1L),
                 new OrderLineItemRequest(2L, 2L)
         ));
-        Menu menu1 = mock(Menu.class);
-        Menu menu2 = mock(Menu.class);
+        Menu burgerMenu = mock(Menu.class);
+        Menu pizzaMenu = mock(Menu.class);
         Order order = mock(Order.class);
 
-        given(menuRepository.getById(1L)).willReturn(menu1);
-        given(menuRepository.getById(2L)).willReturn(menu2);
+        given(menuRepository.getById(1L)).willReturn(burgerMenu);
+        given(menuRepository.getById(2L)).willReturn(pizzaMenu);
 
         given(order.getId()).willReturn(expectedOrderId);
         given(orderRepository.save(any(Order.class))).willReturn(order);
-        willDoNothing().given(orderValidatorImpl).validate(any());
 
         // when
         Long result = orderService.order(request);
