@@ -41,7 +41,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         OrderTables orderTables = new OrderTables(tableService.findAllByTableGroupId(tableGroupId));
-        tableService.checkOrderStatusInCookingOrMeal(orderTables);
+        tableService.checkOrdersStatusInCookingOrMeal(orderTables);
         orderTables.ungroup();
     }
 }

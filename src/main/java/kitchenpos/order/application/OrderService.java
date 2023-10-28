@@ -34,6 +34,10 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
+    /**
+     * 주문 생성 -> OrderTable이 주문 가능한 상태인지 검사한다.
+     * 주문 생성할 때, 도메인 이벤트 발행하고 OrderTable에 주문 가능한지 검증 + 주문 번호 할당
+     */
     @Transactional
     public Order create(OrderCreateRequest request) {
         List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
