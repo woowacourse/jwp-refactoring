@@ -6,6 +6,7 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.OrderTables;
 import kitchenpos.ordertable.request.OrderTableCreateRequest;
 import kitchenpos.ordertable.request.TableChangeEmptyRequest;
 import kitchenpos.ordertable.request.TableChangeNumberOfGuestsRequest;
@@ -28,6 +29,7 @@ public class TableService {
         return orderTableRepository.save(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableRepository.findAll();
     }
@@ -57,5 +59,22 @@ public class TableService {
         OrderTable savedOrderTable = getOrderTableById(orderTableId);
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderTables findAllByTableIds(List<Long> orderTableIds) {
+        return new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
+        return orderTableRepository.findAllByTableGroupId(tableGroupId);
+    }
+
+    @Transactional
+    public void saveAll(List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTableRepository.save(orderTable);
+        }
     }
 }
