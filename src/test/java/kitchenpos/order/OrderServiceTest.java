@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.common.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
@@ -99,7 +100,8 @@ class OrderServiceTest {
             // then
             final OrderCreateResponse 예상_응답값 = OrderCreateResponse.of(
                     주문(null, 저장된_주문_테이블, OrderStatus.COOKING, LocalDateTime.now(),
-                            List.of(new OrderLineItem(null, null, 저장된_메뉴.getId(), 1))));
+                            List.of(new OrderLineItem(null, null, 저장된_메뉴.getId(), 1, 저장된_메뉴.getName(),
+                                    new Price(저장된_메뉴.getPrice())))));
 
             assertAll(
                     () -> assertThat(저장된_주문.getId()).isNotNull(),
@@ -110,10 +112,11 @@ class OrderServiceTest {
         }
 
         @Test
-        void 주문_메뉴_목록들_중_존재하지_않는_메뉴가_있으면_예외가_발생한다() {
+        void 주문_메뉴_목록들_중_메뉴가_중복되면_예외가_발생한다() {
             // given
             final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
-                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId() + 1, 1)));
+                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1),
+                            new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1)));
 
             // expected
             assertThatThrownBy(() -> orderService.create(주문_요청값))
@@ -163,7 +166,8 @@ class OrderServiceTest {
         final List<OrderResponse> 예상_응답값 = List.of(
                 OrderResponse.of(
                         주문(null, 저장된_주문_테이블, OrderStatus.COOKING, LocalDateTime.now(),
-                                List.of(new OrderLineItem(저장된_메뉴.getId(), 1))))
+                                List.of(new OrderLineItem(저장된_메뉴.getId(), 1, 저장된_메뉴.getName(),
+                                        new Price(저장된_메뉴.getPrice())))))
         );
 
         assertThat(주문들).usingRecursiveComparison()

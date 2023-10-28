@@ -3,6 +3,7 @@ package kitchenpos.menu.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
+import kitchenpos.common.Price;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuCreateResponse;
 import kitchenpos.menu.application.dto.MenuResponse;
@@ -10,7 +11,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
-import kitchenpos.menu.domain.vo.MenuPrice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +33,7 @@ public class MenuService {
     }
 
     public MenuCreateResponse create(final MenuCreateRequest request) {
-        final MenuPrice price = new MenuPrice(request.getPrice());
+        final Price price = new Price(request.getPrice());
         final MenuProducts menuProducts = menuProductsMapper.mapFrom(request.getMenuProducts());
 
         final Menu menu = Menu.of(

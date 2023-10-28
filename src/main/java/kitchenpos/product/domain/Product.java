@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.product.domain.vo.ProductPrice;
+import kitchenpos.common.Price;
 
 @Entity
 public class Product {
@@ -20,7 +20,7 @@ public class Product {
     private String name;
 
     @Embedded
-    private ProductPrice price;
+    private Price price;
 
     protected Product() {
     }
@@ -32,7 +32,7 @@ public class Product {
     public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
-        this.price = new ProductPrice(price);
+        this.price = new Price(price);
     }
 
     public BigDecimal multiplyByQuantity(final long quantity) {

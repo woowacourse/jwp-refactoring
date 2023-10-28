@@ -1,7 +1,7 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
-import kitchenpos.menu.domain.vo.MenuPrice;
+import kitchenpos.common.Price;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
@@ -22,7 +22,7 @@ public class MenuValidator {
         this.productRepository = productRepository;
     }
 
-    public void validate(final Long menuGroupId, final MenuPrice price, final MenuProducts menuProducts) {
+    public void validate(final Long menuGroupId, final Price price, final MenuProducts menuProducts) {
         validateMenuGroupById(menuGroupId);
         validateMenuProducts(menuProducts, price);
     }
@@ -32,7 +32,7 @@ public class MenuValidator {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다. id = " + menuGroupId));
     }
 
-    private void validateMenuProducts(final MenuProducts menuProducts, final MenuPrice price) {
+    private void validateMenuProducts(final MenuProducts menuProducts, final Price price) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts.getValues()) {
             final Product product = findProductById(menuProduct.getProductId());
@@ -46,7 +46,7 @@ public class MenuValidator {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다. id = " + productId));
     }
 
-    private void validateMenuProductsPrice(final MenuPrice price, final BigDecimal menuProductsPrice) {
+    private void validateMenuProductsPrice(final Price price, final BigDecimal menuProductsPrice) {
         if (price.isGreaterThan(menuProductsPrice)) {
             throw new IllegalArgumentException("메뉴의 가격이 메뉴 상품들의 가격의 합보다 클 수 없습니다.");
         }
