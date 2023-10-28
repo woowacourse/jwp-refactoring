@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':kitchenpos-generic')
+    implementation project(':kitchenpos-product')
+    testImplementation project(':kitchenpos-testsupport')
+
+}

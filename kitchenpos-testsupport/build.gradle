@@ -1,0 +1,26 @@
+dependencies {
+    implementation project(':kitchenpos-generic')
+    implementation project(':kitchenpos-menu')
+    implementation project(':kitchenpos-order')
+    implementation project(':kitchenpos-product')
+    implementation project(':kitchenpos-table')
+    implementation project(':kitchenpos-tablegroup')
+    implementation project(':kitchenpos-app')
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/test/java'
+        }
+        resources {
+            srcDirs 'src/test/resources'
+        }
+    }
+}
