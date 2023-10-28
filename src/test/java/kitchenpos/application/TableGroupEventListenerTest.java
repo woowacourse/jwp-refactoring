@@ -3,10 +3,10 @@ package kitchenpos.application;
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.application.validator.OrderStatusValidatorImpl;
+import kitchenpos.order.application.validator.OrderStatusBatchValidatorImpl;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.event.TableGroupEventListener;
-import kitchenpos.ordertable.application.validator.OrderStatusValidator;
+import kitchenpos.ordertable.application.validator.OrderStatusBatchValidator;
 import kitchenpos.tablegroup.TableGroup;
 import kitchenpos.tablegroup.application.event.dto.TableGroupCreateRequestEvent;
 import kitchenpos.tablegroup.application.event.dto.TableGroupDeleteRequestEvent;
@@ -27,8 +27,8 @@ public class TableGroupEventListenerTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        final OrderStatusValidator orderStatusValidator = new OrderStatusValidatorImpl(orderRepository);
-        tableGroupEventListener = new TableGroupEventListener(orderTableRepository, orderStatusValidator);
+        final OrderStatusBatchValidator orderStatusBatchValidator = new OrderStatusBatchValidatorImpl(orderRepository);
+        tableGroupEventListener = new TableGroupEventListener(orderTableRepository, orderStatusBatchValidator);
     }
 
     @DisplayName("주문 테이블 그룹화")

@@ -1,7 +1,7 @@
 package kitchenpos.ordertable.application.event;
 
 import kitchenpos.ordertable.OrderTables;
-import kitchenpos.ordertable.application.validator.OrderStatusValidator;
+import kitchenpos.ordertable.application.validator.OrderStatusBatchValidator;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.tablegroup.TableGroup;
 import kitchenpos.tablegroup.application.event.dto.TableGroupCreateRequestEvent;
@@ -17,11 +17,14 @@ import java.util.List;
 public class TableGroupEventListener {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderStatusValidator orderStatusValidator;
+    private final OrderStatusBatchValidator orderStatusBatchValidator;
 
-    public TableGroupEventListener(final OrderTableRepository orderTableRepository, final OrderStatusValidator orderStatusValidator) {
+    public TableGroupEventListener(
+            final OrderTableRepository orderTableRepository,
+            final OrderStatusBatchValidator orderStatusBatchValidator
+    ) {
         this.orderTableRepository = orderTableRepository;
-        this.orderStatusValidator = orderStatusValidator;
+        this.orderStatusBatchValidator = orderStatusBatchValidator;
     }
 
     @EventListener
@@ -43,7 +46,7 @@ public class TableGroupEventListener {
     public void handleTableGroupDeletionRequested(final TableGroupDeleteRequestEvent event) {
         final TableGroup tableGroup = event.getTableGroup();
         final OrderTables orderTables = new OrderTables(orderTableRepository.findByTableGroup(tableGroup));
-        orderStatusValidator.validateAllCompletion(orderTables);
+        orderStatusBatchValidator.batchValidateCompletion(orderTables);
         orderTables.ungroup();
         orderTableRepository.saveAll(orderTables.getOrderTables());
     }
