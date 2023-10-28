@@ -71,10 +71,11 @@ public class TableService {
         return orderTableRepository.findAllByTableGroupId(tableGroupId);
     }
 
-    @Transactional
-    public void saveAll(List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTableRepository.save(orderTable);
+    public void checkOrderStatusInCookingOrMeal(OrderTables orderTables) {
+        List<Long> orderTableIds = orderTables.getIds();
+        List<OrderStatus> invalidOrderStatusToUngroup = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, invalidOrderStatusToUngroup)) {
+            throw new IllegalArgumentException();
         }
     }
 }

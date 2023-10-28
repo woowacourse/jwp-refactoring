@@ -1,8 +1,6 @@
 package kitchenpos.tablegroup.application;
 
 import java.util.List;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.domain.OrderTables;
 import kitchenpos.tablegroup.domain.TableGroup;
@@ -16,17 +14,14 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
 
-    private final OrderRepository orderRepository;
     private final TableService tableService;
 
     public TableGroupService(
-            OrderRepository orderRepository,
-            TableService tableService,
-            TableGroupRepository tableGroupRepository
+            TableGroupRepository tableGroupRepository,
+            TableService tableService
     ) {
-        this.orderRepository = orderRepository;
-        this.tableService = tableService;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableService = tableService;
     }
 
     @Transactional
@@ -46,15 +41,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         OrderTables orderTables = new OrderTables(tableService.findAllByTableGroupId(tableGroupId));
-        validateOrderStatus(orderTables);
+        tableService.checkOrderStatusInCookingOrMeal(orderTables);
         orderTables.ungroup();
-    }
-
-    private void validateOrderStatus(OrderTables orderTables) {
-        List<Long> orderTableIds = orderTables.getIds();
-        List<OrderStatus> invalidOrderStatusToUngroup = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, invalidOrderStatusToUngroup)) {
-            throw new IllegalArgumentException();
-        }
     }
 }
