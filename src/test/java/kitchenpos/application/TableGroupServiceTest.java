@@ -1,23 +1,23 @@
 package kitchenpos.application;
 
+import kitchenpos.global.exception.KitchenposException;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.application.TableService;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.global.exception.KitchenposException;
-import kitchenpos.menugroup.application.MenuGroupService;
-import kitchenpos.support.ServiceTest;
-import kitchenpos.tablegroup.application.TableGroupService;
-import kitchenpos.table.ui.dto.ChangeOrderTableEmptyRequest;
-import kitchenpos.tablegroup.ui.dto.CreateTableGroupRequest;
 import kitchenpos.order.ui.dto.UpdateOrderStateRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.support.ServiceTest;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.ui.dto.ChangeOrderTableEmptyRequest;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.ui.dto.CreateTableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -85,7 +85,7 @@ class TableGroupServiceTest {
         void 테이블이_1개일_경우_예외가_발생한다() {
             final OrderTable 테이블1 = tableService.create(주문_테이블());
 
-            assertThatThrownBy(() -> tableGroupService.create(new CreateTableGroupRequest(List.of(테이블1))))
+            assertThatThrownBy(() -> tableGroupService.create(new CreateTableGroupRequest(List.of(테이블1.getId()))))
                     .isExactlyInstanceOf(KitchenposException.class)
                     .hasMessage(TABLE_GROUP_UNDER_BOUNCE.getMessage());
         }
@@ -100,7 +100,7 @@ class TableGroupServiceTest {
         @Test
         void 중복된_테이블로_테이블_그룹을_만들_수_없다() {
             final OrderTable 테이블1 = tableService.create(주문_테이블());
-            final var 중복된_테이블_그룹_생성요청 = new CreateTableGroupRequest(List.of(테이블1, 테이블1));
+            final var 중복된_테이블_그룹_생성요청 = new CreateTableGroupRequest(List.of(테이블1.getId(), 테이블1.getId()));
 
             assertThatThrownBy(() -> tableGroupService.create(중복된_테이블_그룹_생성요청))
                     .isExactlyInstanceOf(KitchenposException.class)
@@ -109,10 +109,7 @@ class TableGroupServiceTest {
 
         @Test
         void 존재하지_않는_테이블로_테이블_그룹을_만들_수_없다() {
-            final OrderTable 저장_안된_테이블1 = OrderTable.create(1);
-            final OrderTable 저장_안된_테이블2 = OrderTable.create(1);
-
-            final var 저장_안된_테이블으로_그룹_생성_요청 = new CreateTableGroupRequest(List.of(저장_안된_테이블1, 저장_안된_테이블2));
+            final var 저장_안된_테이블으로_그룹_생성_요청 = new CreateTableGroupRequest(List.of(-1L, -2L));
 
 
             assertThatThrownBy(() -> tableGroupService.create(저장_안된_테이블으로_그룹_생성_요청))

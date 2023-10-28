@@ -1,7 +1,6 @@
 package kitchenpos.table.domain;
 
 import kitchenpos.global.exception.KitchenposException;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -15,9 +14,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     @Embedded
     private Guest guest;
@@ -28,8 +25,8 @@ public class OrderTable {
 
     }
 
-    public OrderTable(final TableGroup tableGroup, final Guest guest, final boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(final Long tableGroupId, final Guest guest, final boolean empty) {
+        this.tableGroupId = tableGroupId;
         this.guest = guest;
         this.empty = empty;
     }
@@ -43,10 +40,7 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        if (Objects.isNull(tableGroup)) {
-            return null;
-        }
-        return tableGroup.getId();
+        return tableGroupId;
     }
 
     public boolean isEmpty() {
@@ -68,16 +62,16 @@ public class OrderTable {
         guest = Guest.create(numberOfGuests);
     }
 
-    public void updateTableGroupId(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void updateTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void deleteTableGroupId() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
     public boolean isGrouped() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
     public boolean unableGrouping() {

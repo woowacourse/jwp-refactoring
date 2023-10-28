@@ -35,7 +35,7 @@ public class TableGroup {
 
 
     public void updateOrderTablesGrouped() {
-        orderTables.updateOrderTablesGrouped(this);
+        orderTables.updateOrderTablesGrouped(id);
 
     }
 

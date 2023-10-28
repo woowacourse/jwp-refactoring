@@ -29,18 +29,11 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public static MenuProduct create(final Product product, final long quantity){
+    public static MenuProduct create(final Product product, final long quantity) {
         return new MenuProduct(product, Quantity.create(quantity));
     }
 
-    public MenuProduct(final Long seq, final Menu menu, final Product product, final Quantity quantity) {
-        this.seq = seq;
-        this.menu = menu;
-        this.product = product;
-        this.quantity = quantity;
-    }
-
-    public void updateMenu(Menu menu){
+    public void updateMenu(Menu menu) {
         this.menu = menu;
     }
 

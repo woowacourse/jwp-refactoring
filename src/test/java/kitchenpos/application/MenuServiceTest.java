@@ -1,15 +1,15 @@
 package kitchenpos.application;
 
+import kitchenpos.global.exception.KitchenposException;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.product.domain.Product;
-import kitchenpos.global.exception.KitchenposException;
-import kitchenpos.menugroup.application.MenuGroupService;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.support.ServiceTest;
 import kitchenpos.menu.ui.dto.MenuProductRequest;
 import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.support.ServiceTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -82,7 +82,7 @@ class MenuServiceTest {
             assertSoftly(soft -> {
                 soft.assertThat(저장된_메뉴.getId()).isNotNull();
                 soft.assertThat(저장된_메뉴.getName()).isEqualTo(신메뉴.getName());
-                soft.assertThat(저장된_메뉴.getMenuGroup().getId()).isEqualByComparingTo(메뉴그룹.getId());
+                soft.assertThat(저장된_메뉴.getMenuGroupId()).isEqualByComparingTo(메뉴그룹.getId());
                 soft.assertThat(저장된_메뉴.getMenuProducts().getMenuProducts()).hasSize(2);
                 soft.assertThat(저장된_메뉴.getMenuProducts().getMenuProducts().get(0).getMenu().getId()).isEqualTo(저장된_메뉴.getId());
                 soft.assertThat(저장된_메뉴.getMenuProducts().getMenuProducts().get(0).getSeq()).isNotNull();

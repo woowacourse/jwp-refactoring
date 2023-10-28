@@ -1,16 +1,16 @@
 package kitchenpos.menu.application;
 
+import kitchenpos.global.exception.KitchenposException;
+import kitchenpos.menu.MenuProductRepository;
+import kitchenpos.menu.MenuRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.product.domain.Product;
-import kitchenpos.global.exception.KitchenposException;
-import kitchenpos.menugroup.MenuGroupRepository;
-import kitchenpos.menu.MenuProductRepository;
-import kitchenpos.menu.MenuRepository;
-import kitchenpos.product.ProductRepository;
 import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.menugroup.MenuGroupRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.product.ProductRepository;
+import kitchenpos.product.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +43,7 @@ public class MenuService {
         final Menu menu = Menu.create(
                 menuRequest.getName(),
                 menuRequest.getPrice(),
-                menuGroup,
+                menuGroup.getId(),
                 menuProducts
         );
         final Menu savedMenu = menuRepository.save(menu);

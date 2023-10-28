@@ -16,6 +16,7 @@ import kitchenpos.tablegroup.ui.dto.CreateTableGroupRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TestFixture {
@@ -51,6 +52,7 @@ public class TestFixture {
     }
 
     public static CreateTableGroupRequest 그룹화_테이블(List<OrderTable> 그룹화_할_테이블들) {
-        return new CreateTableGroupRequest(그룹화_할_테이블들);
+        final List<Long> 그룹화할_테이블_아이디 = 그룹화_할_테이블들.stream().map(table -> table.getId()).collect(Collectors.toList());
+        return new CreateTableGroupRequest(그룹화할_테이블_아이디);
     }
 }

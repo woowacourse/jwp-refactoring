@@ -1,25 +1,23 @@
 package kitchenpos.tablegroup.ui.dto;
 
-import kitchenpos.table.domain.OrderTable;
-
 import java.util.List;
 
 public class CreateTableGroupRequest {
 
-    private List<OrderTable> orderTables;
+    private List<Long> orderTableIds;
 
     public CreateTableGroupRequest() {
     }
 
-    public CreateTableGroupRequest(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public CreateTableGroupRequest(final List<Long> orderTableIds) {
+        this.orderTableIds = orderTableIds;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<Long> getOrderTableIds() {
+        return orderTableIds;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public void setOrderTableIds(final List<Long> orderTableIds) {
+        this.orderTableIds = orderTableIds;
     }
 }

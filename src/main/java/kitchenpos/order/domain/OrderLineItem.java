@@ -23,11 +23,6 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Menu menu, final Quantity quantity) {
-        this.menu = menu;
-        this.quantity = quantity;
-    }
-
     public OrderLineItem(final Order order, final Menu menu, final Quantity quantity) {
         this(null, order, menu, quantity);
     }

@@ -1,9 +1,9 @@
 package kitchenpos.table.domain;
 
 import kitchenpos.global.exception.KitchenposException;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +15,7 @@ import static kitchenpos.global.exception.ExceptionInformation.TABLE_GROUP_UNDER
 public class OrderTables {
     private static final int MIN_ORDER_TABLE_SIZE_IN_GROUP = 2;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroupId")
     private List<OrderTable> orderTables;
 
     protected OrderTables() {
@@ -46,9 +46,9 @@ public class OrderTables {
         }
     }
 
-    public void updateOrderTablesGrouped(final TableGroup tableGroup) {
+    public void updateOrderTablesGrouped(final Long tableGroupId) {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroupId(tableGroup);
+            orderTable.updateTableGroupId(tableGroupId);
             orderTable.updateOrderStatus(false);
         }
     }

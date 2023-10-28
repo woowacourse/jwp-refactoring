@@ -1,6 +1,5 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.global.exception.KitchenposException;
 
 import javax.persistence.*;
@@ -23,40 +22,39 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     private MenuProducts menuProducts;
 
     protected Menu() {
     }
 
-    public Menu(final Long id, final Name name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+    public Menu(final Long id, final Name name, final Price price, final Long menuGroupId, final MenuProducts menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
-    public Menu(final Name name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
+    public Menu(final Name name, final Price price, final Long menuGroupId, final MenuProducts menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public static Menu create(final String name, final BigDecimal price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+    public static Menu create(final String name, final BigDecimal price, final Long menuGroupId, final MenuProducts menuProducts) {
         validateMenuPriceIsNotNull(price);
         validateMenuProductsPrice(price, menuProducts);
 
         return new Menu(
                 Name.create(name),
                 Price.create(price),
-                menuGroup,
+                menuGroupId,
                 menuProducts
         );
     }
 
     private static void validateMenuPriceIsNotNull(final BigDecimal price) {
-        if(Objects.isNull(price)){
+        if (Objects.isNull(price)) {
             throw new KitchenposException(MENU_PRICE_IS_NULL);
         }
     }
@@ -82,8 +80,8 @@ public class Menu {
     }
 
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
 

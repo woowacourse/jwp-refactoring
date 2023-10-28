@@ -1,10 +1,8 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.global.exception.KitchenposException;
-import kitchenpos.order.OrderRepository;
 import kitchenpos.table.OrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.ui.dto.ChangeOrderTableEmptyRequest;
 import kitchenpos.table.ui.dto.ChangeOrderTableGuestRequest;
 import kitchenpos.table.ui.dto.CreateOrderTableRequest;
@@ -13,17 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static kitchenpos.global.exception.ExceptionInformation.*;
+import static kitchenpos.global.exception.ExceptionInformation.ORDER_TABLE_IS_GROUPING;
+import static kitchenpos.global.exception.ExceptionInformation.ORDER_TABLE_NOT_FOUND;
 
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    private final OrderTableStatusValidator orderTableStatusValidator;
+
+    public TableService(final OrderTableRepository orderTableRepository, final OrderTableStatusValidator orderTableStatusValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableStatusValidator = orderTableStatusValidator;
     }
 
     @Transactional
@@ -39,7 +39,7 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest) {
         final OrderTable orderTable = findUngroupedOrderTable(orderTableId);
-        validateTableOrderStatusIsComplete(orderTableId);
+        orderTableStatusValidator.validateIsComplete(orderTable.getId());
         orderTable.updateOrderStatus(changeOrderTableEmptyRequest.isEmpty());
         return orderTable;
     }
@@ -52,12 +52,6 @@ public class TableService {
             throw new KitchenposException(ORDER_TABLE_IS_GROUPING);
         }
         return savedOrderTable;
-    }
-
-    private void validateTableOrderStatusIsComplete(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.getNotCompleteStatus())) {
-            throw new KitchenposException(ORDER_TABLE_STATUS_IS_NOT_COMPLETE);
-        }
     }
 
     @Transactional
