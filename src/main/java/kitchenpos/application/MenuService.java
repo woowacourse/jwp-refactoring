@@ -6,6 +6,7 @@ import kitchenpos.domain.menu.MenuPrice;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menuproduct.MenuProduct;
 import kitchenpos.domain.menuproduct.MenuProductQuantity;
+import kitchenpos.domain.menuproduct.MenuProducts;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -45,40 +46,37 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         final MenuName menuName = new MenuName(request.getName());
         final MenuPrice menuPrice = new MenuPrice(request.getPrice());
-        final BigDecimal menuProductsPrice = calculateMenuProductsPrice(request.getMenuProducts());
-        menuPrice.validateMoreThanMenuProductsPrice(menuProductsPrice);
+        final MenuProducts menuProducts = makeMenuProducts(request.getMenuProducts());
         final MenuGroup menuGroup = findMenuGroupById(request.getMenuGroupId());
+        final BigDecimal menuProductsPrice = menuProducts.calculateMenuProductsPrice();
 
+        menuPrice.validateMoreThanMenuProductsPrice(menuProductsPrice);
         final Menu savedMenu = menuRepository.save(new Menu(menuName, menuPrice, menuGroup));
-        saveMenuProducts(request.getMenuProducts(), savedMenu);
+        saveMenuProducts(menuProducts.getMenuProducts(), savedMenu);
 
         return convertToResponse(savedMenu);
-    }
-
-    private BigDecimal calculateMenuProductsPrice(final List<MenuProductRequest> menuProductRequests) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = findProductById(menuProductRequest.getProductId());
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
-        }
-        return sum;
-    }
-
-    private void saveMenuProducts(final List<MenuProductRequest> menuProductRequests, final Menu savedMenu) {
-        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
-            final MenuProduct menuProduct = new MenuProduct(
-                    savedMenu,
-                    findProductById(menuProductRequest.getProductId()),
-                    new MenuProductQuantity(menuProductRequest.getQuantity())
-            );
-            menuProductRepository.save(menuProduct);
-        }
     }
 
     public List<MenuResponse> list() {
         return menuRepository.findAll().stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    private MenuProducts makeMenuProducts(final List<MenuProductRequest> request) {
+        return new MenuProducts(request.stream()
+                .map(menuProductRequest -> new MenuProduct(
+                        new MenuProductQuantity(menuProductRequest.getQuantity()),
+                        findProductById(menuProductRequest.getProductId())
+                ))
+                .collect(Collectors.toList()));
+    }
+
+    private void saveMenuProducts(final List<MenuProduct> menuProducts, final Menu savedMenu) {
+        for (final MenuProduct menuProduct : menuProducts) {
+            menuProduct.changeMenu(savedMenu);
+        }
+        menuProductRepository.saveAll(menuProducts);
     }
 
     private MenuResponse convertToResponse(final Menu menu) {

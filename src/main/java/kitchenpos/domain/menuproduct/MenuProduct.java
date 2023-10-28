@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Entity
 public class MenuProduct {
@@ -32,10 +33,25 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Menu menu, final Product product, final MenuProductQuantity quantity) {
+    public MenuProduct(final MenuProductQuantity quantity, final Product product) {
+        this.menu = null;
+        this.quantity = quantity;
+        this.product = product;
+    }
+
+    public MenuProduct(final MenuProductQuantity quantity, final Menu menu, final Product product) {
+        this.quantity = quantity;
         this.menu = menu;
         this.product = product;
-        this.quantity = quantity;
+    }
+
+    public BigDecimal calculatePrice() {
+        return product.getPrice()
+                .multiply(BigDecimal.valueOf(getQuantity()));
+    }
+
+    public void changeMenu(final Menu menu) {
+        this.menu = menu;
     }
 
     public Long getSeq() {
