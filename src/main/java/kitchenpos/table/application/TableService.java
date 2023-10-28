@@ -2,6 +2,7 @@ package kitchenpos.table.application;
 
 import java.util.List;
 
+import kitchenpos.ordertablegroup.OrderTableValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.dto.table.CreateOrderTableRequest;
@@ -13,10 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    //    private final OrderRepository orderRepository;
+    private final OrderTableValidator orderTableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    public TableService(
+            final OrderTableValidator orderTableValidator,
+            final OrderTableRepository orderTableRepository
+    ) {
+        this.orderTableValidator = orderTableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -35,8 +40,7 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-//        orderRepository.findAllByOrderTableId(orderTableId)
-//                .forEach(Order::validateUncompleted);
+        orderTableValidator.validateOrderStatusByOrderTableId(orderTableId);
 
         orderTable.updateStatus(updateTableStatusRequest.getEmpty());
         return orderTableRepository.save(orderTable);

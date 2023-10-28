@@ -55,7 +55,8 @@ class MenuServiceTest {
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getName()).isEqualTo("치즈피자"),
                 () -> assertThat(actual.getPrice()).isEqualTo(Money.valueOf(5_000)),
-                () -> assertThat(actual.getMenuGroup()).usingRecursiveComparison().isEqualTo(menuGroup)
+                () -> assertThat(actual.getMenuGroup()).usingRecursiveComparison().isEqualTo(menuGroup),
+                () -> assertThat(actual.getMenuProducts()).hasSize(1)
         );
     }
 

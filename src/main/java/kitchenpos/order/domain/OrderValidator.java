@@ -21,4 +21,9 @@ public class OrderValidator implements OrderTableValidator {
                 .forEach(Order::validateUncompleted);
     }
 
+    @Override
+    public void validateOrderStatusByOrderTableId(final Long orderTableId) {
+        orderRepository.getById(orderTableId).validateUncompleted();
+    }
+
 }

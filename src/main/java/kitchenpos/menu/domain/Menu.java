@@ -79,4 +79,8 @@ public class Menu {
     public MenuGroup getMenuGroup() {
         return menuGroup;
     }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
+    }
 }
