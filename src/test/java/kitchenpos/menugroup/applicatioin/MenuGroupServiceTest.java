@@ -1,13 +1,13 @@
 package kitchenpos.menugroup.applicatioin;
 
 import kitchenpos.config.ServiceTestConfig;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menugroup.ui.dto.MenuGroupRequest;
 import kitchenpos.menugroup.ui.dto.MenuGroupResponse;
-import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)

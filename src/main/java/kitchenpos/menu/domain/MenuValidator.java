@@ -30,7 +30,6 @@ public class MenuValidator {
         }
     }
 
-
     private Map<Long, Product> findAllProducts(final List<MenuProduct> menuProducts) {
         final List<Long> productIds = menuProducts.stream()
                                                   .map(MenuProduct::getProductId)
