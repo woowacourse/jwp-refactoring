@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -10,18 +11,18 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.TableGroupCreateRequest;
+import java.util.Optional;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.tablegroup.apllication.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupValidator;
+import kitchenpos.tablegroup.dto.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -44,13 +45,13 @@ class TableGroupServiceTest {
         .build();
 
     @Mock
-    private OrderRepository orderRepository;
-
-    @Mock
     private OrderTableRepository orderTableRepository;
 
     @Mock
     private TableGroupRepository tableGroupRepository;
+
+    @Mock
+    private TableGroupValidator tableGroupValidator;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -60,17 +61,6 @@ class TableGroupServiceTest {
 
     @Nested
     class 테이블_그룹_생성 {
-
-        @Test
-        void 주문_테이블이_없으면_예외() {
-            // given
-            TableGroupCreateRequest request = new TableGroupCreateRequest(NOW, Collections.emptyList());
-
-            // when && then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블은 최소 2개 이상입니다.");
-        }
 
         @Test
         void 주문_테이블이_한개면_예외() {
@@ -106,53 +96,6 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 모든_테이블이_비어있지_않으면_예외() {
-            // given
-            TableGroupCreateRequest request = new TableGroupCreateRequest(NOW, List.of(1L, 2L));
-
-            OrderTable emptyOrderTable = OrderTableFixture.builder()
-                .withEmpty(true)
-                .withId(1L)
-                .build();
-            OrderTable nonEmptyOrderTable = OrderTableFixture.builder()
-                .withEmpty(false)
-                .withId(2L)
-                .build();
-
-            given(orderTableRepository.findAllByIdIn(anyList()))
-                .willReturn(List.of(emptyOrderTable, nonEmptyOrderTable));
-
-            // when && then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("그룹화하기 위해서는 모든 테이블은 빈 테이블이여야 합니다.");
-        }
-
-        @Test
-        void 테이블_그룹에_포함된_주문_테이블이_있으면_에외() {
-            // given
-            TableGroupCreateRequest request = new TableGroupCreateRequest(NOW, List.of(1L, 2L));
-
-            OrderTable groupedOrderTable = OrderTableFixture.builder()
-                .withEmpty(true)
-                .withTableGroupId(1L)
-                .withId(1L)
-                .build();
-            OrderTable orderTable = OrderTableFixture.builder()
-                .withEmpty(true)
-                .withId(2L)
-                .build();
-
-            given(orderTableRepository.findAllByIdIn(anyList()))
-                .willReturn(List.of(groupedOrderTable, orderTable));
-
-            // when && then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블이 이미 그룹화 되어 있습니다.");
-        }
-
-        @Test
         void 생성_성공() {
             // given
             TableGroupCreateRequest request = new TableGroupCreateRequest(NOW, List.of(1L, 2L));
@@ -169,11 +112,14 @@ class TableGroupServiceTest {
             given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(firstOrderTable, secondOrderTable));
 
+            TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), List.of(
+                new OrderTable(null, null, 100, true),
+                new OrderTable(null, null, 100, true)
+            ));
+            given(tableGroupValidator.create(any()))
+                .willReturn(tableGroup);
             given(tableGroupRepository.save(any()))
-                .willReturn(new TableGroup(1L, LocalDateTime.now(), List.of(
-                    new OrderTable(null, null, 100, true),
-                    new OrderTable(null, null, 100, true)
-                )));
+                .willReturn(tableGroup);
 
             // when
             tableGroupService.create(request);
@@ -191,30 +137,7 @@ class TableGroupServiceTest {
     class 그룹_해제 {
 
         @Test
-        void 요리중이거나_식사중인_주문이_있으면_예외() {
-            // given
-            OrderTable firstOrderTable = OrderTableFixture.builder()
-                .withId(1L)
-                .build();
-            OrderTable secondOrderTable = OrderTableFixture.builder()
-                .withId(2L)
-                .build();
-
-            given(orderTableRepository.findAllByTableGroupId(anyLong()))
-                .willReturn(List.of(
-                    firstOrderTable,
-                    secondOrderTable));
-
-            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-                .willReturn(true);
-
-            // when && then
-            assertThatThrownBy(() -> tableGroupService.ungroup(1L))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 그룹_해제_성공() {
+        void 성공() {
             // given
             OrderTable firstOrderTable = OrderTableFixture.builder()
                 .withId(1L)
@@ -225,15 +148,15 @@ class TableGroupServiceTest {
                 .withTableGroupId(1L)
                 .build();
 
-            given(orderTableRepository.findAllByTableGroupId(any()))
-                .willReturn(List.of(
-                    firstOrderTable,
-                    secondOrderTable));
-            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-                .willReturn(false);
+            given(tableGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(
+                    new TableGroup(1L,
+                        LocalDateTime.now(),
+                        List.of(firstOrderTable, secondOrderTable))
+                ));
 
             // when && then
-            Assertions.assertDoesNotThrow(() -> tableGroupService.ungroup(1L));
+            assertDoesNotThrow(() -> tableGroupService.ungroup(1L));
         }
     }
 }

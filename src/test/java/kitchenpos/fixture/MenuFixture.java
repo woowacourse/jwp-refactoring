@@ -3,9 +3,10 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
+import kitchenpos.common.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 public class MenuFixture {
 
@@ -52,7 +53,7 @@ public class MenuFixture {
             id,
             name,
             new Price(price),
-            menuGroupId,
+            new MenuGroup(menuGroupId, "menuGroup"),
             menuProducts
         );
     }

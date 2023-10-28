@@ -1,9 +1,10 @@
 package kitchenpos.fixture;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.ordertable.domain.Order;
+import kitchenpos.ordertable.domain.OrderLineItem;
 
 public final class OrderFixture {
 
@@ -11,7 +12,7 @@ public final class OrderFixture {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     private OrderFixture() {
     }
@@ -48,8 +49,8 @@ public final class OrderFixture {
     public Order build() {
         Order order = new Order(
             id,
-            orderTableId,
             orderStatus,
+            orderTableId,
             orderedTime,
             orderLineItems
         );

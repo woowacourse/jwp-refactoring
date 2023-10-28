@@ -2,9 +2,9 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.fixture.OrderLineItemFixture;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -24,20 +24,6 @@ class OrderTableTest {
         })
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("해당 테이블은 비어있습니다.");
-    }
-
-    @Test
-    void 그룹화된_주문_테이블의_빈_여부를_바꾸면_예외() {
-        // given
-        OrderTable orderTable = new OrderTable(1L, new TableGroup(1L, LocalDateTime.now(), List.of(
-            new OrderTable(null, null, 10, true),
-            new OrderTable(null, null, 10, true)
-        )), 100, true);
-
-        // when && then
-        assertThatThrownBy(() -> orderTable.changeEmpty(false))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("해당 주문 테이블은 그룹화 되어있기 때문에 빈 여부를 변경할 수 없습니다");
     }
 
     @Test

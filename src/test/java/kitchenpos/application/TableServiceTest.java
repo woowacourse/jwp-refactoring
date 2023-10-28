@@ -4,21 +4,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderTableCreateRequest;
-import kitchenpos.dto.request.OrderTableEmptyChangeRequest;
-import kitchenpos.dto.request.OrderTableGuestChangeRequest;
-import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableValidator;
+import kitchenpos.ordertable.dto.request.OrderTableCreateRequest;
+import kitchenpos.ordertable.dto.request.OrderTableEmptyChangeRequest;
+import kitchenpos.ordertable.dto.request.OrderTableGuestChangeRequest;
+import kitchenpos.ordertable.dto.response.OrderTableResponse;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -35,17 +36,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
 
-    @Mock
-    private OrderRepository orderRepository;
-
-    @Mock
-    private OrderTableRepository orderTableRepository;
-
-    @InjectMocks
-    private TableService tableService;
-
     @Captor
     ArgumentCaptor<OrderTable> orderTableArgumentCaptor;
+    @Mock
+    private OrderTableValidator orderTableValidator;
+    @Mock
+    private OrderTableRepository orderTableRepository;
+    @InjectMocks
+    private TableService tableService;
 
     @Test
     void 테이블_생성() {
@@ -65,7 +63,7 @@ class TableServiceTest {
             verify(orderTableRepository, times(1)).save(orderTableArgumentCaptor.capture());
             OrderTable savedOrderTabled = orderTableArgumentCaptor.getValue();
             assertThat(savedOrderTabled.getId()).isNull();
-            assertThat(savedOrderTabled.getTableGroup()).isNull();
+            assertThat(savedOrderTabled.getTableGroupId()).isNull();
             assertThat(savedOrderTabled.isEmpty()).isTrue();
             assertThat(savedOrderTabled.getNumberOfGuests()).isEqualTo(100);
         });
@@ -90,40 +88,6 @@ class TableServiceTest {
         }
 
         @Test
-        void 주문_테이블이_테이블_그룹에_포함되어_있다면_예외() {
-            // given
-            OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(true);
-
-            OrderTable reqeustOrderTable = OrderTableFixture.builder()
-                .withTableGroupId(1L)
-                .build();
-            given(orderTableRepository.findById(anyLong()))
-                .willReturn(Optional.of(reqeustOrderTable));
-
-            // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문_테이블이_요리중_이거나_식사_중이면_에외() {
-            // given
-            OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(true);
-
-            OrderTable reqeustOrderTable = OrderTableFixture.builder()
-                .build();
-            given(orderTableRepository.findById(anyLong()))
-                .willReturn(Optional.of(reqeustOrderTable));
-
-            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
-                .willReturn(true);
-
-            // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 변경_성공() {
             // given
             boolean changeEmpty = true;
@@ -134,8 +98,10 @@ class TableServiceTest {
                     .withEmpty(!changeEmpty)
                     .build()));
 
-            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
-                .willReturn(false);
+            given(orderTableValidator.changeEmpty(any(), anyBoolean()))
+                .willReturn(OrderTableFixture.builder()
+                    .withEmpty(changeEmpty)
+                    .build());
 
             // when
             OrderTableResponse actual = tableService.changeEmpty(orderTableId, request);

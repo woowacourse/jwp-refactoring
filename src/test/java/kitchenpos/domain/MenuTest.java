@@ -3,6 +3,10 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.common.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -19,7 +23,7 @@ class MenuTest {
             2L,
             "nam2",
             new Price(BigDecimal.valueOf(0)),
-            1L,
+            null,
             new ArrayList<>());
 
         List<MenuProduct> newMenuProducts = List.of(new MenuProduct(
@@ -30,7 +34,7 @@ class MenuTest {
 
         // when && then
         Assertions.assertThatThrownBy(
-                () -> new Menu(1L, "name", new Price(BigDecimal.valueOf(1000)), 1L, newMenuProducts))
+                () -> new Menu(1L, "name", new Price(BigDecimal.valueOf(1000)), null, newMenuProducts))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("이미 메뉴가 할당된 상품입니다.");
     }
