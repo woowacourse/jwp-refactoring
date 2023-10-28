@@ -1,8 +1,7 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.menu.domain.Menu;
-
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 public class OrderLineItem {
@@ -14,28 +13,30 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    @OneToOne
-    private Menu menu;
+    private String menuName;
+
+    private BigDecimal menuPrice;
 
     @Embedded
     private Quantity quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Order order, final Menu menu, final Quantity quantity) {
-        this(null, order, menu, quantity);
+    private OrderLineItem(final Order order, final String menuName, final BigDecimal menuPrice, final Quantity quantity) {
+        this(null, order, menuName, menuPrice, quantity);
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Menu menu, final Quantity quantity) {
+    private OrderLineItem(final Long seq, final Order order, final String menuName, final BigDecimal menuPrice, final Quantity quantity) {
         this.seq = seq;
         this.order = order;
-        this.menu = menu;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = quantity;
     }
 
-    public static OrderLineItem create(final Menu menu, final long quantity, final Order order) {
-        return new OrderLineItem(order, menu, Quantity.create(quantity));
+    public static OrderLineItem create(final String menuName, final BigDecimal menuPrice, final long quantity, final Order order) {
+        return new OrderLineItem(order, menuName, menuPrice, Quantity.create(quantity));
     }
 
     public Long getSeq() {
@@ -46,8 +47,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
     }
 
     public long getQuantity() {

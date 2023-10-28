@@ -83,7 +83,10 @@ public class OrderService {
                 .collect(Collectors.toUnmodifiableMap(Menu::getId, Function.identity()));
 
         return orderLineItems.stream()
-                .map(orderLineItemRequest -> OrderLineItem.create(menuMap.get(orderLineItemRequest.getMenuId()), orderLineItemRequest.getQuantity(), order))
+                .map(orderLineItemRequest -> {
+                    final Menu menu = menuMap.get(orderLineItemRequest.getMenuId());
+                    return OrderLineItem.create(menu.getName(), menu.getPrice(), orderLineItemRequest.getQuantity(), order);
+                })
                 .collect(Collectors.toList());
     }
 
