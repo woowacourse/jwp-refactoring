@@ -33,7 +33,7 @@ public class MenuProductRepositoryImpl implements MenuProductRepository {
 
     @Override
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        return jpaMenuProductRepository.findByMenuId(menuId);
+        return jpaMenuProductRepository.findAllByMenuId(menuId);
     }
 
     @Override

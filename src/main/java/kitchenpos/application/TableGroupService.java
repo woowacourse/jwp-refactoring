@@ -6,17 +6,19 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.ui.dto.CreateTableGroupRequest;
-import kitchenpos.ui.dto.OrderTableDto;
+import kitchenpos.dto.request.CreateTableGroupRequest;
+import kitchenpos.dto.request.OrderTableDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -34,8 +36,11 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final CreateTableGroupRequest orderTableRequests) {
         final List<OrderTable> savedOrderTables = findOrderTables(orderTableRequests);
-        final TableGroup tableGroup = new TableGroup(savedOrderTables);
-        return tableGroupRepository.save(tableGroup);
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        for (final OrderTable orderTable : savedOrderTables) {
+            orderTable.group(tableGroup);
+        }
+        return tableGroup;
     }
 
     private List<OrderTable> findOrderTables(final CreateTableGroupRequest orderTableRequest) {
@@ -44,10 +49,14 @@ public class TableGroupService {
                                                           .map(OrderTableDto::getId)
                                                           .collect(Collectors.toUnmodifiableList());
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdsIn(orderTableIds);
+        validateOrderTableSize(orderTableIds, orderTables);
+        return orderTables;
+    }
+
+    private static void validateOrderTableSize(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
         if (orderTableIds.size() != orderTables.size() || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
-        return orderTables;
     }
 
     @Transactional

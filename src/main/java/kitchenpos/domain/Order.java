@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -9,36 +10,36 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "orders")
 public class Order {
 
+    private static final int MINIMUM_ORDER_LINE_ITEM_SIZE = 1;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id", nullable = false)
+    private long orderTableId;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
+    private List<OrderLineItem> orderLineItems;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
-        this.orderTable = orderTable;
+    public Order(final long orderTableId, final OrderStatus orderStatus) {
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
     }
@@ -51,12 +52,19 @@ public class Order {
                                       .orElseThrow(() -> new IllegalArgumentException("잘못된 상태입니다."));
     }
 
+    public void addOrderItems(final List<OrderLineItem> savedOrderLineItems) {
+        if (savedOrderLineItems.size() < MINIMUM_ORDER_LINE_ITEM_SIZE) {
+            throw new IllegalArgumentException();
+        }
+        this.orderLineItems = savedOrderLineItems;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public long getOrderTableId() {
+        return orderTableId;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
@@ -82,12 +90,5 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> savedOrderLineItems) {
-        for (final OrderLineItem orderLineItem : savedOrderLineItems) {
-            this.orderLineItems.add(orderLineItem);
-            orderLineItem.setOrder(this);
-        }
     }
 }

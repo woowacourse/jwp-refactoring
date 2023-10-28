@@ -4,9 +4,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.ui.dto.CreateOrderTableRequest;
-import kitchenpos.ui.dto.PutOrderTableEmptyRequest;
-import kitchenpos.ui.dto.PutOrderTableGuestsNumberRequest;
+import kitchenpos.dto.request.CreateOrderTableRequest;
+import kitchenpos.dto.request.PutOrderTableEmptyRequest;
+import kitchenpos.dto.request.PutOrderTableGuestsNumberRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +30,7 @@ public class TableService {
         return orderTableRepository.save(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableRepository.findAll();
     }
@@ -40,7 +41,7 @@ public class TableService {
                                                                .orElseThrow(IllegalArgumentException::new);
         validateCompletion(orderTableId);
         validateTableGroupInvolve(savedOrderTable);
-        savedOrderTable.setEmpty(orderTableRequest.getEmpty());
+        savedOrderTable.changeEmptyStatus(orderTableRequest.getEmpty());
         return orderTableRepository.save(savedOrderTable);
     }
 
@@ -67,7 +68,7 @@ public class TableService {
         final int numberOfGuests = orderTableGuestsNumberRequest.getNumberOfGuests();
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                                                                .orElseThrow(IllegalArgumentException::new);
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return orderTableRepository.save(savedOrderTable);
     }
 }

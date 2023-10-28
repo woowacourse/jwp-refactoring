@@ -22,6 +22,11 @@ public class OrderLineItemRepositoryImpl implements OrderLineItemRepository {
     }
 
     @Override
+    public List<OrderLineItem> saveAll(final List<OrderLineItem> orderLineItems) {
+        return jpaOrderLineItemRepository.saveAll(orderLineItems);
+    }
+
+    @Override
     public Optional<OrderLineItem> findById(final Long id) {
         return jpaOrderLineItemRepository.findById(id);
     }
@@ -29,10 +34,5 @@ public class OrderLineItemRepositoryImpl implements OrderLineItemRepository {
     @Override
     public List<OrderLineItem> findAll() {
         return jpaOrderLineItemRepository.findAll();
-    }
-
-    @Override
-    public List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        return jpaOrderLineItemRepository.findAllByOrderId(orderId);
     }
 }

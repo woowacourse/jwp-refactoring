@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.ProductRepository;
-import kitchenpos.ui.dto.CreateProductRequest;
+import kitchenpos.dto.request.CreateProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +23,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> list() {
         return productRepository.findAll();
     }

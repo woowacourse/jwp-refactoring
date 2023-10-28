@@ -13,6 +13,4 @@ public interface JpaOrderLineItemRepository extends JpaRepository<OrderLineItem,
     Optional<OrderLineItem> findById(final Long id);
 
     List<OrderLineItem> findAll();
-
-    List<OrderLineItem> findAllByOrderId(final Long orderId);
 }

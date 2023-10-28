@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
@@ -18,6 +19,7 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
     @Embedded
@@ -25,13 +27,7 @@ public class OrderTable {
 
     private boolean empty;
 
-    public OrderTable() {
-    }
-
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = new GuestsNumber(numberOfGuests);
-        this.empty = empty;
+    protected OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
@@ -51,22 +47,25 @@ public class OrderTable {
     }
 
     public void group(final TableGroup tableGroup) {
+        if (isEmpty() || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException();
+        }
         this.empty = false;
         this.tableGroup = tableGroup;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmptyStatus(final boolean empty) {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
         }
         this.empty = empty;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void addToTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
         final GuestsNumber guestsNumber = new GuestsNumber(numberOfGuests);
         this.numberOfGuests = guestsNumber;
     }

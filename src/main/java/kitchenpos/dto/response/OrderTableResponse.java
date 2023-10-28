@@ -1,4 +1,4 @@
-package kitchenpos.ui.response;
+package kitchenpos.dto.response;
 
 import kitchenpos.domain.TableGroup;
 

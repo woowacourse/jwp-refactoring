@@ -14,5 +14,5 @@ public interface JpaMenuProductRepository extends JpaRepository<MenuProduct, Lon
 
     List<MenuProduct> findAll();
 
-    List<MenuProduct> findByMenuId(final Long menuId);
+    List<MenuProduct> findAllByMenuId(final Long menuId);
 }

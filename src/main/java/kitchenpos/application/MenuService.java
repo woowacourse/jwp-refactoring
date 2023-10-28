@@ -9,8 +9,8 @@ import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
-import kitchenpos.ui.dto.CreateMenuRequest;
-import kitchenpos.ui.dto.MenuProductDto;
+import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.request.MenuProductDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,8 +44,12 @@ public class MenuService {
                                                        ));
         final Menu menu = Menu.of(menuGroup, menuRequest.getName(), menuRequest.getPrice());
         final Menu savedMenu = menuRepository.save(menu);
-
         final Products products = findProducts(menuRequest);
+        createMenuProducts(menuRequest, savedMenu, products);
+        return savedMenu;
+    }
+
+    private void createMenuProducts(final CreateMenuRequest menuRequest, final Menu savedMenu, final Products products) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
             final Product product = products.findProductById(menuProductDto.getProductId());
@@ -53,7 +57,6 @@ public class MenuService {
             menuProducts.add(menuProduct);
         }
         menuProductRepository.saveAll(menuProducts);
-        return savedMenu;
     }
 
     private Products findProducts(final CreateMenuRequest menuRequest) {
@@ -66,10 +69,11 @@ public class MenuService {
         return new Products(products);
     }
 
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         final List<Menu> menus = menuRepository.findAll();
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            menuProductRepository.findAllByMenuId(menu.getId());
         }
         return menus;
     }
