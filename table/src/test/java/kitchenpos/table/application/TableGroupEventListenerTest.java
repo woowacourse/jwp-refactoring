@@ -1,22 +1,24 @@
 package kitchenpos.table.application;
 
 import static java.util.stream.Collectors.toUnmodifiableSet;
-import static kitchenpos.support.fixture.TableFixture.비어있는_주문_테이블_DTO;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import kitchenpos.support.ServiceIntegrationTest;
-import kitchenpos.table.domain.listener.TableGroupEventListener;
+import kitchenpos.ServiceIntegrationTest;
+import kitchenpos.fixture.TableFixture;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableChangeEmptyValidator;
+import kitchenpos.table.domain.listener.TableGroupEventListener;
 import kitchenpos.table_group.application.TableGroupCreateEvent;
 import kitchenpos.table_group.domain.TableGroup;
 import kitchenpos.table_group.domain.TableGroupRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 class TableGroupEventListenerTest extends ServiceIntegrationTest {
 
@@ -28,6 +30,12 @@ class TableGroupEventListenerTest extends ServiceIntegrationTest {
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
+
+    @MockBean
+    private TableChangeEmptyValidator tableChangeEmptyValidator;
+
+    @Autowired
+    private TableService tableService;
 
     @Test
     @DisplayName("tableGroupId를 table에 세팅해준다.")

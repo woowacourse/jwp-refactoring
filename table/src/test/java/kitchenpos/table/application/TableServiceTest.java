@@ -1,33 +1,38 @@
 package kitchenpos.table.application;
 
-import static kitchenpos.order.domain.exception.OrderExceptionType.ORDER_IS_NOT_COMPLETION;
-import static kitchenpos.support.fixture.OrderFixture.createOrderLineItem;
-import static kitchenpos.support.fixture.TableFixture.비어있는_전쳬_주문_테이블_DTO;
-import static kitchenpos.support.fixture.TableFixture.비어있는_주문_테이블_DTO;
-import static kitchenpos.support.fixture.TableFixture.비어있지_않는_주문_테이블_DTO;
 import static kitchenpos.table.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
 import static kitchenpos.table.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.table.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.application.dto.MenuDto;
-import kitchenpos.order.application.dto.OrderDto;
-import kitchenpos.order.application.dto.OrderLineItemDto;
-import kitchenpos.order.domain.exception.OrderException;
-import kitchenpos.support.ServiceIntegrationTest;
+import kitchenpos.ServiceIntegrationTest;
+import kitchenpos.fixture.TableFixture;
 import kitchenpos.table.application.dto.OrderTableDto;
+import kitchenpos.table.domain.TableChangeEmptyValidator;
 import kitchenpos.table.domain.exception.OrderTableException;
+import kitchenpos.table_group.application.TableGroupService;
 import kitchenpos.table_group.application.dto.OrderTableDtoInTableGroup;
 import kitchenpos.table_group.application.dto.TableGroupDto;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 class TableServiceTest extends ServiceIntegrationTest {
+
+    @MockBean
+    private TableChangeEmptyValidator tableChangeEmptyValidator;
+    @Autowired
+    private TableService tableService;
+    @Autowired
+    private TableGroupService tableGroupService;
 
     @Test
     @DisplayName("table을 생성한다.")
@@ -82,8 +87,8 @@ class TableServiceTest extends ServiceIntegrationTest {
 
             final Long orderTableId = savedOrderTableDto.getId();
             Assertions.assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTableId, savedOrderTableDto)
-            ).isInstanceOf(OrderTableException.class)
+                    () -> tableService.changeEmpty(orderTableId, savedOrderTableDto)
+                ).isInstanceOf(OrderTableException.class)
                 .hasMessage(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP.getMessage());
         }
 
@@ -93,28 +98,12 @@ class TableServiceTest extends ServiceIntegrationTest {
             //given
             final OrderTableDto orderTableDto = TableFixture.비어있지_않는_주문_테이블_DTO();
             final OrderTableDto savedOrderTableDto = tableService.create(orderTableDto);
-            createOrderSuccessfully(savedOrderTableDto);
-
-            //when
             final Long orderTableId = savedOrderTableDto.getId();
-            Assertions.assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTableId, savedOrderTableDto)
-            ).isInstanceOf(OrderException.class)
-                .hasMessage(ORDER_IS_NOT_COMPLETION.getMessage());
-        }
 
-        private void createOrderSuccessfully(final OrderTableDto orderTableDto) {
-            final MenuDto menuDto = createMenu();
-            final OrderLineItemDto orderLineItemDto = OrderFixture.createOrderLineItem(menuDto.getId(), 1L);
+            tableService.changeEmpty(orderTableId, savedOrderTableDto);
 
-            final OrderDto orderDto = new OrderDto(
-                null,
-                orderTableDto.getId(),
-                null,
-                LocalDateTime.now(),
-                List.of(orderLineItemDto)
-            );
-            orderService.create(orderDto);
+            verify(tableChangeEmptyValidator, times(1))
+                .validateChangeEmpty(orderTableId);
         }
     }
 
@@ -154,8 +143,8 @@ class TableServiceTest extends ServiceIntegrationTest {
             //when
             final Long savedOrderTableId = savedOrderTableDto.getId();
             Assertions.assertThatThrownBy(() ->
-                tableService.changeNumberOfGuests(savedOrderTableId, parameter)
-            ).isInstanceOf(OrderTableException.class)
+                    tableService.changeNumberOfGuests(savedOrderTableId, parameter)
+                ).isInstanceOf(OrderTableException.class)
                 .hasMessage(NUMBER_OF_GUEST_LOWER_THAN_ZERO.getMessage());
         }
 
@@ -172,8 +161,8 @@ class TableServiceTest extends ServiceIntegrationTest {
             //when
             final Long tableId = savedOrderTableDto.getId();
             Assertions.assertThatThrownBy(() ->
-                tableService.changeNumberOfGuests(tableId, parameter)
-            ).isInstanceOf(OrderTableException.class)
+                    tableService.changeNumberOfGuests(tableId, parameter)
+                ).isInstanceOf(OrderTableException.class)
                 .hasMessage(TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY.getMessage());
         }
     }
@@ -181,8 +170,8 @@ class TableServiceTest extends ServiceIntegrationTest {
     private void saveTableGroup(final OrderTableDto savedOrderTableDto) {
         final OrderTableDto orderTable = tableService.create(TableFixture.비어있는_주문_테이블_DTO());
 
-        final List<OrderTableDtoInTableGroup> orderTables = List.of(
-            ServiceIntegrationTest.map(orderTable), ServiceIntegrationTest.map(savedOrderTableDto));
+        final List<OrderTableDtoInTableGroup> orderTables
+            = List.of(map(orderTable), map(savedOrderTableDto));
 
         final TableGroupDto tableGroupDto = new TableGroupDto(
             null,
@@ -191,5 +180,14 @@ class TableServiceTest extends ServiceIntegrationTest {
         );
 
         tableGroupService.create(tableGroupDto);
+    }
+
+    private static OrderTableDtoInTableGroup map(final OrderTableDto orderTableDto) {
+        return new OrderTableDtoInTableGroup(
+            orderTableDto.getId(),
+            orderTableDto.getTableGroupId(),
+            orderTableDto.getNumberOfGuests(),
+            orderTableDto.getEmpty()
+        );
     }
 }

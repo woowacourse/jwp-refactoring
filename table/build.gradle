@@ -1,4 +1,10 @@
+bootJar { enabled = false }
+jar { enabled = true }
+
 dependencies {
-    implementation project(':support')
-    implementation project(':table_group')
+    implementation project(':core')
+
+    testImplementation testFixtures(project(':core'))
+
+    testFixturesImplementation(project(':core'))
 }

@@ -1,14 +1,13 @@
 package kitchenpos.table.domain;
 
-import static kitchenpos.support.fixture.TableFixture.비어있는_주문_테이블;
-import static kitchenpos.support.fixture.TableFixture.비어있지_않는_주문_테이블;
 import static kitchenpos.table.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
 import static kitchenpos.table.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.table.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.fixture.TableFixture;
 import kitchenpos.table.domain.exception.OrderTableException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

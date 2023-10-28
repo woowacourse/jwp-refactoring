@@ -15,8 +15,10 @@ public class TableService {
     private final TableChangeEmptyValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final TableChangeEmptyValidator tableValidator,
-        final OrderTableRepository orderTableRepository) {
+    public TableService(
+        final TableChangeEmptyValidator tableValidator,
+        final OrderTableRepository orderTableRepository
+    ) {
         this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
     }

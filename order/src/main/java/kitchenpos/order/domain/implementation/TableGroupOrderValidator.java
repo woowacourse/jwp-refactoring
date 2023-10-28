@@ -1,15 +1,15 @@
 package kitchenpos.order.domain.implementation;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static kitchenpos.table_group.domain.exception.TableGroupExceptionType.ORDER_IS_NOT_COMPLETION;
 
 import java.util.List;
 import kitchenpos.order.application.OrderRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.exception.OrderException;
-import kitchenpos.order.domain.exception.OrderExceptionType;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table_group.domain.UngroupTableValidator;
+import kitchenpos.table_group.domain.exception.TableGroupException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,7 +32,7 @@ public class TableGroupOrderValidator implements UngroupTableValidator {
             = findOrderTableIdsInTableGroup(tableGroupId);
 
         if (isOrderStatusIsNotCompletion(orderTableIdsInTableGroup)) {
-            throw new OrderException(OrderExceptionType.ORDER_IS_NOT_COMPLETION);
+            throw new TableGroupException(ORDER_IS_NOT_COMPLETION);
         }
     }
 
