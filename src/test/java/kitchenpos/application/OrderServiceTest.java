@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import static kitchenpos.domain.order.OrderFixture.order;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -175,8 +176,8 @@ class OrderServiceTest {
 
         final OrderLineItem 후라이드_2개_메뉴_1개_주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
 
-        final Order 세명_테이블_주문 = orderRepository.save(new Order(세명_테이블.getId(), new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목))));
-        final Order 네명_테이블_주문 = orderRepository.save(new Order(네명_테이블.getId(), new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목))));
+        final Order 세명_테이블_주문 = orderRepository.save(order(세명_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목))));
+        final Order 네명_테이블_주문 = orderRepository.save(order(네명_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목))));
 
         em.flush();
         em.clear();
@@ -198,7 +199,7 @@ class OrderServiceTest {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
-        final Order 주문 = orderRepository.save(new Order(주문_테이블.getId(), new OrderLineItems(List.of(주문항목))));
+        final Order 주문 = orderRepository.save(order(주문_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(주문항목))));
 
         em.flush();
         em.clear();
@@ -219,9 +220,7 @@ class OrderServiceTest {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
-        final Order 완료된_주문 = orderRepository.save(new Order(주문_테이블.getId(), new OrderLineItems(List.of(주문항목))));
-
-        완료된_주문.changeOrderStatus(OrderStatus.COMPLETION);
+        final Order 완료된_주문 = orderRepository.save(order(주문_테이블.getId(), OrderStatus.COMPLETION, new OrderLineItems(List.of(주문항목))));
 
         em.flush();
         em.clear();

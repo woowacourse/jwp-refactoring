@@ -21,8 +21,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(4, false);
         final Long menuId = 1L;
         final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
-        final Order order = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
-        order.changeOrderStatus(orderStatus);
+        final Order order = new Order(orderTable.getId(), orderStatus, new OrderLineItems(List.of(orderLineItem)));
 
         // when
         final boolean actual = order.isNotComplete();
@@ -38,8 +37,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(4, false);
         final Long menuId = 1L;
         final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
-        final Order completeOrder = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
-        completeOrder.changeOrderStatus(OrderStatus.COMPLETION);
+        final Order completeOrder = new Order(orderTable.getId(), OrderStatus.COMPLETION, new OrderLineItems(List.of(orderLineItem)));
 
         // when
         final boolean actual = completeOrder.isNotComplete();
@@ -55,8 +53,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(4, false);
         final Long menuId = 1L;
         final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
-        final Order completeOrder = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
-        completeOrder.changeOrderStatus(OrderStatus.COMPLETION);
+        final Order completeOrder = new Order(orderTable.getId(), OrderStatus.COMPLETION, new OrderLineItems(List.of(orderLineItem)));
 
         // when
         assertThatThrownBy(() -> completeOrder.changeOrderStatus(OrderStatus.COOKING))

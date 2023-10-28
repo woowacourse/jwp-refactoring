@@ -34,10 +34,17 @@ public class Order extends BaseCreateTimeEntity {
     protected Order() {
     }
 
-    public Order(final Long orderTableId, final OrderLineItems orderLineItems) {
+    Order(final Long orderTableId, final OrderStatus orderStatus, final OrderLineItems orderLineItems) {
         this.orderTableId = orderTableId;
-        this.orderStatus = INITIAL_ORDER_STATUS;
+        this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
+    }
+
+    public static Order createNewOrder(final Long orderTableId, final OrderLineItems orderLineItems, OrderValidator orderValidator) {
+        final Order order = new Order(orderTableId, INITIAL_ORDER_STATUS, orderLineItems);
+        orderValidator.validate(order);
+
+        return order;
     }
 
     public boolean isNotComplete() {
