@@ -12,7 +12,7 @@ public class MenuProductFixture {
     private static final long DEFAULT_QUANTITY = 1L;
 
     public static MenuProduct 메뉴_상품_생성(final Product product) {
-        return new MenuProduct(product.getId(), DEFAULT_QUANTITY);
+        return new MenuProduct(product.getId(), product.getPrice(), DEFAULT_QUANTITY);
     }
 
     public static List<MenuProduct> 메뉴_상품들_생성(final List<Product> products) {

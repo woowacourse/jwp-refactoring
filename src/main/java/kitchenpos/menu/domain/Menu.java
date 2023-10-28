@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.common.vo.Price;
+import kitchenpos.exception.InvalidMenuPriceException;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -32,7 +33,7 @@ public class Menu {
 
     protected Menu() {}
 
-    public Menu(
+    private Menu(
             final String name,
             final Price price,
             final Long menuGroupId,
@@ -42,6 +43,27 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public static Menu of(
+            final String name,
+            final Price price,
+            final Long menuGroupId,
+            final MenuProducts menuProducts
+    ) {
+        validateMenuPrice(menuProducts, price);
+
+        return new Menu(name, price, menuGroupId, menuProducts);
+    }
+
+    private static void validateMenuPrice(final MenuProducts menuProducts, final Price price) {
+        final Price totalPrice = menuProducts.calculateTotalPrice();
+
+        if (price.isHigherThan(totalPrice)) {
+            System.out.println("price : " + price.getValue());
+            System.out.println("totalPrice : " + totalPrice.getValue());
+            throw new InvalidMenuPriceException("메뉴 가격이 상품들의 가격 합보다 클 수 없습니다.");
+        }
     }
 
     public Long getId() {

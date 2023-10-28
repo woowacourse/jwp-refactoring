@@ -1,9 +1,15 @@
 package kitchenpos.menu.domain;
 
+import kitchenpos.common.vo.Price;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -15,13 +21,24 @@ public class MenuProduct {
 
     private Long productId;
 
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    private Price price;
+
     private long quantity;
 
     protected MenuProduct() {}
 
-    public MenuProduct(final Long productId, final long quantity) {
+    public MenuProduct(final Long productId, final Price price, final long quantity) {
         this.productId = productId;
+        this.price = price;
         this.quantity = quantity;
+    }
+
+    public Price calculatePrice() {
+        final BigDecimal multiply = price.getValue().multiply(BigDecimal.valueOf(quantity));
+
+        return new Price(multiply);
     }
 
     public Long getSeq() {

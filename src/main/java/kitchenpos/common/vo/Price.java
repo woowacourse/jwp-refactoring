@@ -9,6 +9,8 @@ import java.util.Objects;
 @Embeddable
 public class Price {
 
+    public static Price ZERO = new Price(BigDecimal.ZERO);
+
     private BigDecimal value;
 
     public Price() {}
@@ -22,6 +24,12 @@ public class Price {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidPriceValue("상품의 가격은 0 혹은 양수여야 합니다.");
         }
+    }
+
+    public Price sum(final Price other) {
+        this.value = this.value.add(other.value);
+
+        return this;
     }
 
     public boolean isHigherThan(final Price other) {

@@ -1,5 +1,6 @@
 package kitchenpos.menu.ui.dto;
 
+import kitchenpos.common.vo.Price;
 import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductDto {
@@ -12,8 +13,8 @@ public class MenuProductDto {
         this.quantity = quantity;
     }
 
-    public MenuProduct toEntity() {
-        return new MenuProduct(productId, quantity);
+    public MenuProduct toEntity(final Price price) {
+        return new MenuProduct(productId, price, quantity);
     }
 
     public Long getProductId() {

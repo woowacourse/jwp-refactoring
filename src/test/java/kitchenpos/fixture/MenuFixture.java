@@ -29,7 +29,7 @@ public class MenuFixture {
 
         final MenuProducts 메뉴_상품들 = 메뉴_상품_엔티티들_생성(products);
 
-        return new Menu(메뉴_이름, new Price(메뉴_가격_계산(products)), menuGroup.getId(), 메뉴_상품들);
+        return Menu.of(메뉴_이름, new Price(메뉴_가격_계산(products)), menuGroup.getId(), 메뉴_상품들);
     }
 
     public static Menu 메뉴_엔티티_생성(final MenuGroup menuGroup, final List<Product> products) {
@@ -63,7 +63,7 @@ public class MenuFixture {
     }
 
     private static MenuProduct 메뉴_상품_엔티티_생성(final Product product) {
-        return new MenuProduct(product.getId(), DEFAULT_QUANTITY);
+        return new MenuProduct(product.getId(), product.getPrice(), DEFAULT_QUANTITY);
     }
 
     private static MenuRequest 메뉴_요청_dto_생성(final MenuGroup menuGroup, final List<Product> products, @Nullable final Integer number) {

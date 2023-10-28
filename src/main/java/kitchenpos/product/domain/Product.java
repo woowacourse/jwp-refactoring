@@ -32,6 +32,10 @@ public class Product {
         this.price = price;
     }
 
+    public BigDecimal getPriceValue() {
+        return price.getValue();
+    }
+
     public Long getId() {
         return id;
     }
@@ -40,8 +44,8 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPriceValue() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 
     @Override
