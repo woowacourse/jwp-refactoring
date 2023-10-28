@@ -6,6 +6,7 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.table.NumberOfGuests;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
@@ -169,7 +170,7 @@ class TableServiceTest {
         final OrderLineItem 주문_항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 2);
 
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
-        final Order 두명_테이블_주문 = orderRepository.save(new Order(두명_테이블.getId(), List.of(주문_항목)));
+        final Order 두명_테이블_주문 = orderRepository.save(new Order(두명_테이블.getId(), new OrderLineItems(List.of(주문_항목))));
         두명_테이블_주문.changeOrderStatus(orderStatus);
 
         em.flush();

@@ -21,7 +21,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(4, false);
         final Long menuId = 1L;
         final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
-        final Order order = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order order = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
         order.changeOrderStatus(orderStatus);
 
         // when
@@ -38,7 +38,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(4, false);
         final Long menuId = 1L;
         final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
-        final Order completeOrder = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order completeOrder = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
         completeOrder.changeOrderStatus(OrderStatus.COMPLETION);
 
         // when
@@ -55,7 +55,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(4, false);
         final Long menuId = 1L;
         final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
-        final Order completeOrder = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order completeOrder = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
         completeOrder.changeOrderStatus(OrderStatus.COMPLETION);
 
         // when

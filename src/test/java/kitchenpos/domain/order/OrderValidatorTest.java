@@ -70,7 +70,7 @@ class OrderValidatorTest {
         em.flush();
         em.clear();
 
-        final Order order = new Order(orderTable.getId(), List.of(주문_항목));
+        final Order order = new Order(orderTable.getId(), new OrderLineItems(List.of(주문_항목)));
 
         // when & then
         assertThatCode(() -> orderValidator.validate(order))
@@ -85,7 +85,7 @@ class OrderValidatorTest {
         em.clear();
 
         final long invalidOrderTableId = -999L;
-        final Order invalidOrder = new Order(invalidOrderTableId, List.of(주문_항목));
+        final Order invalidOrder = new Order(invalidOrderTableId, new OrderLineItems(List.of(주문_항목)));
 
         // when & then
         assertThatThrownBy(() -> orderValidator.validate(invalidOrder))
@@ -102,7 +102,7 @@ class OrderValidatorTest {
         em.flush();
         em.clear();
 
-        final Order invalidOrder = new Order(비어있는_테이블.getId(), List.of(주문_항목));
+        final Order invalidOrder = new Order(비어있는_테이블.getId(), new OrderLineItems(List.of(주문_항목)));
 
         // when & then
         assertThatThrownBy(() -> orderValidator.validate(invalidOrder))

@@ -7,6 +7,7 @@ import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
@@ -226,8 +227,8 @@ class TableGroupServiceTest {
         세명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
         네명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
 
-        orderRepository.save(new Order(세명_테이블.getId(), List.of(주문_항목)));
-        final Order 네명_테이블_미완료_주문 = orderRepository.save(new Order(네명_테이블.getId(), List.of(주문_항목)));
+        orderRepository.save(new Order(세명_테이블.getId(), new OrderLineItems(List.of(주문_항목))));
+        final Order 네명_테이블_미완료_주문 = orderRepository.save(new Order(네명_테이블.getId(), new OrderLineItems(List.of(주문_항목))));
         네명_테이블_미완료_주문.changeOrderStatus(orderStatus);
 
         em.flush();

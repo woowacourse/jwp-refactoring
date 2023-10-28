@@ -18,10 +18,10 @@ class OrdersTest {
 
         final Long menuId = 1L;
         final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
-        final Order notCompleteOrder = new Order(orderTable.getId(), List.of(orderLineItem));
-        final Order completeOrder1 = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order notCompleteOrder = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
+        final Order completeOrder1 = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
         completeOrder1.changeOrderStatus(OrderStatus.COMPLETION);
-        final Order completeOrder2 = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order completeOrder2 = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
         completeOrder2.changeOrderStatus(OrderStatus.COMPLETION);
 
         final Orders orders = new Orders(List.of(notCompleteOrder, completeOrder1, completeOrder2));
@@ -41,11 +41,11 @@ class OrdersTest {
         final Long menuId = 1L;
         final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2);
 
-        final Order completeOrder1 = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order completeOrder1 = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
         completeOrder1.changeOrderStatus(OrderStatus.COMPLETION);
-        final Order completeOrder2 = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order completeOrder2 = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
         completeOrder2.changeOrderStatus(OrderStatus.COMPLETION);
-        final Order completeOrder3 = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order completeOrder3 = new Order(orderTable.getId(), new OrderLineItems(List.of(orderLineItem)));
         completeOrder3.changeOrderStatus(OrderStatus.COMPLETION);
 
         final Orders orders = new Orders(List.of(completeOrder1, completeOrder2, completeOrder3));

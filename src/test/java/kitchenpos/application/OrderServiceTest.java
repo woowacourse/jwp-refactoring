@@ -5,6 +5,7 @@ import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.menu.Product;
@@ -174,8 +175,8 @@ class OrderServiceTest {
 
         final OrderLineItem 후라이드_2개_메뉴_1개_주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
 
-        final Order 세명_테이블_주문 = orderRepository.save(new Order(세명_테이블.getId(), List.of(후라이드_2개_메뉴_1개_주문항목)));
-        final Order 네명_테이블_주문 = orderRepository.save(new Order(네명_테이블.getId(), List.of(후라이드_2개_메뉴_1개_주문항목)));
+        final Order 세명_테이블_주문 = orderRepository.save(new Order(세명_테이블.getId(), new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목))));
+        final Order 네명_테이블_주문 = orderRepository.save(new Order(네명_테이블.getId(), new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목))));
 
         em.flush();
         em.clear();
@@ -197,7 +198,7 @@ class OrderServiceTest {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
-        final Order 주문 = orderRepository.save(new Order(주문_테이블.getId(), List.of(주문항목)));
+        final Order 주문 = orderRepository.save(new Order(주문_테이블.getId(), new OrderLineItems(List.of(주문항목))));
 
         em.flush();
         em.clear();
@@ -218,7 +219,7 @@ class OrderServiceTest {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
-        final Order 완료된_주문 = orderRepository.save(new Order(주문_테이블.getId(), List.of(주문항목)));
+        final Order 완료된_주문 = orderRepository.save(new Order(주문_테이블.getId(), new OrderLineItems(List.of(주문항목))));
 
         완료된_주문.changeOrderStatus(OrderStatus.COMPLETION);
 

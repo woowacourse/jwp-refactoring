@@ -5,6 +5,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class OrderLineItems {
@@ -47,5 +49,11 @@ public class OrderLineItems {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public Set<Long> getMenuIds() {
+        return orderLineItems.stream()
+                             .map(OrderLineItem::getMenuId)
+                             .collect(Collectors.toSet());
     }
 }
