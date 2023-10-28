@@ -9,10 +9,10 @@ public class OrderLineItemDto {
     private Long menuId;
     private long quantity;
 
-    public static OrderLineItemDto from(final OrderLineItem entity) {
+    public static OrderLineItemDto from(final OrderLineItem entity, Long orderId) {
         final OrderLineItemDto orderLineItemDto = new OrderLineItemDto();
         orderLineItemDto.setSeq(entity.getSeq());
-        orderLineItemDto.setOrderId(entity.getOrder().getId());
+        orderLineItemDto.setOrderId(orderId);
         orderLineItemDto.setMenuId(entity.getMenu().getId());
         orderLineItemDto.setQuantity(entity.getQuantity());
         return orderLineItemDto;

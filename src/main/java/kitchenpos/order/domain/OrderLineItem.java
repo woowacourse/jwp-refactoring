@@ -16,9 +16,6 @@ public class OrderLineItem {
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-    @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
     private long quantity;
@@ -26,20 +23,16 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
+    public OrderLineItem(Long seq, Menu menu, long quantity) {
         this.seq = seq;
         this.menu = menu;
         this.quantity = quantity;
-        setOrder(order);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Order getOrder() {
-        return order;
-    }
 
     public Menu getMenu() {
         return menu;
@@ -49,24 +42,14 @@ public class OrderLineItem {
         return quantity;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
     public static class Builder {
 
         private Long seq;
-        private Order order;
         private Menu menu;
         private long quantity;
 
         public Builder seq(Long seq) {
             this.seq = seq;
-            return this;
-        }
-
-        public Builder order(Order order) {
-            this.order = order;
             return this;
         }
 
@@ -81,7 +64,7 @@ public class OrderLineItem {
         }
 
         public OrderLineItem build() {
-            return new OrderLineItem(seq, order, menu, quantity);
+            return new OrderLineItem(seq, menu, quantity);
         }
     }
 }

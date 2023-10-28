@@ -6,14 +6,15 @@ import static kitchenpos.exception.ExceptionType.TABLE_GROUP_NOT_FOUND;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.exception.CustomException;
+import kitchenpos.exception.ExceptionType;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.service.OrderService;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.service.OrderService;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.domain.TableGroup.Builder;
-import kitchenpos.exception.CustomException;
-import kitchenpos.exception.ExceptionType;
 import kitchenpos.ordertable.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,16 +23,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
 
     private final OrderService orderService;
-    private final TableService tableService;
+    private final OrderRepository orderRepository;
+    private final OrderTableService orderTableService;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
         final OrderService orderService,
-        final TableService tableService,
+        final OrderRepository orderRepository,
+        final OrderTableService orderTableService,
         final TableGroupRepository tableGroupRepository
     ) {
         this.orderService = orderService;
-        this.tableService = tableService;
+        this.orderRepository = orderRepository;
+        this.orderTableService = orderTableService;
         this.tableGroupRepository = tableGroupRepository;
     }
 
@@ -40,7 +44,7 @@ public class TableGroupService {
         List<OrderTable> orderTables = tableGroupDto.getOrderTables()
                                                     .stream()
                                                     .map(OrderTableDto::getId)
-                                                    .map(tableService::findById)
+                                                    .map(orderTableService::findById)
                                                     .collect(toList());
 
         TableGroup tableGroup = new Builder()
@@ -57,7 +61,7 @@ public class TableGroupService {
 
         List<Long> ids = getOrderTableIds(tableGroup);
 
-        List<Order> processingOrders = orderService.findByOrderTableIdInAndOrderStatusIn(
+        List<Order> processingOrders = orderRepository.findByOrderTableIdInAndOrderStatusIn(
             ids,
             Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)
         );

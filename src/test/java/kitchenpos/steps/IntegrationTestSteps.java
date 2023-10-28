@@ -7,7 +7,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.menu.service.MenuDto;
 import kitchenpos.menugroup.service.MenuGroupDto;
-import kitchenpos.order.service.OrderDto;
+import kitchenpos.ordercrud.service.OrderDto;
 import kitchenpos.ordertable.service.OrderTableDto;
 import kitchenpos.product.service.ProductDto;
 import kitchenpos.ordertable.service.TableGroupDto;

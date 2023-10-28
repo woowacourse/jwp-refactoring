@@ -6,7 +6,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.service.OrderDto;
+import kitchenpos.ordercrud.service.OrderDto;
 import kitchenpos.ordertable.service.OrderTableDto;
 import kitchenpos.ordertable.service.TableGroupDto;
 import kitchenpos.fixture.OrderFixture;

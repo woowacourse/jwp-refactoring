@@ -1,4 +1,4 @@
-package kitchenpos.order.service;
+package kitchenpos.ordercrud.service;
 
 import static java.util.stream.Collectors.toList;
 
@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.service.OrderLineItemDto;
 
 public class OrderDto {
 
@@ -18,12 +19,12 @@ public class OrderDto {
     public static OrderDto from(Order entity) {
         List<OrderLineItemDto> orderLineItemDtos = entity.getOrderLineItems()
                                                          .stream()
-                                                         .map(OrderLineItemDto::from)
+                                                         .map(orderLineItem -> OrderLineItemDto.from(orderLineItem, entity.getId()))
                                                          .collect(toList());
         OrderDto orderDto = new OrderDto();
         orderDto.setId(entity.getId());
-        orderDto.setOrderTableId(entity.getOrderTable().getId());
         orderDto.setOrderStatus(entity.getOrderStatus().name());
+        orderDto.setOrderTableId(entity.geOrderTableId());
         orderDto.setOrderedTime(entity.getOrderedTime());
         orderDto.setOrderLineItemDtos(orderLineItemDtos);
         return orderDto;

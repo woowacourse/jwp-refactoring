@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.service.OrderDto;
+import kitchenpos.ordercrud.service.OrderDto;
 import kitchenpos.order.service.OrderLineItemDto;
 
 public enum OrderFixture {
@@ -57,7 +57,6 @@ public enum OrderFixture {
 
     public Order toEntity() {
         return new Order.Builder()
-            .orderTable(OrderTableFixture.OCCUPIED_TABLE.toEntity())
             .orderLineItems(List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toEntity()))
             .orderStatus(OrderStatus.COOKING)
             .orderedTime(LocalDateTime.now())
