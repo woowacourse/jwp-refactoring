@@ -5,7 +5,6 @@ dependencies {
     implementation project(':product')
     implementation project(':order')
     implementation project(':table-group')
-    implementation project(':web')
 
     runtimeOnly 'com.h2database:h2'
 }
