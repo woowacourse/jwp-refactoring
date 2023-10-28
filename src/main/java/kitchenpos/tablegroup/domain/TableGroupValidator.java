@@ -6,11 +6,11 @@ import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TableGroupGenerator {
+public class TableGroupValidator {
 
     private final OrderTableRepository orderTableRepository;
 
-    public TableGroupGenerator(final OrderTableRepository orderTableRepository) {
+    public TableGroupValidator(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -47,13 +47,6 @@ public class TableGroupGenerator {
     private void validateEmptyOrderTable(final OrderTable orderTable) {
         if (!orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블은 비어있어야 합니다.");
-        }
-    }
-
-    public void setOrderTableGroupId(final Long tableGroupId, final List<Long> orderTableIds) {
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
         }
     }
 }

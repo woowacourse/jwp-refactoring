@@ -6,16 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.common.OrderStatus;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.dto.OrderTableChangNumberOfGuestRequest;
 import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.OrderTableCreateRequest;
-import kitchenpos.tablegroup.domain.TableGroupGenerator;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroupValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class TableServiceTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private TableGroupGenerator tableGroupGenerator;
+    private TableGroupValidator tableGroupValidator;
 
     @Test
     @DisplayName("주문 테이블을 정상적으로 생성한다.")

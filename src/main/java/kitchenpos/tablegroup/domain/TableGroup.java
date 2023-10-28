@@ -28,10 +28,10 @@ public class TableGroup {
     }
 
     public static TableGroup of(
-            final TableGroupGenerator tableGroupGenerator,
+            final TableGroupValidator tableGroupValidator,
             final List<Long> orderTableIds
     ) {
-        tableGroupGenerator.validate(orderTableIds);
+        tableGroupValidator.validate(orderTableIds);
         return new TableGroup();
     }
 

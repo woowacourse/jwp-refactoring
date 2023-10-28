@@ -3,13 +3,13 @@ package kitchenpos.tablegroup.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.common.OrderStatus;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupGenerator;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroupValidator;
 import kitchenpos.tablegroup.dto.OrderTableRequest;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
@@ -21,18 +21,18 @@ public class TableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final TableGroupGenerator tableGroupGenerator;
+    private final TableGroupValidator tableGroupValidator;
 
     public TableGroupService(
             final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository,
-            final TableGroupGenerator tableGroupGenerator
+            final TableGroupValidator tableGroupValidator
     ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableGroupGenerator = tableGroupGenerator;
+        this.tableGroupValidator = tableGroupValidator;
     }
 
     @Transactional
@@ -40,9 +40,12 @@ public class TableGroupService {
         final List<OrderTableRequest> orderTableRequests = request.getOrderTables();
         final List<Long> orderTableIds = getOrderTableIds(orderTableRequests);
 
-        final TableGroup newTableGroup = TableGroup.of(tableGroupGenerator, orderTableIds);
+        final TableGroup newTableGroup = TableGroup.of(tableGroupValidator, orderTableIds);
         final TableGroup savedTableGroup = tableGroupRepository.save(newTableGroup);
-        tableGroupGenerator.setOrderTableGroupId(savedTableGroup.getId(), orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.setTableGroupId(savedTableGroup.getId());
+        }
         return savedTableGroup;
     }
 

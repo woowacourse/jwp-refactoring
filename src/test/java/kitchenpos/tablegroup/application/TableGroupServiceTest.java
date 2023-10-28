@@ -6,14 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.common.OrderStatus;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupGenerator;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.dto.OrderTableRequest;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -38,13 +36,7 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private TableGroupGenerator tableGroupGenerator;
 
     @Nested
     @DisplayName("테이블 그룹을 생성할 때 ")

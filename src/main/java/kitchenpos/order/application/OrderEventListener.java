@@ -1,8 +1,8 @@
 package kitchenpos.order.application;
 
 import java.util.Arrays;
-import kitchenpos.common.OrderStatus;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.dto.OrderStatusValidated;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
