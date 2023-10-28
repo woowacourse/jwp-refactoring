@@ -48,9 +48,7 @@ public class OrderService {
         final List<OrderLineItemCreateRequest> orderLineItemRequest = request.getOrderLineItems();
         validateOrderLineItemSize(orderLineItemRequest);
         final List<Long> menuIds = getMenuIds(orderLineItemRequest);
-        if (orderLineItemRequest.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        validateDuplicateMenu(orderLineItemRequest, menuIds);
 
         final OrderTable orderTable = findOrderTableById(request.getOrderTableId());
         orderTable.validateIsEmpty();
@@ -73,6 +71,13 @@ public class OrderService {
         final Order order = findOrderById(orderId);
         order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return convertToResponse(order);
+    }
+
+    private void validateDuplicateMenu(final List<OrderLineItemCreateRequest> orderLineItemRequest,
+                                       final List<Long> menuIds) {
+        if (orderLineItemRequest.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateOrderLineItemSize(final List<OrderLineItemCreateRequest> orderLineItemRequest) {
