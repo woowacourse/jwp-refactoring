@@ -30,7 +30,7 @@ public class Order {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "order_table_id")
+    @JoinColumn(name = "order_table_id", nullable = false)
     private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)

@@ -25,7 +25,7 @@ public class Menu {
     private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_group_id")
+    @JoinColumn(name = "menu_group_id", nullable = false)
     private MenuGroup menuGroup;
 
     public Menu(String name, Price price, MenuGroup menuGroup) {
