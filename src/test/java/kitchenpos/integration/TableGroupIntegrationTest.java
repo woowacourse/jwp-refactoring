@@ -8,12 +8,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import kitchenpos.application.dto.request.OrderTableCreateRequest;
-import kitchenpos.application.dto.request.TableGroupCreateOrderTableRequest;
-import kitchenpos.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.integration.helper.InitIntegrationTest;
+import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.request.TableGroupCreateOrderTableRequest;
+import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.table.application.dto.response.OrderTableResponse;
+import kitchenpos.table.application.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
@@ -26,7 +26,7 @@ class TableGroupIntegrationTest extends InitIntegrationTest {
     void testCreateSuccess() {
         //given
         final OrderTableResponse orderTableResponse1 = createDefaultOrderTable();
-        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, true));
+        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, false));
         final List<TableGroupCreateOrderTableRequest> tableGroupCreateOrderTableRequests = List.of(
                 new TableGroupCreateOrderTableRequest(orderTableResponse1.getId()),
                 new TableGroupCreateOrderTableRequest(orderTableResponse2.getId())
@@ -49,7 +49,7 @@ class TableGroupIntegrationTest extends InitIntegrationTest {
     void testUngroupSuccess() {
         //given
         final OrderTableResponse orderTableResponse1 = createDefaultOrderTable();
-        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, true));
+        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, false));
         final List<TableGroupCreateOrderTableRequest> tableGroupCreateOrderTableRequests = List.of(
                 new TableGroupCreateOrderTableRequest(orderTableResponse1.getId()),
                 new TableGroupCreateOrderTableRequest(orderTableResponse2.getId())

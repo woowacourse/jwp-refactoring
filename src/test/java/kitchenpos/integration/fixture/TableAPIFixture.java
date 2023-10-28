@@ -5,10 +5,10 @@ import static io.restassured.RestAssured.given;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.dto.request.OrderTableCreateRequest;
-import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.table.application.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.table.application.dto.request.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.response.OrderTableResponse;
 import org.springframework.http.MediaType;
 import java.util.List;
 

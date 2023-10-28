@@ -16,21 +16,21 @@ import static kitchenpos.integration.fixture.TableGroupAPIFixture.createTableGro
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderLineItemRequest;
-import kitchenpos.application.dto.request.OrderStatusChangeRequest;
-import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.dto.request.OrderTableCreateRequest;
-import kitchenpos.application.dto.request.TableGroupCreateOrderTableRequest;
-import kitchenpos.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.integration.helper.InitIntegrationTest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.menu.application.dto.response.ProductResponse;
+import kitchenpos.order.application.dto.request.OrderCreateRequest;
+import kitchenpos.order.application.dto.request.OrderLineItemRequest;
+import kitchenpos.order.application.dto.request.OrderStatusChangeRequest;
+import kitchenpos.order.application.dto.response.OrderResponse;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.application.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.table.application.dto.request.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.request.TableGroupCreateOrderTableRequest;
+import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.table.application.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -77,17 +77,10 @@ class TableIntegrationTest extends InitIntegrationTest {
         final MenuGroupResponse menuGroupResponse = createDefaultMenuGroup();
         final MenuResponse menuResponse = createDefaultMenu(productResponse.getId(), productResponse.getPrice(), menuGroupResponse.getId());
 
-        final OrderTableResponse orderTableResponse1 = createDefaultOrderTable();
-        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, true));
-        final List<TableGroupCreateOrderTableRequest> tableGroupCreateOrderTableRequests = List.of(
-                new TableGroupCreateOrderTableRequest(orderTableResponse1.getId()),
-                new TableGroupCreateOrderTableRequest(orderTableResponse2.getId())
-        );
-        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(tableGroupCreateOrderTableRequests);
-        createTableGroupAndReturnResponse(tableGroupCreateRequest);
+        final OrderTableResponse orderTableResponse = createDefaultOrderTable();
 
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuResponse.getMenuGroupId(), 2L);
-        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableResponse1.getId(), List.of(orderLineItemRequest));
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableResponse.getId(), List.of(orderLineItemRequest));
         final OrderResponse orderCreateResponse = createOrderAndReturnResponse(orderCreateRequest);
 
         final OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
@@ -96,11 +89,11 @@ class TableIntegrationTest extends InitIntegrationTest {
         final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(true);
 
         //when
-        final OrderTableResponse response = changeOrderEmpty(orderTableResponse1.getId(), orderTableChangeEmptyRequest);
+        final OrderTableResponse response = changeOrderEmpty(orderTableResponse.getId(), orderTableChangeEmptyRequest);
 
         //then
         assertAll(
-                () -> assertThat(response.getId()).isEqualTo(orderTableResponse1.getId()),
+                () -> assertThat(response.getId()).isEqualTo(orderTableResponse.getId()),
                 () -> assertThat(response.getNumberOfGuests()).isEqualTo(DEFAULT_ORDER_TABLE_NUMBER_OF_GUESTS),
                 () -> assertThat(response.isEmpty()).isEqualTo(orderTableChangeEmptyRequest.isEmpty())
         );
@@ -115,7 +108,7 @@ class TableIntegrationTest extends InitIntegrationTest {
         final MenuResponse menuResponse = createDefaultMenu(productResponse.getId(), productResponse.getPrice(), menuGroupResponse.getId());
 
         final OrderTableResponse orderTableResponse1 = createDefaultOrderTable();
-        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, true));
+        final OrderTableResponse orderTableResponse2 = createOrderTableAndReturnResponse(new OrderTableCreateRequest(5, false));
         final List<TableGroupCreateOrderTableRequest> tableGroupCreateOrderTableRequests = List.of(
                 new TableGroupCreateOrderTableRequest(orderTableResponse1.getId()),
                 new TableGroupCreateOrderTableRequest(orderTableResponse2.getId())

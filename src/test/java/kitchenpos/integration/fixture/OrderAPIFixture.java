@@ -5,9 +5,9 @@ import static io.restassured.RestAssured.given;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderStatusChangeRequest;
-import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.order.application.dto.request.OrderCreateRequest;
+import kitchenpos.order.application.dto.request.OrderStatusChangeRequest;
+import kitchenpos.order.application.dto.response.OrderResponse;
 import org.springframework.http.MediaType;
 import java.util.List;
 

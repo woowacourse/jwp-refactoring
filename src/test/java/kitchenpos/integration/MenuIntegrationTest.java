@@ -9,10 +9,10 @@ import static kitchenpos.integration.fixture.ProductAPIFixture.createDefaultProd
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.integration.helper.InitIntegrationTest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.menu.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;

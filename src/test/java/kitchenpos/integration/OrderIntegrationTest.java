@@ -10,16 +10,16 @@ import static kitchenpos.integration.fixture.TableAPIFixture.createDefaultOrderT
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderLineItemRequest;
-import kitchenpos.application.dto.request.OrderStatusChangeRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.integration.helper.InitIntegrationTest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.menu.application.dto.response.ProductResponse;
+import kitchenpos.order.application.dto.request.OrderCreateRequest;
+import kitchenpos.order.application.dto.request.OrderLineItemRequest;
+import kitchenpos.order.application.dto.request.OrderStatusChangeRequest;
+import kitchenpos.order.application.dto.response.OrderResponse;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.application.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
