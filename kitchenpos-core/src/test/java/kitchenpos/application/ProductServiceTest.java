@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.fixture.ProductServiceFixture;
 import kitchenpos.common.dto.request.CreateProductRequest;
-import kitchenpos.menu.application.ProductService;
-import kitchenpos.menu.domain.Product;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

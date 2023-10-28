@@ -4,13 +4,13 @@ import kitchenpos.common.dto.request.CreateMenuRequest;
 import kitchenpos.common.dto.request.MenuProductDto;
 import kitchenpos.common.vo.Price;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.Product;
-import kitchenpos.menu.persistence.JpaMenuProductRepository;
 import kitchenpos.menu.persistence.JpaMenuRepository;
-import kitchenpos.menu.persistence.JpaProductRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.persistence.JpaMenuGroupRepository;
+import kitchenpos.product.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.persistence.JpaMenuProductRepository;
+import kitchenpos.product.persistence.JpaProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;

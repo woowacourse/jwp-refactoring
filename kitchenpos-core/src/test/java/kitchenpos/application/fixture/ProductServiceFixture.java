@@ -1,8 +1,8 @@
 package kitchenpos.application.fixture;
 
 import kitchenpos.common.vo.Price;
-import kitchenpos.menu.domain.Product;
-import kitchenpos.menu.persistence.JpaProductRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.persistence.JpaProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 

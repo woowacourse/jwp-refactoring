@@ -1,6 +1,6 @@
-package kitchenpos.menu.persistence;
+package kitchenpos.product.persistence;
 
-import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.MenuProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
