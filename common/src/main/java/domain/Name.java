@@ -1,7 +1,9 @@
-package kitchenpos.common.domain;
+package domain;
 
 import java.util.Objects;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class Name {
 
     private String name;
