@@ -27,8 +27,19 @@ public class Product {
     }
 
     public static Product of(final String name, final BigDecimal price) {
-        validatePrice(price);
+        validate(name, price);
         return new Product(null, name, price);
+    }
+
+    private static void validate(final String name, final BigDecimal price) {
+        validateName(name);
+        validatePrice(price);
+    }
+
+    private static void validateName(final String name) {
+        if (name.isEmpty() || name.length() > 64) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private static void validatePrice(final BigDecimal price) {

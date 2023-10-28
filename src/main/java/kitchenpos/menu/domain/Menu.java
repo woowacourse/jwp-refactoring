@@ -45,11 +45,11 @@ public class Menu {
     }
 
     private static void validate(final String name, final BigDecimal price) {
-        validateMenuName(name);
+        validateName(name);
         validatePrice(price);
     }
 
-    private static void validateMenuName(final String name) {
+    private static void validateName(final String name) {
         if (name.isEmpty() || name.length() > 64) {
             throw new IllegalArgumentException();
         }
