@@ -3,9 +3,9 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
-import kitchenpos.domain.Menu;
-import kitchenpos.dto.MenuDto;
-import kitchenpos.dto.MenuProductDto;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.service.MenuDto;
+import kitchenpos.menu.service.MenuProductDto;
 
 public enum MenuFixture {
 

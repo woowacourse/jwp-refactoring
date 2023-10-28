@@ -1,11 +1,11 @@
-package kitchenpos.dto;
+package kitchenpos.menu.service;
 
 import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.domain.Menu;
 
 public class MenuDto {
 

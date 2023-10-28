@@ -7,7 +7,7 @@ import java.util.List;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.Order.Builder;
 import kitchenpos.domain.OrderLineItem;
@@ -17,6 +17,7 @@ import kitchenpos.dto.OrderDto;
 import kitchenpos.dto.OrderLineItemDto;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
+import kitchenpos.menu.service.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

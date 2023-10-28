@@ -5,10 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu.Builder;
+import kitchenpos.menu.domain.Menu.Builder;
 import kitchenpos.exception.ExceptionType;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.menu.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

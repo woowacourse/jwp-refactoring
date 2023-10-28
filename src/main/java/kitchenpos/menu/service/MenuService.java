@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.service;
 
 import static java.util.stream.Collectors.toList;
 import static kitchenpos.exception.ExceptionType.MENU_GROUP_NOT_FOUND;
@@ -6,14 +6,12 @@ import static kitchenpos.exception.ExceptionType.MENU_GROUP_NOT_FOUND;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.MenuRepository;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.product.domain.Product;
-import kitchenpos.dto.MenuDto;
-import kitchenpos.dto.MenuProductDto;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
 import kitchenpos.product.service.ProductService;

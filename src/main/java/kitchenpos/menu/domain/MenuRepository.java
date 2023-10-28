@@ -1,8 +1,8 @@
-package kitchenpos.dao;
+package kitchenpos.menu.domain;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.domain.Menu;
 import org.springframework.data.repository.Repository;
 
 public interface MenuRepository extends Repository<Menu, Long> {

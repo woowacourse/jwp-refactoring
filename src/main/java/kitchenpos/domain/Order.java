@@ -23,6 +23,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
+import kitchenpos.menu.domain.Menu;
 
 @Entity
 @Table(name = "orders")
