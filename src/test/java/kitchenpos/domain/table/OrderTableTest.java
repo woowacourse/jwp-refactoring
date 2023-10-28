@@ -1,14 +1,24 @@
 package kitchenpos.domain.table;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderTableTest {
+
+    private final OrderTableValidator mockValidator = Mockito.mock(OrderTableValidator.class);
+
+    @BeforeEach
+    void setUp() {
+        doNothing().when(mockValidator).validateCanChangeEmpty(any(OrderTable.class));
+    }
 
     @Test
     @DisplayName("테이블을 그룹화하면 테이블은 비어있지 않은 상태가 된다")
@@ -72,22 +82,5 @@ class OrderTableTest {
         assertThatThrownBy(() -> 두명_테이블.changeNumberOfGuests(invalidNumberOfGuests))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("손님 수는 음수일 수 없습니다.");
-    }
-
-    @Test
-    @DisplayName("테이블의 비어있음 정보를 변경할 때 테이블이 그룹화되어 있다면 변경할 수 없다")
-    void changeEmpty_groupedTable() {
-        // given
-        final OrderTable 두명_테이블 = new OrderTable(2, true);
-        final OrderTable 세명_테이블 = new OrderTable(3, true);
-        final TableGroup 두명_세명_테이블_그룹 = new TableGroup();
-        ReflectionTestUtils.setField(두명_세명_테이블_그룹, "id", 1L);
-        두명_테이블.groupBy(두명_세명_테이블_그룹.getId());
-        세명_테이블.groupBy(두명_세명_테이블_그룹.getId());
-
-        // when & then
-        assertThatThrownBy(() -> 두명_테이블.changeEmpty(true))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("그룹화된 테이블의 상태를 변경할 수 없습니다.");
     }
 }

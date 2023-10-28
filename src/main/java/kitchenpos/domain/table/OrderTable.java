@@ -49,10 +49,8 @@ public class OrderTable {
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
-    public void changeEmpty(final boolean empty) {
-        if (isGrouped()) {
-            throw new IllegalArgumentException("그룹화된 테이블의 상태를 변경할 수 없습니다.");
-        }
+    public void changeEmpty(final boolean empty, final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateCanChangeEmpty(this);
 
         this.empty = empty;
     }
