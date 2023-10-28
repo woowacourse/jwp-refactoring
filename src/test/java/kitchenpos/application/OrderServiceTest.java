@@ -1,104 +1,108 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import kitchenpos.domain.Menu;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderStatusRequest;
-import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderLineItemRequest;
-import kitchenpos.ui.dto.OrderResponse;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.dto.OrderStatusRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.domain.repository.OrderTableRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@SpringBootTest
+@Transactional
 class OrderServiceTest {
-    @InjectMocks
+    @Autowired
     private OrderService orderService;
-    @Mock
-    private MenuRepository menuRepository;
-    @Mock
+    @Autowired
     private OrderRepository orderRepository;
-    @Mock
+    @Autowired
     private OrderTableRepository orderTableRepository;
 
+    private OrderTable orderTable;
+
+    @BeforeEach
+    void setUp() {
+        OrderTable orderTableRequest = OrderTable.of(4, false);
+        orderTable = orderTableRepository.save(orderTableRequest);
+    }
+
     @Test
-    @DisplayName("주문한다.")
-    void testCreateOrder() {
+    @DisplayName("정상적으로 주문한다.")
+    void order() {
         // given
-        long expectedOrderId = 1L;
-        OrderCreateRequest request = new OrderCreateRequest(1L, Arrays.asList(
-                new OrderLineItemRequest(1L, 1L),
-                new OrderLineItemRequest(2L, 2L)
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), Arrays.asList(
+                new OrderLineItemRequest(1L, 1L)
         ));
-        OrderTable orderTable = mock(OrderTable.class);
-        Menu menu1 = mock(Menu.class);
-        Menu menu2 = mock(Menu.class);
-        Order order = mock(Order.class);
-
-        given(menu1.getId()).willReturn(1L);
-        given(menu2.getId()).willReturn(2L);
-        given(orderTableRepository.getById(anyLong())).willReturn(orderTable);
-        given(menuRepository.findByIdIn(anyList())).willReturn(List.of(menu1, menu2));
-        given(order.getId()).willReturn(expectedOrderId);
-        given(orderRepository.save(any(Order.class))).willReturn(order);
 
         // when
-        Long result = orderService.order(request);
+        final Long orderId = orderService.order(request);
 
         // then
-        assertThat(result).isEqualTo(expectedOrderId);
-        verify(orderTableRepository).getById(anyLong());
-        verify(menuRepository).findByIdIn(anyList());
-        verify(orderRepository).save(any(Order.class));
-    }
+        final Order savedOrder = orderRepository.findById(orderId).get();
 
-
-    @Test
-    @DisplayName("주문를 조회한다.")
-    void testFindAllOrders() {
-        // given
-        Order order1 = new Order();
-        Order order2 = new Order();
-        given(orderRepository.findAll()).willReturn(Arrays.asList(order1, order2));
-
-        // when
-        List<OrderResponse> results = orderService.findAll();
-
-        // then
-        assertEquals(2, results.size());
-        verify(orderRepository).findAll();
+        assertThat(savedOrder.getId()).isEqualTo(orderId);
+        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+        assertThat(savedOrder.getOrderLineItems()).hasSize(1);
     }
 
     @Test
-    @DisplayName("주문의 상태를 변경한다.")
-    void testChangeOrderStatus() {
+    @DisplayName("없는 메뉴를 주문했을때 에러를 반환한다.")
+    void order_non_men() {
         // given
-        Long orderId = 1L;
-        final OrderStatusRequest orderStatusRequest = new OrderStatusRequest(COOKING);
-        Order savedOrder = mock(Order.class);
-
-        given(orderRepository.getById(anyLong())).willReturn(savedOrder);
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), Arrays.asList());
 
         // when
-        OrderResponse result = orderService.changeOrderStatus(orderId, orderStatusRequest);
+        // then
+        assertThatThrownBy(
+                () -> orderService.order(request)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("주문한 메뉴가 없을때 에러를 반환한다.")
+    void order_non_existent_menu() {
+        // given
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), Arrays.asList(
+                new OrderLineItemRequest(999L, 1L)
+        ));
+
+        // when & then
+        assertThatThrownBy(
+                () -> orderService.order(request)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("정상적으로 주문상태를 변경한다.")
+    void changeOrderStatus() {
+        // given
+        final OrderCreateRequest orderRequest = new OrderCreateRequest(orderTable.getId(), Arrays.asList(
+                new OrderLineItemRequest(1L, 1L)
+        ));
+        final Long orderId = orderService.order(orderRequest);
+        final OrderStatusRequest statusRequest = new OrderStatusRequest(OrderStatus.MEAL);
+
+        // when
+        final OrderResponse response = orderService.changeOrderStatus(orderId, statusRequest);
 
         // then
-        assertNotNull(result);
-        verify(savedOrder).updateOrderStatus(orderStatusRequest.getOrderStatus());
+        final Order updatedOrder = orderRepository.findById(orderId).get();
+
+        assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
+        assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 }

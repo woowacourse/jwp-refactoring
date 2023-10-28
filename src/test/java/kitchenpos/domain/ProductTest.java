@@ -1,59 +1,94 @@
 package kitchenpos.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import java.math.BigDecimal;
-
+import kitchenpos.menu.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ProductTest {
+import java.math.BigDecimal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+class ProductTest {
     @Test
-    @DisplayName("Product 인스턴스를 생성할 수 있어야 함")
-    void createProductInstance() {
-        //given
-        final Long id = 1L;
-        final String name = "Test Product";
-        final BigDecimal price = BigDecimal.valueOf(10.99);
+    @DisplayName("상품을 생성할 수 있다.")
+    void createProduct() {
+        // given
+        final String name = "피자";
+        final BigDecimal price = BigDecimal.valueOf(20000);
 
-        //when
-        final Product product = new Product(id, name, price);
+        // when
+        final Product product = new Product(null, name, price);
 
-        //then
+        // then
         assertThat(product).isNotNull();
-        assertThat(product.getId()).isEqualTo(id);
         assertThat(product.getName()).isEqualTo(name);
         assertThat(product.getPrice()).isEqualTo(price);
     }
 
     @Test
-    @DisplayName("Product를 생성할 때 유효한 가격을 사용해야 함")
-    void createProductWithValidPrice() {
-        //given
-        final String name = "Test Product";
-        final BigDecimal validPrice = BigDecimal.valueOf(10.99);
+    @DisplayName("이름이 비어있으면 예외를 발생시킨다.")
+    void throwExceptionIfNameIsEmpty() {
+        // given
+        final String name = "";
+        final BigDecimal price = BigDecimal.valueOf(20000);
 
-        //when
-        final Product product = Product.of(name, validPrice);
-
-        //then
-        assertThat(product).isNotNull();
-        assertThat(product.getName()).isEqualTo(name);
-        assertThat(product.getPrice()).isEqualTo(validPrice);
+        // then
+        assertThatThrownBy(
+                () -> Product.of(name, price)
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("Product를 생성할 때 가격이 null이거나 음수이면 예외를 던져야 함")
-    void createProductWithInvalidPrice() {
-        //given
-        final String name = "Test Product";
-        final BigDecimal invalidPrice = BigDecimal.valueOf(-10.99);
+    @DisplayName("이름의 길이가 64를 초과하면 예외를 발생시킨다.")
+    void throwExceptionIfNameLengthIsGreaterThan64() {
+        // given
+        final String name = "a".repeat(65);
+        final BigDecimal price = BigDecimal.valueOf(20000);
 
-        //when
-        //then
-        assertThatThrownBy(() -> Product.of(name, null)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> Product.of(name, invalidPrice)).isInstanceOf(IllegalArgumentException.class);
+        // then
+        assertThatThrownBy(
+                () -> Product.of(name, price)
+        ).isInstanceOf(IllegalArgumentException.class);
     }
+
+
+    @Test
+    @DisplayName("상품 가격은 null이 될 수 없다.")
+    void validateNullPrice() {
+        // given
+        final String name = "피자";
+
+        // then
+        assertThatThrownBy(() -> new Product(null, name, null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("상품 가격은 음수가 될 수 없다.")
+    void validateNegativePrice() {
+        // given
+        final String name = "피자";
+        final BigDecimal negativePrice = BigDecimal.valueOf(-10000);
+
+        // then
+        assertThatThrownBy(
+                () -> new Product(null, name, negativePrice)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("상품 가격 계산이 올바르게 작동한다.")
+    void calculatePrice() {
+        // given
+        final Product product = new Product(null, "피자", BigDecimal.valueOf(20000));
+        final long quantity = 3;
+
+        // when
+        final BigDecimal totalPrice = product.calculatePrice(quantity);
+
+        // then
+        assertThat(totalPrice).isEqualTo(BigDecimal.valueOf(60000));
+    }
+
 }

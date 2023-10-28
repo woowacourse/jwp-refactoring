@@ -1,13 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.MenuCreateRequest;
-import kitchenpos.ui.dto.MenuProductRequest;
-import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuProductRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -50,7 +53,6 @@ class MenuServiceTest {
                 menuGroupRepository.findAll().get(0).getId(),
                 createMenuProductRequests()
         );
-
         // When
         Long createdMenuId = menuService.create(createRequest);
 
