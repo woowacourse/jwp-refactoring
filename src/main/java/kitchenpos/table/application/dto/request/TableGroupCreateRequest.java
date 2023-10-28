@@ -1,14 +1,13 @@
 package kitchenpos.table.application.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.List;
 
 public class TableGroupCreateRequest {
 
-    private List<OrderTableRequest> orderTables;
+    private final List<OrderTableRequest> orderTables;
 
-    public TableGroupCreateRequest() {
-    }
-
+    @JsonCreator
     public TableGroupCreateRequest(final List<OrderTableRequest> orderTables) {
         this.orderTables = orderTables;
     }

@@ -1,11 +1,11 @@
 package kitchenpos.menu.application.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class MenuGroupCreateRequest {
-    private String name;
+    private final String name;
 
-    public MenuGroupCreateRequest() {
-    }
-
+    @JsonCreator
     public MenuGroupCreateRequest(final String name) {
         this.name = name;
     }

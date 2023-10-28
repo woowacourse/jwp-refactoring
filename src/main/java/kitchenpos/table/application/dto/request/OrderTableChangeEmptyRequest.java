@@ -1,12 +1,12 @@
 package kitchenpos.table.application.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class OrderTableChangeEmptyRequest {
 
-    private boolean empty;
+    private final boolean empty;
 
-    public OrderTableChangeEmptyRequest() {
-    }
-
+    @JsonCreator
     public OrderTableChangeEmptyRequest(final boolean empty) {
         this.empty = empty;
     }

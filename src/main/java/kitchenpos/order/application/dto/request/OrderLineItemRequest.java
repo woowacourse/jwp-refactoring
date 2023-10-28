@@ -1,11 +1,13 @@
 package kitchenpos.order.application.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class OrderLineItemRequest {
 
-    private long menuId;
+    private final long menuId;
+    private final long quantity;
 
-    private long quantity;
-
+    @JsonCreator
     public OrderLineItemRequest(final long menuId, final long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;

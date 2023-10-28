@@ -1,13 +1,13 @@
 package kitchenpos.menu.application.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class MenuProductRequest {
 
-    private long productId;
-    private long quantity;
+    private final long productId;
+    private final long quantity;
 
-    public MenuProductRequest() {
-    }
-
+    @JsonCreator
     public MenuProductRequest(final long productId, final long quantity) {
         this.productId = productId;
         this.quantity = quantity;
