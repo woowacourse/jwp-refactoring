@@ -1,8 +1,8 @@
 package kitchenpos.order.application;
 
+import domain.Name;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.common.domain.Name;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;

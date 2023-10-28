@@ -5,10 +5,10 @@ import static kitchenpos.fixture.TableGroupFixtures.getTableGroupCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import domain.Price;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.common.domain.Price;
 import kitchenpos.fixture.MenuGroupFixtures;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;

@@ -1,5 +1,7 @@
 package kitchenpos.menu.domain;
 
+import domain.Name;
+import domain.Price;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -8,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import kitchenpos.common.domain.Name;
-import kitchenpos.common.domain.Price;
 
 @Entity
 public class Menu {

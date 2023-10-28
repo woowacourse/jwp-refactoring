@@ -1,8 +1,8 @@
 package kitchenpos.menu.response;
 
+import domain.Price;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.common.domain.Price;
 import kitchenpos.menu.domain.Menu;
 
 public class MenuResponse {
