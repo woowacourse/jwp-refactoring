@@ -6,7 +6,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.dto.MenuDto;
-import kitchenpos.menugroup.MenuGroupDto;
+import kitchenpos.menugroup.service.MenuGroupDto;
 import kitchenpos.dto.OrderDto;
 import kitchenpos.dto.OrderTableDto;
 import kitchenpos.product.service.ProductDto;

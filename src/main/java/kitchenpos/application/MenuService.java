@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.menugroup.MenuGroupRepository;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;

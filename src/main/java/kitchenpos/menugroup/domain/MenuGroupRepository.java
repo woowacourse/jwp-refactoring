@@ -1,6 +1,7 @@
-package kitchenpos.menugroup;
+package kitchenpos.menugroup.domain;
 
 import java.util.List;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.springframework.data.repository.Repository;
 
 public interface MenuGroupRepository extends Repository<MenuGroup, Long> {

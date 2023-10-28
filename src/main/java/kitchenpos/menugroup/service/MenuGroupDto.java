@@ -1,6 +1,7 @@
-package kitchenpos.menugroup;
+package kitchenpos.menugroup.service;
 
 import java.util.Objects;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 public class MenuGroupDto {
     private Long id;

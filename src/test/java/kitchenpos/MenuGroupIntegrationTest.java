@@ -6,7 +6,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.menugroup.MenuGroupDto;
+import kitchenpos.menugroup.service.MenuGroupDto;
 import kitchenpos.product.service.ProductDto;
 import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.DisplayName;
