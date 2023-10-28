@@ -2,9 +2,12 @@ package kitchenpos.ordertable.domain;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
 
 public class OrderTables {
 
+    @OneToMany(mappedBy = "tableGroupId", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private final List<OrderTable> orderTables;
 
     public OrderTables(List<OrderTable> orderTables) {
