@@ -19,12 +19,14 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderCompletedValidatorImpl;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest.OrderTableRequest;
@@ -50,6 +52,7 @@ class TableGroupServiceTest {
     private final MenuRepository menuRepository;
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
+    private final OrderTableValidator orderTableValidator;
 
     private OrderTable 저장된_주문_테이블1;
     private OrderTable 저장된_주문_테이블2;
@@ -60,14 +63,17 @@ class TableGroupServiceTest {
             final MenuGroupRepository menuGroupRepository,
             final MenuRepository menuRepository,
             final OrderTableRepository orderTableRepository,
-            final OrderRepository orderRepository
-    ) {
+            final OrderRepository orderRepository,
+            final OrderTableValidator orderTableValidator) {
         this.tableGroupService = tableGroupService;
         this.productRepository = productRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuRepository = menuRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
+        this.orderTableValidator = new OrderTableValidator(
+                new OrderCompletedValidatorImpl(orderRepository)
+        );
     }
 
     @BeforeEach
@@ -197,7 +203,7 @@ class TableGroupServiceTest {
             );
             final TableGroupCreateResponse 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹_요청값);
 
-            저장된_주문_테이블1.changeEmpty(false);
+            저장된_주문_테이블1.changeEmpty(false, orderTableValidator);
             final Order 주문 = 주문(null, 저장된_주문_테이블1, 주문_상태, null, Collections.emptyList());
             orderRepository.save(주문);
 

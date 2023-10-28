@@ -42,19 +42,16 @@ public class OrderTable {
         this.empty = false;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty, final OrderTableValidator validator) {
+        validator.canChangeEmpty(this.tableGroupId, this.id);
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
-        checkEmtpy();
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    private void checkEmtpy() {
         if (empty) {
             throw new IllegalArgumentException("주문 테이블이 비어있으면 방문자 수를 변경할 수 없습니다.");
         }
+        this.numberOfGuests = numberOfGuests;
     }
 
     public void ungroup() {

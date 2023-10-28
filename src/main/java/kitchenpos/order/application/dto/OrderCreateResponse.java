@@ -30,7 +30,7 @@ public class OrderCreateResponse {
                 .collect(toList());
         return new OrderCreateResponse(
                 order.getId(),
-                order.getOrderTable().getId(),
+                order.getOrderTableId(),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
                 orderLineItemCreateResponses

@@ -19,6 +19,7 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderCompletedValidatorImpl;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.domain.Product;
@@ -31,6 +32,7 @@ import kitchenpos.table.application.dto.OrderTableNumberOfGuestsRequest;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
@@ -54,6 +56,7 @@ class TableServiceTest {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderTableValidator orderTableValidator;
 
     public TableServiceTest(
             final TableService tableService,
@@ -62,8 +65,8 @@ class TableServiceTest {
             final MenuGroupRepository menuGroupRepository,
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final TableGroupRepository tableGroupRepository
-    ) {
+            final TableGroupRepository tableGroupRepository,
+            final OrderTableValidator orderTableValidator) {
         this.tableService = tableService;
         this.orderTableRepository = orderTableRepository;
         this.productRepository = productRepository;
@@ -71,6 +74,9 @@ class TableServiceTest {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderTableValidator = new OrderTableValidator(
+                new OrderCompletedValidatorImpl(orderRepository)
+        );
     }
 
     @Test
@@ -230,7 +236,7 @@ class TableServiceTest {
         menuRepository.save(메뉴);
 
         final OrderTable 주문_테이블 = orderTableRepository.findById(저장된_주문_테이블.getId()).get();
-        주문_테이블.changeEmpty(false);
+        주문_테이블.changeEmpty(false, orderTableValidator);
         final Order 주문 = 주문(null, 주문_테이블, 주문_상태, null, Collections.emptyList());
         orderRepository.save(주문);
     }

@@ -3,6 +3,7 @@ package kitchenpos.order;
 import static kitchenpos.menu.domain.MenuFixture.메뉴;
 import static kitchenpos.menu.domain.MenuProductFixture.메뉴_상품;
 import static kitchenpos.menugroup.domain.MenuGroupFixture.메뉴_그룹;
+import static kitchenpos.order.domain.OrderFixture.주문;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.product.domain.ProductFixture.상품;
 import static kitchenpos.table.domain.OrderTableFixture.주문_테이블;
@@ -24,7 +25,6 @@ import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineItemCreateRe
 import kitchenpos.order.application.dto.OrderCreateResponse;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusRequest;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.domain.Product;
@@ -98,8 +98,8 @@ class OrderServiceTest {
 
             // then
             final OrderCreateResponse 예상_응답값 = OrderCreateResponse.of(
-                    new Order(null, 저장된_주문_테이블, OrderStatus.COOKING, LocalDateTime.now(),
-                            List.of(new OrderLineItem(저장된_메뉴, 1))));
+                    주문(null, 저장된_주문_테이블, OrderStatus.COOKING, LocalDateTime.now(),
+                            List.of(new OrderLineItem(null, null, 저장된_메뉴.getId(), 1))));
 
             assertAll(
                     () -> assertThat(저장된_주문.getId()).isNotNull(),
@@ -162,8 +162,8 @@ class OrderServiceTest {
         // then
         final List<OrderResponse> 예상_응답값 = List.of(
                 OrderResponse.of(
-                        new Order(null, 저장된_주문_테이블, OrderStatus.COOKING, LocalDateTime.now(),
-                                List.of(new OrderLineItem(저장된_메뉴, 1))))
+                        주문(null, 저장된_주문_테이블, OrderStatus.COOKING, LocalDateTime.now(),
+                                List.of(new OrderLineItem(저장된_메뉴.getId(), 1))))
         );
 
         assertThat(주문들).usingRecursiveComparison()

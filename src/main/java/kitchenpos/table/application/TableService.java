@@ -2,11 +2,7 @@ package kitchenpos.table.application;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.OrderTableCreateResponse;
 import kitchenpos.table.application.dto.OrderTableEmptyRequest;
@@ -14,6 +10,7 @@ import kitchenpos.table.application.dto.OrderTableNumberOfGuestsRequest;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderTableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
     public TableService(
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderTableRepository orderTableRepository,
+            final OrderTableValidator orderTableValidator
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     public OrderTableCreateResponse create(final OrderTableCreateRequest request) {
@@ -50,9 +47,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyRequest request) {
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
 
-        checkGroupedTable(savedOrderTable);
-        checkCompletedOrder(orderTableId);
-        savedOrderTable.changeEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty(), orderTableValidator);
 
         return OrderTableResponse.of(savedOrderTable);
     }
@@ -60,19 +55,6 @@ public class TableService {
     private OrderTable findOrderTableById(final Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 입니다. id = " + orderTableId));
-    }
-
-    private void checkGroupedTable(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("테이블이 그룹에 속해있으면 빈 테이블로 변경할 수 없습니다.");
-        }
-    }
-
-    private void checkCompletedOrder(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("주문이 완료되지 않았습니다.");
-        }
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,

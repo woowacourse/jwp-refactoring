@@ -14,11 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -31,9 +28,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column
+    private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
@@ -51,24 +47,18 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, null, orderLineItems);
-    }
-
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
-        validate(orderTable);
+    protected Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                    final List<OrderLineItem> orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
         addOrderLineItems(orderLineItems);
     }
 
-    private void validate(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
-        }
+    public static Order of(final Long orderTableId, final OrderStatus orderStatus,
+                           final List<OrderLineItem> orderLineItems, final OrderValidator validator) {
+        validator.validate(orderTableId, orderLineItems);
+        return new Order(null, orderTableId, orderStatus, orderLineItems);
     }
 
     public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -79,10 +69,17 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
+        checkCompleted();
         this.orderStatus = orderStatus;
     }
 
-    public boolean completed() {
+    private void checkCompleted() {
+        if (completed()) {
+            throw new IllegalArgumentException("이미 완료된 주문입니다.");
+        }
+    }
+
+    private boolean completed() {
         return Objects.equals(OrderStatus.COMPLETION, orderStatus);
     }
 
@@ -90,8 +87,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
