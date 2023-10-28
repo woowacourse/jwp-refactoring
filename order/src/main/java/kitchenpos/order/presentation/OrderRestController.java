@@ -17,9 +17,9 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/api/order/")
-    public ResponseEntity<Void> create() {
-        final Long orderId = orderService.create();
+    @PostMapping("/api/order/{orderTableId}")
+    public ResponseEntity<Void> create(@PathVariable Long orderTableId) {
+        final Long orderId = orderService.create(orderTableId);
         final URI uri = URI.create("/api/order/" + orderId);
         return ResponseEntity.created(uri).build();
     }

@@ -4,6 +4,8 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,13 +16,17 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public Long create() {
+    public Long create(final Long orderTableId) {
+        OrderTable orderTable = orderTableRepository.getById(orderTableId);
+        orderTable.validateIsEmpty();
         Order order = new Order(OrderStatus.COOKING, LocalDateTime.now());
         return orderRepository.save(order).getId();
     }
