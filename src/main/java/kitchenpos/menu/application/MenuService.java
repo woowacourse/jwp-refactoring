@@ -84,4 +84,11 @@ public class MenuService {
 
         return menus;
     }
+
+    public Menu getById(Long id) {
+        final Menu menu = menuRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+        menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+        return menu;
+    }
 }

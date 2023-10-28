@@ -1,10 +1,8 @@
 package kitchenpos.order.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.request.OrderCreateRequest;
@@ -38,20 +36,12 @@ public class OrderService {
     public Order create(OrderCreateRequest request) {
         OrderTable orderTable = tableService.getById(request.getOrderTableId());
         Order savedOrder = orderRepository.save(Order.create(orderTable));
-        List<OrderLineItem> orderLineItems = orderLineItemService.create(savedOrder,
-                request.getOrderLineItems());
-        validateOrderLineItemsSize(orderLineItems);
+        orderLineItemService.create(
+                savedOrder,
+                menuService.findAllByIds(request.getMenuIds()),
+                request.getOrderLineItems()
+        );
         return savedOrder;
-    }
-
-    private void validateOrderLineItemsSize(List<OrderLineItem> orderLineItems) {
-        List<Long> menuIds = orderLineItems.stream()
-                                           .map(OrderLineItem::getMenuId)
-                                           .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuService.findAllByIds(menuIds).size()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     @Transactional(readOnly = true)
