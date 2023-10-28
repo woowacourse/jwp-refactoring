@@ -18,7 +18,6 @@ import kitchenpos.menu.request.MenuCreateRequest;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.TableService;
@@ -135,8 +134,7 @@ class TableGroupServiceTest extends ServiceTest {
                 null,
                 orderTable1.getId(),
                 orderStatus,
-                LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 1))
+                LocalDateTime.now()
         );
         Order savedOrder = orderRepository.save(order);
 

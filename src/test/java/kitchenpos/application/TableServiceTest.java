@@ -16,7 +16,6 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.TableService;
@@ -91,8 +90,7 @@ class TableServiceTest extends ServiceTest {
                 null,
                 orderTable.getId(),
                 OrderStatus.COMPLETION,
-                LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 1))
+                LocalDateTime.now()
         );
         orderRepository.save(order);
 
@@ -120,8 +118,7 @@ class TableServiceTest extends ServiceTest {
                 null,
                 orderTable1.getId(),
                 OrderStatus.COMPLETION,
-                LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 1))
+                LocalDateTime.now()
         );
         orderRepository.save(order);
 
@@ -146,8 +143,7 @@ class TableServiceTest extends ServiceTest {
                 null,
                 orderTable.getId(),
                 orderStatus,
-                LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 1))
+                LocalDateTime.now()
         );
         orderRepository.save(order);
 

@@ -74,4 +74,14 @@ public class MenuService {
 
         return menus;
     }
+
+    public List<Menu> findAllByIds(List<Long> ids) {
+        final List<Menu> menus = menuRepository.findAllByIdIn(ids);
+
+        for (final Menu menu : menus) {
+            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+        }
+
+        return menus;
+    }
 }

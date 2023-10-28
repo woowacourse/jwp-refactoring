@@ -22,7 +22,7 @@ public class OrderLineItemResponse {
         return orderLineItems.stream()
                 .map(orderLineItem -> new OrderLineItemResponse(
                         orderLineItem.getSeq(),
-                        orderLineItem.getOrderId(),
+                        orderLineItem.getOrder().getId(),
                         orderLineItem.getMenuId(),
                         orderLineItem.getQuantity()
                 ))

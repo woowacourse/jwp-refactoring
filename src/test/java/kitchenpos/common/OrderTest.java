@@ -22,22 +22,10 @@ class OrderTest {
         List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 5));
 
         // when
-        Order order = Order.create(orderTable, orderLineItems);
+        Order order = Order.create(orderTable);
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-    }
-
-    @DisplayName("주문 항목이 포함되어 있지 않은 주문을 생성하면 예외가 발생한다.")
-    @Test
-    void create_ItemEmpty_ExceptionThrown() {
-        // given
-        OrderTable orderTable = new OrderTable(1L, 2L, 5, false);
-        List<OrderLineItem> orderLineItems = Collections.emptyList();
-        
-        // when, then
-        assertThatThrownBy(() -> Order.create(orderTable, orderLineItems))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("비어 있는 테이블에 주문을 생성하면 예외가 발생한다.")
@@ -48,7 +36,7 @@ class OrderTest {
         List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 5));
 
         // when, then
-        assertThatThrownBy(() -> Order.create(orderTable, orderLineItems))
+        assertThatThrownBy(() -> Order.create(orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
