@@ -1,11 +1,11 @@
 package kitchenpos.order;
 
-import static kitchenpos.fixture.MenuFixture.메뉴;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
-import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블;
-import static kitchenpos.fixture.ProductFixture.상품;
+import static kitchenpos.menu.domain.MenuFixture.메뉴;
+import static kitchenpos.menu.domain.MenuProductFixture.메뉴_상품;
+import static kitchenpos.menugroup.domain.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.product.domain.ProductFixture.상품;
+import static kitchenpos.table.domain.OrderTableFixture.주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

@@ -1,14 +1,14 @@
 package kitchenpos.order;
 
+import static kitchenpos.menu.domain.MenuFixture.메뉴;
+import static kitchenpos.menu.domain.MenuProductFixture.메뉴_상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.common.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -28,9 +28,9 @@ class OrderTest {
         final OrderStatus orderStatus = OrderStatus.COOKING;
 
         final Product product = new Product("상품", BigDecimal.valueOf(10000));
-        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product, 1)));
+        final List<MenuProduct> menuProducts = List.of(메뉴_상품(null, null, product, 1));
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = new Menu(null, "메뉴", new Price(BigDecimal.valueOf(10000)), menuGroup, menuProducts);
+        final Menu menu = 메뉴(null, "메뉴", BigDecimal.valueOf(10000), menuGroup, menuProducts);
         final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu, 1));
 
         // expected
@@ -46,9 +46,9 @@ class OrderTest {
         final OrderStatus orderStatus = OrderStatus.COMPLETION;
 
         final Product product = new Product("상품", BigDecimal.valueOf(10000));
-        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product, 1)));
+        final List<MenuProduct> menuProducts = List.of(메뉴_상품(null, null, product, 1));
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = new Menu(null, "메뉴", new Price(BigDecimal.valueOf(10000)), menuGroup, menuProducts);
+        final Menu menu = 메뉴(null, "메뉴", BigDecimal.valueOf(10000), menuGroup, menuProducts);
         final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu, 1));
 
         final Order order = new Order(orderTable, orderStatus, orderLineItems);
@@ -67,9 +67,9 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(2, false);
 
         final Product product = new Product("상품", BigDecimal.valueOf(10000));
-        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product, 1)));
+        final List<MenuProduct> menuProducts = List.of(메뉴_상품(null, null, product, 1));
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = new Menu(null, "메뉴", new Price(BigDecimal.valueOf(10000)), menuGroup, menuProducts);
+        final Menu menu = 메뉴(null, "메뉴", BigDecimal.valueOf(10000), menuGroup, menuProducts);
         final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu, 1));
 
         final Order order = new Order(orderTable, orderStatus, orderLineItems);

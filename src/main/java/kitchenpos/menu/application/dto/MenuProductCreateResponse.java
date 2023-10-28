@@ -20,7 +20,7 @@ public class MenuProductCreateResponse {
         return new MenuProductCreateResponse(
                 menuProduct.getSeq(),
                 menuProduct.getMenu().getId(),
-                menuProduct.getProduct().getId(),
+                menuProduct.getProductId(),
                 menuProduct.getQuantity()
         );
     }
