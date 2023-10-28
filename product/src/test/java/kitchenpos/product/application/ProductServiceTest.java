@@ -1,23 +1,25 @@
 package kitchenpos.product.application;
 
-import static kitchenpos.support.fixture.ProductFixture.간장치킨_DTO;
-import static kitchenpos.support.fixture.ProductFixture.후라이드_DTO;
-import static kitchenpos.vo.exception.PriceExceptionType.PRICE_IS_LOWER_THAN_ZERO;
-import static kitchenpos.vo.exception.PriceExceptionType.PRICE_IS_NULL;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.ServiceIntegrationTest;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.product.application.dto.ProductDto;
-import kitchenpos.support.ServiceIntegrationTest;
 import kitchenpos.vo.exception.PriceException;
+import kitchenpos.vo.exception.PriceExceptionType;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class ProductServiceTest extends ServiceIntegrationTest {
+
+    @Autowired
+    private ProductService productService;
 
     @Nested
     @DisplayName("Product를 추가한다.")
