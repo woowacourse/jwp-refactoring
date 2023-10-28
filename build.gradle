@@ -37,35 +37,38 @@ allprojects {
 
 project(':menu') {
     dependencies {
-        implementation project(':app')
         implementation project(':product')
+
+        testImplementation project(':app')
     }
 }
 
 project(':order') {
     dependencies {
-        implementation project(':app')
         implementation project(':ordertable')
         implementation project(':menu')
+
+        testImplementation project(':app')
     }
 }
 
 project(':tablegroup') {
     dependencies {
-        implementation project(':app')
         implementation project(':ordertable')
+
+        testImplementation project(':app')
     }
 }
 
 project(':product') {
     dependencies {
-        implementation project(':app')
+        testImplementation project(':app')
     }
 }
 
 project(':ordertable') {
     dependencies {
-        implementation project(':app')
+        testImplementation project(':app')
     }
 }
 
