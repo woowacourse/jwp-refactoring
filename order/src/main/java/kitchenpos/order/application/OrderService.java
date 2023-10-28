@@ -5,12 +5,11 @@ import java.util.stream.Collectors;
 import kitchenpos.order.application.request.OrderCreateRequest;
 import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderResponse;
-import kitchenpos.order.domain.dto.OrderLineItemDto;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.order.domain.dto.OrderLineItemDto;
+import kitchenpos.order.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -39,28 +38,13 @@ public class OrderService {
 
         Order order = Order.builder()
                 .orderTableId(orderCreateRequest.getOrderTableId())
-                .orderLineItems(convertToOrderLineItems(orderCreateRequest.getOrderLineItems()))
+                .orderLineItems(orderCreateRequest.convertToOrderLineItems())
                 .orderStatus(OrderStatus.COOKING)
                 .build();
         orderValidator.validate(order);
 
         Order savedOrder = orderRepository.save(order);
         return OrderResponse.from(savedOrder);
-    }
-
-    private List<OrderLineItem> convertToOrderLineItems(List<OrderLineItemDto> orderLineItemDtos) {
-        return orderLineItemDtos.stream()
-                .map(this::createOrderLineItem)
-                .collect(Collectors.toList());
-    }
-
-    private OrderLineItem createOrderLineItem(OrderLineItemDto orderLineItemDto) {
-        return OrderLineItem.builder()
-                .menuId(orderLineItemDto.getMenuId())
-                .quantity(orderLineItemDto.getQuantity())
-                .menuName(orderLineItemDto.getMenuName())
-                .price(orderLineItemDto.getPrice())
-                .build();
     }
 
     @Transactional(readOnly = true)
