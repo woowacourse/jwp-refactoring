@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.product.Product;
-import kitchenpos.exception.KitchenposException;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.product.domain.Product;
+import kitchenpos.global.exception.KitchenposException;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.product.application.ProductService;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.menu.ui.dto.MenuProductRequest;
+import kitchenpos.menu.ui.dto.MenuRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.exception.ExceptionInformation.*;
+import static kitchenpos.global.exception.ExceptionInformation.*;
 import static kitchenpos.support.TestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;

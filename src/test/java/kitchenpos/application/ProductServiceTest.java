@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.product.Product;
-import kitchenpos.exception.KitchenposException;
+import kitchenpos.product.domain.Product;
+import kitchenpos.global.exception.KitchenposException;
+import kitchenpos.product.application.ProductService;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.product.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.exception.ExceptionInformation.PRODUCT_PRICE_IS_NULL;
-import static kitchenpos.exception.ExceptionInformation.PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE;
+import static kitchenpos.global.exception.ExceptionInformation.PRODUCT_PRICE_IS_NULL;
+import static kitchenpos.global.exception.ExceptionInformation.PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;

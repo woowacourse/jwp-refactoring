@@ -1,16 +1,19 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.product.Name;
-import kitchenpos.domain.product.Price;
-import kitchenpos.domain.product.Product;
-import kitchenpos.exception.KitchenposException;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.product.domain.Name;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.global.exception.KitchenposException;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.exception.ExceptionInformation.MENU_PRICE_OVER_MENU_PRODUCT_PRICE;
+import static kitchenpos.global.exception.ExceptionInformation.MENU_PRICE_OVER_MENU_PRODUCT_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -18,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("메뉴에 테스트")
 class MenuTest {
-    private static final MenuProduct 가격_45_상품 = MenuProduct.create(new Product(1L, kitchenpos.domain.product.Name.create("name"), kitchenpos.domain.product.Price.create(new BigDecimal(15))), 3);
-    private static final MenuProduct 가격_0_상품 = MenuProduct.create(new Product(1L, kitchenpos.domain.product.Name.create("name"), kitchenpos.domain.product.Price.create(new BigDecimal(15))), 0);
+    private static final MenuProduct 가격_45_상품 = MenuProduct.create(new Product(1L, Name.create("name"), Price.create(new BigDecimal(15))), 3);
+    private static final MenuProduct 가격_0_상품 = MenuProduct.create(new Product(1L, Name.create("name"), Price.create(new BigDecimal(15))), 0);
     private static final MenuProduct 가격_70_상품 = MenuProduct.create(new Product(1L, Name.create("name"), Price.create(new BigDecimal(10))), 7);
     private static final MenuProducts 총가격_115인_상품들 = MenuProducts.create(List.of(가격_45_상품, 가격_0_상품, 가격_70_상품));
     private static final MenuGroup 메뉴그룹 = MenuGroup.create("그룹이름");

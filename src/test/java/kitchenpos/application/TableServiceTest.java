@@ -1,14 +1,20 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.exception.KitchenposException;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.global.exception.KitchenposException;
+import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.request.ChangeOrderTableEmptyRequest;
-import kitchenpos.ui.dto.request.ChangeOrderTableGuestRequest;
-import kitchenpos.ui.dto.request.CreateOrderTableRequest;
+import kitchenpos.table.application.TableService;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.table.ui.dto.ChangeOrderTableEmptyRequest;
+import kitchenpos.table.ui.dto.ChangeOrderTableGuestRequest;
+import kitchenpos.table.ui.dto.CreateOrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static kitchenpos.exception.ExceptionInformation.*;
+import static kitchenpos.global.exception.ExceptionInformation.*;
 import static kitchenpos.support.TestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
