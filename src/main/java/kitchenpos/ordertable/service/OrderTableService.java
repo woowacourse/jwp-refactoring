@@ -1,6 +1,5 @@
 package kitchenpos.ordertable.service;
 
-import static java.util.stream.Collectors.toList;
 import static kitchenpos.exception.ExceptionType.ORDER_TABLE_CANNOT_CHANGE_STATUS;
 import static kitchenpos.exception.ExceptionType.ORDER_TABLE_NOT_FOUND;
 
@@ -11,7 +10,6 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.service.OrderService;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.OrderTable.Builder;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,20 +32,12 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTableDto create(final OrderTableDto orderTableDto) {
-        OrderTable orderTable = new Builder()
-            .setNumberOfGuests(orderTableDto.getNumberOfGuests())
-            .setEmpty(orderTableDto.isEmpty())
-            .build();
-
-        return OrderTableDto.from(orderTableRepository.save(orderTable));
+    public OrderTable create(final OrderTable orderTable) {
+        return orderTableRepository.save(orderTable);
     }
 
-    public List<OrderTableDto> list() {
-        return orderTableRepository.findAll()
-                                   .stream()
-                                   .map(OrderTableDto::from)
-                                   .collect(toList());
+    public List<OrderTable> list() {
+        return orderTableRepository.findAll();
     }
 
     @Transactional
