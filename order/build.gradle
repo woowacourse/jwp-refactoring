@@ -1,0 +1,14 @@
+bootJar { enabled = false }
+jar { enabled = true }
+
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":menu"))
+    implementation(project(":table"))
+    testImplementation testFixtures(project(':core'))
+    testImplementation testFixtures(project(':menu'))
+    testImplementation testFixtures(project(':table'))
+    testFixturesImplementation(project(":core"))
+    testFixturesImplementation(project(":menu"))
+    testFixturesImplementation(project(":table"))
+}

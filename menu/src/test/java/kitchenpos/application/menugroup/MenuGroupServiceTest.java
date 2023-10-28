@@ -1,0 +1,52 @@
+package kitchenpos.application.menugroup;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.dto.menugroup.MenuGroupRequest;
+import kitchenpos.dto.menugroup.MenuGroupResponse;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.test.ServiceTest;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@SuppressWarnings("NonAsciiCharacters")
+@ServiceTest
+class MenuGroupServiceTest {
+
+    @Autowired
+    private MenuGroupService sut;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Test
+    void 메뉴_그룹을_등록한다() {
+        // given
+        MenuGroupRequest request = new MenuGroupRequest("피자");
+
+        // when
+        MenuGroupResponse result = sut.create(request);
+
+        // then
+        assertThat(menuGroupRepository.findById(result.getId())).isPresent();
+    }
+
+    @Test
+    void 메뉴_그룹_목록을_조회한다() {
+        // given
+        MenuGroup pizzaGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹("피자"));
+        MenuGroup chickenGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹("치킨"));
+
+        // when
+        List<MenuGroupResponse> result = sut.list();
+
+        // then
+        Assertions.assertThat(result)
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(MenuGroupResponse.from(pizzaGroup), MenuGroupResponse.from(chickenGroup)));
+    }
+}
