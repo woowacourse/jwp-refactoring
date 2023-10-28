@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class OrderTableService {
     private final OrderTableRepository orderTableRepository;
-    private final OrderTableValidator orderTableValidator;
+    private final OrderValidator orderValidator;
 
-    public OrderTableService(final OrderTableValidator orderTableValidator, final OrderTableRepository orderTableRepository) {
-        this.orderTableValidator = orderTableValidator;
+    public OrderTableService(final OrderValidator orderValidator, final OrderTableRepository orderTableRepository) {
+        this.orderValidator = orderValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -36,7 +36,7 @@ public class OrderTableService {
 
     public void changeEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
-        orderTableValidator.validate(orderTableId, savedOrderTable);
+        orderValidator.validate(orderTableId, savedOrderTable);
         savedOrderTable.updateEmpty(isEmpty);
     }
 

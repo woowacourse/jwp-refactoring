@@ -1,28 +1,28 @@
 package kitchenpos.order.application;
 
-import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
-
 @Component
 public class OrderTableValidator {
-    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderTableValidator(final OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+    public OrderTableValidator(final OrderTableRepository orderTableRepository) {
+        this.orderTableRepository = orderTableRepository;
     }
 
-    public void validate(final Long orderTableId, final OrderTable savedOrderTable) {
-        if (savedOrderTable.validateTableGroupIsNonNull()) {
+    public void validate(final OrderCreateRequest request, final List<Menu> menus) {
+        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, List.of(COOKING, MEAL))) {
+        if (request.extractMenuIds().size() != menus.size()) {
             throw new IllegalArgumentException();
         }
     }
