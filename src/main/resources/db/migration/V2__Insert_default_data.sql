@@ -48,6 +48,8 @@ values (6, 6, 1);
 
 insert into table_group (created_date)
 values (now());
+insert into table_group (created_date)
+values (now());
 
 insert into order_table (number_of_guests, empty)
 values (0, true);
@@ -69,6 +71,10 @@ insert into order_table (number_of_guests, empty, table_group_id)
 values (0, false, 1);
 insert into order_table (number_of_guests, empty)
 values (0, false);
+insert into order_table (number_of_guests, empty, table_group_id)
+values (0, false, 2);
+insert into order_table (number_of_guests, empty, table_group_id)
+values (0, false, 2);
 
 insert into orders (order_table_id, order_status, ordered_time)
 values (1, 'COOKING', now());
@@ -82,3 +88,7 @@ insert into orders (order_table_id, order_status, ordered_time)
 values (10, 'COMPLETION', now());
 insert into orders (order_table_id, order_status, ordered_time)
 values (10, 'COMPLETION', now());
+insert into orders (order_table_id, order_status, ordered_time)
+values (11, 'COOKING', now());
+insert into orders (order_table_id, order_status, ordered_time)
+values (12, 'COMPLETION', now());

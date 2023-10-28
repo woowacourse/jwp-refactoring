@@ -1,18 +1,13 @@
 package kitchenpos.application;
 
-import fixture.OrderBuilder;
-import fixture.OrderTableBuilder;
-import fixture.TableGroupBuilder;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.ui.request.OrderTableRequest;
-import kitchenpos.ui.request.UpdateOrderTableEmptyRequest;
-import kitchenpos.ui.request.UpdateOrderTableNumberOfGuestsRequest;
-import kitchenpos.ui.response.OrderTableResponse;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.ui.request.OrderTableRequest;
+import kitchenpos.ordertable.ui.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.ordertable.ui.request.UpdateOrderTableNumberOfGuestsRequest;
+import kitchenpos.ordertable.ui.response.OrderTableResponse;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -76,12 +71,9 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 주문테이블의_아이디로_조리중_식사중_상태인_주문이_존재하면_예외를_발생한다() {
-        final TableGroup saveTableGroup = tableGroupRepository.save(TableGroupBuilder.init().build());
-        final OrderTable saveOrderTable = orderTableRepository.save(OrderTableBuilder.init().tableGroup(saveTableGroup).empty(false).build());
-        orderRepository.save(OrderBuilder.init().orderTable(saveOrderTable).orderStatus(OrderStatus.MEAL).build());
         final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(saveOrderTable.getId(), request)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

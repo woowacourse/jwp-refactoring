@@ -1,19 +1,15 @@
 package kitchenpos.application;
 
-import fixture.OrderBuilder;
-import fixture.OrderTableBuilder;
-import fixture.TableGroupBuilder;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.ui.request.OrderLineItemRequest;
-import kitchenpos.ui.request.OrderRequest;
-import kitchenpos.ui.request.UpdateOrderStatusRequest;
-import kitchenpos.ui.response.OrderResponse;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.domain.validator.OrderValidator;
+import kitchenpos.order.ui.request.OrderLineItemRequest;
+import kitchenpos.order.ui.request.OrderRequest;
+import kitchenpos.order.ui.request.UpdateOrderStatusRequest;
+import kitchenpos.order.ui.response.OrderResponse;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,6 +33,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    OrderValidator orderValidator;
 
     @Test
     void 주문을_저장한다() {
@@ -109,19 +108,6 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경한다() {
-        final TableGroup tableGroup = TableGroupBuilder.init()
-                .build();
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        final OrderTable orderTable = OrderTableBuilder.init()
-                .empty(false)
-                .tableGroup(tableGroup)
-                .build();
-        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        final Order order = OrderBuilder.init()
-                .orderTable(savedOrderTable)
-                .orderStatus(OrderStatus.MEAL)
-                .build();
-        orderRepository.save(order);
         final List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
         orderLineItemRequests.add(new OrderLineItemRequest(1L, 3));
         orderLineItemRequests.add(new OrderLineItemRequest(2L, 2));
@@ -135,19 +121,6 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태_변경_시_주문이_없으면_예외를_발생한다() {
-        final TableGroup tableGroup = TableGroupBuilder.init()
-                .build();
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        final OrderTable orderTable = OrderTableBuilder.init()
-                .empty(false)
-                .tableGroup(savedTableGroup)
-                .build();
-        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        final Order order = OrderBuilder.init()
-                .orderTable(savedOrderTable)
-                .orderStatus(OrderStatus.MEAL)
-                .build();
-        orderRepository.save(order);
         final List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
         orderLineItemRequests.add(new OrderLineItemRequest(1L, 3));
         orderLineItemRequests.add(new OrderLineItemRequest(2L, 2));
@@ -159,19 +132,6 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태_변경_시_이미_완료된_주문이면_예외를_발생한다() {
-        final TableGroup tableGroup = TableGroupBuilder.init()
-                .build();
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        final OrderTable orderTable = OrderTableBuilder.init()
-                .empty(false)
-                .tableGroup(savedTableGroup)
-                .build();
-        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        final Order order = OrderBuilder.init()
-                .orderTable(savedOrderTable)
-                .orderStatus(OrderStatus.COMPLETION)
-                .build();
-        orderRepository.save(order);
         final List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
         orderLineItemRequests.add(new OrderLineItemRequest(1L, 3));
         orderLineItemRequests.add(new OrderLineItemRequest(2L, 2));
