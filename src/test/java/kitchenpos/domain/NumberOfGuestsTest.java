@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.vo.NumberOfGuests;
+import kitchenpos.ordertable.vo.NumberOfGuests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -136,3 +136,69 @@ API 응답에 orderLineItems 안에 불필요한 orderId 제거
     ]
 }
 ```
+
+
+_23/10/25_
+### `GET /api/table-groups`
+API 응답에 orderTable 목록이 있는데 이를 orderTableId 목록으로 변경
+#### 변경 전
+```json
+{
+  "id": 1,
+  "createdDate": "2023-10-20T10:41:07.998694",
+  "orderTables": [1, 2]
+}
+```
+
+#### 변경 후
+```json
+{
+  "id": 1,
+  "createdDate": "2023-10-20T10:41:07.998694",
+  "orderTableIds": [
+    {
+      "id": 1,
+      "numberOfGuests": 2,
+      "empty": true
+    },
+    {
+      "id": 2,
+      "numberOfGuests": 2,
+      "empty": true
+    }
+  ]
+}
+```
+<br>
+
+### `POST /api/table-groups`
+API 응답에 orderTable 목록이 있는데 이를 orderTableId 목록으로 변경
+#### 변경 전
+```json
+{
+  "id": 1,
+  "createdDate": "2023-10-20T10:41:07.998694",
+  "orderTableIds": [
+    {
+      "id": 1,
+      "numberOfGuests": 2,
+      "empty": true
+    },
+    {
+      "id": 2,
+      "numberOfGuests": 2,
+      "empty": true
+    }
+  ]
+}
+```
+
+#### 변경 후
+```json
+{
+  "id": 1,
+  "createdDate": "2023-10-20T10:41:07.998694",
+  "orderTableIds": [1, 2]
+}
+```
+<br>

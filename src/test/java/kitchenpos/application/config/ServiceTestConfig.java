@@ -1,43 +1,37 @@
 package kitchenpos.application.config;
 
 import kitchenpos.common.DataTestExecutionListener;
+import kitchenpos.common.vo.Price;
 import kitchenpos.config.JpaConfig;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.vo.NumberOfGuests;
-import kitchenpos.domain.vo.Price;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.order.Order;
+import kitchenpos.order.OrderLineItem;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.ordertable.vo.NumberOfGuests;
+import kitchenpos.product.Product;
+import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.tablegroup.TableGroup;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestExecutionListeners;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @DataJpaTest
 @Import(JpaConfig.class)
 @TestExecutionListeners(value = DataTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class ServiceTestConfig {
-
-    @PersistenceContext
-    protected EntityManager em;
 
     @Autowired
     protected ProductRepository productRepository;
@@ -56,6 +50,9 @@ public class ServiceTestConfig {
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher;
 
     protected Product saveProduct() {
         final Product product = new Product("여우가 좋아하는 피자", new Price(BigDecimal.valueOf(10000)));
@@ -89,10 +86,13 @@ public class ServiceTestConfig {
         return orderTableRepository.save(new OrderTable(new NumberOfGuests(2), true));
     }
 
+    protected TableGroup saveTableGroup() {
+        return tableGroupRepository.save(new TableGroup());
+    }
+
     protected TableGroup saveTableGroup(List<OrderTable> orderTables) {
-        final TableGroup tableGroup = new TableGroup(new OrderTables(orderTables));
-        // TODO: em 사용해보기, setter 제거
-        orderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
+        final TableGroup tableGroup = new TableGroup();
+        orderTables.forEach(orderTable -> orderTable.makeGroup(tableGroup));
         return tableGroupRepository.save(tableGroup);
     }
 }

@@ -1,6 +1,6 @@
 package kitchenpos.config.coverter;
 
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.OrderStatus;
 import org.springframework.core.convert.converter.Converter;
 
 public class OrderStatusConverter implements Converter<String, OrderStatus> {

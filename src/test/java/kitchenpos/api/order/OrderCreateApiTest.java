@@ -1,11 +1,11 @@
 package kitchenpos.api.order;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.application.dto.response.OrderLineItemResponse;
-import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.application.dto.request.OrderCreateRequest;
+import kitchenpos.order.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.order.application.dto.response.OrderLineItemResponse;
+import kitchenpos.order.application.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
