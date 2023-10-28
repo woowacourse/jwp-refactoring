@@ -5,7 +5,6 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTableChangedEmptyEvent;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -18,7 +17,6 @@ public class OrderTableEventListener {
         this.orderDao = orderDao;
     }
 
-    @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void orderTableChangedEmpty(OrderTableChangedEmptyEvent event) {
         validateOrderCompletionByOrderTableId(event.getOrderTableId());
