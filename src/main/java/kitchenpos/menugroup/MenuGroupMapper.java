@@ -1,7 +1,4 @@
-package kitchenpos.mapper;
-
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupDto;
+package kitchenpos.menugroup;
 
 public class MenuGroupMapper {
 

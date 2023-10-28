@@ -1,8 +1,8 @@
 package kitchenpos.fixture;
 
 import java.util.function.Consumer;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupDto;
+import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menugroup.MenuGroupDto;
 
 public enum MenuGroupFixture {
 

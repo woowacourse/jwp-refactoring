@@ -4,10 +4,10 @@ import static java.util.stream.Collectors.toList;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupDto;
-import kitchenpos.mapper.MenuGroupMapper;
+import kitchenpos.menugroup.MenuGroupService;
+import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menugroup.MenuGroupDto;
+import kitchenpos.menugroup.MenuGroupMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

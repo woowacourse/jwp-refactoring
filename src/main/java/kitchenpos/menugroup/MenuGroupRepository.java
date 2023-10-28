@@ -1,7 +1,6 @@
-package kitchenpos.dao;
+package kitchenpos.menugroup;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
 import org.springframework.data.repository.Repository;
 
 public interface MenuGroupRepository extends Repository<MenuGroup, Long> {
