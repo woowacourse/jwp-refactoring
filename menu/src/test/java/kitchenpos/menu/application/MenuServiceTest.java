@@ -1,40 +1,51 @@
 package kitchenpos.menu.application;
 
+import static kitchenpos.fixture.MenuFixture.createMenuProductDto;
+import static kitchenpos.fixture.MenuGroupFixture.한마리메뉴_DTO;
 import static kitchenpos.menu.domain.exception.MenuExceptionType.PRICE_IS_BIGGER_THAN_MENU_PRODUCT_PRICES_SUM;
-import static kitchenpos.support.fixture.MenuFixture.createMenuProductDto;
-import static kitchenpos.support.fixture.MenuFixture.한마리메뉴_DTO;
-import static kitchenpos.support.fixture.MenuFixture.후라이드치킨_DTO;
-import static kitchenpos.support.fixture.ProductFixture.후라이드_DTO;
-import static kitchenpos.vo.exception.PriceExceptionType.PRICE_IS_LOWER_THAN_ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.ServiceIntegrationTest;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.menu.application.dto.MenuDto;
 import kitchenpos.menu.application.dto.MenuProductDto;
 import kitchenpos.menu.domain.exception.MenuException;
 import kitchenpos.menu_group.application.MenuGroupDto;
+import kitchenpos.menu_group.application.MenuGroupService;
+import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductDto;
-import kitchenpos.support.ServiceIntegrationTest;
 import kitchenpos.vo.exception.PriceException;
+import kitchenpos.vo.exception.PriceExceptionType;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuServiceTest extends ServiceIntegrationTest {
 
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private MenuGroupService menuGroupService;
+    @Autowired
+    private MenuService menuService;
+
     @Nested
     @DisplayName("Menu를 생성한다.")
-    class create {
+    class Create {
 
         @Test
         @DisplayName("정상적으로 생성한다.")
         void success() {
             final ProductDto savedProduct = productService.create(ProductFixture.후라이드_DTO());
-            final MenuProductDto menuProductDto = MenuFixture.createMenuProductDto(savedProduct, 1L);
-            final MenuGroupDto savedMenuGroupDto = menuGroupService.create(MenuFixture.한마리메뉴_DTO());
+            final MenuProductDto menuProductDto = createMenuProductDto(savedProduct,
+                1L);
+            final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
             final MenuDto menuDto = MenuFixture.후라이드치킨_DTO(
                 savedMenuGroupDto, List.of(menuProductDto), BigDecimal.valueOf(16000)
             );
@@ -55,8 +66,9 @@ class MenuServiceTest extends ServiceIntegrationTest {
         @DisplayName("가격이 0미만인 경우 예외처리.")
         void throwExceptionPriceLowerThan0() {
             final ProductDto savedProductDto = productService.create(ProductFixture.후라이드_DTO());
-            final MenuProductDto menuProductDto = MenuFixture.createMenuProductDto(savedProductDto, 1L);
-            final MenuGroupDto savedMenuGroupDto = menuGroupService.create(MenuFixture.한마리메뉴_DTO());
+            final MenuProductDto menuProductDto = createMenuProductDto(savedProductDto,
+                1L);
+            final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
             final MenuDto menuDto = MenuFixture.후라이드치킨_DTO(
                 savedMenuGroupDto, List.of(menuProductDto), BigDecimal.valueOf(-16000)
             );
@@ -71,8 +83,9 @@ class MenuServiceTest extends ServiceIntegrationTest {
         @DisplayName("price가 product의 총합보다 큰 경우 예외처리")
         void throwExceptionPriceIsBiggerThanProductSum() {
             final ProductDto savedProduct = productService.create(ProductFixture.후라이드_DTO());
-            final MenuProductDto menuProductDto = MenuFixture.createMenuProductDto(savedProduct, 1L);
-            final MenuGroupDto savedMenuGroupDto = menuGroupService.create(MenuFixture.한마리메뉴_DTO());
+            final MenuProductDto menuProductDto = createMenuProductDto(savedProduct,
+                1L);
+            final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
             final MenuDto menuDto = MenuFixture.후라이드치킨_DTO(
                 savedMenuGroupDto, List.of(menuProductDto), BigDecimal.valueOf(18000)
             );
@@ -88,8 +101,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @DisplayName("menu list를 조회한다.")
     void list() {
         final ProductDto savedProduct = productService.create(ProductFixture.후라이드_DTO());
-        final MenuProductDto menuProductDto = MenuFixture.createMenuProductDto(savedProduct, 1L);
-        final MenuGroupDto savedMenuGroupDto = menuGroupService.create(MenuFixture.한마리메뉴_DTO());
+        final MenuProductDto menuProductDto = createMenuProductDto(savedProduct, 1L);
+        final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
         final MenuDto menuDto = MenuFixture.후라이드치킨_DTO(
             savedMenuGroupDto, List.of(menuProductDto), BigDecimal.valueOf(16000)
         );
