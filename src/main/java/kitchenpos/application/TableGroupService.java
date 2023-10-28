@@ -1,14 +1,13 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
+import kitchenpos.dto.CreateTableGroupRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.dto.CreateTableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,10 +74,15 @@ public class TableGroupService {
     }
 
     private void validateCanUngroup(final OrderTables orderTables) {
-        final List<Order> findOrders = orderRepository.findAllByOrderTableIdIn(orderTables.getOrderTableIds());
-        final Orders orders = new Orders(findOrders);
-        if (orders.containsNotCompleteOrder()) {
+        if (containsNotCompleteOrder(orderTables)) {
             throw new IllegalArgumentException("테이블 그룹을 해제하려면 그룹화된 테이블의 모든 주문이 완료 상태이어야 합니다.");
         }
+    }
+
+    private boolean containsNotCompleteOrder(final OrderTables orderTables) {
+        final List<Order> findOrders = orderRepository.findAllByOrderTableIdIn(orderTables.getOrderTableIds());
+
+        return findOrders.stream()
+                         .anyMatch(Order::isNotComplete);
     }
 }

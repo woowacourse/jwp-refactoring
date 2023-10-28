@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.Orders;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -48,10 +48,16 @@ public class TableService {
     }
 
     private void validateCanChangeEmpty(final Long orderTableId) {
-        final Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTableId));
-        if (orders.containsNotCompleteOrder()) {
+        if (containsNotCompleteOrder(orderTableId)) {
             throw new IllegalArgumentException("주문 상태가 조리중이거나 식사중인 주문이 남아있다면 테이블 상태를 변경할 수 없습니다.");
         }
+    }
+
+    private boolean containsNotCompleteOrder(final Long orderTableId) {
+        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
+
+        return orders.stream()
+                     .anyMatch(Order::isNotComplete);
     }
 
     @Transactional
