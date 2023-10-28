@@ -54,6 +54,7 @@ public class OrderRestController {
         @PathVariable final Long orderId,
         @RequestBody final OrderDto orderDto
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderDto));
+        Order order = orderService.changeOrderStatus(orderId, orderMapper.toEntity(orderDto));
+        return ResponseEntity.ok(OrderDto.from(order));
     }
 }

@@ -52,11 +52,11 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void changeOrderStatus(OrderStatus orderStatus) {
+    public void changeOrderStatus(Order other) {
         if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new CustomException(ExceptionType.ALREADY_COMPLETION_ORDER);
         }
-        this.orderStatus = orderStatus;
+        this.orderStatus = other.getOrderStatus();
     }
 
     public Long getId() {

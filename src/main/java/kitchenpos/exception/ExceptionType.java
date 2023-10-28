@@ -22,6 +22,7 @@ public enum ExceptionType {
     DUPLICATED_ORDER_LINE_ITEM(400, "주문 항목에 중복된 메뉴가 있습니다."),
 
     // order,
+    ORDER_NOT_FOUND(404, "존재하지 않는 주문입니다."),
     ALREADY_COMPLETION_ORDER(400, "이미 완료된 주문입니다."),
     ORDER_TABLE_CANNOT_CHANGE_STATUS(400, "주문이 완료되지 않으면 테이블 상태를 변경할 수 없습니다."),
 
@@ -35,7 +36,8 @@ public enum ExceptionType {
     PROCESSING_ORDER_TABLE_CANNOT_UNGROUP(400, "조리중 또는 식사중인 테이블은 그룹을 지을 수 없습니다."),
 
     // table,
-    NUMBER_OF_GUESTS(400, "손님 수는 0보다 작을 수 없습니다.");
+    NUMBER_OF_GUESTS(400, "손님 수는 0보다 작을 수 없습니다."),
+    ;
 
     private final int status;
     private final String message;

@@ -1,9 +1,10 @@
 package kitchenpos.order.service;
 
+import static kitchenpos.exception.ExceptionType.ORDER_NOT_FOUND;
+
+import kitchenpos.exception.CustomException;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordercrud.service.OrderDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +18,12 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto changeOrderStatus(final Long orderId, final OrderDto orderDto) {
+    public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order foundOrder = orderRepository.findById(orderId)
-                                                .orElseThrow(IllegalArgumentException::new);
+                                                .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(orderDto.getOrderStatus());
+        foundOrder.changeOrderStatus(order);
 
-        foundOrder.changeOrderStatus(orderStatus);
-
-        return OrderDto.from(foundOrder);
+        return foundOrder;
     }
 }

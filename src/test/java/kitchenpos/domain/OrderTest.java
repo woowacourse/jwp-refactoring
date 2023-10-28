@@ -1,19 +1,14 @@
 package kitchenpos.domain;
 
 import static kitchenpos.exception.ExceptionType.ALREADY_COMPLETION_ORDER;
-import static kitchenpos.exception.ExceptionType.DUPLICATED_ORDER_LINE_ITEM;
-import static kitchenpos.exception.ExceptionType.EMPTY_ORDER_LINE_ITEMS;
-import static kitchenpos.exception.ExceptionType.EMPTY_ORDER_TABLE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.Order.Builder;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderFixture.OrderLineItemFixture;
-import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.Order.Builder;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +28,10 @@ class OrderTest {
     void change_order_status_success() {
         // given
         OrderLineItem orderLineItem = OrderLineItemFixture.ORDER_LINE_ITEM_1.toEntity();
+        Order other = new Builder()
+            .orderLineItems(List.of(orderLineItem))
+            .orderStatus(OrderStatus.MEAL)
+            .build();
 
         // when
         Order order = new Builder()
@@ -41,7 +40,7 @@ class OrderTest {
             .build();
 
         // then
-        assertDoesNotThrow(() -> order.changeOrderStatus(OrderStatus.MEAL));
+        assertDoesNotThrow(() -> order.changeOrderStatus(other));
     }
 
     @Test
@@ -49,6 +48,10 @@ class OrderTest {
     void change_order_status_fail() {
         // given
         OrderLineItem orderLineItem = OrderLineItemFixture.ORDER_LINE_ITEM_1.toEntity();
+        Order other = new Builder()
+            .orderLineItems(List.of(orderLineItem))
+            .orderStatus(OrderStatus.COMPLETION)
+            .build();
 
         // when
         Order order = new Builder()
@@ -57,7 +60,7 @@ class OrderTest {
             .build();
 
         // then
-        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COMPLETION))
+        assertThatThrownBy(() -> order.changeOrderStatus(other))
             .hasMessageContaining(ALREADY_COMPLETION_ORDER.getMessage());
     }
 }

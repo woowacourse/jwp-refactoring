@@ -28,7 +28,7 @@ public class OrderMapper {
                                                      .collect(toList());
 
         return new Order.Builder()
-            .orderStatus(OrderStatus.COOKING)
+            .orderStatus(OrderStatus.valueOf(orderDto.getOrderStatus()))
             .orderTableId(orderDto.getOrderTableId())
             .orderedTime(LocalDateTime.now())
             .orderLineItems(orderLineItems)
