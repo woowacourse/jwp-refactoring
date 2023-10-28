@@ -21,7 +21,7 @@ public class OrderTableGroupRestController {
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<OrderTableGroup> create(@RequestBody final OrderTableGroupCreateRequest request) {
+    public ResponseEntity<Void> create(@RequestBody final OrderTableGroupCreateRequest request) {
         final Long id = orderTableGroupService.create(request);
         return ResponseEntity.created(URI.create("/api/table-groups/" + id)).build();
     }
