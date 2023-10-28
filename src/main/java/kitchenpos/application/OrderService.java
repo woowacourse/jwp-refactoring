@@ -55,9 +55,10 @@ public class OrderService {
         final OrderTable orderTable = findOrderTableById(request.getOrderTableId());
         orderTable.validateIsEmpty();
 
-        final Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
-        saveOrderLineItems(orderLineItemRequest, order);
-        return convertToResponse(order);
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        final Order savedOrder = orderRepository.save(order);
+        saveOrderLineItems(orderLineItemRequest, savedOrder);
+        return convertToResponse(savedOrder);
     }
 
     public List<OrderResponse> list() {

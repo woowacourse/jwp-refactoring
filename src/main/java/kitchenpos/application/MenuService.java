@@ -51,7 +51,8 @@ public class MenuService {
         final BigDecimal menuProductsPrice = menuProducts.calculateMenuProductsPrice();
 
         menuPrice.validateMoreThanMenuProductsPrice(menuProductsPrice);
-        final Menu savedMenu = menuRepository.save(new Menu(menuName, menuPrice, menuGroup));
+        final Menu menu = new Menu(menuName, menuPrice, menuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
         saveMenuProducts(menuProducts.getMenuProducts(), savedMenu);
 
         return convertToResponse(savedMenu);

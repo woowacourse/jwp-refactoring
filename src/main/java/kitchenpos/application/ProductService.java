@@ -26,7 +26,8 @@ public class ProductService {
                 new ProductName(request.getName()),
                 new ProductPrice(request.getPrice())
         );
-        return convertToResponse(productRepository.save(product));
+        final Product savedProduct = productRepository.save(product);
+        return convertToResponse(savedProduct);
     }
 
     public List<ProductResponse> list() {
