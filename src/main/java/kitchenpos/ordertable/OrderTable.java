@@ -2,7 +2,6 @@ package kitchenpos.ordertable;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,11 +55,18 @@ public class OrderTable {
 
     public void setNumberOfGuests(final int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
+        validateIsEmpty();
         this.numberOfGuests = numberOfGuests;
     }
 
     private void validateNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < 0 || this.isEmpty == true) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateIsEmpty() {
+        if (this.isEmpty == true) {
             throw new IllegalArgumentException();
         }
     }
