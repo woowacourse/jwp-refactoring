@@ -1,13 +1,13 @@
 package kitchenpos.fixture;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProducts;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 import kitchenpos.common.vo.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.ui.dto.MenuProductDto;
 import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.product.domain.Product;
 import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
@@ -64,7 +64,7 @@ public class MenuFixture {
     }
 
     private static MenuProduct 메뉴_상품_엔티티_생성(final Product product) {
-        final MenuProduct menuProduct = new MenuProduct(product, DEFAULT_QUANTITY);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), DEFAULT_QUANTITY);
 
         return menuProduct;
     }

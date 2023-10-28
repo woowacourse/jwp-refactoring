@@ -1,25 +1,21 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.exception.NotFoundMenuGroupException;
-import kitchenpos.exception.NotFoundProductException;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProducts;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.menu.ui.dto.MenuProductDto;
 import kitchenpos.menu.ui.dto.MenuRequest;
 import kitchenpos.menu.ui.dto.MenuResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,18 +24,17 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
-    private final ProductRepository productRepository;
+    private final MenuValidator menuValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
             final MenuProductRepository menuProductRepository,
-            final ProductRepository productRepository
-    ) {
+            final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
-        this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
     }
 
     @Transactional
@@ -49,44 +44,18 @@ public class MenuService {
                                    .orElseThrow(() -> new NotFoundMenuGroupException("해당 메뉴 그룹이 존재하지 않습니다."));
         final MenuProducts menuProducts = convertToMenuProducts(menuRequest.getMenuProducts());
         final Menu menu = menuRequest.toEntity(menuGroup, menuProducts);
+        menuValidator.validateMenuPrice(menuProducts.getMenuProducts(), menu.getPrice());
+
         final Menu savedMenu = menuRepository.save(menu);
 
         return MenuResponse.from(savedMenu);
     }
 
     private MenuProducts convertToMenuProducts(final List<MenuProductDto> menuProductDtos) {
-        final Map<Long, Product> products = findAllProducts(menuProductDtos);
-
-        final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProductDto menuProductDto : menuProductDtos) {
-            final Product product = products.get(menuProductDto.getProductId());
-            menuProducts.add(menuProductDto.toEntity(product));
-        }
-
+        final List<MenuProduct> menuProducts = menuProductDtos.stream()
+                                                              .map(MenuProductDto::toEntity)
+                                                              .collect(Collectors.toList());
         return new MenuProducts(menuProducts);
-    }
-
-    private Map<Long, Product> findAllProducts(final List<MenuProductDto> menuProductDtos) {
-        final List<Long> productIds = menuProductDtos.stream()
-                                                     .map(MenuProductDto::getProductId)
-                                                     .collect(Collectors.toList());
-        final Map<Long, Product> products = findProductsWithId(productIds);
-
-        return products;
-    }
-
-    private Map<Long, Product> findProductsWithId(final List<Long> productIds) {
-        final Map<Long, Product> products = productRepository.findAllByIdIn(productIds).stream()
-                                                             .collect(Collectors.toMap(Product::getId, product -> product));
-        validateProducts(productIds, products);
-
-        return products;
-    }
-
-    private static void validateProducts(final List<Long> productIds, final Map<Long, Product> products) {
-        if (products.size() != productIds.size()) {
-            throw new NotFoundProductException("존재하지 않는 상품이 있습니다.");
-        }
     }
 
     @Transactional(readOnly = true)

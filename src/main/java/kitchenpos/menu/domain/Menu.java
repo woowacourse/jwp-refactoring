@@ -1,7 +1,6 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.common.vo.Price;
-import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.menugroup.domain.MenuGroup;
 
 import javax.persistence.AttributeOverride;
@@ -15,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,19 +58,9 @@ public class Menu {
             final MenuProducts menuProducts
     ) {
         final Menu menu = new Menu(name, price, menuGroup, menuProducts);
-
-        validateMenuPrice(menuProducts, price);
         menuProducts.addMenuProducts(menu);
 
         return menu;
-    }
-
-    private static void validateMenuPrice(final MenuProducts menuProducts, final Price price) {
-        final Price totalPrice = menuProducts.calculateTotalPrice();
-
-        if (price.compareTo(totalPrice)) {
-            throw new InvalidMenuPriceException("메뉴 가격이 상품들의 가격 합보다 클 수 없습니다.");
-        }
     }
 
     public Long getId() {
@@ -83,8 +71,8 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 
     public MenuGroup getMenuGroup() {
