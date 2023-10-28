@@ -1,12 +1,12 @@
 package kitchenpos.table;
 
+import static kitchenpos.tablegroup.domain.TableGroupFixture.테이블_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
 class OrderTablesTest {
@@ -17,9 +17,7 @@ class OrderTablesTest {
         final OrderTable orderTable1 = new OrderTable(2, true);
         final OrderTable orderTable2 = new OrderTable(3, true);
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        final TableGroup tableGroup = new TableGroup(orderTables);
-        orderTable1.updateTableGroup(tableGroup);
-        orderTable2.updateTableGroup(tableGroup);
+        테이블_그룹(null, null);
 
         // when
         final OrderTables savedOrderTables = new OrderTables(orderTables);
@@ -27,8 +25,8 @@ class OrderTablesTest {
 
         // then
         assertAll(
-                () -> assertThat(orderTable1.getTableGroup()).isNull(),
-                () -> assertThat(orderTable2.getTableGroup()).isNull()
+                () -> assertThat(orderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable2.getTableGroupId()).isNull()
         );
     }
 }

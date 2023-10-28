@@ -6,9 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -17,9 +14,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -34,15 +30,16 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void updateTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void makeTableGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
     }
 
     public void changeEmpty(final boolean empty) {
@@ -61,20 +58,20 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
     public boolean hasTableGroup() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

@@ -145,9 +145,11 @@ class TableServiceTest {
 
             final OrderTable 주문_테이블1 = new OrderTable(저장된_주문_테이블1.getId(), null, 2, true);
             final OrderTable 주문_테이블2 = new OrderTable(저장된_주문_테이블2.getId(), null, 3, true);
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(주문_테이블1, 주문_테이블2));
+            final TableGroup 테이블_그룹 = 테이블_그룹(null, null);
 
-            tableGroupRepository.save(테이블_그룹);
+            final TableGroup 저장된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
+            주문_테이블1.makeTableGroup(저장된_테이블_그룹.getId());
+            주문_테이블2.makeTableGroup(저장된_테이블_그룹.getId());
 
             orderTableRepository.save(주문_테이블1);
             orderTableRepository.save(주문_테이블2);

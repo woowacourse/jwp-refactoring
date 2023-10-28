@@ -1,5 +1,7 @@
 package kitchenpos.tablegroup.application.dto;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 import org.springframework.util.CollectionUtils;
 
@@ -13,6 +15,12 @@ public class TableGroupCreateRequest {
     public TableGroupCreateRequest(final List<OrderTableRequest> orderTables) {
         validate(orderTables);
         this.orderTables = orderTables;
+    }
+
+    public List<Long> getOrderTableIds() {
+        return getOrderTables().stream()
+                .map(OrderTableRequest::getId)
+                .collect(toList());
     }
 
     private void validate(final List<OrderTableRequest> orderTables) {

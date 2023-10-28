@@ -10,10 +10,10 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
-import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest.OrderTableRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroupValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,51 +21,40 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableGroupService {
 
-    private static final int MIN_NUMBER_OF_ORDER_TABLE = 2;
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupValidator tableGroupValidator;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
     public TableGroupService(
-            final OrderRepository orderRepository,
+            final TableGroupRepository tableGroupRepository,
+            final TableGroupValidator tableGroupValidator,
             final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final OrderRepository orderRepository
     ) {
-        this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupValidator = tableGroupValidator;
+        this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     public TableGroupCreateResponse create(final TableGroupCreateRequest request) {
-        final List<OrderTableRequest> requestOrderTables = request.getOrderTables();
-        checkOrderTableSize(requestOrderTables);
-        final List<OrderTable> savedOrderTables = findOrderTablesByIds(requestOrderTables);
-        checkValidOrderTablesSize(requestOrderTables, savedOrderTables);
+        final List<Long> orderTableIds = request.getOrderTableIds();
 
-        final TableGroup tableGroup = new TableGroup(savedOrderTables);
+        final TableGroup tableGroup = TableGroup.of(orderTableIds, tableGroupValidator);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final List<OrderTable> orderTables = findOrderTablesByIds(orderTableIds);
 
-        return TableGroupCreateResponse.of(savedTableGroup);
-    }
-
-    private void checkOrderTableSize(final List<OrderTableRequest> requestOrderTables) {
-        if (requestOrderTables.size() < MIN_NUMBER_OF_ORDER_TABLE) {
-            throw new IllegalArgumentException("2개 이상의 주문 테이블을 그룹으로 만들 수 있습니다.");
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.makeTableGroup(savedTableGroup.getId());
+            orderTableRepository.save(orderTable);
         }
+
+        return TableGroupCreateResponse.of(savedTableGroup, orderTables);
     }
 
-    private List<OrderTable> findOrderTablesByIds(final List<OrderTableRequest> requestOrderTables) {
-        final List<Long> orderTableIds = requestOrderTables.stream()
-                .map(OrderTableRequest::getId)
-                .collect(toList());
+    private List<OrderTable> findOrderTablesByIds(final List<Long> orderTableIds) {
         return orderTableRepository.findAllByIdIn(orderTableIds);
-    }
-
-    private void checkValidOrderTablesSize(final List<OrderTableRequest> requestOrderTables,
-                                           final List<OrderTable> savedOrderTables) {
-        if (requestOrderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("주문 테이블의 정보가 올바르지 않습니다.");
-        }
     }
 
     public void ungroup(final Long tableGroupId) {
@@ -84,7 +73,7 @@ public class TableGroupService {
     }
 
     private List<OrderTable> findOrderTablesByTableGroup(final TableGroup tableGroup) {
-        return orderTableRepository.findAllByTableGroup(tableGroup);
+        return orderTableRepository.findAllByTableGroupId(tableGroup.getId());
     }
 
     private void checkCompletedOrder(final List<OrderTable> orderTables) {

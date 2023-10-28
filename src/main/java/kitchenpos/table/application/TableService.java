@@ -63,7 +63,7 @@ public class TableService {
     }
 
     private void checkGroupedTable(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
             throw new IllegalArgumentException("테이블이 그룹에 속해있으면 빈 테이블로 변경할 수 없습니다.");
         }
     }

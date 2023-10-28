@@ -3,9 +3,7 @@ package kitchenpos.table;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
@@ -42,11 +40,7 @@ class OrderTableTest {
         // given
         final OrderTable orderTable = new OrderTable(
                 null,
-                new TableGroup(
-                        List.of(
-                                new OrderTable(2, true),
-                                new OrderTable(3, true))
-                ),
+                1L,
                 1,
                 true
         );
