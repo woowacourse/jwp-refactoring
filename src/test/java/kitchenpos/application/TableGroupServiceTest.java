@@ -5,14 +5,18 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.application.dto.request.OrderStatusRequest;
-import kitchenpos.application.dto.request.TableGroupRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.application.dto.response.TableResponse;
+import kitchenpos.order.service.dto.OrderStatusRequest;
+import kitchenpos.order.service.dto.TableGroupRequest;
+import kitchenpos.menu.service.dto.MenuGroupResponse;
+import kitchenpos.menu.service.dto.MenuResponse;
+import kitchenpos.order.service.dto.OrderResponse;
+import kitchenpos.product.service.dto.ProductResponse;
+import kitchenpos.order.service.dto.TableGroupResponse;
+import kitchenpos.order.service.dto.TableResponse;
+import kitchenpos.menu.service.MenuService;
+import kitchenpos.menu.service.MenuGroupService;
+import kitchenpos.order.service.OrderService;
+import kitchenpos.product.service.ProductService;
 import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
@@ -20,6 +24,8 @@ import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
 import kitchenpos.supports.TableGroupFixture;
+import kitchenpos.order.service.TableService;
+import kitchenpos.order.service.TableGroupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -96,7 +102,7 @@ class TableGroupServiceTest {
         void throwExceptionWhenContainsInvalidOrderTable() {
             // given
             final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroupRequest tableGroup = new TableGroupRequest(List.of(orderTable1.getId(), INVALID_ID));
+            final TableGroupRequest tableGroup = TableGroupFixture.fromIds(orderTable1.getId(), INVALID_ID);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -109,7 +115,7 @@ class TableGroupServiceTest {
         void throwExceptionWhenContainsDuplicatedOrderTable() {
             // given
             final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroupRequest tableGroup = new TableGroupRequest(List.of(orderTable1.getId(), orderTable1.getId()));
+            final TableGroupRequest tableGroup = TableGroupFixture.fromIds(orderTable1.getId(), orderTable1.getId());
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))

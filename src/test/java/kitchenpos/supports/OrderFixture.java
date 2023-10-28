@@ -1,9 +1,9 @@
 package kitchenpos.supports;
 
 import java.util.List;
-import kitchenpos.application.dto.request.OrderLineItemRequest;
-import kitchenpos.application.dto.request.OrderRequest;
-import kitchenpos.application.dto.request.OrderStatusRequest;
+import kitchenpos.order.service.dto.OrderLineItemRequest;
+import kitchenpos.order.service.dto.OrderRequest;
+import kitchenpos.order.service.dto.OrderStatusRequest;
 
 public class OrderFixture {
 
