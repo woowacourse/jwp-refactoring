@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.vo.OrderStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

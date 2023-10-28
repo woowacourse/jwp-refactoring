@@ -10,8 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.application.TableValidator;
 import kitchenpos.application.TableMapper;
+import kitchenpos.application.TableValidator;
 
 @Entity
 public class TableGroup {

@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.test.fixture.OrderFixture;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

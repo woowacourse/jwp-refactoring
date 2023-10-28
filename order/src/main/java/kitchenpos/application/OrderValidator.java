@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.vo.OrderLineItems;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.vo.OrderLineItems;
 import org.springframework.stereotype.Component;
 
 @Component

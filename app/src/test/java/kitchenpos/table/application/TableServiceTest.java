@@ -10,14 +10,14 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.OrderValidator;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.application.TableGroupValidator;
 import kitchenpos.application.TableService;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
 import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestRequest;
 import kitchenpos.dto.response.OrderTableResponse;
@@ -29,7 +29,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
- @SuppressWarnings("NonAsciiCharacters")
+@SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
 
     @Autowired

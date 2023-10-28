@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
