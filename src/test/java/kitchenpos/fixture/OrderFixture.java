@@ -3,11 +3,11 @@ package kitchenpos.fixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.OrderDto;
-import kitchenpos.dto.OrderLineItemDto;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.service.OrderDto;
+import kitchenpos.order.service.OrderLineItemDto;
 
 public enum OrderFixture {
 

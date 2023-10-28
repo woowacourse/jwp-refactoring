@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import static java.util.stream.Collectors.toSet;
 import static javax.persistence.CascadeType.MERGE;
@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
 import kitchenpos.menu.domain.Menu;

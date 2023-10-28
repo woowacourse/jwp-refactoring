@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.ordertable.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.exception.ExceptionType.EMPTY_ORDER_TABLE;

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.ordertable.domain;
 
 import static java.util.stream.Collectors.toSet;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -15,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import kitchenpos.exception.CustomException;
-import kitchenpos.exception.ExceptionType;
 
 @Entity
 public class TableGroup {

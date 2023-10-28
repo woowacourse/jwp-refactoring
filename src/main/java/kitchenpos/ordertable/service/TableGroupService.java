@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.service;
 
 import static java.util.stream.Collectors.toList;
 import static kitchenpos.exception.ExceptionType.TABLE_GROUP_NOT_FOUND;
@@ -6,16 +6,15 @@ import static kitchenpos.exception.ExceptionType.TABLE_GROUP_NOT_FOUND;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroup.Builder;
-import kitchenpos.dto.OrderTableDto;
-import kitchenpos.dto.TableGroupDto;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.service.OrderService;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.TableGroup.Builder;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
+import kitchenpos.ordertable.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

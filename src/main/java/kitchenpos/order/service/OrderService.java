@@ -1,20 +1,18 @@
-package kitchenpos.application;
+package kitchenpos.order.service;
 
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderLineItemRepository;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.Order.Builder;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderDto;
-import kitchenpos.dto.OrderLineItemDto;
+import kitchenpos.order.domain.Order.Builder;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
 import kitchenpos.menu.service.MenuService;

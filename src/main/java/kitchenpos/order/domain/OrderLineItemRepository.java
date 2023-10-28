@@ -1,6 +1,5 @@
-package kitchenpos.dao;
+package kitchenpos.order.domain;
 
-import kitchenpos.domain.OrderLineItem;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.Repository;

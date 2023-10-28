@@ -7,17 +7,17 @@ import static kitchenpos.exception.ExceptionType.EMPTY_ORDER_TABLE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order.Builder;
-import kitchenpos.exception.ExceptionType;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.Order.Builder;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderFixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 class OrderTest {
 

@@ -1,8 +1,8 @@
-package kitchenpos.dto;
+package kitchenpos.ordertable.service;
 
 import java.util.Objects;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.TableGroup;
 
 public class OrderTableDto {
     private Long id;

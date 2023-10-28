@@ -1,11 +1,11 @@
-package kitchenpos.dto;
+package kitchenpos.ordertable.service;
 
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.domain.TableGroup;
 
 public class TableGroupDto {
 

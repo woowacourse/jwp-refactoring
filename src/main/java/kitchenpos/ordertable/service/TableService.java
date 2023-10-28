@@ -1,17 +1,17 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.service;
 
 import static java.util.stream.Collectors.toList;
 import static kitchenpos.exception.ExceptionType.ORDER_TABLE_CANNOT_CHANGE_STATUS;
 import static kitchenpos.exception.ExceptionType.ORDER_TABLE_NOT_FOUND;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTable.Builder;
-import kitchenpos.dto.OrderTableDto;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.service.OrderService;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable.Builder;
 import kitchenpos.exception.CustomException;
+import kitchenpos.ordertable.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

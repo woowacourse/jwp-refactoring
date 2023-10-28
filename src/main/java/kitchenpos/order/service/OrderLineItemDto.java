@@ -1,7 +1,7 @@
-package kitchenpos.dto;
+package kitchenpos.order.service;
 
 import java.util.Objects;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemDto {
     private Long seq;
