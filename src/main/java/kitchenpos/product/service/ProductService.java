@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -17,15 +18,16 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public Product create(final Product product) {
         return productRepository.save(product);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> list() {
         return productRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Product getById(Long productId) {
         return productRepository.findById(productId)
                                 .orElseThrow(() -> new CustomException(ExceptionType.PRODUCT_NOT_FOUND, String.valueOf(productId)));

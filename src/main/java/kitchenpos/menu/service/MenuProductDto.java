@@ -4,6 +4,7 @@ import java.util.Objects;
 import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductDto {
+
     private Long seq;
     private Long menuId;
     private Long productId;

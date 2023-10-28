@@ -7,9 +7,11 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.service.ProductService;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
+@Transactional
 public class MenuMapper {
 
     private final ProductService productService;
@@ -18,6 +20,7 @@ public class MenuMapper {
         this.productService = productService;
     }
 
+    @Transactional(readOnly = true)
     public Menu toEntity(MenuDto menuDto) {
         BigDecimal menuPrice = menuDto.getPrice();
         Long menuGroupId = menuDto.getMenuGroupId();
@@ -37,6 +40,7 @@ public class MenuMapper {
 
         for (MenuProductDto menuProductDto : menuProductDtos) {
             Product product = productService.getById(menuProductDto.getProductId());
+
             MenuProduct menuProduct = new MenuProduct.Builder()
                 .name(product.getName())
                 .price(product.getPrice())

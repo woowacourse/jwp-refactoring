@@ -64,7 +64,7 @@ public class OrderService {
     }
 
     private OrderLineItem toOrderLineItem(OrderLineItemDto orderLineItemDto) {
-        Menu menu = menuService.findById(orderLineItemDto.getMenuId());
+        Menu menu = menuService.getById(orderLineItemDto.getMenuId());
         return new OrderLineItem.Builder()
             .menu(menu)
             .quantity(orderLineItemDto.getQuantity())
