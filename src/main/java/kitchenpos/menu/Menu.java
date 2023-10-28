@@ -34,7 +34,7 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Long getId() {

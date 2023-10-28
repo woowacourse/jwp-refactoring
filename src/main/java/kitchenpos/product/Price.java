@@ -10,8 +10,7 @@ public class Price {
     @Column(precision = 10, scale = 2, name = "price", nullable = false)
     private BigDecimal value;
 
-    public Price() {
-        this.value = BigDecimal.ZERO;
+    protected Price() {
     }
 
     public Price(BigDecimal value) {

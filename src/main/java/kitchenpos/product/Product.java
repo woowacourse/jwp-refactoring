@@ -25,6 +25,10 @@ public class Product {
         this.price = price;
     }
 
+    protected Product(){
+
+    }
+
     public Long getId() {
         return id;
     }

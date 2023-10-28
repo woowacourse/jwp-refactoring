@@ -45,6 +45,9 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    protected Order() {
+    }
+
     private void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();

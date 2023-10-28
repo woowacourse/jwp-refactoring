@@ -21,6 +21,9 @@ public class TableGroup {
     @CreatedDate
     private LocalDateTime createdDate;
 
+    public TableGroup() {
+    }
+
     public Long getId() {
         return id;
     }
