@@ -15,11 +15,11 @@ public class ProductName {
     }
 
     public ProductName(final String name) {
-        validation(name);
+        validate(name);
         this.name = name;
     }
 
-    private void validation(final String name) {
+    private void validate(final String name) {
         if (Objects.isNull(name) || name.length() > MAX_LENGTH) {
             throw new IllegalArgumentException();
         }

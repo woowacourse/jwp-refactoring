@@ -17,11 +17,11 @@ public class ProductPrice {
     }
 
     public ProductPrice(final BigDecimal price) {
-        validation(price);
+        validate(price);
         this.price = price;
     }
 
-    private void validation(final BigDecimal price) {
+    private void validate(final BigDecimal price) {
         if (Objects.isNull(price) || isLessThanMinPrice(price) || isMoreThanMaxPrice(price)) {
             throw new IllegalArgumentException();
         }
