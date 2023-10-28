@@ -54,7 +54,7 @@ public class OrderTables {
         }
     }
 
-    public void updateTableGroupIds(final OrderTableGroup savedTableGroup) {
+    public void joinTableGroup(final OrderTableGroup savedTableGroup) {
         for (OrderTable orderTable : values) {
             orderTable.updateTableGroup(savedTableGroup);
         }
