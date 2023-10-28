@@ -28,7 +28,7 @@ public class MenuFixture {
         }
 
         final MenuProducts 메뉴_상품들 = 메뉴_상품_엔티티들_생성(products);
-        final Menu 메뉴 = Menu.of(메뉴_이름, new Price(메뉴_가격_계산(products)), menuGroup, 메뉴_상품들);
+        final Menu 메뉴 = Menu.of(메뉴_이름, new Price(메뉴_가격_계산(products)), menuGroup.getId(), 메뉴_상품들);
 
         return 메뉴;
     }
