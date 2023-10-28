@@ -1,10 +1,10 @@
 dependencies {
     implementation project(':common')
-    implementation project(':menugroup')
+    implementation project(':menu-group')
     implementation project(':menu')
     implementation project(':product')
     implementation project(':order')
-    implementation project(':tablegroup')
+    implementation project(':table-group')
     implementation project(':web')
 
     runtimeOnly 'com.h2database:h2'
