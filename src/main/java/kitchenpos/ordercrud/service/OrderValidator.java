@@ -9,9 +9,9 @@ import java.util.Objects;
 import java.util.Set;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.service.OrderTableService;
 import org.springframework.stereotype.Component;
@@ -50,10 +50,10 @@ public class OrderValidator {
     }
 
     private void validateUniqueMenu(List<OrderLineItem> orderLineItems) {
-        Set<Menu> uniqueMenus = orderLineItems.stream()
-                                              .map(OrderLineItem::getMenu)
-                                              .filter(Objects::nonNull)
-                                              .collect(toSet());
+        Set<OrderMenu> uniqueMenus = orderLineItems.stream()
+                                                   .map(OrderLineItem::getOrderMenu)
+                                                   .filter(Objects::nonNull)
+                                                   .collect(toSet());
 
         if (uniqueMenus.size() != orderLineItems.size()) {
             throw new CustomException(DUPLICATED_ORDER_LINE_ITEM);

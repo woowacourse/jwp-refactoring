@@ -8,6 +8,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.service.MenuService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.service.OrderLineItemDto;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class OrderMapper {
         Menu menu = menuService.getById(orderLineItemDto.getMenuId());
 
         return new OrderLineItem.Builder()
-            .menu(menu)
+            .orderMenu(new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()))
             .quantity(orderLineItemDto.getQuantity())
             .build();
     }

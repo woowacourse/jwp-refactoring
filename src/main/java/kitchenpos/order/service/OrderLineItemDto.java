@@ -13,7 +13,6 @@ public class OrderLineItemDto {
         final OrderLineItemDto orderLineItemDto = new OrderLineItemDto();
         orderLineItemDto.setSeq(entity.getSeq());
         orderLineItemDto.setOrderId(orderId);
-        orderLineItemDto.setMenuId(entity.getMenu().getId());
         orderLineItemDto.setQuantity(entity.getQuantity());
         return orderLineItemDto;
     }

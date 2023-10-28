@@ -2,12 +2,13 @@ package kitchenpos.order.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -15,17 +16,20 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @Embedded
+    @AttributeOverrides(value = {
+        @AttributeOverride(name = "name", column = @Column(name = "name")),
+        @AttributeOverride(name = "price", column = @Column(name = "price"))
+    })
+    private OrderMenu orderMenu;
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Menu menu, long quantity) {
+    public OrderLineItem(Long seq, OrderMenu orderMenu, long quantity) {
         this.seq = seq;
-        this.menu = menu;
+        this.orderMenu = orderMenu;
         this.quantity = quantity;
     }
 
@@ -34,8 +38,8 @@ public class OrderLineItem {
     }
 
 
-    public Menu getMenu() {
-        return menu;
+    public OrderMenu getOrderMenu() {
+        return orderMenu;
     }
 
     public long getQuantity() {
@@ -45,7 +49,7 @@ public class OrderLineItem {
     public static class Builder {
 
         private Long seq;
-        private Menu menu;
+        private OrderMenu orderMenu;
         private long quantity;
 
         public Builder seq(Long seq) {
@@ -53,8 +57,8 @@ public class OrderLineItem {
             return this;
         }
 
-        public Builder menu(Menu menu) {
-            this.menu = menu;
+        public Builder orderMenu(OrderMenu orderMenu) {
+            this.orderMenu = orderMenu;
             return this;
         }
 
@@ -64,7 +68,7 @@ public class OrderLineItem {
         }
 
         public OrderLineItem build() {
-            return new OrderLineItem(seq, menu, quantity);
+            return new OrderLineItem(seq, orderMenu, quantity);
         }
     }
 }
