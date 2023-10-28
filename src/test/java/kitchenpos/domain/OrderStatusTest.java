@@ -10,21 +10,21 @@ class OrderStatusTest {
     @Test
     @DisplayName("COOKING 상태의 OrderStatus에서 다음 단계로 이동하면 MEAL 상태가 된다.")
     void cooking() {
-        assertThat(OrderStatus.COOKING.transitionToNextStatus())
+        assertThat(OrderStatus.COOKING.transitionTo(OrderStatus.MEAL))
                 .isEqualTo(OrderStatus.MEAL);
     }
 
     @Test
     @DisplayName("MEAL 상태의 OrderStatus에서 다음 단계로 이동하면 COMPLETION 상태가 된다.")
     void meal() {
-        assertThat(OrderStatus.MEAL.transitionToNextStatus())
+        assertThat(OrderStatus.MEAL.transitionTo(OrderStatus.COMPLETION))
                 .isEqualTo(OrderStatus.COMPLETION);
     }
 
     @Test
-    @DisplayName("COMPLETION 상태의 OrderStatus에서 다음 단계로 이동하려 하면 예외가 발생한다.")
+    @DisplayName("COMPLETION 상태의 OrderStatus에서 다른 단계로 이동하려 하면 예외가 발생한다.")
     void completion() {
-        assertThatThrownBy(OrderStatus.COMPLETION::transitionToNextStatus)
+        assertThatThrownBy(() -> OrderStatus.COMPLETION.transitionTo(OrderStatus.COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

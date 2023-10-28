@@ -72,7 +72,7 @@ class OrderRestControllerTest {
         final OrderLineItemResponse orderLineItemResponse2 = new OrderLineItemResponse(2L, 3L, 3L);
         final OrderResponse orderResponse = new OrderResponse(3L, 3L, OrderStatus.MEAL, LocalDateTime.now(),
                 List.of(orderLineItemResponse, orderLineItemResponse2));
-        when(orderService.changeOrderStatus(3L)).thenReturn(orderResponse);
+        when(orderService.changeOrderStatus(3L, OrderStatus.MEAL)).thenReturn(orderResponse);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", 3)
                         .contentType(MediaType.APPLICATION_JSON)

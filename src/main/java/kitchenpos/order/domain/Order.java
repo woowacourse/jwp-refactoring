@@ -51,8 +51,8 @@ public class Order {
         return orderStatus;
     }
 
-    public void transitionToNextStatus() {
-        this.orderStatus = orderStatus.transitionToNextStatus();
+    public void transitionStatusTo(final OrderStatus orderStatus) {
+        this.orderStatus = this.orderStatus.transitionTo(orderStatus);
     }
 
     public LocalDateTime getOrderedTime() {

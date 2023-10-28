@@ -15,6 +15,7 @@ import kitchenpos.order.application.dto.OrderLineItemsRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.validator.OrderStatusOrderTablesValidator;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.application.dto.TableResponse;
@@ -95,7 +96,7 @@ class TableServiceTest {
                     )
             );
 
-            orderService.changeOrderStatus(savedOrder.getId());
+            orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), false))
                     .isInstanceOf(IllegalArgumentException.class);

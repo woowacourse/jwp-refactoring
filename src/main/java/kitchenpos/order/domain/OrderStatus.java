@@ -1,22 +1,26 @@
 package kitchenpos.order.domain;
 
-public enum OrderStatus {
-    COOKING,
-    MEAL,
-    COMPLETION;
+import java.util.Objects;
 
-    public OrderStatus transitionToNextStatus() {
-        OrderStatus orderStatus;
-        switch (this) {
-            case COOKING:
-                orderStatus = MEAL;
-                break;
-            case MEAL:
-                orderStatus = COMPLETION;
-                break;
-            default:
-                throw new IllegalArgumentException();
+public enum OrderStatus {
+    COMPLETION(null),
+    MEAL(COMPLETION),
+    COOKING(MEAL);
+
+    private final OrderStatus nextStatus;
+
+    OrderStatus(final OrderStatus nextStatus) {
+        this.nextStatus = nextStatus;
+    }
+
+    public OrderStatus transitionTo(OrderStatus orderStatus) {
+        if (canBeTransitionedTo(orderStatus)) {
+            return this.nextStatus;
         }
-        return orderStatus;
+        throw new IllegalArgumentException();
+    }
+
+    private boolean canBeTransitionedTo(final OrderStatus orderStatus) {
+        return Objects.equals(this.nextStatus, orderStatus);
     }
 }

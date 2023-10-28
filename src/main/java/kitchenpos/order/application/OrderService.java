@@ -45,9 +45,9 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
         final Order savedOrder = orderDao.findMandatoryById(orderId);
-        savedOrder.transitionToNextStatus();
+        savedOrder.transitionStatusTo(orderStatus);
         orderDao.save(savedOrder);
         return OrderResponse.from(savedOrder);
     }
