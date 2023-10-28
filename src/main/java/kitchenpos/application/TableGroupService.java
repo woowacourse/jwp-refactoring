@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.application.mapper.TableGroupMapper;
 import kitchenpos.domain.order.OrderStatus;
@@ -32,10 +32,11 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupResponse create(final List<OrderTableDto> request) {
-        checkRequestOrderTableSize(request);
-        final List<OrderTable> savedOrderTables = findOrderTables(request);
-        checkSavedOrderTablesHasSameSizeWithRequest(request, savedOrderTables);
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        final List<OrderTableDto> orderTableIds = request.getOrderTables();
+        checkRequestOrderTableSize(orderTableIds);
+        final List<OrderTable> savedOrderTables = findOrderTables(orderTableIds);
+        checkSavedOrderTablesHasSameSizeWithRequest(orderTableIds, savedOrderTables);
 
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
         final OrderTables orderTables = new OrderTables(savedOrderTables);

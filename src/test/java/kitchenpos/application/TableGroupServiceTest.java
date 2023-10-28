@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
@@ -53,7 +54,8 @@ class TableGroupServiceTest {
                     .thenReturn(savedTabledGroup);
 
             // when
-            final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(new OrderTableDto(1L), new OrderTableDto(2L)));
             final TableGroupResponse result = tableGroupService.create(request);
 
             // then
@@ -63,7 +65,7 @@ class TableGroupServiceTest {
         @Test
         void 테이블_그룹을_생성할_때_전달된_주문_테이블이_없으면_실패한다() {
             // given, when
-            final List<OrderTableDto> request = Collections.emptyList();
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(Collections.emptyList());
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -73,7 +75,7 @@ class TableGroupServiceTest {
         @Test
         void 테이블_그룹을_생성할_때_전달된_주문_테이블의_개수가_2개보다_적으면_실패한다() {
             // given, when
-            final List<OrderTableDto> request = List.of(new OrderTableDto(1L));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(new OrderTableDto(1L)));
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -87,7 +89,8 @@ class TableGroupServiceTest {
                     .thenReturn(Collections.emptyList());
 
             // when
-            final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(new OrderTableDto(1L), new OrderTableDto(2L)));
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -104,7 +107,8 @@ class TableGroupServiceTest {
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
 
             // when
-            final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(new OrderTableDto(1L), new OrderTableDto(2L)));
 
 
             // then
@@ -123,7 +127,8 @@ class TableGroupServiceTest {
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
 
             // when
-            final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(new OrderTableDto(1L), new OrderTableDto(2L)));
 
 
             // then

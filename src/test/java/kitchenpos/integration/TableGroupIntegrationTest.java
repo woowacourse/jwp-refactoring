@@ -1,6 +1,7 @@
 package kitchenpos.integration;
 
 import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.table.OrderTable;
@@ -26,8 +27,9 @@ class TableGroupIntegrationTest extends IntegrationTest {
         final OrderTable table1 = createTable(createTableRequest);
         final OrderTable table2 = createTable(createTableRequest);
 
-        final List<OrderTableDto> orderTableIds = List.of(new OrderTableDto(table1.getId()), new OrderTableDto(table2.getId()));
-        final HttpEntity<List<OrderTableDto>> request = new HttpEntity<>(orderTableIds);
+        final TableGroupCreateRequest orderTableIds = new TableGroupCreateRequest(
+                List.of(new OrderTableDto(table1.getId()), new OrderTableDto(table2.getId())));
+        final HttpEntity<TableGroupCreateRequest> request = new HttpEntity<>(orderTableIds);
 
         // when
         final ResponseEntity<TableGroupResponse> response = testRestTemplate
@@ -54,8 +56,9 @@ class TableGroupIntegrationTest extends IntegrationTest {
         final OrderTable table1 = createTable(createTableRequest);
         final OrderTable table2 = createTable(createTableRequest);
 
-        final List<OrderTableDto> orderTableIds = List.of(new OrderTableDto(table1.getId()), new OrderTableDto(table2.getId()));
-        final HttpEntity<List<OrderTableDto>> request = new HttpEntity<>(orderTableIds);
+        final TableGroupCreateRequest orderTableIds = new TableGroupCreateRequest(
+                List.of(new OrderTableDto(table1.getId()), new OrderTableDto(table2.getId())));
+        final HttpEntity<TableGroupCreateRequest> request = new HttpEntity<>(orderTableIds);
 
         final Long tableGroupId = testRestTemplate
                 .postForEntity("/api/table-groups", request, TableGroupResponse.class)
