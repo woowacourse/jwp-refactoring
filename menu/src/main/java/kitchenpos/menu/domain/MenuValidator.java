@@ -1,6 +1,5 @@
 package kitchenpos.menu.domain;
 
-import java.util.List;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.springframework.stereotype.Component;
 import kitchenpos.product.domain.Product;
@@ -30,21 +29,18 @@ public class MenuValidator {
     }
 
     private void validateMenuProducts(Menu menu) {
-        long menuProductPriceSum = 0;
-
-        List<MenuProduct> menuProducts = menu.getMenuProducts();
-        for (MenuProduct menuProduct : menuProducts) {
-            Long productId = menuProduct.getProductId();
-
-            Product foundProduct = findProductById(productId);
-
-            long quantity = menuProduct.getQuantity();
-            menuProductPriceSum += foundProduct.calculatePrice(quantity);
-        }
+        long menuProductPriceSum = menu.getMenuProducts().stream()
+                .mapToLong(this::calculateProductPrice)
+                .sum();
 
         if (menu.hasBiggerPriceThan(menuProductPriceSum)) {
             throw new IllegalArgumentException("메뉴 금액이 상품 금액 합계보다 클 수 없습니다.");
         }
+    }
+
+    private long calculateProductPrice(MenuProduct menuProduct) {
+        Product foundProduct = findProductById(menuProduct.getProductId());
+        return foundProduct.calculatePrice(menuProduct.getQuantity());
     }
 
     private Product findProductById(Long productId) {
