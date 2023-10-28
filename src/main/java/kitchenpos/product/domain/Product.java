@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.product.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 

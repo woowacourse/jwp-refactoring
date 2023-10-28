@@ -11,11 +11,12 @@ import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 import kitchenpos.dto.MenuDto;
 import kitchenpos.dto.MenuProductDto;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
+import kitchenpos.product.service.ProductService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -9,7 +9,7 @@ import kitchenpos.dto.MenuDto;
 import kitchenpos.dto.MenuGroupDto;
 import kitchenpos.dto.OrderDto;
 import kitchenpos.dto.OrderTableDto;
-import kitchenpos.dto.ProductDto;
+import kitchenpos.product.service.ProductDto;
 import kitchenpos.dto.TableGroupDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

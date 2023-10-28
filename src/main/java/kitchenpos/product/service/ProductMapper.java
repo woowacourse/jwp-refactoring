@@ -1,7 +1,6 @@
-package kitchenpos.mapper;
+package kitchenpos.product.service;
 
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductDto;
+import kitchenpos.product.domain.Product;
 import org.springframework.stereotype.Component;
 
 @Component

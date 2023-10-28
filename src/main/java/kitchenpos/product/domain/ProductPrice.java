@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.product.domain;
 
 import static kitchenpos.exception.ExceptionType.PRICE_RANGE;
 

@@ -1,10 +1,10 @@
-package kitchenpos.application;
+package kitchenpos.product.service;
 
 import java.util.List;
-import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Product;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
