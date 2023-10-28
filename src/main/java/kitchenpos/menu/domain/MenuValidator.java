@@ -2,7 +2,9 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.common.vo.Price;
 import kitchenpos.exception.InvalidMenuPriceException;
+import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.stereotype.Component;
@@ -15,17 +17,25 @@ import java.util.stream.Collectors;
 @Component
 public class MenuValidator {
 
+    private MenuGroupRepository menuGroupRepository;
     private ProductRepository productRepository;
 
-    public MenuValidator(final ProductRepository productRepository) {
+    public MenuValidator(final MenuGroupRepository menuGroupRepository, final ProductRepository productRepository) {
+        this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
+    }
+
+    public void validateMenuGroup(final Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+             throw new NotFoundMenuGroupException("해당 메뉴 그룹이 존재하지 않습니다.");
+        }
     }
 
     public void validateMenuPrice(final List<MenuProduct> menuProducts, final Price menuPrice) {
         final Map<Long, Product> products = findAllProducts(menuProducts);
         final Price totalPrice = calculateTotalPrice(menuProducts, products);
 
-        if (menuPrice.compareTo(totalPrice)) {
+        if (menuPrice.isHigherThen(totalPrice)) {
             throw new InvalidMenuPriceException("메뉴 가격이 상품들의 가격 합보다 클 수 없습니다.");
         }
     }
