@@ -1,7 +1,22 @@
+bootJar { enabled = false }
+jar { enabled = true }
+
 dependencies {
-    implementation project(':support')
+    implementation project(':core')
     implementation project(':table')
     implementation project(':product')
     implementation project(':menu')
-    implementation project(':table_group')
+    implementation project(':menu-group')
+
+    testImplementation testFixtures(project(':core'))
+    testImplementation testFixtures(project(':table'))
+    testImplementation testFixtures(project(':product'))
+    testImplementation testFixtures(project(':menu'))
+    testImplementation testFixtures(project(':menu-group'))
+
+    testFixturesImplementation(project(':core'))
+    testFixturesImplementation(project(':table'))
+    testFixturesImplementation(project(':product'))
+    testFixturesImplementation(project(':menu'))
+    testFixturesImplementation(project(':menu-group'))
 }

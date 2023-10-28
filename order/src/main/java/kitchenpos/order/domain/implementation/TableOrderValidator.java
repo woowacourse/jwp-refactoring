@@ -1,10 +1,11 @@
 package kitchenpos.order.domain.implementation;
 
+import static kitchenpos.table.domain.exception.OrderTableExceptionType.ORDER_IS_NOT_COMPLETION;
+
 import kitchenpos.order.application.OrderRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.exception.OrderException;
-import kitchenpos.order.domain.exception.OrderExceptionType;
 import kitchenpos.table.domain.TableChangeEmptyValidator;
+import kitchenpos.table.domain.exception.OrderTableException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,7 +25,7 @@ public class TableOrderValidator implements TableChangeEmptyValidator {
 
     private void validateOrderIsNotCompletion(final Order order) {
         if (order.isNotAlreadyCompletion()) {
-            throw new OrderException(OrderExceptionType.ORDER_IS_NOT_COMPLETION);
+            throw new OrderTableException(ORDER_IS_NOT_COMPLETION);
         }
     }
 }
