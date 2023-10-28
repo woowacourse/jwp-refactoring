@@ -1,11 +1,11 @@
 package kitchenpos;
 
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.respository.MenuGroupRepository;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
