@@ -1,9 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8&serverTimezone=UTC
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:h2:mem:~/test;MODE=MySQL
+    username: sa
+    driver-class-name: org.h2.Driver
   jpa:
     properties:
       hibernate:
@@ -12,9 +11,6 @@ spring:
     hibernate:
       ddl-auto: validate
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  h2:
-    console:
-      enabled: true
   flyway:
     enabled: true
 

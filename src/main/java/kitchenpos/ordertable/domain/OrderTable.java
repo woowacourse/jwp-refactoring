@@ -20,7 +20,7 @@ public class OrderTable {
     @Embedded
     private NumberOfGuests numberOfGuests;
 
-    @Column
+    @Column(nullable = false)
     private boolean empty;
 
     protected OrderTable() {
