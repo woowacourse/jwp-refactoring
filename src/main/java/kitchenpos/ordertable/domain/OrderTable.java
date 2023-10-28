@@ -5,11 +5,10 @@ import static kitchenpos.exception.ExceptionType.EMPTY_ORDER_TABLE;
 import static kitchenpos.exception.ExceptionType.NUMBER_OF_GUESTS;
 import static kitchenpos.exception.ExceptionType.TABLE_GROUP_CANNOT_CHANGE_STATUS;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import kitchenpos.exception.CustomException;
 
 @Entity
@@ -18,24 +17,23 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id", insertable = false, updatable = false)
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
     protected OrderTable() {
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public void changeEmpty(boolean empty) {
-        if (tableGroup != null) {
+        if (tableGroupId != null) {
             throw new CustomException(TABLE_GROUP_CANNOT_CHANGE_STATUS);
         }
         this.empty = empty;
@@ -53,7 +51,7 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        tableGroup = null;
+        tableGroupId = null;
         empty = false;
     }
 
@@ -61,8 +59,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -73,15 +71,15 @@ public class OrderTable {
         return empty;
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    public void setTableGroupId(Long tableGroupId) {
         this.empty = false;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     public static class Builder {
 
         private Long id;
-        private TableGroup tableGroup;
+        private Long tableGroupId;
         private int numberOfGuests;
         private boolean empty;
 
@@ -90,8 +88,8 @@ public class OrderTable {
             return this;
         }
 
-        public Builder setTableGroup(TableGroup tableGroup) {
-            this.tableGroup = tableGroup;
+        public Builder setTableGroupId(Long tableGroupId) {
+            this.tableGroupId = tableGroupId;
             return this;
         }
 
@@ -106,7 +104,7 @@ public class OrderTable {
         }
 
         public OrderTable build() {
-            return new OrderTable(id, tableGroup, numberOfGuests, empty);
+            return new OrderTable(id, tableGroupId, numberOfGuests, empty);
         }
     }
 }

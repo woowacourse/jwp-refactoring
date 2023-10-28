@@ -2,9 +2,9 @@ package kitchenpos.ordertable.service;
 
 import java.util.Objects;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.TableGroup;
 
 public class OrderTableDto {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -13,12 +13,7 @@ public class OrderTableDto {
     public static OrderTableDto from(OrderTable entity) {
         OrderTableDto orderTableDto = new OrderTableDto();
         orderTableDto.setId(entity.getId());
-        TableGroup tableGroup = entity.getTableGroup();
-        if (tableGroup == null) {
-            orderTableDto.setTableGroupId(null);
-        } else {
-            orderTableDto.setTableGroupId(tableGroup.getId());
-        }
+        orderTableDto.setTableGroupId(entity.getTableGroupId());
         orderTableDto.setNumberOfGuests(entity.getNumberOfGuests());
         orderTableDto.setEmpty(entity.isEmpty());
         return orderTableDto;

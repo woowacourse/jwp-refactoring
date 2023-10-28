@@ -28,10 +28,10 @@ class TableGroupTest {
         // then
         assertAll(
             () -> assertThat(tableGroup.getOrderTables()).hasSize(2),
-            () -> assertThat(tableGroup.getOrderTables().get(0).getTableGroup()).isEqualTo(
-                tableGroup),
-            () -> assertThat(tableGroup.getOrderTables().get(1).getTableGroup()).isEqualTo(
-                tableGroup)
+            () -> assertThat(tableGroup.getOrderTables().get(0).getTableGroupId()).isEqualTo(
+                tableGroup.getId()),
+            () -> assertThat(tableGroup.getOrderTables().get(1).getTableGroupId()).isEqualTo(
+                tableGroup.getId())
         );
     }
 

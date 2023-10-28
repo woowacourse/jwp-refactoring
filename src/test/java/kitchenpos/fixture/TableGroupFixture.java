@@ -56,6 +56,7 @@ public enum TableGroupFixture {
                                                          .map(OrderTableFixture::toEntity)
                                                          .collect(toList());
         return new TableGroup.Builder()
+            .id(id)
             .orderTables(orderTables)
             .build();
     }

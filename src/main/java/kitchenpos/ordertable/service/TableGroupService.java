@@ -11,7 +11,6 @@ import kitchenpos.exception.ExceptionType;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.service.OrderService;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.domain.TableGroup.Builder;
@@ -22,18 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderService orderService;
     private final OrderRepository orderRepository;
     private final OrderTableService orderTableService;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-        final OrderService orderService,
         final OrderRepository orderRepository,
         final OrderTableService orderTableService,
         final TableGroupRepository tableGroupRepository
     ) {
-        this.orderService = orderService;
         this.orderRepository = orderRepository;
         this.orderTableService = orderTableService;
         this.tableGroupRepository = tableGroupRepository;
@@ -44,7 +40,7 @@ public class TableGroupService {
         List<OrderTable> orderTables = tableGroupDto.getOrderTables()
                                                     .stream()
                                                     .map(OrderTableDto::getId)
-                                                    .map(orderTableService::findById)
+                                                    .map(orderTableService::getById)
                                                     .collect(toList());
 
         TableGroup tableGroup = new Builder()

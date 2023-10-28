@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.exception.CustomException;
 
@@ -23,7 +24,8 @@ public class TableGroup {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
     public TableGroup() {
@@ -34,8 +36,8 @@ public class TableGroup {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
-        for (OrderTable orderTable : this.orderTables) {
-            orderTable.setTableGroup(this);
+        for (OrderTable orderTable : orderTables) {
+            orderTable.setTableGroupId(id);
         }
     }
 
@@ -63,7 +65,7 @@ public class TableGroup {
     }
 
     private void validateOrderTablesHaveNoGroup(List<OrderTable> orderTables) {
-        if (orderTables.stream().anyMatch(orderTable -> orderTable.getTableGroup() != null)) {
+        if (orderTables.stream().anyMatch(orderTable -> orderTable.getTableGroupId() != null)) {
             throw new CustomException(ALREADY_ASSIGNED_TABLE_GROUP);
         }
     }

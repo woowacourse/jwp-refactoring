@@ -45,7 +45,7 @@ public class TableRestController {
                                                        .stream()
                                                        .map(OrderTableDto::from)
                                                        .collect(toList());
-        
+
         return ResponseEntity.ok()
                              .body(orderTableDtos)
             ;
@@ -57,7 +57,7 @@ public class TableRestController {
         @RequestBody final OrderTableDto orderTableDto
     ) {
         return ResponseEntity.ok()
-                             .body(orderTableService.changeEmpty(orderTableId, orderTableDto))
+                             .body(orderTableService.changeEmpty(orderTableId, orderTableMapper.toEntity(orderTableDto)))
             ;
     }
 
@@ -67,8 +67,7 @@ public class TableRestController {
         @RequestBody final OrderTableDto orderTableDto
     ) {
         return ResponseEntity.ok()
-                             .body(orderTableService.changeNumberOfGuests(orderTableId,
-                                 orderTableDto))
+                             .body(orderTableService.changeNumberOfGuests(orderTableId, orderTableMapper.toEntity(orderTableDto)))
             ;
     }
 }
