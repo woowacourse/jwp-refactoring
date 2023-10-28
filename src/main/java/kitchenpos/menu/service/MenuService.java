@@ -1,20 +1,13 @@
 package kitchenpos.menu.service;
 
 import static java.util.stream.Collectors.toList;
-import static kitchenpos.exception.ExceptionType.MENU_GROUP_NOT_FOUND;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductRepository;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.product.domain.Product;
 import kitchenpos.exception.CustomException;
 import kitchenpos.exception.ExceptionType;
-import kitchenpos.product.service.ProductService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,60 +16,18 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuProductRepository menuProductRepository;
-    private final MenuGroupRepository menuGroupRepository;
-    private final ProductService productService;
 
     public MenuService(
         final MenuRepository menuRepository,
-        final MenuProductRepository menuProductRepository,
-        final MenuGroupRepository menuGroupRepository,
-        final ProductService productService
+        final MenuProductRepository menuProductRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuProductRepository = menuProductRepository;
-        this.menuGroupRepository = menuGroupRepository;
-        this.productService = productService;
     }
 
     @Transactional
-    public MenuDto create(final MenuDto menuDto) {
-        BigDecimal menuPrice = menuDto.getPrice();
-        Long menuGroupId = menuDto.getMenuGroupId();
-        String name = menuDto.getName();
-        List<MenuProduct> menuProducts = toMenuProducts(menuDto.getMenuProductDtos());
-
-        validateMenuGroupExists(menuGroupId);
-
-        Menu menu = new Menu.Builder()
-            .name(name)
-            .menuGroupId(menuGroupId)
-            .menuProducts(menuProducts)
-            .price(menuPrice)
-            .build();
-
-        Menu savedMenu = menuRepository.save(menu);
-
-        return MenuDto.from(savedMenu);
-    }
-
-    private void validateMenuGroupExists(Long menuGroupId) {
-        if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new CustomException(MENU_GROUP_NOT_FOUND);
-        }
-    }
-
-    private List<MenuProduct> toMenuProducts(List<MenuProductDto> menuProductDtos) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-
-        for (MenuProductDto menuProductDto : menuProductDtos) {
-            Product product = productService.getById(menuProductDto.getProductId());
-            MenuProduct menuProduct = new MenuProduct.Builder()
-                .product(product)
-                .quantity(menuProductDto.getQuantity())
-                .build();
-            menuProducts.add(menuProduct);
-        }
-        return menuProducts;
+    public Menu create(final Menu menu) {
+        return menuRepository.save(menu);
     }
 
     public List<MenuDto> list() {
