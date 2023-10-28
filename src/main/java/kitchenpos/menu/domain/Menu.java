@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -39,7 +40,25 @@ public class Menu {
             final Long menuGroupId,
             final List<MenuProduct> menuProducts
     ) {
+        validate(name, price);
         return new Menu(name, price, menuGroupId, menuProducts);
+    }
+
+    private static void validate(final String name, final BigDecimal price) {
+        validateMenuName(name);
+        validatePrice(price);
+    }
+
+    private static void validateMenuName(final String name) {
+        if (name.isEmpty() || name.length() > 64) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -52,13 +71,5 @@ public class Menu {
 
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
     }
 }
