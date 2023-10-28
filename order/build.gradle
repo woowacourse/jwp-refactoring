@@ -1,0 +1,6 @@
+
+dependencies {
+    implementation(project(':common'))
+    implementation(project(':menu'))
+    implementation(project(':ordertable'))
+}
