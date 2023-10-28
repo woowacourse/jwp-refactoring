@@ -1,30 +1,29 @@
 package kitchenpos.order.application;
 
+import kitchenpos.common.vo.OrderStatus;
+import kitchenpos.config.ServiceTestConfig;
+import kitchenpos.exception.InvalidOrderLineItemsToOrder;
 import kitchenpos.exception.InvalidOrderStatusToChangeException;
 import kitchenpos.exception.NotFoundOrDuplicateMenuToOrderExcpetion;
-import kitchenpos.config.ServiceTestConfig;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.order.domain.Order;
-import kitchenpos.common.vo.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.product.domain.Product;
-import kitchenpos.exception.InvalidOrderLineItemsToOrder;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.repository.OrderLineItemRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.order.domain.Order;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.order.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.order.ui.dto.OrderRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
-import org.assertj.core.api.SoftAssertions;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.repository.ProductRepository;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -51,9 +50,6 @@ class OrderServiceTest extends ServiceTestConfig {
 
     @Autowired
     OrderRepository orderRepository;
-
-    @Autowired
-    OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     OrderTableRepository orderTableRepository;

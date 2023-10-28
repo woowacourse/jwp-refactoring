@@ -6,6 +6,7 @@ import org.springframework.util.CollectionUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.List;
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> values = new ArrayList<>();
 
     public OrderLineItems() {}
@@ -25,12 +27,6 @@ public class OrderLineItems {
     public void validateOrderLineItems() {
         if (CollectionUtils.isEmpty(values)) {
             throw new InvalidOrderLineItemsToOrder("주문 항목이 없습니다.");
-        }
-    }
-
-    public void addOrderLineItems(final Order order) {
-        for (OrderLineItem orderLineItem : values) {
-            orderLineItem.updateOrder(order);
         }
     }
 

@@ -56,10 +56,7 @@ public class Order {
     ) {
         orderLineItems.validateOrderLineItems();
 
-        final Order order = new Order(orderTableId, orderStatus, now, orderLineItems);
-        orderLineItems.addOrderLineItems(order);
-
-        return order;
+        return new Order(orderTableId, orderStatus, now, orderLineItems);
     }
 
     public Long getId() {

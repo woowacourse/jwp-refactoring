@@ -1,13 +1,9 @@
 package kitchenpos.order.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -16,10 +12,6 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "fk_order_line_item_order"))
-    private Order order;
 
     private Long menuId;
 
@@ -37,14 +29,6 @@ public class OrderLineItem {
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void updateOrder(final Order order) {
-        this.order = order;
     }
 
     public Long getMenuId() {

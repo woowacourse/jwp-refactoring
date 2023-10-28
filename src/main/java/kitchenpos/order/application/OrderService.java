@@ -6,7 +6,6 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.order.ui.dto.OrderLineItemDto;
@@ -22,16 +21,13 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderValidator orderValidator;
 
     public OrderService(
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderValidator orderValidator
     ) {
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderValidator = orderValidator;
     }
 
@@ -58,19 +54,9 @@ public class OrderService {
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
-        for (final Order order : orders) {
-            order.updateOrderLineItems(findAllOrderListItems(order.getId()));
-        }
-
         return orders.stream()
                      .map(OrderResponse::from)
                      .collect(Collectors.toList());
-    }
-
-    private OrderLineItems findAllOrderListItems(final Long orderId) {
-        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
-
-        return new OrderLineItems(orderLineItems);
     }
 
     @Transactional
