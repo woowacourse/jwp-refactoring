@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.ui.request.TableCreateRequest;
-import kitchenpos.ui.request.TableEmptyUpdateRequest;
-import kitchenpos.ui.request.TableGuestUpdateRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.request.TableCreateRequest;
+import kitchenpos.table.application.request.TableEmptyUpdateRequest;
+import kitchenpos.table.application.request.TableGuestUpdateRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -37,7 +39,7 @@ class TableServiceTest {
 
 
         // when
-        OrderTable createdOrderTable = tableService.create(tableCreateRequest);
+        OrderTableResponse createdOrderTable = tableService.create(tableCreateRequest);
 
         // then
         assertThat(createdOrderTable).usingRecursiveComparison()
@@ -53,7 +55,7 @@ class TableServiceTest {
         tableService.create(tableCreateRequest);
 
         // when
-        List<OrderTable> orderTables = tableService.list();
+        List<OrderTableResponse> orderTables = tableService.list();
 
         // then
         assertThat(orderTables).usingRecursiveComparison()
@@ -64,10 +66,10 @@ class TableServiceTest {
     @Test
     void 주문_테이블의_empty_상태를_변경한다() {
         // given
-        OrderTable orderTable = tableService.create(new TableCreateRequest(3, true));
+        OrderTableResponse orderTable = tableService.create(new TableCreateRequest(3, true));
 
         // when
-        OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), new TableEmptyUpdateRequest(false));
+        OrderTableResponse changedOrderTable = tableService.changeEmpty(orderTable.getId(), new TableEmptyUpdateRequest(false));
 
         // then
         assertThat(changedOrderTable.isEmpty()).isFalse();
@@ -77,7 +79,8 @@ class TableServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"MEAL", "COOKING"})
     void 주문_테이블의_주문_상태가_MEAL_이나_COOKING이면_empty_상태_변경_요청시_예외_발생(OrderStatus status) {
         // given
-        OrderTable orderTable = tableService.create(new TableCreateRequest(3, true));
+        OrderTableResponse orderTableResponse = tableService.create(new TableCreateRequest(3, true));
+        OrderTable orderTable = new OrderTable(orderTableResponse.getId(), orderTableResponse.getTableGroupId(), orderTableResponse.getNumberOfGuests(), orderTableResponse.isEmpty());
 
         orderRepository.save(new Order(null, orderTable, status, LocalDateTime.now(), Collections.emptyList()));
 
@@ -89,10 +92,10 @@ class TableServiceTest {
     @Test
     void 주문_테이블의_게스트_인원_수를_변경한다() {
         // given
-        OrderTable orderTable = tableService.create(new TableCreateRequest(3, false));
+        OrderTableResponse orderTable = tableService.create(new TableCreateRequest(3, false));
 
         // when
-        OrderTable changedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(),
+        OrderTableResponse changedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(),
                 new TableGuestUpdateRequest(10));
 
         // then
@@ -102,7 +105,7 @@ class TableServiceTest {
     @Test
     void 변경할_게스트_인원이_음수면_인원_수_변경_요청_시_예외_발생() {
         // given
-        OrderTable orderTable = tableService.create(new TableCreateRequest(3, false));
+        OrderTableResponse orderTable = tableService.create(new TableCreateRequest(3, false));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),
@@ -113,7 +116,7 @@ class TableServiceTest {
     @Test
     void 주문_테이블의_상태가_빈_상태면_게스트_인원_수_변경_요청_시_예외_발생() {
         // given
-        OrderTable orderTable = tableService.create(new TableCreateRequest(3, true));
+        OrderTableResponse orderTable = tableService.create(new TableCreateRequest(3, true));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),

@@ -1,14 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.ui.request.TableGroupCreateRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.response.TableGroupResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -49,11 +51,11 @@ class TableGroupServiceTest {
                         new TableGroupCreateRequest.OrderTableId(orderTable2.getId())));
 
         // when
-        TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         // then
         assertThat(tableGroup.getOrderTables()).usingRecursiveComparison()
-                .ignoringFields("id", "tableGroup")
+                .ignoringFields("id", "tableGroupId")
                 .isEqualTo(List.of(new OrderTable(null, 3, false), new OrderTable(null, 2, false)));
     }
 
@@ -70,8 +72,8 @@ class TableGroupServiceTest {
     @Test
     void 테이블_하나라도_다른_테이블에_속해있으면_그룹화할_수_없다() {
         // given
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), new OrderTables(Collections.emptyList())));
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, tableGroup, 3, true));
+        TableGroup tableGroup = tableGroupRepository.save(TableGroup.of(LocalDateTime.now(), new OrderTables(Collections.emptyList())));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, tableGroup.getId(), 3, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 3, true));
 
         TableGroupCreateRequest tableGroupCreateRequest =
@@ -93,7 +95,7 @@ class TableGroupServiceTest {
                 new TableGroupCreateRequest(List.of(new TableGroupCreateRequest.OrderTableId(orderTable1.getId()),
                         new TableGroupCreateRequest.OrderTableId(orderTable2.getId())));
 
-        TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -103,9 +105,9 @@ class TableGroupServiceTest {
 
         // then
         assertAll(
-                () -> assertEquals(unGroupedOrderTable1.getTableGroup(), null),
+                () -> assertEquals(unGroupedOrderTable1.getTableGroupId(), null),
                 () -> assertEquals(unGroupedOrderTable1.isEmpty(), false),
-                () -> assertEquals(unGroupedOrderTable2.getTableGroup(), null),
+                () -> assertEquals(unGroupedOrderTable2.getTableGroupId(), null),
                 () -> assertEquals(unGroupedOrderTable2.isEmpty(), false)
         );
     }
@@ -121,9 +123,11 @@ class TableGroupServiceTest {
                 new TableGroupCreateRequest(List.of(new TableGroupCreateRequest.OrderTableId(orderTable1.getId()),
                         new TableGroupCreateRequest.OrderTableId(orderTable2.getId())));
 
-        TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
-        orderRepository.save(new Order(orderTable1, status));
+        Order save = orderRepository.save(new Order(orderTable1, status));
+        System.out.println(save);
+
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

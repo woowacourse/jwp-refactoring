@@ -1,14 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.request.MenuCreateRequest;
-import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.menu.application.request.MenuCreateRequest;
+import kitchenpos.menu.application.request.MenuProductCreateRequest;
+import kitchenpos.menu.application.response.MenuResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -60,11 +62,11 @@ class MenuServiceTest {
                 List.of(menuProductCreateRequest));
 
         MenuProduct menuProduct = new MenuProduct(product, 3);
-        Menu menu = new Menu("치킨메뉴", new BigDecimal("48000.00"), menuGroup,
+        Menu menu = Menu.of("치킨메뉴", new BigDecimal("48000.00"), menuGroup,
                 new MenuProducts(List.of(menuProduct)));
 
         // when
-        Menu createdMenu = menuService.create(menuCreateRequest);
+        MenuResponse createdMenu = menuService.create(menuCreateRequest);
 
         // then
         assertThat(createdMenu).usingRecursiveComparison()
@@ -102,7 +104,7 @@ class MenuServiceTest {
     @Test
     void 메뉴_리스트를_조회한다() {
         // given, when
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         // then
         assertThat(menus).usingRecursiveComparison()

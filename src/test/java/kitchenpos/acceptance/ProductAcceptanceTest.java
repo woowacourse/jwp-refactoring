@@ -3,8 +3,8 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.product.application.request.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -94,6 +94,6 @@ class ProductAcceptanceTest extends AcceptanceTest {
         List<Product> actual = response.jsonPath().getList("", Product.class);
 
         assertThat(actual).usingRecursiveComparison().ignoringFields("id")
-                .isEqualTo(List.of(new Product("김치찌개", new BigDecimal("10000.0"))));
+                .isEqualTo(List.of(Product.of("김치찌개", new BigDecimal("10000.0"))));
     }
 }
