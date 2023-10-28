@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(path: ':product')
+    implementation project(path: ':menu')
+    implementation project(path: ':order')
+    implementation project(path: ':tablegroup')
+}
