@@ -15,8 +15,6 @@ dependencies {
 
     testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation project(path: ':menu_group')
-    testImplementation project(path: ':menu_group')
-    testImplementation project(path: ':menu_group')
     runtimeOnly 'com.h2database:h2'
 }
 
