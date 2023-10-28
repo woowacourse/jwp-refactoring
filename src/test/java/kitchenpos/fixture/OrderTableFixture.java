@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.table.OrderTableRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.ui.dto.OrderTableRequest;
 
 import java.util.ArrayList;
 import java.util.List;

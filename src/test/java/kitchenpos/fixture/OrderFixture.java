@@ -1,12 +1,13 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.order.OrderLineItemDto;
-import kitchenpos.ui.dto.order.OrderRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.common.vo.OrderStatus;
+import kitchenpos.order.domain.OrderLineItems;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.order.ui.dto.OrderLineItemDto;
+import kitchenpos.order.ui.dto.OrderRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,8 +42,9 @@ public class OrderFixture {
     }
 
     private static Order 주문_생성(final OrderTable orderTable, final Menu menu, final OrderStatus orderStatus) {
-        final OrderLineItem 주문_항목 = new OrderLineItem(menu, DEFAULT_QUANTITY);
-        final Order 주문 = Order.of(orderTable, orderStatus, LocalDateTime.now(), List.of(주문_항목));
+        final OrderLineItem 주문_항목 = new OrderLineItem(menu.getId(), DEFAULT_QUANTITY);
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(주문_항목));
+        final Order 주문 = Order.of(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
 
         return 주문;
     }

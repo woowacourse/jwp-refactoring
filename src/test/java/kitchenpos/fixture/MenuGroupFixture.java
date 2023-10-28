@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.ui.dto.menugroup.MenuGroupRequest;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.ui.dto.MenuGroupRequest;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
