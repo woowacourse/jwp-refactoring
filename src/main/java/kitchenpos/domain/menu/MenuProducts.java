@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,9 +17,10 @@ import java.util.stream.IntStream;
 @Embeddable
 public class MenuProducts {
     public static final String PRODUCTS_SIZE_AND_QUANTITIES_SIZE_ARE_DIFFERENT_ERROR_MESSAGE = "상품 개수와 상품 수량의 개수가 일치하지 않습니다.";
-
+    
+    @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id", nullable = true)
     private List<MenuProduct> items;
 
     protected MenuProducts() {
@@ -35,14 +37,6 @@ public class MenuProducts {
         return new MenuProducts(IntStream.range(0, products.size())
                 .mapToObj(i -> MenuProduct.of(products.get(i), Quantity.of(quantities.get(i))))
                 .collect(Collectors.toList()));
-    }
-
-    public static MenuProducts empty() {
-        return new MenuProducts(new ArrayList<>());
-    }
-
-    public void setMenu(final Menu menu) {
-        items.forEach(menuProduct -> menuProduct.setMenu(menu));
     }
 
     public Money calculateSum() {

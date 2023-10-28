@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.domain.DomainTest;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -22,17 +23,14 @@ class MenuTest extends DomainTest {
         final List<Long> quantities = List.of(1L, 1L);
 
         //when
-        final Menu actual = Menu.of("후라이드", 16_000L, menuGroup, MenuProducts.from(products, quantities));
+        final Menu actual = Menu.of("후라이드", 16_000L, menuGroup.getId(), MenuProducts.from(products, quantities));
 
         //then
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(actual).isNotNull();
             softly.assertThat(actual.getName().getName()).isEqualTo("후라이드");
             softly.assertThat(actual.getPrice().getPrice()).isEqualTo(BigDecimal.valueOf(16_000L));
-            softly.assertThat(actual.getMenuGroup())
-                    .usingRecursiveComparison()
-                    .ignoringFields("id")
-                    .isEqualTo(menuGroup);
+            softly.assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId());
             softly.assertThat(actual.getMenuProducts()).isNotNull();
             softly.assertThat(actual.getMenuProducts().getItems()).hasSize(2);
         });
@@ -49,7 +47,7 @@ class MenuTest extends DomainTest {
         final List<Long> quantities = List.of(1L, 1L);
 
         //when & then
-        assertThatThrownBy(() -> Menu.of("후라이드", 32_000L, menuGroup, MenuProducts.from(products, quantities)))
+        assertThatThrownBy(() -> Menu.of("후라이드", 32_000L, menuGroup.getId(), MenuProducts.from(products, quantities)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

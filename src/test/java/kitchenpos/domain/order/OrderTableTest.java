@@ -1,10 +1,8 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.DomainTest;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -31,10 +29,10 @@ class OrderTableTest extends DomainTest {
     @Test
     void throw_when_change_unorderable_table_when_in_table_group() {
         // given
-        final OrderTable orderTable = OrderTable.of(TableGroup.of(List.of()));
+        final OrderTable orderTable = OrderTable.of(3L);
 
         // when & then
-        assertThatThrownBy(() -> orderTable.setUnOrderable())
+        assertThatThrownBy(orderTable::setUnOrderable)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(OrderTable.CHANGE_UNORDERABLE_TABLE_WHEN_IN_TABLE_GROUP_ERROR_MESSAGE);
     }

@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.product;
 
 import kitchenpos.domain.common.Money;
 import kitchenpos.domain.common.Name;

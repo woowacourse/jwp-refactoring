@@ -1,17 +1,17 @@
 package kitchenpos.application.integration;
 
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.table.ChangeOrderTableOrderableRequest;
 import kitchenpos.dto.table.CreateOrderTableRequest;
-import kitchenpos.dto.table.CreateTableGroupRequest;
 import kitchenpos.dto.table.OrderTableRequest;
 import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.tablegroup.CreateTableGroupRequest;
 import kitchenpos.exception.table.OrderIsNotCompletedBadRequestException;
-import kitchenpos.exception.table.OrderTableIsInTableGroupBadRequest;
+import kitchenpos.exception.table.OrderTableIsInOtherTableGroupBadRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -71,7 +71,7 @@ class TableServiceTest extends ApplicationIntegrationTest {
 
         //when & then
         assertThatThrownBy(() -> tableService.changeOrderable(createdOrderTable.getId(), ChangeOrderTableOrderableRequest.of(false)))
-                .isInstanceOf(OrderTableIsInTableGroupBadRequest.class);
+                .isInstanceOf(OrderTableIsInOtherTableGroupBadRequest.class);
     }
 
 

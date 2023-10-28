@@ -9,6 +9,7 @@ public class Name {
     public static final String NAME_IS_NOT_PROVIDED_ERROR_MESSAGE = "이름이 입력되지 않았습니다.";
     public static final String NAME_CANNOT_EXCEED_255_ERROR_MESSAGE = "이름은 255자를 초과할 수 없습니다.";
     public static final String NAME_CANNOT_CONTAIN_ONLY_NUMBER_ERROR_MESSAGE = "이름은 숫자만 입력할 수 없습니다.";
+    
     @NotNull
     private String name;
 

@@ -4,15 +4,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class CreateMenuRequest {
-    //"name": "후라이드+후라이드",
-    //  "price": 19000,
-    //  "menuGroupId": 1,
-    //  "menuProducts": [
-    //    {
-    //      "productId": 1,
-    //      "quantity": 2
-    //    }
-    //  ]
     @NotNull
     private final String name;
     @NotNull
@@ -41,7 +32,7 @@ public class CreateMenuRequest {
         return price;
     }
 
-    public long getMenuGroupId() {
+    public Long getMenuGroupId() {
         return menuGroupId;
     }
 
