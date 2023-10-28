@@ -72,11 +72,11 @@ public class OrderTableManagerImpl implements OrderTableManager {
     public void ungroup(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
-        orderManager.validateOrdersToUngroup(convetToIds(orderTables));
+        orderManager.validateOrdersToUngroup(convertToIds(orderTables));
         ungroupOrderTables(orderTables);
     }
 
-    private List<Long> convetToIds(final List<OrderTable> orderTables) {
+    private List<Long> convertToIds(final List<OrderTable> orderTables) {
         return orderTables.stream()
                           .map(OrderTable::getId)
                           .collect(Collectors.toList());
