@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.fixture.MenuServiceFixture;
 import kitchenpos.domain.Menu;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class MenuServiceTest extends MenuServiceFixture {
             전달_받은_메뉴의_가격이_입력되지_않았다면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> menuService.create(가격이_입력되지_않은_메뉴_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -47,7 +48,7 @@ class MenuServiceTest extends MenuServiceFixture {
             전달_받은_메뉴의_가격이_0보다_작은_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> menuService.create(가격이_0보다_작은_메뉴_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -55,7 +56,7 @@ class MenuServiceTest extends MenuServiceFixture {
             유효하지_않은_메뉴_그룹_아이디를_전달_받으면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> menuService.create(유효하지_않은_메뉴_그룹_아이디를_갖는_메뉴_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -63,7 +64,7 @@ class MenuServiceTest extends MenuServiceFixture {
             유효하지_않은_메뉴_상품_아이디를_전달_받으면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> menuService.create(유효하지_않은_메뉴_상품_아이디를_갖는_메뉴_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -71,7 +72,7 @@ class MenuServiceTest extends MenuServiceFixture {
             메뉴의_가격이_메뉴에_포함된_상품_가격을_합친_것보다_작은_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> menuService.create(유효하지_않은_가격을_갖는_메뉴_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.fixture.MenuGroupServiceFixture;
 import kitchenpos.domain.MenuGroup;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

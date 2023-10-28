@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.fixture.TableServiceFixture;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.CreateOrderTableRequest;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -70,7 +71,7 @@ class TableServiceTest extends TableServiceFixture {
             유효하지_않은_테이블_아이디를_전달_받은_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableService.changeEmpty(유효하지_않은_주문_테이블의_테이블아이디, 유효하지_않은_테이블아이디의_주문_테이블_상태_변경_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -78,7 +79,7 @@ class TableServiceTest extends TableServiceFixture {
             주문_테이블_아이디가_그룹_테이블에_포함되어_있다면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableService.changeEmpty(그룹테이블에_포함된_주문_테이블_1.getId(), 상태_변경_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -86,7 +87,7 @@ class TableServiceTest extends TableServiceFixture {
             주문_테이블_아이디에_해당하는_테이블의_주문_상태가_COMPLETION이_아닌_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableService.changeEmpty(주문_상태가_COMPLETION인_주문_테이블.getId(), 상태_변경_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -107,7 +108,7 @@ class TableServiceTest extends TableServiceFixture {
             입력_받은_손님_수가_0보다_작으면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(손님이_한_명인_테이블.getId(), 손님수가_음수인_손님수_변경_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -115,7 +116,7 @@ class TableServiceTest extends TableServiceFixture {
             유효하지_않은_주문_테이블_아이디를_전달_받은_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(유효하지_않은_주문_테이블_아이디, 손님수_변경_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

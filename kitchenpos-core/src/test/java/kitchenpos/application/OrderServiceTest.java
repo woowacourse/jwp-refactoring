@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.fixture.OrderServiceFixture;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class OrderServiceTest extends OrderServiceFixture {
             주문_항목이_1개_미만이면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> orderService.create(주문항목이_1개_미만인_주문_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -48,7 +49,7 @@ class OrderServiceTest extends OrderServiceFixture {
             주문_항목에서_입력받은_메뉴가_올바른_메뉴가_아니라면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> orderService.create(주문항목이_2개인_주문_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -56,7 +57,7 @@ class OrderServiceTest extends OrderServiceFixture {
             유효하지_않은_주문_테이블_아이디라면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> orderService.create(유효하지_않은_주문_테이블_아이디를_갖는_주문_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -64,7 +65,7 @@ class OrderServiceTest extends OrderServiceFixture {
             주문_테이블_아이디에_해당하는_주문_테이블이_empty_table이라면_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> orderService.create(주문_불가능_상태의_주문_테이블_생성_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -102,7 +103,7 @@ class OrderServiceTest extends OrderServiceFixture {
             완료된_상태의_주문을_완료된_상태로_변경하는_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(COMPLETION_상태의_주문.getId(), 주문_상태_변경_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -110,7 +111,7 @@ class OrderServiceTest extends OrderServiceFixture {
             유효하지_않은_주문_번호를_입력한_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(유효하지_않은_주문_아이디, 완료_상태인_주문_변경_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -118,7 +119,7 @@ class OrderServiceTest extends OrderServiceFixture {
             order_status가_잘못_입력된_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(식사중에서_완료로_상태를_변경할_주문.getId(), 잘못된_상태로_수정하고자_하는_주문_변경_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

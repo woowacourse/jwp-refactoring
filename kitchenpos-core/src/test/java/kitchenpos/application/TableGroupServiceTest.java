@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.fixture.TableGroupServiceFixture;
 import kitchenpos.domain.TableGroup;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
             주문_테이블_아이디가_입력되지_않은_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableGroupService.create(주문_테이블이_없는_테이블그룹_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -45,7 +46,7 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
             주문_테이블_아이디가_1개인_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableGroupService.create(주문_테이블이_1개인_테이블그룹_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -53,7 +54,7 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
             주문_테이블이_사용가능한_테이블인_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableGroupService.create(사용가능한_테이블을_포함한_테이블그룹_요청_dto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -79,7 +80,7 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
             단체_테이블에_포함된_주문_테이블_중_주문_상태가_조리_또는_식사인_경우_예외가_발생한다_픽스처_생성();
 
             assertThatThrownBy(() -> tableGroupService.ungroup(식사중인_단체_테이블.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                      .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
