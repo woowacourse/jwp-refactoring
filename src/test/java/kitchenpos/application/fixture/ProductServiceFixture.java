@@ -19,8 +19,8 @@ public class ProductServiceFixture {
 
     @BeforeEach
     void setUp() {
-        final Product 상품1 = new Product();
-        final Product 상품2 = new Product();
+        final Product 상품1 = new Product("상품1", new Price(BigDecimal.valueOf(10_000)));
+        final Product 상품2 = new Product("상품2", new Price(BigDecimal.valueOf(10_000)));
         저장된_모든_상품 = List.of(상품1, 상품2);
     }
 

@@ -40,9 +40,4 @@ public class MenuProductRepositoryImpl implements MenuProductRepository {
     public List<MenuProduct> saveAll(final List<MenuProduct> menuProducts) {
         return jpaMenuProductRepository.saveAll(menuProducts);
     }
-
-    @Override
-    public List<MenuProduct> saveAll(final List<MenuProduct> menuProducts) {
-        return jpaMenuProductRepository.saveAll(menuProducts);
-    }
 }
