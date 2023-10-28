@@ -84,12 +84,12 @@ public class Fixtures {
     }
 
     public OrderTable 주문_테이블_저장(TableGroup tableGroup, boolean isEmpty) {
-        OrderTable orderTable = new OrderTable(tableGroup, 0, isEmpty);
+        OrderTable orderTable = new OrderTable(tableGroup.getId(), 0, isEmpty);
         return jpaOrderTableRepository.save(orderTable);
     }
 
     public OrderTable 주문_테이블_저장(TableGroup tableGroup, boolean isEmpty, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable(tableGroup, numberOfGuests, isEmpty);
+        OrderTable orderTable = new OrderTable(tableGroup.getId(), numberOfGuests, isEmpty);
         return jpaOrderTableRepository.save(orderTable);
     }
 

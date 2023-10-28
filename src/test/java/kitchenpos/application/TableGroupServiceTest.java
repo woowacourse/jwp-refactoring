@@ -79,6 +79,7 @@ class TableGroupServiceTest extends ServiceTest {
             fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
             ReflectionTestUtils.setField(orderTableA, "isEmpty", true);
             ReflectionTestUtils.setField(orderTableB, "isEmpty", true);
+            entityManager.flush();
             entityManager.clear();
 
             // when
@@ -88,8 +89,8 @@ class TableGroupServiceTest extends ServiceTest {
             List<OrderTable> orderTables = jpaOrderTableRepository.findAllByIdIn(
                     List.of(orderTableA.getId(), orderTableB.getId())
             );
-            assertThat(orderTables.get(0).getTableGroup()).isNull();
-            assertThat(orderTables.get(1).getTableGroup()).isNull();
+            assertThat(orderTables.get(0).getTableGroupId()).isNull();
+            assertThat(orderTables.get(1).getTableGroupId()).isNull();
         }
 
 //        @Test

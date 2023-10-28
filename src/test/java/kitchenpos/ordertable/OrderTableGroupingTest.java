@@ -40,8 +40,8 @@ class OrderTableGroupingTest extends ServiceTest {
 
         // then
         List<OrderTable> orderTables = jpaOrderTableRepository.findAllByIdIn(orderTableIds);
-        assertThat(orderTables.get(0).getTableGroup()).isNotNull();
-        assertThat(orderTables.get(1).getTableGroup()).isNotNull();
+        assertThat(orderTables.get(0).getTableGroupId()).isNotNull();
+        assertThat(orderTables.get(1).getTableGroupId()).isNotNull();
     }
 
 
@@ -57,7 +57,7 @@ class OrderTableGroupingTest extends ServiceTest {
     }
 
     @Test
-    void 주문_ㅋ테이블이_존재하지_않는_경우_예외가_발생한다() {
+    void 주문_테이블이_존재하지_않는_경우_예외가_발생한다() {
         // given
         OrderTable orderTableA = fixtures.빈_테이블_저장();
         TableGroup tableGroup = fixtures.단체_지정_저장();

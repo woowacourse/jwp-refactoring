@@ -43,11 +43,11 @@ public class OrderTableGrouping implements TableGrouping {
                 throw new IllegalArgumentException();
             }
 
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
 
-            savedOrderTable.setTableGroup(tableGroup);
+            savedOrderTable.setTableGroupId(tableGroup.getId());
             savedOrderTable.changeEmpty(false);
         }
     }
@@ -55,7 +55,7 @@ public class OrderTableGrouping implements TableGrouping {
     @Override
     public void ungroup(TableGroup tableGroup) {
 
-        List<OrderTable> savedOrderTables = jpaOrderTableRepository.findAllByTableGroup(tableGroup);
+        List<OrderTable> savedOrderTables = jpaOrderTableRepository.findAllByTableGroupId(tableGroup.getId());
         List<Long> orderTableIds = savedOrderTables.stream().map(OrderTable::getId).collect(Collectors.toList());
 
         if (jpaOrderRepository.existsByOrderTableIdInAndOrderStatusIn(

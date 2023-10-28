@@ -1,6 +1,5 @@
 package kitchenpos.ordertable;
 
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Objects;
@@ -8,9 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.tablegroup.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -19,9 +15,8 @@ public class OrderTable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column
+    private Long tableGroupId;
 
     @Column
     private int numberOfGuests;
@@ -29,8 +24,8 @@ public class OrderTable {
     @Column(name = "empty")
     private boolean isEmpty;
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean isEmpty) {
+        this.tableGroupId = tableGroupId;
         this.isEmpty = isEmpty;
         this.numberOfGuests = numberOfGuests;
     }
@@ -51,15 +46,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
     public Long getTableGroupId() {
-        if (tableGroup == null) {
-            return null;
-        }
-        return tableGroup.getId();
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -77,11 +65,11 @@ public class OrderTable {
         }
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
-        if (this.tableGroup != null || this.isEmpty == false) {
+    public void setTableGroupId(Long tableGroupId) {
+        if (this.tableGroupId != null || this.isEmpty == false) {
             throw new IllegalArgumentException();
         }
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     public boolean isEmpty() {
@@ -89,12 +77,12 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.isEmpty = false;
     }
 
     public void changeEmpty(boolean isEmpty) {
-        if (isEmpty == true && Objects.nonNull(tableGroup)) {
+        if (isEmpty == true && Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
         this.isEmpty = isEmpty;
