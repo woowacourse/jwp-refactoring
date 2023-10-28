@@ -3,6 +3,7 @@ package kitchenpos.ordertable.domain;
 import kitchenpos.exception.InvalidChangeOrderTableNumberOfGuests;
 import kitchenpos.exception.InvalidUpdateNumberOfGuestsException;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,8 +19,10 @@ public class OrderTable {
 
     private Long tableGroupId;
 
+    @Column(nullable = false)
     private int numberOfGuests;
 
+    @Column(nullable = false)
     private boolean empty;
 
     protected OrderTable() {}

@@ -19,12 +19,14 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
+    @Column(nullable = false)
     private Long productId;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "price"))
     private Price price;
 
+    @Column(nullable = false)
     private long quantity;
 
     protected MenuProduct() {}

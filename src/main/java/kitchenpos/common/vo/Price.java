@@ -2,6 +2,7 @@ package kitchenpos.common.vo;
 
 import kitchenpos.exception.InvalidPriceValue;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -9,8 +10,9 @@ import java.util.Objects;
 @Embeddable
 public class Price {
 
-    public static Price ZERO = new Price(BigDecimal.ZERO);
+    public final static Price ZERO = new Price(BigDecimal.ZERO);
 
+    @Column(nullable = false)
     private BigDecimal value;
 
     public Price() {}

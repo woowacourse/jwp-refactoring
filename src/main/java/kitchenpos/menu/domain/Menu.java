@@ -20,12 +20,14 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "price"))
     private Price price;
 
+    @Column(nullable = false)
     private Long menuGroupId;
 
     @Embedded
