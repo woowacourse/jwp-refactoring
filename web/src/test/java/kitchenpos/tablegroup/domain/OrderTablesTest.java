@@ -99,7 +99,9 @@ class OrderTablesTest {
         // then
         assertSoftly(softly -> {
             softly.assertThat(orderTable1.getTableGroupId()).isNull();
+            softly.assertThat(orderTable1.isEmpty()).isFalse();
             softly.assertThat(orderTable2.getTableGroupId()).isNull();
+            softly.assertThat(orderTable2.isEmpty()).isFalse();
         });
     }
 }

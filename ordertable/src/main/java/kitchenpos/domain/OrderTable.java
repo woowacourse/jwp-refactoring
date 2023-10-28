@@ -90,6 +90,7 @@ public class OrderTable {
     }
 
     public void ungroup() {
+        this.empty = false;
         this.tableGroupId = null;
     }
 }
