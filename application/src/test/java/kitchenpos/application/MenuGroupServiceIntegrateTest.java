@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static kitchenpos.fixture.MenuGroupFixture.*;
+import static org.assertj.core.api.Assertions.*;
+
 class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
 
     @Autowired
@@ -27,7 +30,7 @@ class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
         @Test
         void 모든_메뉴_그룹을_생성한다() {
             // given
-            MenuGroup 인기_메뉴 = MenuGroupFixture.인기_메뉴_생성();
+            MenuGroup 인기_메뉴 = 인기_메뉴_생성();
 
             // when, then
             Assertions.assertDoesNotThrow(() -> menuGroupService.create(인기_메뉴.getName()));
@@ -40,7 +43,7 @@ class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
 
         @BeforeEach
         void setUp() {
-            MenuGroup 인기_메뉴 = MenuGroupFixture.인기_메뉴_생성();
+            MenuGroup 인기_메뉴 = 인기_메뉴_생성();
             menuGroupRepository.save(인기_메뉴);
         }
 
@@ -51,8 +54,8 @@ class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
 
             // then
             Assertions.assertAll(
-                    () -> org.assertj.core.api.Assertions.assertThat(menuGroups).hasSize(1),
-                    () -> org.assertj.core.api.Assertions.assertThat(menuGroups).extracting(MenuGroupResponse::getName)
+                    () -> assertThat(menuGroups).hasSize(1),
+                    () -> assertThat(menuGroups).extracting(MenuGroupResponse::getName)
                             .contains("인기 메뉴")
             );
         }
