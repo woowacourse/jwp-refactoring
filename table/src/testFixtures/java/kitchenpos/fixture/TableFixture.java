@@ -1,4 +1,4 @@
-package kitchenpos.support.fixture;
+package kitchenpos.fixture;
 
 import java.util.List;
 import kitchenpos.table.application.dto.OrderTableDto;
