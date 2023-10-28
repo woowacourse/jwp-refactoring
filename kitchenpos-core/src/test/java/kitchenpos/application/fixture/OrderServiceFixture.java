@@ -5,7 +5,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.vo.Price;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.request.OrderLineItemDto;
 import kitchenpos.dto.request.PutOrderStatusRequest;
@@ -104,7 +103,8 @@ public class OrderServiceFixture {
         final Menu 메뉴 = Menu.of(메뉴_그룹_1, "치킨", BigDecimal.valueOf(10_000));
         menuRepository.save(메뉴);
 
-        final OrderTable 주문_테이블 = new OrderTable(3, true);
+        final OrderTable 주문_테이블 = new OrderTable(3, false);
+        주문_테이블.changeEmptyStatus(true);
         orderTableRepository.save(주문_테이블);
 
         final OrderLineItemDto 주문_항목_아이템_생성_dto = new OrderLineItemDto(메뉴.getId(), 3);
@@ -113,8 +113,10 @@ public class OrderServiceFixture {
     }
 
     protected void 모든_주문내역을_조회한다_픽스처_생성() {
-        final OrderTable 주문_테이블_1 = new OrderTable(3, true);
-        final OrderTable 주문_테이블_2 = new OrderTable(2, true);
+        final OrderTable 주문_테이블_1 = new OrderTable(3, false);
+        final OrderTable 주문_테이블_2 = new OrderTable(2, false);
+        주문_테이블_1.changeEmptyStatus(true);
+        주문_테이블_2.changeEmptyStatus(true);
         orderTableRepository.saveAll(List.of(주문_테이블_1, 주문_테이블_2));
 
         조회할_주문_1 = new Order(주문_테이블_1.getId(), OrderStatus.COOKING);
@@ -123,7 +125,8 @@ public class OrderServiceFixture {
     }
 
     protected void 주문_상태를_변경한다_픽스처_생성() {
-        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
+        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, false);
+        주문_상태를_변경할_주문_테이블.changeEmptyStatus(true);
         orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
         식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블.getId(), OrderStatus.MEAL);
@@ -133,7 +136,8 @@ public class OrderServiceFixture {
     }
 
     protected void 완료된_상태의_주문을_완료된_상태로_변경하는_경우_예외가_발생한다_픽스처_생성() {
-        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
+        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, false);
+        주문_상태를_변경할_주문_테이블.changeEmptyStatus(true);
         orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
         COMPLETION_상태의_주문 = new Order(주문_상태를_변경할_주문_테이블.getId(), OrderStatus.COMPLETION);
@@ -143,7 +147,8 @@ public class OrderServiceFixture {
     }
 
     protected void 유효하지_않은_주문_번호를_입력한_경우_예외가_발생한다_픽스처_생성() {
-        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
+        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, false);
+        주문_상태를_변경할_주문_테이블.changeEmptyStatus(true);
         orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
         식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블.getId(), OrderStatus.MEAL);
@@ -153,7 +158,8 @@ public class OrderServiceFixture {
     }
 
     protected void order_status가_잘못_입력된_경우_예외가_발생한다_픽스처_생성() {
-        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
+        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, false);
+        주문_상태를_변경할_주문_테이블.changeEmptyStatus(true);
         orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
         식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블.getId(), OrderStatus.MEAL);

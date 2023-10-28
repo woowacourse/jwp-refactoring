@@ -46,7 +46,8 @@ public class TableServiceFixture {
     }
 
     protected void 사용_불가능한_테이블_상태를_사용_가능한_상태로_바꾼다_픽스처_생성() {
-        사용_불가능한_상태의_테이블 = new OrderTable(3, true);
+        사용_불가능한_상태의_테이블 = new OrderTable(3, false);
+        사용_불가능한_상태의_테이블.changeEmptyStatus(true);
         orderTableRepository.save(사용_불가능한_상태의_테이블);
 
         상태_변경_요청_dto = new PutOrderTableEmptyRequest(false);

@@ -63,7 +63,8 @@ public class TableGroupServiceFixture {
 
     protected void 주문_테이블이_사용가능한_테이블인_경우_예외가_발생한다_픽스처_생성() {
         final OrderTable 주문_테이블1 = new OrderTable(1, false);
-        final OrderTable 주문_테이블2 = new OrderTable(2, true);
+        final OrderTable 주문_테이블2 = new OrderTable(2, false);
+        주문_테이블2.changeEmptyStatus(true);
         orderTableRepository.saveAll(List.of(주문_테이블1, 주문_테이블2));
 
         final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_1 = new OrderTableDto(주문_테이블1.getId());

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -40,7 +39,7 @@ public class OrderService {
     public Order create(final CreateOrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                                                           .orElseThrow(IllegalArgumentException::new);
-        validateOrderTableSize(orderTable.isEmpty());
+        validateEmptyTable(orderTable);
         final Order order = new Order(orderTable.getId(), OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
         final List<OrderLineItem> orderLineItems = createOrderLineItems(orderRequest);
@@ -48,8 +47,8 @@ public class OrderService {
         return savedOrder;
     }
 
-    private static void validateOrderTableSize(final boolean orderTable) {
-        if (orderTable) {
+    private void validateEmptyTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
@@ -76,8 +75,10 @@ public class OrderService {
     private void validateMenuIds(final int orderLineItemSize, final List<Menu> menus) {
         final List<Long> menuIds = menus.stream()
                                         .map(Menu::getId)
-                                        .collect(Collectors.toUnmodifiableList());
-        validateOrderTableSize(orderLineItemSize != menuRepository.countByIdIn(menuIds));
+                                        .toList();
+        if (orderLineItemSize != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional(readOnly = true)

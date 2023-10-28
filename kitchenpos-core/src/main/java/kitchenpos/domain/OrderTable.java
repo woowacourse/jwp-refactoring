@@ -14,6 +14,8 @@ import java.util.Objects;
 @Entity
 public class OrderTable {
 
+    private static final boolean DEFAULT_EMPTY_STATUS = false;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,8 +33,15 @@ public class OrderTable {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
+        validateEmpty(empty);
         this.numberOfGuests = new GuestsNumber(numberOfGuests);
-        this.empty = empty;
+        this.empty = DEFAULT_EMPTY_STATUS;
+    }
+
+    private static void validateEmpty(final boolean empty) {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean isEmpty() {
