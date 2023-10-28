@@ -6,7 +6,7 @@ GET {{host}}/api/order
 
 ###
 PUT {{host}}/api/order/1/order-status
-Content-Type: application/json
+Content-Type: kitchenpos.application/json
 
 {
   "orderStatus": "MEAL"
@@ -14,7 +14,7 @@ Content-Type: application/json
 
 ###
 PUT {{host}}/api/order/1/order-status
-Content-Type: application/json
+Content-Type: kitchenpos.application/json
 
 {
   "orderStatus": "COMPLETION"

@@ -1,0 +1,23 @@
+plugins{
+    id 'java-library'
+    id 'java-test-fixtures'
+    id 'maven-publish'
+}
+
+dependencies {
+    implementation project(path: ':menu')
+    implementation project(path: ':menu-group')
+    implementation project(path: ':order')
+    implementation project(path: ':order-table')
+    implementation project(path: ':product')
+
+    implementation 'org.flywaydb:flyway-core'
+
+    testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation project(path: ':menu-group')
+    runtimeOnly 'com.h2database:h2'
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}

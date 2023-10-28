@@ -1,0 +1,25 @@
+###
+POST {{host}}/api/tables
+Content-Type: kitchenpos.application/json
+
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+
+###
+GET {{host}}/api/tables
+
+###
+PUT {{host}}/api/tables/1/empty?isEmpty=false
+
+###
+PUT {{host}}/api/tables/1?number-of-guests=4
+
+###
+PUT {{host}}/api/tables/1/empty
+Content-Type: kitchenpos.application/json
+
+{
+  "empty": true
+}
