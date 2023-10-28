@@ -8,14 +8,11 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.exception.CustomException;
-import kitchenpos.exception.ExceptionType;
 
 @Entity
 public class Menu {
@@ -24,8 +21,7 @@ public class Menu {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
-    @Embedded
-    private MenuPrice price;
+    private BigDecimal price;
     private Long menuGroupId;
     @OneToMany(cascade = {PERSIST, MERGE, REMOVE})
     @JoinColumn(name = "menu_id", updatable = false, nullable = false)
@@ -41,29 +37,11 @@ public class Menu {
         Long menuGroupId,
         List<MenuProduct> menuProducts
     ) {
-        validatePrice(price, menuProducts);
         this.id = id;
         this.name = name;
-        this.price = new MenuPrice(price);
+        this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts == null ? new ArrayList<>() : menuProducts;
-    }
-
-    private void validatePrice(BigDecimal price, List<MenuProduct> menuProducts) {
-        BigDecimal sum = calculateProductPriceSum(menuProducts);
-
-        if (price.compareTo(sum) > 0) {
-            throw new CustomException(ExceptionType.MENU_PRICE_OVER_SUM);
-        }
-    }
-
-    private BigDecimal calculateProductPriceSum(List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.calculatePriceSum());
-        }
-
-        return sum;
     }
 
     public Long getId() {
@@ -75,7 +53,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price.getValue();
+        return price;
     }
 
     public Long getMenuGroupId() {

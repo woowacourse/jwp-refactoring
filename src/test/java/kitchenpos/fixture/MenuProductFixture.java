@@ -31,6 +31,6 @@ public enum MenuProductFixture {
     }
 
     public MenuProduct toEntity(Product product) {
-        return new MenuProduct(seq, product, quantity);
+        return new MenuProduct(seq, product.getName(), product.getPrice(), quantity);
     }
 }

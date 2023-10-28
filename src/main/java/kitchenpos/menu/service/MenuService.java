@@ -14,20 +14,27 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
 
+    private final MenuValidator menuValidator;
     private final MenuRepository menuRepository;
     private final MenuProductRepository menuProductRepository;
 
     public MenuService(
+        final MenuValidator menuValidator,
         final MenuRepository menuRepository,
         final MenuProductRepository menuProductRepository
     ) {
+        this.menuValidator = menuValidator;
         this.menuRepository = menuRepository;
         this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
     public Menu create(final Menu menu) {
-        return menuRepository.save(menu);
+        Menu createdMenu = menuRepository.save(menu);
+
+        menuValidator.validate(createdMenu);
+
+        return createdMenu;
     }
 
     public List<MenuDto> list() {

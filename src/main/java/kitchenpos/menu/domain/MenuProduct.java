@@ -6,9 +6,6 @@ import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.product.domain.Product;
 
 @Entity
 public class MenuProduct {
@@ -16,33 +13,34 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private String name;
+    private BigDecimal price;
     private long quantity;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Product product, long quantity) {
+    public MenuProduct(Long seq, String name, BigDecimal price, long quantity) {
         this.seq = seq;
-        this.product = product;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
     public BigDecimal calculatePriceSum() {
-        BigDecimal productPrice = product.getPrice();
-        BigDecimal quantityCount = BigDecimal.valueOf(quantity);
-
-        return productPrice.multiply(quantityCount);
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Product getProduct() {
-        return product;
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public long getQuantity() {
@@ -52,7 +50,8 @@ public class MenuProduct {
     public static class Builder {
 
         private Long seq;
-        private Product product;
+        private String name;
+        private BigDecimal price;
         private long quantity;
 
         public Builder seq(Long seq) {
@@ -60,8 +59,13 @@ public class MenuProduct {
             return this;
         }
 
-        public Builder product(Product product) {
-            this.product = product;
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder price(BigDecimal price) {
+            this.price = price;
             return this;
         }
 
@@ -71,7 +75,7 @@ public class MenuProduct {
         }
 
         public MenuProduct build() {
-            return new MenuProduct(seq, product, quantity);
+            return new MenuProduct(seq, name, price, quantity);
         }
     }
 }

@@ -13,7 +13,6 @@ public class MenuProductDto {
         MenuProductDto menuProductDto = new MenuProductDto();
         menuProductDto.setSeq(entity.getSeq());
         menuProductDto.setMenuId(menuId);
-        menuProductDto.setProductId(entity.getProduct().getId());
         menuProductDto.setQuantity(entity.getQuantity());
         return menuProductDto;
     }

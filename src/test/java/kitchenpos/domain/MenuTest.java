@@ -21,7 +21,7 @@ class MenuTest {
         // given
         String name = "후라이드";
         MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(ProductFixture.FRIED_CHICKEN.toEntity());
-        BigDecimal price = BigDecimal.valueOf(menuProduct.getProduct().getPrice().longValue() * menuProduct.getQuantity());
+        BigDecimal price = BigDecimal.valueOf(menuProduct.getPrice().longValue() * menuProduct.getQuantity());
 
         // when
         Builder builder = new Builder()
@@ -32,43 +32,5 @@ class MenuTest {
 
         // then
         assertDoesNotThrow(builder::build);
-    }
-
-    @Test
-    @DisplayName("Menu 객체 생성 실패 - 가격 합계가 메뉴 가격보다 큰 경우")
-    void create_fail1() {
-        // given
-        String name = "후라이드";
-        MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(ProductFixture.FRIED_CHICKEN.toEntity());
-        BigDecimal price = BigDecimal.valueOf(menuProduct.getProduct().getPrice().longValue() * menuProduct.getQuantity() + 1);
-
-        // when
-        Builder builder = new Builder()
-            .name(name)
-            .price(price)
-            .menuGroupId(1L)
-            .menuProducts(List.of(menuProduct));
-
-        // then
-        assertThatThrownBy(builder::build).hasMessageContaining(ExceptionType.MENU_PRICE_OVER_SUM.getMessage());
-    }
-
-    @Test
-    @DisplayName("Menu 객체 생성 실패 - 가격이 0보다 작은 경우")
-    void create_fail2() {
-        // given
-        String name = "후라이드";
-        MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(ProductFixture.FRIED_CHICKEN.toEntity());
-        BigDecimal price = BigDecimal.valueOf(-1);
-
-        // when
-        Builder builder = new Builder()
-            .name(name)
-            .price(price)
-            .menuGroupId(1L)
-            .menuProducts(List.of(menuProduct));
-
-        // then
-        assertThatThrownBy(builder::build).hasMessageContaining(ExceptionType.PRICE_RANGE.getMessage());
     }
 }
