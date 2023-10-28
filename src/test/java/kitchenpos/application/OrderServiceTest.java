@@ -9,7 +9,7 @@ import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.application.OrderValidatorImpl;
+import kitchenpos.order.application.OrderValidatorImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
