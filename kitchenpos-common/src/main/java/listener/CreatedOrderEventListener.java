@@ -1,4 +1,4 @@
-package kitchenpos.listener;
+package listener;
 
 import org.springframework.stereotype.Component;
 

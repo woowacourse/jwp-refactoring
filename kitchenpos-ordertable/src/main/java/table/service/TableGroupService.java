@@ -1,9 +1,11 @@
 package table.service;
 
+import exception.InvalidOrderStateException;
 import exception.NoSuchDataException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.util.CollectionUtils;
 import table.domain.OrderTable;
 import table.domain.TableGroup;
 import table.dto.OrderStatusValidateByIdsEvent;
@@ -35,8 +37,12 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(final CreateTableGroupRequest request) {
-        publisher.publishEvent(request);
+
         final List<OrderTableRequest> orderTables = request.getOrderTables();
+
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new InvalidOrderStateException("테이블 2개 이상부터 그룹을 형성할 수 있습니다.");
+        }
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTableRequest::getId)

@@ -1,4 +1,4 @@
-package kitchenpos.listener;
+package listener;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

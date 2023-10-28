@@ -1,5 +1,6 @@
 package order.service;
 
+import exception.EmptyListException;
 import java.util.List;
 import java.util.stream.Collectors;
 import exception.NoSuchDataException;
@@ -17,6 +18,7 @@ import order.repository.OrderRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional
@@ -36,7 +38,9 @@ public class OrderService {
     public OrderResponse create(final CreateOrderRequest request) {
         final List<OrderLineItemsDto> orderLineItemDtos = request.getOrderLineItems();
 
-        publisher.publishEvent(request);
+        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
+            throw new EmptyListException("아이템이 비어있습니다.");
+        }
 
         final List<Long> menuIds = orderLineItemDtos.stream()
                 .map(OrderLineItemsDto::getMenuId)
