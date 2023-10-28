@@ -1,11 +1,10 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.common.vo.OrderStatus;
 import kitchenpos.exception.InvalidOrderToChangeEmptyException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.menugroup.ui.dto.ChangeOrderTableEmptyRequest;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableValidator;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
 import kitchenpos.ordertable.ui.dto.OrderTableRequest;
@@ -13,7 +12,6 @@ import kitchenpos.ordertable.ui.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -21,12 +19,15 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(
+            final OrderTableRepository orderTableRepository,
+            final OrderTableValidator orderTableValidator
+    ) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -64,11 +65,7 @@ public class TableService {
         if (Objects.nonNull(orderTable.getTableGroupId())) {
             throw new InvalidOrderToChangeEmptyException("단체 지정이 정해지지 않아 상태 변경이 불가능합니다.");
         }
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))
-        ) {
-            throw new InvalidOrderToChangeEmptyException("단체 지정이 정해지지 않아 상태 변경이 불가능합니다.");
-        }
+        orderTableValidator.validateOrderStatusIsCompletion(orderTableId);
     }
 
     @Transactional

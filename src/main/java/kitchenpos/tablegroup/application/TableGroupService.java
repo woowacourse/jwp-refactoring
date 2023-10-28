@@ -1,8 +1,8 @@
 package kitchenpos.tablegroup.application;
 
 import kitchenpos.exception.NotFoundTableGroupException;
-import kitchenpos.tablegroup.domain.OrderTableManager;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupManager;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
 import kitchenpos.tablegroup.ui.dto.OrderTableDto;
 import kitchenpos.tablegroup.ui.dto.TableGroupRequest;
@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 @Service
 public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
-    private final OrderTableManager orderTableManager;
+    private final TableGroupManager tableGroupManager;
 
     public TableGroupService(
             final TableGroupRepository tableGroupRepository,
-            final OrderTableManager orderTableManager
+            final TableGroupManager tableGroupManager
     ) {
         this.tableGroupRepository = tableGroupRepository;
-        this.orderTableManager = orderTableManager;
+        this.tableGroupManager = tableGroupManager;
     }
 
     @Transactional
@@ -33,7 +33,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         final List<Long> orderTableIds = convertToIds(tableGroupRequest.getOrderTables());
-        orderTableManager.addOrderTables(tableGroup, orderTableIds);
+        tableGroupManager.addOrderTables(tableGroup, orderTableIds);
 
         return TableGroupResponse.from(savedTableGroup);
     }
@@ -49,6 +49,6 @@ public class TableGroupService {
         final TableGroup tableGroup =
                 tableGroupRepository.findById(tableGroupId)
                                     .orElseThrow(() -> new NotFoundTableGroupException("해당 단체 지정이 존재하지 않습니다."));
-        orderTableManager.ungroup(tableGroup);
+        tableGroupManager.ungroup(tableGroup);
     }
 }

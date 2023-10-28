@@ -4,8 +4,8 @@ import kitchenpos.exception.InvalidOrderTableToTableGroup;
 import kitchenpos.exception.InvalidOrderTablesSize;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.OrderTableManager;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupManager;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -14,14 +14,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class OrderTableManagerImpl implements OrderTableManager {
+public class TableGroupManagerImpl implements TableGroupManager {
 
-    private OrderTableRepository orderTableRepository;
-    private OrderManager orderManager;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public OrderTableManagerImpl(final OrderTableRepository orderTableRepository, final OrderManager orderManager) {
+    public TableGroupManagerImpl(final OrderTableRepository orderTableRepository, final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
-        this.orderManager = orderManager;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class OrderTableManagerImpl implements OrderTableManager {
     public void ungroup(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
-        orderManager.validateOrdersToUngroup(convertToIds(orderTables));
+        orderTableValidator.validateOrdersToUngroup(convertToIds(orderTables));
         ungroupOrderTables(orderTables);
     }
 

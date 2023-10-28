@@ -161,7 +161,7 @@ class TableServiceTest extends ServiceTestConfig {
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTable.getId(), changeEmptyRequest))
                     .isInstanceOf(InvalidOrderToChangeEmptyException.class)
-                    .hasMessage("단체 지정이 정해지지 않아 상태 변경이 불가능합니다.");
+                    .hasMessage("계산이 완료되지 않아 상태 변경이 불가능합니다.");
         }
     }
 

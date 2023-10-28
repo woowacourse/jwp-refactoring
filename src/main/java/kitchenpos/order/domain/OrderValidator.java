@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 @Component
 public class OrderValidator {
 
-    private OrderTableRepository orderTableRepository;
-    private MenuRepository menuRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final MenuRepository menuRepository;
 
     public OrderValidator(final OrderTableRepository orderTableRepository, final MenuRepository menuRepository) {
         this.orderTableRepository = orderTableRepository;

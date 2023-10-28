@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @Component
 public class MenuValidator {
 
-    private MenuGroupRepository menuGroupRepository;
-    private ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuValidator(final MenuGroupRepository menuGroupRepository, final ProductRepository productRepository) {
         this.menuGroupRepository = menuGroupRepository;
