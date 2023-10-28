@@ -28,6 +28,5 @@ public class TableGroupMapper {
             .createdDate(LocalDateTime.now())
             .orderTables(orderTables)
             .build();
-
     }
 }

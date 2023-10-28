@@ -1,12 +1,12 @@
 package kitchenpos.ordertable.service;
 
 import static java.util.stream.Collectors.toList;
+import static kitchenpos.exception.ExceptionType.PROCESSING_ORDER_TABLE_CANNOT_UNGROUP;
 import static kitchenpos.exception.ExceptionType.TABLE_GROUP_NOT_FOUND;
 
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.exception.CustomException;
-import kitchenpos.exception.ExceptionType;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
@@ -20,19 +20,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
 
     private final OrderRepository orderRepository;
+    private final TableGroupValidator tableGroupValidator;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
         final OrderRepository orderRepository,
+        final TableGroupValidator tableGroupValidator,
         final TableGroupRepository tableGroupRepository
     ) {
         this.orderRepository = orderRepository;
+        this.tableGroupValidator = tableGroupValidator;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
+        tableGroupValidator.validate(tableGroup);
 
+        tableGroup.group();
 
         return tableGroupRepository.save(tableGroup);
     }
@@ -41,6 +46,12 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = getById(tableGroupId);
 
+        validateUngroupable(tableGroup);
+
+        tableGroup.ungroup();
+    }
+
+    private void validateUngroupable(TableGroup tableGroup) {
         List<Long> ids = getOrderTableIds(tableGroup);
 
         List<Order> processingOrders = orderRepository.findByOrderTableIdInAndOrderStatusIn(
@@ -49,10 +60,8 @@ public class TableGroupService {
         );
 
         if (!processingOrders.isEmpty()) {
-            throw new CustomException(ExceptionType.PROCESSING_ORDER_TABLE_CANNOT_UNGROUP);
+            throw new CustomException(PROCESSING_ORDER_TABLE_CANNOT_UNGROUP);
         }
-
-        tableGroup.ungroup();
     }
 
     private List<Long> getOrderTableIds(TableGroup tableGroup) {

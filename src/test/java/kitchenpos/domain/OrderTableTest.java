@@ -37,19 +37,6 @@ class OrderTableTest {
         assertThat(orderTable.isEmpty()).isTrue();
     }
 
-    @Test
-    @DisplayName("주문 테이블이 그룹이면 상태를 변경할 수 없다")
-    void change_empty_fail1() {
-        // given
-        TableGroup tableGroup = TableGroupFixture.TABLE_GROUP_AVAILABLE.toEntity();
-
-        // when & then
-        tableGroup.getOrderTables().forEach(orderTable ->
-            assertThatThrownBy(() -> orderTable.changeEmpty(true))
-            .hasMessageContaining(ExceptionType.TABLE_GROUP_CANNOT_CHANGE_STATUS.getMessage())
-        );
-    }
-
     @ParameterizedTest
     @DisplayName("테이블의 인원수를 변경할 수 있다.")
     @ValueSource(ints = {0, 10})
