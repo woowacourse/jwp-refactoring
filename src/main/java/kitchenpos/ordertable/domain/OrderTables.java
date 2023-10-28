@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
 public class OrderTables implements Iterable<OrderTable> {
+    private static final int MIN_ORDER_TABLES_SIZE = 2;
+
     @MappedCollection(idColumn = "TABLE_GROUP_ID", keyColumn = "ID")
     private final List<OrderTable> orderTables;
 
@@ -19,7 +21,7 @@ public class OrderTables implements Iterable<OrderTable> {
     }
 
     public boolean isPersistableInTableGroup() {
-        if (orderTables.size() < 2) {
+        if (orderTables.size() < MIN_ORDER_TABLES_SIZE) {
             return false;
         }
 

@@ -5,7 +5,8 @@ import java.util.Objects;
 import org.springframework.data.relational.core.mapping.Column;
 
 public class Name {
-    public static final int MAX_NAME_LENGTH = 255;
+    private static final int MAX_NAME_LENGTH = 255;
+
     @JsonProperty("name")
     @Column("NAME")
     private final String value;

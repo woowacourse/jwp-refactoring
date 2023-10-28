@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.menugroup.application.dto.MenuGroupResponse;
+import kitchenpos.menugroup.dto.MenuGroupResponse;
 import kitchenpos.product.domain.Name;
 import kitchenpos.menugroup.application.MenuGroupService;
 import org.junit.jupiter.api.DisplayName;

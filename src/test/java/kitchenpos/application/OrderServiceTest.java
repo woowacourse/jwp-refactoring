@@ -17,7 +17,7 @@ import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.application.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.application.validator.OrderCreationOrderTableValidator;
 import kitchenpos.order.application.OrderService;

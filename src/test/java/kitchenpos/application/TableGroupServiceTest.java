@@ -15,7 +15,7 @@ import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.application.TableGroupCustomDao;
-import kitchenpos.menugroup.application.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.validator.OrderStatusValidator;
 import kitchenpos.order.domain.OrderLineItem;

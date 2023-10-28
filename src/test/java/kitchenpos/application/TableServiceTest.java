@@ -20,7 +20,7 @@ import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.application.dto.TableResponse;
 import kitchenpos.ordertable.application.OrderTableDao;
-import kitchenpos.menugroup.application.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.ordertable.domain.OrderTable;

@@ -7,8 +7,8 @@ import org.springframework.data.relational.core.mapping.Column;
 
 public class Price {
 
-    public static final int MAX_PRICE_SCALE = 2;
-    public static final int MAX_PRICE_PRECISION = 19;
+    private static final int MAX_PRICE_SCALE = 2;
+    private static final int MAX_PRICE_PRECISION = 19;
 
     @JsonProperty("price")
     @Column("PRICE")

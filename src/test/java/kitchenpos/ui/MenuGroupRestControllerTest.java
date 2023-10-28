@@ -8,10 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import kitchenpos.menugroup.application.MenuGroupService;
-import kitchenpos.menugroup.application.dto.MenuGroupResponse;
-import kitchenpos.menugroup.application.domain.MenuGroup;
+import kitchenpos.menugroup.dto.MenuGroupResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Name;
-import kitchenpos.menugroup.application.ui.MenuGroupRestController;
+import kitchenpos.menugroup.ui.MenuGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
