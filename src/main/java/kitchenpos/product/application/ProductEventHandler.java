@@ -20,16 +20,16 @@ public class ProductEventHandler {
 
     @EventListener
     @Transactional
-    public void validateExistProduct(final ValidateExistProductEvent dto) {
-        productRepository.findById(dto.getProductId())
+    public void validateExistProduct(final ValidateExistProductEvent event) {
+        productRepository.findById(event.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다."));
     }
 
     @EventListener
     @Transactional
-    public void validateSamePriceWithMenu(final ValidateSamePriceWithMenuEvent validateSamePriceWithMenuEvent) {
-        final Price menuPrice = Price.from(validateSamePriceWithMenuEvent.getMenuPrice());
-        final Price sum = validateSamePriceWithMenuEvent.getProductQuantityDtos().stream()
+    public void validateSamePriceWithMenu(final ValidateSamePriceWithMenuEvent event) {
+        final Price menuPrice = Price.from(event.getMenuPrice());
+        final Price sum = event.getProductQuantityDtos().stream()
                 .map(dto -> findProductPrice(dto.getProductId()).multiply(dto.getQuantity()))
                 .reduce(Price.createZero(), Price::plus);
         if (menuPrice.isGreaterThan(sum)) {

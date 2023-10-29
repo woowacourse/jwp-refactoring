@@ -30,8 +30,8 @@ public class TableEventHandler {
 
     @EventListener
     @Transactional
-    public void validateSameSizeOrderTable(final ValidateSameSizeOrderTableEvent dto) {
-        final List<Long> orderTableIds = dto.getOrderTableIds();
+    public void validateSameSizeOrderTable(final ValidateSameSizeOrderTableEvent event) {
+        final List<Long> orderTableIds = event.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTableIds.size() != orderTables.size()) {
@@ -41,9 +41,9 @@ public class TableEventHandler {
 
     @EventListener
     @Transactional
-    public void createTableGroupEvent(final TableGroupCreateEvent dto) {
-        final Long tableGroupId = dto.getTableGroupId();
-        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(dto.getOrderTableIds());
+    public void createTableGroupEvent(final TableGroupCreateEvent event) {
+        final Long tableGroupId = event.getTableGroupId();
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(event.getOrderTableIds());
 
         validateSizeOrderTables(orderTables);
         validateEmptyOrderTables(orderTables);
