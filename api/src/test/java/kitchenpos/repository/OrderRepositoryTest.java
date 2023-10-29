@@ -3,7 +3,6 @@ package kitchenpos.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
@@ -64,8 +63,8 @@ class OrderRepositoryTest extends DataDependentIntegrationTest {
         final OrderTable orderTable2 = new OrderTable(2, false);
         orderTableRepository.saveAll(List.of(orderTable1, orderTable2));
 
-        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1)));
-        final Order order2 = new Order(orderTable2.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1)));
+        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING, List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1)));
+        final Order order2 = new Order(orderTable2.getId(), OrderStatus.COOKING, List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1)));
         orderRepository.saveAll(List.of(order1, order2));
 
         // when
@@ -82,7 +81,7 @@ class OrderRepositoryTest extends DataDependentIntegrationTest {
         final OrderTable orderTable1 = new OrderTable(3, false);
         orderTableRepository.save(orderTable1);
 
-        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1)));
+        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING, List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1)));
         orderRepository.save(order1);
 
         // when

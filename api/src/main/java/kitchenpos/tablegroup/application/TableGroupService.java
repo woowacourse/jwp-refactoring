@@ -1,6 +1,5 @@
 package kitchenpos.tablegroup.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.tablegroup.application.dto.TableGroupRequest;
@@ -25,7 +24,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
         final List<Long> tableIdsToGroup = convertToTableIds(tableGroupRequest.getOrderTables());
         tableGroupManager.group(tableGroup, tableIdsToGroup);
         tableGroupRepository.save(tableGroup);

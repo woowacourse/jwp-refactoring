@@ -1,11 +1,13 @@
 package kitchenpos.tablegroup.domain;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 
 @Entity
 public class TableGroup {
@@ -14,14 +16,15 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private LocalDateTime createdDate;
+    @Column(updatable = false)
+    private LocalDateTime createdDate = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
 
-    protected TableGroup() {}
-
-    public TableGroup(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    @PrePersist
+    private void prePersist() {
+        createdDate = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
     }
+
+    public TableGroup() {}
 
     public Long getId() {
         return id;

@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -14,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 @Table(name = "orders")
@@ -32,8 +34,13 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @Column
-    private LocalDateTime orderedTime;
+    @Column(updatable = false)
+    private LocalDateTime orderedTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+
+    @PrePersist
+    private void prePersist() {
+        orderedTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+    }
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "order_id", nullable = false, updatable = false)
@@ -43,16 +50,14 @@ public class Order {
 
     public Order(final Long orderTableId,
                  final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
                  final List<OrderLineItem> items) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
         this.orderLineItems = items;
     }
 
-    public static Order createDefault(final Long orderTableId, final LocalDateTime orderedTime, final List<OrderLineItem> items) {
-        return new Order(orderTableId, INITIAL_ORDER_STATUS, orderedTime, items);
+    public static Order createDefault(final Long orderTableId, final List<OrderLineItem> items) {
+        return new Order(orderTableId, INITIAL_ORDER_STATUS, items);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

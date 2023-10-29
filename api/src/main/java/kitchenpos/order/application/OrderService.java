@@ -1,6 +1,5 @@
 package kitchenpos.order.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.application.dto.MenuQuantityDto;
@@ -9,9 +8,9 @@ import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderedItem;
 import kitchenpos.order.domain.OrderedItemGenerator;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final Order order = Order.createDefault(orderRequest.getOrderTableId(), LocalDateTime.now(), convertToOrderLineItems(orderRequest.getOrderLineItems()));
+        final Order order = Order.createDefault(orderRequest.getOrderTableId(), convertToOrderLineItems(orderRequest.getOrderLineItems()));
         orderValidator.validate(order);
         orderRepository.save(order);
 

@@ -125,7 +125,7 @@ class TableServiceTest extends DataDependentIntegrationTest {
     @Test
     void changeEmpty_tableInGroup_fail() {
         // given
-        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
         final OrderTable orderTable = new OrderTable(3, true);
         orderTable.groupBy(tableGroup.getId());
         orderTableRepository.save(orderTable);
@@ -145,7 +145,7 @@ class TableServiceTest extends DataDependentIntegrationTest {
         final TableRequest tableRequest = new TableRequest(3, false);
         final TableResponse savedOrderTable = tableService.create(tableRequest);
         final OrderTable orderTable = orderTableRepository.findById(savedOrderTable.getId()).get();
-        orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1))));
+        orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1))));
         final Long orderTableId = orderTable.getId();
 
         final TableEmptyChangeRequest request = new TableEmptyChangeRequest(true);

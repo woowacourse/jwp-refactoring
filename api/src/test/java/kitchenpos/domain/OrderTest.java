@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -27,7 +26,7 @@ class OrderTest {
     void createDefault() {
         // given
         // when
-        final Order order = Order.createDefault(NOT_EMPTY_ORDER_TABLE.getId(), LocalDateTime.now(), ORDER_LINE_ITEMS);
+        final Order order = Order.createDefault(NOT_EMPTY_ORDER_TABLE.getId(), ORDER_LINE_ITEMS);
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
@@ -37,7 +36,7 @@ class OrderTest {
     @Test
     void changeOrderStatus() {
         // given
-        final Order order = Order.createDefault(NOT_EMPTY_ORDER_TABLE.getId(), LocalDateTime.now(), ORDER_LINE_ITEMS);
+        final Order order = Order.createDefault(NOT_EMPTY_ORDER_TABLE.getId(), ORDER_LINE_ITEMS);
 
         // when
         order.changeOrderStatus(OrderStatus.MEAL);
@@ -50,7 +49,7 @@ class OrderTest {
     @Test
     void changeOrderStatus_fail() {
         // given
-        final Order order = Order.createDefault(NOT_EMPTY_ORDER_TABLE.getId(), LocalDateTime.now(), ORDER_LINE_ITEMS);
+        final Order order = Order.createDefault(NOT_EMPTY_ORDER_TABLE.getId(), ORDER_LINE_ITEMS);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         // when, then

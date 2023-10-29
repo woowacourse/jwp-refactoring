@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
@@ -169,7 +168,7 @@ class TableGroupServiceTest extends DataDependentIntegrationTest {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(request);
         final Long tableGroupId = tableGroupResponse.getId();
 
-        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1))));
+        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, List.of(new OrderLineItem(createMenuAndGetOrderedItem(), 1))));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
