@@ -1,5 +1,4 @@
 dependencies {
     implementation project(path: ':product')
     implementation project(path: ':common')
-    implementation project(path: ':menu')
 }
