@@ -4,17 +4,15 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.3' apply(false)
 }
 
-repositories {
-    mavenCentral()
-}
-
-subprojects {
+allprojects {
     group = 'camp.nextstep.edu'
     version = '0.0.1-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
 
+subprojects {
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
@@ -23,73 +21,7 @@ subprojects {
         mavenCentral()
     }
 
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-
-        implementation 'org.flywaydb:flyway-core'
-
-        runtimeOnly 'com.h2database:h2'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    }
-
     test {
         useJUnitPlatform()
-    }
-}
-
-project(':common') {
-    bootJar { enabled = false }
-    jar { enabled = true }
-}
-
-project(':app') {
-    dependencies {
-        implementation project(':menu')
-        implementation project(':menugroup')
-        implementation project(':order')
-        implementation project(':table')
-        implementation project(':tablegroup')
-        implementation project(':product')
-        implementation project(':common')
-    }
-}
-
-project(':menu') {
-    dependencies {
-        implementation project(':common')
-        implementation project(':product')
-    }
-}
-
-project(':menugroup') {
-    dependencies {
-        implementation project(':common')
-    }
-}
-
-project(':order') {
-    dependencies {
-        implementation project(':common')
-    }
-}
-
-project(':product') {
-    dependencies {
-        implementation project(':common')
-    }
-}
-
-project(':table') {
-    dependencies {
-        implementation project(':common')
-    }
-}
-
-project(':tablegroup') {
-    dependencies {
-        implementation project(':common')
-        implementation project(':table')
     }
 }
