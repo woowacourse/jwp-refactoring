@@ -1,1 +1,10 @@
 rootProject.name = 'kitchenpos'
+
+include 'app'
+include 'common'
+include 'menu'
+include 'menugroup'
+include 'order'
+include 'product'
+include 'table'
+include 'tablegroup'
