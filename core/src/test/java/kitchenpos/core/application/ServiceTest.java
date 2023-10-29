@@ -1,12 +1,12 @@
-package kitchenpos.application;
+package kitchenpos.core.application;
 
 import kitchenpos.DatabaseCleaner;
-import kitchenpos.Product.application.ProductService;
-import kitchenpos.menu.application.MenuService;
-import kitchenpos.menugroup.application.MenuGroupService;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.table.application.OrderTableService;
-import kitchenpos.table.application.TableGroupService;
+import kitchenpos.core.Product.application.ProductService;
+import kitchenpos.core.menu.application.MenuService;
+import kitchenpos.core.menugroup.application.MenuGroupService;
+import kitchenpos.core.order.application.OrderService;
+import kitchenpos.core.table.application.OrderTableService;
+import kitchenpos.core.table.application.TableGroupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

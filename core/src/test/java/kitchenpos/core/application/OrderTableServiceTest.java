@@ -1,20 +1,19 @@
-package kitchenpos.application;
+package kitchenpos.core.application;
 
-import kitchenpos.Product.repository.ProductRepository;
-import kitchenpos.menu.repository.MenuProductRepository;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
-import kitchenpos.order.domain.Order;
-import kitchenpos.table.presentation.dto.OrderTableCreateRequest;
-import kitchenpos.table.presentation.dto.OrderTableUpdateEmptyRequest;
-import kitchenpos.table.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.repository.TableGroupRepository;
+import kitchenpos.core.Product.repository.ProductRepository;
+import kitchenpos.core.menu.repository.MenuProductRepository;
+import kitchenpos.core.menu.repository.MenuRepository;
+import kitchenpos.core.menugroup.repository.MenuGroupRepository;
+import kitchenpos.core.order.domain.Order;
+import kitchenpos.core.order.repository.OrderRepository;
+import kitchenpos.core.table.domain.OrderTable;
+import kitchenpos.core.table.presentation.dto.OrderTableCreateRequest;
+import kitchenpos.core.table.presentation.dto.OrderTableUpdateEmptyRequest;
+import kitchenpos.core.table.presentation.dto.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.core.table.repository.OrderTableRepository;
+import kitchenpos.core.table.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import java.util.List;
 
@@ -83,7 +82,7 @@ class OrderTableServiceTest extends ServiceTest {
 
         OrderTableUpdateEmptyRequest 주문_테이블_상태_변경_요청 = new OrderTableUpdateEmptyRequest(true);
 
-        assertThatThrownBy(() ->  tableService.changeEmpty(주문_테이블.getId(), 주문_테이블_상태_변경_요청))
+        assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블.getId(), 주문_테이블_상태_변경_요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
