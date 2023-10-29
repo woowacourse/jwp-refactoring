@@ -55,8 +55,8 @@ public class TableService {
     }
 
     private void checkOrderStatusInTableGroup(final OrderTable orderTable) {
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                List.of(orderTable), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                List.of(orderTable.getId()), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }

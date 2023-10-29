@@ -151,7 +151,7 @@ class TableGroupServiceTest {
                     .thenReturn(Optional.of(savedTableGroup));
             when(orderTableRepository.findAllByTableGroupId(anyLong()))
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
-            when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any()))
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(false);
 
             // when
@@ -184,7 +184,7 @@ class TableGroupServiceTest {
                     .thenReturn(Optional.of(savedTableGroup));
             when(orderTableRepository.findAllByTableGroupId(anyLong()))
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
-            when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any()))
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(true);
 
             // when, then

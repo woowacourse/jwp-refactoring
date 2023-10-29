@@ -79,7 +79,7 @@ class TableServiceTest {
 
             when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
-            when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any()))
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(false);
             when(orderTableRepository.save(any(OrderTable.class)))
                     .thenReturn(savedOrderTable);
@@ -116,7 +116,7 @@ class TableServiceTest {
 
             when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
-            when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any()))
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(true);
 
             // when

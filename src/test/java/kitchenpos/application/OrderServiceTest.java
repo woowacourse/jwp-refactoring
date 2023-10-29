@@ -1,19 +1,20 @@
 package kitchenpos.application;
 
+import kitchenpos.common.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.persistence.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.OrderTableService;
 import kitchenpos.order.application.dto.OrderLineItemDto;
 import kitchenpos.order.application.dto.OrderStatusDto;
 import kitchenpos.order.application.dto.request.OrderCreateRequest;
 import kitchenpos.order.application.dto.response.OrderResponse;
-import kitchenpos.common.Price;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.menu.persistence.MenuRepository;
 import kitchenpos.order.persistence.OrderLineItemRepository;
 import kitchenpos.order.persistence.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.persistence.OrderTableRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +49,7 @@ class OrderServiceTest {
     private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderTableService orderTableService;
 
     @InjectMocks
     private OrderService orderService;
@@ -57,14 +60,12 @@ class OrderServiceTest {
         void 주문을_생성한다() {
             // given
             final OrderTable savedOrderTable = new OrderTable(1L, null, 0, false);
-            final Order savedOrder = new Order(1L, savedOrderTable, OrderStatus.COOKING);
+            final Order savedOrder = new Order(1L, savedOrderTable.getId(), OrderStatus.COOKING);
             final Menu savedMenu = new Menu(1L, "신메뉴", new Price(BigDecimal.valueOf(1000)), null, null);
             final OrderLineItem savedOrderLineItem = new OrderLineItem(savedOrder, savedMenu.getId(), 1);
 
             when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
-            when(orderTableRepository.findById(anyLong()))
-                    .thenReturn(Optional.of(savedOrderTable));
             when(orderRepository.save(any(Order.class)))
                     .thenReturn(savedOrder);
             when(menuRepository.findById(anyLong()))
@@ -112,8 +113,6 @@ class OrderServiceTest {
             // given
             when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
-            when(orderTableRepository.findById(anyLong()))
-                    .thenReturn(Optional.empty());
 
             // when
             final OrderCreateRequest request = new OrderCreateRequest(1L,
@@ -127,12 +126,10 @@ class OrderServiceTest {
         @Test
         void 주문을_생성할_때_주문_테이블이_빈_상태면_실패한다() {
             // given
-            final OrderTable savedOrderTable = new OrderTable(null, null, 0, true);
-
             when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
-            when(orderTableRepository.findById(anyLong()))
-                    .thenReturn(Optional.of(savedOrderTable));
+            doNothing().when(orderTableService)
+                    .checkOrderTableEmpty(anyLong());
 
             // when
             final OrderCreateRequest request = new OrderCreateRequest(1L,
@@ -148,7 +145,7 @@ class OrderServiceTest {
     void 전체_주문_목록을_조회한다() {
         // given
         final OrderTable savedOrderTable = new OrderTable(1L, null, 0, false);
-        final Order savedOrder = new Order(1L, savedOrderTable, OrderStatus.COOKING);
+        final Order savedOrder = new Order(1L, savedOrderTable.getId(), OrderStatus.COOKING);
 
         when(orderRepository.findAll())
                 .thenReturn(List.of(savedOrder));
@@ -166,8 +163,8 @@ class OrderServiceTest {
         void 주문_상태를_변경한다() {
             // given
             final OrderTable orderTable = new OrderTable(1L, null, 0, false);
-            final Order savedOrder = new Order(1L, orderTable, OrderStatus.MEAL);
-            final Order updatedOrder = new Order(1L, orderTable, OrderStatus.COMPLETION);
+            final Order savedOrder = new Order(1L, orderTable.getId(), OrderStatus.MEAL);
+            final Order updatedOrder = new Order(1L, orderTable.getId(), OrderStatus.COMPLETION);
 
             when(orderRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrder));
@@ -196,7 +193,7 @@ class OrderServiceTest {
         void 주문_상태_변경_시_변경하려는_주문의_상태가_COMPLETION이면_실패한다() {
             // given
             final OrderTable orderTable = new OrderTable(1L, null, 0, false);
-            final Order savedOrder = new Order(1L, orderTable, OrderStatus.COMPLETION);
+            final Order savedOrder = new Order(1L, orderTable.getId(), OrderStatus.COMPLETION);
 
             when(orderRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrder));

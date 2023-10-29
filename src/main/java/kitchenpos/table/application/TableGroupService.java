@@ -80,8 +80,8 @@ public class TableGroupService {
     }
 
     private void validateOrderStatusInTableGroup(final OrderTables orderTables) {
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                orderTables.getOrderTables(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTables.getOrderTableIds(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }

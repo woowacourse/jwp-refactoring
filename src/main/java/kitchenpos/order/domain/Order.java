@@ -1,6 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.table.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -12,8 +11,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -27,9 +24,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id", nullable = false)
-    private OrderTable orderTable;
+    private long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -41,21 +36,14 @@ public class Order {
     public Order() {
     }
 
-    public Order(final OrderTable orderTable) {
-        this(null, orderTable, OrderStatus.COOKING);
+    public Order(final long orderTableId) {
+        this(null, orderTableId, OrderStatus.COOKING);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus) {
-        checkOrderTableIsEmpty(orderTable);
+    public Order(final Long id, final long orderTableId, final OrderStatus orderStatus) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-    }
-
-    private void checkOrderTableIsEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public void changeStatus(final OrderStatus status) {
@@ -70,8 +58,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

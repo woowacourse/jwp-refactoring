@@ -32,7 +32,7 @@ public class Menu {
     @Embedded
     private MenuProducts menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(final String name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
