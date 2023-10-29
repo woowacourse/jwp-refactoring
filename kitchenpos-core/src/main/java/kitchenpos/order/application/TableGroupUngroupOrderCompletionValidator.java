@@ -1,8 +1,9 @@
-package kitchenpos.order.domain;
+package kitchenpos.order.application;
 
+import kitchenpos.order.domain.Order;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.OrderCompletionValidator;
+import kitchenpos.tablegroup.application.OrderCompletionValidator;
 import kitchenpos.tablegroup.exception.InvalidTableGroupUngroupException;
 import org.springframework.stereotype.Component;
 

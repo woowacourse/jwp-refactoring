@@ -1,5 +1,6 @@
 package kitchenpos.tablegroup.domain;
 
+import kitchenpos.tablegroup.application.OrderCompletionValidator;
 import kitchenpos.tablegroup.exception.InvalidTableGroupException;
 import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;

@@ -1,5 +1,6 @@
 package kitchenpos.ordertable.domain;
 
+import kitchenpos.ordertable.application.OrderStatusValidator;
 import kitchenpos.ordertable.exception.InvalidOrderTableChangeEmptyException;
 import kitchenpos.ordertable.exception.InvalidOrderTableChangeNumberOfGuestsException;
 import kitchenpos.ordertable.exception.InvalidOrderTableException;

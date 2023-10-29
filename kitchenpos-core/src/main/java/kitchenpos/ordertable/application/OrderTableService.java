@@ -1,6 +1,5 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.ordertable.domain.OrderStatusValidator;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.dto.OrderTableChangeNumberOfGuests;

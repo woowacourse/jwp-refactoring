@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.domain;
+package kitchenpos.ordertable.application;
 
 public interface OrderStatusValidator {
     

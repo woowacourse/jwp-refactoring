@@ -1,6 +1,5 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.tablegroup.domain.OrderCompletionValidator;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.exception.NotExistOrderTable;
