@@ -59,4 +59,8 @@ public class MenuService {
     public List<MenuResponse> list() {
         return MenuResponse.from(menuDao.findAll());
     }
+
+    public MenuResponse findById(final Long id) {
+        return MenuResponse.from(menuDao.findById(id).orElseThrow(IllegalArgumentException::new));
+    }
 }

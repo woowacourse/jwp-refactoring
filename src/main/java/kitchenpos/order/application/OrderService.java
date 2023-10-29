@@ -3,6 +3,8 @@ package kitchenpos.order.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.order.application.dto.OrderLineItemsRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.domain.Order;
@@ -14,10 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
     private final OrderDao orderDao;
+    private final MenuService menuService;
     private final List<OrderCreationValidator> orderCreationValidators;
 
-    public OrderService(final OrderDao orderDao, final List<OrderCreationValidator> orderCreationValidators) {
+    public OrderService(final OrderDao orderDao, final MenuService menuService,
+                        final List<OrderCreationValidator> orderCreationValidators) {
         this.orderDao = orderDao;
+        this.menuService = menuService;
         this.orderCreationValidators = orderCreationValidators;
     }
 
@@ -33,9 +38,17 @@ public class OrderService {
         return OrderResponse.from(orderDao.save(order));
     }
 
-    private static List<OrderLineItem> convertToLineItems(final List<OrderLineItemsRequest> orderLineItemRequests) {
+    private List<OrderLineItem> convertToLineItems(final List<OrderLineItemsRequest> orderLineItemRequests) {
         return orderLineItemRequests
-                .stream().map(OrderLineItemsRequest::toEntity)
+                .stream().map(orderLineItemsRequest -> {
+                    final MenuResponse menu = menuService.findById(orderLineItemsRequest.getMenuId());
+                    return new OrderLineItem(
+                            orderLineItemsRequest.getMenuId(),
+                            menu.getPrice(),
+                            menu.getName(),
+                            orderLineItemsRequest.getQuantity()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 

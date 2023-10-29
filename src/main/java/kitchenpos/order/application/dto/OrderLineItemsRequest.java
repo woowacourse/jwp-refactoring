@@ -17,8 +17,12 @@ public class OrderLineItemsRequest {
         this.quantity = quantity;
     }
 
-    public OrderLineItem toEntity() {
-        return new OrderLineItem(menuId, quantity);
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public Long getMenuId() {
+        return menuId;
     }
 
     @Override

@@ -53,6 +53,6 @@ public class KitchenposFixture {
     }
 
     public static OrderLineItem 주문할메뉴만들기(final Long menuId, final int quantity) {
-        return new OrderLineItem(menuId, quantity);
+        return new OrderLineItem(menuId, new Price(new BigDecimal("4000")), "메뉴", quantity);
     }
 }

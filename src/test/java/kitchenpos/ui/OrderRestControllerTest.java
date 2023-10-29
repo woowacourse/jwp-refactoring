@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.application.dto.OrderLineItemsRequest;
 import kitchenpos.order.application.OrderRequest;
 import kitchenpos.order.ui.OrderRestController;
+import kitchenpos.product.domain.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,11 +53,11 @@ class OrderRestControllerTest {
         );
         final OrderRequest orderRequest = new OrderRequest(1L, orderLineItemsRequests);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 4L);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, new Price(new BigDecimal("4000")), "메뉴1", 4L);
         final Field field = ReflectionUtils.findField(OrderLineItem.class, "seq");
         ReflectionUtils.makeAccessible(field);
         ReflectionUtils.setField(field, orderLineItem, 1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 7L);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, new Price(new BigDecimal("4000")), "메뉴", 7L);
         ReflectionUtils.setField(field, orderLineItem2, 2L);
 
         when(orderService.create(1L, orderLineItemsRequests))

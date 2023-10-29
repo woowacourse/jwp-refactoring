@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import kitchenpos.product.domain.Price;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
@@ -18,6 +19,10 @@ public class Menu {
     private Long menuGroupId;
     @MappedCollection(idColumn = "MENU_ID")
     private Set<MenuProduct> menuProducts;
+
+    @PersistenceCreator
+    public Menu() {
+    }
 
     public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
                 final MenuProducts menuProducts) {

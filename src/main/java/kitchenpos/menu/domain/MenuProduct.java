@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.Price;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Embedded;
 
@@ -15,6 +16,7 @@ public class MenuProduct {
     private AggregateReference<Product, Long> productId;
     private long quantity;
 
+    @PersistenceCreator
     public MenuProduct(final Long seq, final Price price, final Long productId,
                        final long quantity) {
         this.seq = seq;
