@@ -1,13 +1,13 @@
-package kitchenpos.order.application;
+package kitchenpos.ordertable.application;
 
+import kitchenpos.common.dto.request.OrderTableDto;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.application.event.AddGroupTableEvent;
 import kitchenpos.tablegroup.application.event.UngroupTableEvent;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.common.dto.request.OrderTableDto;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +23,9 @@ public class OrderTableEventListener {
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
 
-    public OrderTableEventListener(final OrderTableRepository orderRepository, final OrderRepository orderRepository1) {
-        this.orderTableRepository = orderRepository;
-        this.orderRepository = orderRepository1;
+    public OrderTableEventListener(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
+        this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @EventListener
