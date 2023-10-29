@@ -162,7 +162,7 @@ class TableGroupServiceTest {
         OrderTable orderTableB = new OrderTable(0, true);
         savedOrderTableB = orderTableRepository.save(orderTableB);
 
-        Order order = new Order(savedOrderTableA, orderStatus.name(), LocalDateTime.now());
+        Order order = new Order(savedOrderTableA.getId(), orderStatus.name(), LocalDateTime.now());
         orderRepository.save(order);
 
         savedOrderTableA.changeEmptyStatus(true);

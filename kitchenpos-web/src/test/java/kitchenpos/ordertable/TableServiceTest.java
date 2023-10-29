@@ -145,7 +145,7 @@ class TableServiceTest {
     @DisplayName("주문 상태가 조리 중이거나 식사 중인 테이블의 상태를 변경할 경우 예외가 발생한다.")
     void failToChangeTableStatusWithOrderStatus(OrderStatus orderStatus) {
         // given
-        Order order = new Order(savedFullOrderTable, orderStatus.name(), LocalDateTime.now());
+        Order order = new Order(savedFullOrderTable.getId(), orderStatus.name(), LocalDateTime.now());
         orderRepository.save(order);
 
         // when

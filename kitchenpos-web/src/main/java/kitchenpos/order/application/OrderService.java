@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -41,7 +42,12 @@ public class OrderService {
 
     @Transactional
     public Order create(OrderRequest orderRequest) {
-        Order order = new Order(getOrderTable(orderRequest), OrderStatus.COOKING.name(), LocalDateTime.now());
+        OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블에는 주문을 등록할 수 없습니다."));
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈테이블은 주문을 등록할 수 없습니다.");
+        }
+        Order order = new Order(orderRequest.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
         setOrderLineItems(orderRequest, savedOrder);
 

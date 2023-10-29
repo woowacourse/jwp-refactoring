@@ -212,7 +212,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태가 'COMPLETION'인 경우 주문 상태 변경 시 예외가 발생한다.")
     void failToChangeOrderStatusWithCompletionOrderStatus() {
         // given
-        Order order = new Order(savedOrderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        Order order = new Order(savedOrderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 
         // when

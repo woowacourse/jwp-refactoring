@@ -24,9 +24,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Column(nullable = false)
     private String orderStatus;
@@ -41,17 +40,10 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
-        validate(orderTable);
-        this.orderTable = orderTable;
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-    }
-
-    private void validate(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈테이블은 주문을 등록할 수 없습니다.");
-        }
     }
 
     public void changeOrderStatus(String orderStatus) {
@@ -65,8 +57,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {
