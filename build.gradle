@@ -4,23 +4,58 @@ plugins {
     id 'java'
 }
 
-group = 'camp.nextstep.edu'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+subprojects {
 
-repositories {
-    mavenCentral()
+    group = 'camp.nextstep.edu'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '11'
+
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+    }
 }
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.flywaydb:flyway-core'
-    runtimeOnly 'com.h2database:h2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+project(":module-application") {
+    dependencies {
+        implementation project(":module-common")
+        implementation project(":module-menu")
+        implementation project(":module-order")
+        implementation project(":module-ordertable")
+        implementation project(":module-product")
+    }
 }
 
-test {
-    useJUnitPlatform()
+project(":module-menu") {
+    dependencies {
+        implementation project(":module-common")
+        implementation project(":module-product")
+    }
+}
+
+project(":module-order") {
+    dependencies {
+        implementation project(":module-common")
+        implementation project(":module-menu")
+        implementation project(":module-product")
+    }
+}
+
+project(":module-ordertable") {
+    dependencies {
+        implementation project(":module-common")
+        implementation project(":module-order")
+    }
+}
+
+project(":module-product") {
+    dependencies {
+        implementation project(":module-common")
+    }
 }
