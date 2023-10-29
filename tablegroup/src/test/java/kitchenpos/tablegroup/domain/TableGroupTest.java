@@ -1,10 +1,10 @@
 package kitchenpos.tablegroup.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ class TableGroupTest {
         OrderTable orderTable = OrderTable.create(0, Boolean.FALSE);
 
         //when then
-        Assertions.assertThatThrownBy(() -> GroupedTables.createForGrouping(List.of(orderTable)))
+        assertThatThrownBy(() -> GroupedTables.createForGrouping(List.of(orderTable)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("그룹화 할 테이블 개수는 2 이상이어야 합니다");
     }
@@ -30,7 +30,7 @@ class TableGroupTest {
         OrderTable orderTable2 = OrderTable.create(0, Boolean.TRUE);
 
         //when then
-        Assertions.assertThatThrownBy(() -> GroupedTables.createForGrouping(List.of(orderTable1, orderTable2)))
+        assertThatThrownBy(() -> GroupedTables.createForGrouping(List.of(orderTable1, orderTable2)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 가능한 상태의 테이블이 존재합니다.");
     }
