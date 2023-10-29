@@ -1,15 +1,15 @@
+tasks.named('bootJar') {
+    enabled = true
+}
+
+tasks.named('jar') {
+    enabled = true
+}
+
 dependencies {
     implementation project(path: ':product')
     implementation project(path: ':common')
     implementation project(path: ':menu')
     implementation project(path: ':order')
     implementation project(path: ':table')
-}
-
-tasks.named('bootJar') {
-    enabled = true
-}
-
-tasks.named('jar') {
-    enabled = false
 }
