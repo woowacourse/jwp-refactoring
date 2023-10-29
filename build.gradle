@@ -4,24 +4,98 @@ plugins {
     id 'java'
 }
 
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    group = 'camp.nextstep.edu'
+
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '11'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'org.flywaydb:flyway-core'
+        runtimeOnly 'com.h2database:h2'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    bootJar { enabled = false }
+    jar { enabled = true }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
 group = 'camp.nextstep.edu'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.flywaydb:flyway-core'
-    runtimeOnly 'com.h2database:h2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
 
 test {
     useJUnitPlatform()
+}
+
+project(':app') {
+    dependencies {
+        implementation project(':product')
+        implementation project(':menugroup')
+        implementation project(':order')
+        implementation project(':menu')
+        implementation project(':table')
+        implementation project(':tablegroup')
+    }
+
+    bootJar { enabled = true }
+}
+
+project(':menu') {
+    dependencies {
+        implementation project(':common')
+        implementation project(':product')
+        implementation project(':menugroup')
+    }
+}
+
+project(':menugroup') {
+    dependencies {
+        implementation project(':common')
+    }
+}
+
+project(':order') {
+    dependencies {
+        implementation project(':common')
+        implementation project(':table')
+        implementation project(':menu')
+    }
+}
+
+project(':tablegroup') {
+    dependencies {
+        implementation project(':common')
+        implementation project(':table')
+        implementation project(':order')
+    }
+}
+
+project(':product') {
+    dependencies {
+        implementation project(':common')
+    }
+}
+
+project(':table') {
+    dependencies {
+        implementation project(':common')
+    }
+}
+
+repositories {
+    mavenCentral()
 }
