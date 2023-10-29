@@ -27,7 +27,7 @@ public class TableEventListener {
     }
 
     @EventListener
-    public void validate(OrderTableChangeEmptyEvent event) {
+    public void validateToChangeEmpty(OrderTableChangeEmptyEvent event) {
         orderValidator.validateCompletedOrders(event.getOrderTableId());
     }
 }
