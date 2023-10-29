@@ -65,7 +65,6 @@ class OrderServiceTest {
 
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 orderTable.getId(),
-                OrderStatus.COOKING.name(),
                 List.of(new OrderLineItemCreateRequest(menu1.getId(), 1),
                         new OrderLineItemCreateRequest(menu2.getId(), 1))
         );
@@ -113,7 +112,6 @@ class OrderServiceTest {
 
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 100L,
-                OrderStatus.COOKING.name(),
                 List.of(new OrderLineItemCreateRequest(menu1.getId(), 1))
         );
 
@@ -144,7 +142,6 @@ class OrderServiceTest {
 
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 100L,
-                OrderStatus.COOKING.name(),
                 List.of(new OrderLineItemCreateRequest(menu1.getId(), 1),
                         new OrderLineItemCreateRequest(menu2.getId(), 1))
         );

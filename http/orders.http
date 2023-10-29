@@ -4,9 +4,13 @@ Content-Type: application/json
 
 {
   "orderTableId": 1,
-  "orderLineItems": [
+  "orderLineItemRequests": [
     {
       "menuId": 1,
+      "quantity": 1
+    },
+    {
+      "menuId": 2,
       "quantity": 1
     }
   ]

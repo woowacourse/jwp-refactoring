@@ -48,7 +48,6 @@ class OrderRestControllerTest {
         // given
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 1L,
-                OrderStatus.COOKING.name(),
                 List.of(new OrderLineItemCreateRequest(1L, 1),
                         new OrderLineItemCreateRequest(2L, 1)
                 )
@@ -73,28 +72,6 @@ class OrderRestControllerTest {
         // given
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 null,
-                OrderStatus.COOKING.name(),
-                List.of(new OrderLineItemCreateRequest(1L, 1),
-                        new OrderLineItemCreateRequest(2L, 1)
-                )
-        );
-
-        // when
-        final ResultActions resultActions = mockMvc.perform(post("/api/orders")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(orderCreateRequest)));
-
-        // then
-        resultActions.andExpect(status().isBadRequest());
-    }
-
-    @DisplayName("입력받는 테이블의 상태가 null이면 예외 처리한다.")
-    @Test
-    void create_FailWhenOrderStatusNull() throws Exception {
-        // given
-        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
-                1L,
-                null,
                 List.of(new OrderLineItemCreateRequest(1L, 1),
                         new OrderLineItemCreateRequest(2L, 1)
                 )
@@ -115,7 +92,6 @@ class OrderRestControllerTest {
         // given
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 1L,
-                OrderStatus.COOKING.name(),
                 null
         );
 
@@ -134,7 +110,6 @@ class OrderRestControllerTest {
         // given
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 1L,
-                OrderStatus.COOKING.name(),
                 List.of(new OrderLineItemCreateRequest(1L, 1),
                         new OrderLineItemCreateRequest(1L, 2)
                 )
