@@ -8,6 +8,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-test-fixtures'
 
     group = 'camp.nextstep.edu'
     version = '0.0.1-SNAPSHOT'

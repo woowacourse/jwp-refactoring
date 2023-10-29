@@ -5,12 +5,11 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.ProductFixture;
+import kitchenpos.common.vo.Price;
 import kitchenpos.product.service.dto.ProductRequest;
 import kitchenpos.product.service.dto.ProductResponse;
-import kitchenpos.common.vo.Price;
-import kitchenpos.product.service.ProductService;
 import kitchenpos.supports.IntegrationTest;
-import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

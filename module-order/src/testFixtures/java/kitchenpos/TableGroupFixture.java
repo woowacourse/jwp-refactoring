@@ -1,10 +1,10 @@
-package kitchenpos.supports;
+package kitchenpos;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.service.dto.TableIdRequest;
 import kitchenpos.order.service.dto.TableGroupRequest;
+import kitchenpos.order.service.dto.TableIdRequest;
 import kitchenpos.order.service.dto.TableResponse;
 
 public class TableGroupFixture {

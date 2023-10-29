@@ -1,4 +1,4 @@
-package kitchenpos.supports;
+package kitchenpos;
 
 import java.util.List;
 import kitchenpos.order.service.dto.OrderLineItemRequest;
