@@ -44,6 +44,16 @@ public class TableGroupServiceFixture {
         생성할_테이블그룹_요청_dto = new CreateTableGroupRequest(List.of(그룹화할_주문_테이블에_포함될_주문_테이블_1, 그룹화할_주문_테이블에_포함될_주문_테이블_2));
     }
 
+    protected void 단체_테이블_등록시_주문_테이블_연관관계_세팅_이벤트가_호출된다_픽스처_생성() {
+        final OrderTable 주문_테이블1 = new OrderTable(1, false);
+        final OrderTable 주문_테이블2 = new OrderTable(2, false);
+        orderTableRepository.saveAll(List.of(주문_테이블1, 주문_테이블2));
+
+        final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_1 = new OrderTableDto(주문_테이블1.getId());
+        final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_2 = new OrderTableDto(주문_테이블2.getId());
+        생성할_테이블그룹_요청_dto = new CreateTableGroupRequest(List.of(그룹화할_주문_테이블에_포함될_주문_테이블_1, 그룹화할_주문_테이블에_포함될_주문_테이블_2));
+    }
+
     protected void 주문_테이블_아이디가_입력되지_않은_경우_예외가_발생한다_픽스처_생성() {
         final OrderTable 주문_테이블1 = new OrderTable(1, false);
         final OrderTable 주문_테이블2 = new OrderTable(2, false);
