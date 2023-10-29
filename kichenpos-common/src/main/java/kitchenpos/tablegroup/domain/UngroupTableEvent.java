@@ -8,7 +8,7 @@ public class UngroupTableEvent {
         this.tableGroup = tableGroup;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroup.getId();
     }
 }

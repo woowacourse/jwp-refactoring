@@ -28,11 +28,22 @@ public class UngroupTableEventListener {
     @Transactional
     public void handle(final UngroupTableEvent ungroupTableEvent) {
         final List<OrderTable> findOrderTables =
-                orderTableRepository.findAllByTableGroupId(ungroupTableEvent.getTableGroup().getId());
-
-        validateCanUngroup(findOrderTables);
+                orderTableRepository.findAllByTableGroupId(ungroupTableEvent.getTableGroupId());
 
         ungroupOrderTables(findOrderTables);
+    }
+
+    private void ungroupOrderTables(final List<OrderTable> orderTables) {
+        validateCanUngroup(orderTables);
+
+        if (containsDifferentId(orderTables)) {
+            throw new IllegalArgumentException("다른 테이블 그룹에 속한 테이블이 포함되어 있습니다.");
+        }
+
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+
     }
 
     private void validateCanUngroup(final List<OrderTable> orderTables) {
@@ -47,19 +58,6 @@ public class UngroupTableEventListener {
                                                     .collect(Collectors.toList());
 
         return orderRepository.existsByOrderTableIdInAndOrderStatusIsNot(orderTableIds, OrderStatus.COMPLETION);
-    }
-
-    private void ungroupOrderTables(final List<OrderTable> orderTables) {
-        validateCanUngroup(orderTables);
-
-        if (containsDifferentId(orderTables)) {
-            throw new IllegalArgumentException("다른 테이블 그룹에 속한 테이블이 포함되어 있습니다.");
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-        }
-
     }
 
     private boolean containsDifferentId(final List<OrderTable> orderTables) {
