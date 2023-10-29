@@ -4,8 +4,8 @@ import kitchenpos.tablegroup.domain.GroupingService;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.tablegroup.domain.validator.TableGroupValidator;
-import kitchenpos.tablegroup.ui.request.TableGroupRequest;
-import kitchenpos.tablegroup.ui.response.TableGroupResponse;
+import kitchenpos.tablegroup.application.request.TableGroupRequest;
+import kitchenpos.tablegroup.application.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

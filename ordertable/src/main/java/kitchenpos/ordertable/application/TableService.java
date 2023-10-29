@@ -3,10 +3,10 @@ package kitchenpos.ordertable.application;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.ordertable.domain.validator.OrderTableValidator;
-import kitchenpos.ordertable.ui.request.OrderTableRequest;
-import kitchenpos.ordertable.ui.request.UpdateOrderTableEmptyRequest;
-import kitchenpos.ordertable.ui.request.UpdateOrderTableNumberOfGuestsRequest;
-import kitchenpos.ordertable.ui.response.OrderTableResponse;
+import kitchenpos.ordertable.application.request.OrderTableRequest;
+import kitchenpos.ordertable.application.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.ordertable.application.request.UpdateOrderTableNumberOfGuestsRequest;
+import kitchenpos.ordertable.application.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

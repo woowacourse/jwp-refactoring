@@ -8,10 +8,10 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderedMenu;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.validator.OrderValidator;
-import kitchenpos.order.ui.response.OrderResponse;
-import kitchenpos.order.ui.request.OrderLineItemRequest;
-import kitchenpos.order.ui.request.OrderRequest;
-import kitchenpos.order.ui.request.UpdateOrderStatusRequest;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.application.request.OrderLineItemRequest;
+import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.request.UpdateOrderStatusRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

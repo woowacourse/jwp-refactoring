@@ -6,9 +6,9 @@ import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.tablegroup.domain.validator.TableGroupValidator;
-import kitchenpos.tablegroup.ui.request.OrderTableIdRequest;
-import kitchenpos.tablegroup.ui.request.TableGroupRequest;
-import kitchenpos.tablegroup.ui.response.TableGroupResponse;
+import kitchenpos.tablegroup.application.request.OrderTableIdRequest;
+import kitchenpos.tablegroup.application.request.TableGroupRequest;
+import kitchenpos.tablegroup.application.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
