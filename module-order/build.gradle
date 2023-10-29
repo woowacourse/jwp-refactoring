@@ -1,0 +1,8 @@
+dependencies {
+    implementation project(":module-common")
+    implementation project(":module-menu")
+    implementation project(":module-menu-group")
+    implementation project(":module-product")
+    implementation project(":module-order-table")
+    implementation project(":module-table-group")
+}
