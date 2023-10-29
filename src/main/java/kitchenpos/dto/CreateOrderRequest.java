@@ -1,7 +1,7 @@
 package kitchenpos.dto;
 
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,10 +21,6 @@ public class CreateOrderRequest {
 
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-    public List<CreateOrderLineItemRequest> getOrderLineItems() {
-        return orderLineItems;
     }
 
     public OrderLineItems toOrderLineItems() {
