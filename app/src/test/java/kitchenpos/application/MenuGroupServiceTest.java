@@ -8,11 +8,11 @@ import static org.mockito.Mockito.times;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.dto.MenuGroupCreateRequest;
 import kitchenpos.menugroup.dto.MenuGroupResponse;
-import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

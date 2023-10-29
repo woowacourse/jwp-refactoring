@@ -13,10 +13,10 @@ import kitchenpos.order.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {

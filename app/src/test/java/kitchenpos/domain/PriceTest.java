@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import static java.math.BigDecimal.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.common.Price;
