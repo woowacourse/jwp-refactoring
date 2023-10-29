@@ -4,8 +4,8 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.dto.ChangeOrderStatusRequest;
-import kitchenpos.dto.CreateOrderRequest;
+import kitchenpos.order.dto.ChangeOrderStatusRequest;
+import kitchenpos.order.dto.CreateOrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

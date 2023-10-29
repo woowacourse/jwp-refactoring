@@ -1,6 +1,6 @@
 package kitchenpos.menugroup.application;
 
-import kitchenpos.dto.CreateMenuGroupRequest;
+import kitchenpos.menugroup.dto.CreateMenuGroupRequest;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.assertj.core.api.SoftAssertions;

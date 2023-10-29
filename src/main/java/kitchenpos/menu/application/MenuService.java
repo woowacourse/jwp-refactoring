@@ -2,7 +2,7 @@ package kitchenpos.menu.application;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuValidator;
-import kitchenpos.dto.CreateMenuRequest;
+import kitchenpos.menu.dto.CreateMenuRequest;
 import kitchenpos.menu.repository.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
