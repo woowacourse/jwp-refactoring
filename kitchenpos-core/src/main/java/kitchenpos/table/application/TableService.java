@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
 
-    private final OrderTableRepository orderTableRepository;
+    private final kitchenpos.table.domain.repository.OrderTableRepository orderTableRepository;
     private final TableChangeEmptyValidator tableChangeEmptyValidator;
 
     public TableService(OrderTableRepository orderTableRepository,

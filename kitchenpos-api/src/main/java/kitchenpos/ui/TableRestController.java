@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/tables")
 public class TableRestController {
 
-    private final TableService tableService;
+    private final kitchenpos.table.application.TableService tableService;
 
     public TableRestController(final TableService tableService) {
         this.tableService = tableService;
