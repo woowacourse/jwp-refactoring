@@ -43,7 +43,13 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public static Menu createNewMenu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts, final MenuValidator menuValidator) {
+    public static Menu createNewMenu(
+            final String name,
+            final BigDecimal price,
+            final Long menuGroupId,
+            final List<MenuProduct> menuProducts,
+            final MenuValidator menuValidator
+    ) {
         final Menu menu = new Menu(name, price, menuGroupId, menuProducts);
         menuValidator.validate(menu);
 

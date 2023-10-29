@@ -43,10 +43,6 @@ public class OrderLineItems {
         }
     }
 
-    public void add(final OrderLineItem orderLineItem) {
-        orderLineItems.add(orderLineItem);
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }

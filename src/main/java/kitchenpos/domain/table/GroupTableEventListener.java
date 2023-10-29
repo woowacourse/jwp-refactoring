@@ -19,19 +19,19 @@ public class GroupTableEventListener {
     @EventListener
     @Transactional
     public void handle(final GroupTableEvent groupTableEvent) {
-        final List<Long> orderTableIds = groupTableEvent.getOrderTableIds();
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        validateTableIdAllExists(orderTableIds, savedOrderTables);
-
-        for (final OrderTable orderTable : savedOrderTables) {
+        for (final OrderTable orderTable : getValidatedOrderTables(groupTableEvent)) {
             orderTable.groupBy(groupTableEvent.getTableGroup().getId());
         }
     }
 
-    private void validateTableIdAllExists(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
+    private List<OrderTable> getValidatedOrderTables(final GroupTableEvent groupTableEvent) {
+        final List<Long> orderTableIds = groupTableEvent.getOrderTableIds();
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException("그룹화를 요청한 테이블 중에 존재하지 않는 테이블이 포함되어 있습니다.");
         }
+
+        return savedOrderTables;
     }
 }

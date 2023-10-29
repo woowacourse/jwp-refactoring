@@ -26,9 +26,12 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                                                          .orElseThrow(() -> new IllegalArgumentException("테이블 그룹이 존재하지 않습니다."));
+        final TableGroup tableGroup =
+                tableGroupRepository.findById(tableGroupId)
+                                    .orElseThrow(() -> new IllegalArgumentException("테이블 그룹이 존재하지 않습니다."));
+
         tableGroup.ungroup();
+
         tableGroupRepository.save(tableGroup);
     }
 }

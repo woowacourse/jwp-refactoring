@@ -42,7 +42,6 @@ public class OrderService {
                                                 .orElseThrow(IllegalArgumentException::new);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-
         savedOrder.changeOrderStatus(orderStatus);
 
         return savedOrder;

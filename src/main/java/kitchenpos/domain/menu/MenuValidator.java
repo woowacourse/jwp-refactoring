@@ -16,13 +16,16 @@ public class MenuValidator {
     }
 
     public void validate(final Menu menu) {
+        validateMenuGroupExists(menu);
+        validateMenuPrice(menu);
+    }
+
+    private void validateMenuGroupExists(final Menu menu) {
         final Long menuGroupId = menu.getMenuGroupId();
 
         if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
-
-        validateMenuPrice(menu);
     }
 
     private void validateMenuPrice(final Menu menu) {

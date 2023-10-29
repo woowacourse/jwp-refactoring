@@ -15,7 +15,10 @@ public class UngroupTableEventListener {
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
 
-    public UngroupTableEventListener(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
+    public UngroupTableEventListener(
+            final OrderTableRepository orderTableRepository,
+            final OrderRepository orderRepository
+    ) {
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
     }
@@ -23,7 +26,8 @@ public class UngroupTableEventListener {
     @EventListener
     @Transactional
     public void handle(final UngroupTableEvent ungroupTableEvent) {
-        final List<OrderTable> findOrderTables = orderTableRepository.findAllByTableGroupId(ungroupTableEvent.getTableGroup().getId());
+        final List<OrderTable> findOrderTables =
+                orderTableRepository.findAllByTableGroupId(ungroupTableEvent.getTableGroup().getId());
         final OrderTables orderTables = new OrderTables(findOrderTables);
 
         validateCanUngroup(orderTables);

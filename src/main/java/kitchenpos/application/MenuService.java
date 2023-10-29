@@ -22,7 +22,13 @@ public class MenuService {
 
     @Transactional
     public Menu create(final CreateMenuRequest request) {
-        final Menu menu = Menu.createNewMenu(request.getName(), request.getPrice(), request.getMenuGroupId(), request.toMenuProducts(), menuValidator);
+        final Menu menu = Menu.createNewMenu(
+                request.getName(),
+                request.getPrice(),
+                request.getMenuGroupId(),
+                request.toMenuProducts(),
+                menuValidator
+        );
 
         return menuRepository.save(menu);
     }

@@ -40,7 +40,11 @@ public class Order extends BaseCreateTimeEntity {
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order createNewOrder(final Long orderTableId, final OrderLineItems orderLineItems, OrderValidator orderValidator) {
+    public static Order createNewOrder(
+            final Long orderTableId,
+            final OrderLineItems orderLineItems,
+            final OrderValidator orderValidator
+    ) {
         final Order order = new Order(orderTableId, INITIAL_ORDER_STATUS, orderLineItems);
         orderValidator.validate(order);
 
