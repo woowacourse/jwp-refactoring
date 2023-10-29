@@ -1,4 +1,4 @@
-package kitchenpos.application.order;
+package order.application;
 
 public interface OrderedTableService {
     boolean doesTableExist(Long orderTableId);

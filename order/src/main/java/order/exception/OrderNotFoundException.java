@@ -1,6 +1,6 @@
-package kitchenpos.exception.order;
+package order.exception;
 
-import kitchenpos.exception.common.NotFoundException;
+import common.exception.NotFoundException;
 
 public class OrderNotFoundException extends NotFoundException {
     private static final String RESOURCE = "주문";

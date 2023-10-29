@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package order.domain;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;

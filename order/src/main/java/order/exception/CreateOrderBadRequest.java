@@ -1,6 +1,6 @@
-package kitchenpos.exception.order;
+package order.exception;
 
-import kitchenpos.exception.common.BadRequestException;
+import common.exception.BadRequestException;
 
 public class CreateOrderBadRequest extends BadRequestException {
     public CreateOrderBadRequest(final String message) {

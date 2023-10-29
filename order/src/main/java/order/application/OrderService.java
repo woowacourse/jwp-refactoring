@@ -1,18 +1,18 @@
-package kitchenpos.application.order;
+package order.application;
 
-import kitchenpos.domain.common.Quantity;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItems;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.dto.order.ChangeOrderStatusRequest;
-import kitchenpos.dto.order.CreateOrderRequest;
-import kitchenpos.dto.order.ListOrderResponse;
-import kitchenpos.dto.order.OrderResponse;
-import kitchenpos.exception.menu.MenuNotFoundException;
-import kitchenpos.exception.order.OrderNotFoundException;
-import kitchenpos.exception.order.OrderTableNotFoundException;
+import common.domain.Quantity;
+import menu.domain.Menu;
+import menu.domain.MenuRepository;
+import menu.exception.MenuNotFoundException;
+import order.domain.Order;
+import order.domain.OrderLineItems;
+import order.domain.OrderRepository;
+import order.dto.ChangeOrderStatusRequest;
+import order.dto.CreateOrderRequest;
+import order.dto.ListOrderResponse;
+import order.dto.OrderResponse;
+import order.exception.OrderNotFoundException;
+import order.exception.OrderTableNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

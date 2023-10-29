@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package order.domain;
 
 public enum OrderStatus {
     COOKING, MEAL, COMPLETION
