@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(path: ':kitchenpos-common')
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}
