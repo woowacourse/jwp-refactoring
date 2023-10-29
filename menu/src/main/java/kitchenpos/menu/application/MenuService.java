@@ -5,6 +5,7 @@ import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuGroupRepository;
 import kitchenpos.menu.MenuRepository;
 import kitchenpos.menu.MenuValidator;
+import kitchenpos.menu.ui.MenuProductRequest;
 import kitchenpos.menu.ui.MenuRequest;
 import kitchenpos.menu.ui.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,15 @@ public class MenuService {
         final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
 
         final Menu savedMenu = menuRepository.save(menu);
-        savedMenu.registerMenuProducts(menuValidator, menuRequest.getMenuProducts(), menuRequest.getPrice());
+        List<Long> productIds = menuRequest.getMenuProducts()
+                .stream().map(MenuProductRequest::getProductId)
+                .collect(Collectors.toList());
+
+        List<Long> quantities = menuRequest.getMenuProducts()
+                .stream().map(MenuProductRequest::getQuantity)
+                .collect(Collectors.toList());
+
+        savedMenu.registerMenuProducts(menuValidator, productIds, quantities, menuRequest.getPrice());
 
         return MenuResponse.from(savedMenu);
     }

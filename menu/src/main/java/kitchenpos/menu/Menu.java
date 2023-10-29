@@ -1,7 +1,5 @@
 package kitchenpos.menu;
 
-import kitchenpos.menu.ui.MenuProductRequest;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,13 +36,21 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name,
+    public Menu(final Long id,
+                final String name,
                 final BigDecimal price,
                 final MenuGroup menuGroup) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         validatePriceRange(price);
+    }
+
+    public Menu(final String name,
+                final BigDecimal price,
+                final MenuGroup menuGroup) {
+        this(null, name, price, menuGroup);
     }
 
     private void validatePriceRange(final BigDecimal price) {
@@ -54,9 +60,10 @@ public class Menu {
     }
 
     public void registerMenuProducts(final MenuValidator menuValidator,
-                                     final List<MenuProductRequest> menuProductRequests,
+                                     final List<Long> productIds,
+                                     final List<Long> quantities,
                                      final BigDecimal price) {
-        menuValidator.validateMenuPrice(this, menuProductRequests, price);
+        menuValidator.validateMenuPrice(this, productIds, quantities, price);
         this.menuProducts.addAll(menuProducts);
     }
 

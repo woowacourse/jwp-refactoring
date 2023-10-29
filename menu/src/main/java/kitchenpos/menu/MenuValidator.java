@@ -1,6 +1,5 @@
 package kitchenpos.menu;
 
-import kitchenpos.menu.ui.MenuProductRequest;
 import kitchenpos.product.Product;
 import kitchenpos.product.ProductRepository;
 import org.springframework.stereotype.Component;
@@ -17,13 +16,13 @@ public class MenuValidator {
         this.productRepository = productRepository;
     }
 
-    public void validateMenuPrice(final Menu menu, final List<MenuProductRequest> menuProductRequests, final BigDecimal price) {
+    public void validateMenuPrice(final Menu menu, final List<Long> productIds, List<Long> quantities, final BigDecimal price) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
 
-        for (MenuProductRequest request : menuProductRequests) {
-            final Product product = productRepository.findById(request.getProductId())
+        for (int i = 0; i < productIds.size(); i++) {
+            final Product product = productRepository.findById(productIds.get(i))
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴상품입니다. 메뉴를 등록할 수 없습니다."));
-            menuProducts.add(new MenuProduct(menu, product.getId(), request.getQuantity()));
+            menuProducts.add(new MenuProduct(menu, product.getId(), quantities.get(i)));
         }
 
         BigDecimal sum = BigDecimal.ZERO;

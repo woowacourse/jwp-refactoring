@@ -10,6 +10,7 @@ import kitchenpos.order.OrderLineItemRepository;
 import kitchenpos.order.OrderRepository;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.order.ui.OrderLineItemDto;
 import kitchenpos.order.ui.OrderRequest;
 import kitchenpos.order.ui.OrderResponse;
 import kitchenpos.ordertable.OrderTable;
@@ -56,6 +57,7 @@ class OrderServiceTest {
     private Menu menu;
     private OrderTable orderTable;
     private OrderLineItem orderLineItem;
+    private OrderLineItemDto orderLineItemDto;
     private Order order;
 
     @BeforeEach
@@ -64,7 +66,8 @@ class OrderServiceTest {
         menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(30000), menuGroup));
         orderTable = orderTableRepository.save(new OrderTable(null, 1, false));
         order = orderRepository.save(new Order(orderTable.getId(), MEAL.name(), LocalDateTime.now()));
-        orderLineItem = orderLineItemRepository.save(new OrderLineItem(order, menu.getId(), 1));
+        orderLineItem = orderLineItemRepository.save(new OrderLineItem(order, menu.getName(), menu.getPrice(), 1));
+        orderLineItemDto = new OrderLineItemDto(order.getId(), menu.getId(), 2L);
     }
 
     @Nested
@@ -72,7 +75,7 @@ class OrderServiceTest {
 
         @Test
         void 주문을_등록한다() {
-            OrderRequest orderRequest = new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItem));
+            OrderRequest orderRequest = new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItemDto));
 
             OrderResponse response = orderService.create(orderRequest);
 
@@ -82,10 +85,10 @@ class OrderServiceTest {
                 softly.assertThat(response).extracting("orderTableId", "orderStatus")
                         .containsOnly(orderRequest.getOrderTableId(), orderRequest.getOrderStatus());
 
-                List<Long> menuIds = response.getOrderLineItems().stream()
-                        .map(OrderLineItem::getMenuId)
+                List<String> orderNames = response.getOrderLineItems().stream()
+                        .map(OrderLineItem::getName)
                         .collect(Collectors.toList());
-                softly.assertThat(menuIds).containsOnly(orderLineItem.getMenuId());
+                softly.assertThat(orderNames).containsOnly(orderLineItem.getName());
             });
         }
 
@@ -100,20 +103,20 @@ class OrderServiceTest {
 
         @Test
         void 주문_항목에_존재하지_않는_메뉴가_있으면_등록할_수_없다() {
-            Menu notExistMenu = new Menu(null, BigDecimal.ONE, null);
-            OrderLineItem wrongOrderLineItem = new OrderLineItem(null, notExistMenu.getId(), 2);
+            Menu notExistMenu = new Menu(1000L, "name", BigDecimal.ONE, menuGroup);
+            OrderLineItemDto wrongOrderLineItem = new OrderLineItemDto(order.getId(), notExistMenu.getId(), 2L);
             OrderRequest orderRequest = new OrderRequest(orderTable.getId(), MEAL.name(),
-                    LocalDateTime.now(), List.of(orderLineItem, wrongOrderLineItem));
+                    LocalDateTime.now(), List.of(orderLineItemDto, wrongOrderLineItem));
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalStateException.class)
+                    .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문항목에 존재하지 않는 메뉴가 있습니다. 주문을 등록할 수 없습니다.");
         }
 
         @Test
         void 해당하는_주문_테이블이_존재하지_않으면_등록할_수_없다() {
             long notExistId = Long.MIN_VALUE;
-            OrderRequest orderRequest = new OrderRequest(notExistId, null, LocalDateTime.now(), List.of(orderLineItem));
+            OrderRequest orderRequest = new OrderRequest(notExistId, null, LocalDateTime.now(), List.of(orderLineItemDto));
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -126,11 +129,11 @@ class OrderServiceTest {
         @Test
         void 주문_상태를_변경할_수_있다() {
             OrderResponse orderResponse = orderService.create(
-                    new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItem))
+                    new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItemDto))
             );
 
             OrderRequest orderRequest = new OrderRequest(orderResponse.getOrderTableId(), orderResponse.getOrderStatus(),
-                    orderResponse.getOrderedTime(), orderResponse.getOrderLineItems());
+                    orderResponse.getOrderedTime(), List.of(orderLineItemDto));
             OrderResponse changed = orderService.changeOrderStatus(orderResponse.getId(), orderRequest);
 
             assertThat(changed.getOrderStatus()).isEqualTo(MEAL.name());
@@ -147,11 +150,11 @@ class OrderServiceTest {
         @Test
         void 주문이_이미_완료된_경우_상태를_변경할_수_없다() {
             OrderResponse orderResponse = orderService.create(
-                    new OrderRequest(orderTable.getId(), COMPLETION.name(), LocalDateTime.now(), List.of(orderLineItem))
+                    new OrderRequest(orderTable.getId(), COMPLETION.name(), LocalDateTime.now(), List.of(orderLineItemDto))
             );
 
             OrderRequest changeRequest = new OrderRequest(orderResponse.getOrderTableId(), OrderStatus.COOKING.name(),
-                    orderResponse.getOrderedTime(), orderResponse.getOrderLineItems());
+                    orderResponse.getOrderedTime(), List.of(orderLineItemDto));
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), changeRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -162,10 +165,10 @@ class OrderServiceTest {
     @Test
     void 주문목록을_조회한다() {
         OrderResponse order2 = orderService.create(
-                new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItem))
+                new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItemDto))
         );
         OrderResponse order3 = orderService.create(
-                new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItem))
+                new OrderRequest(orderTable.getId(), MEAL.name(), LocalDateTime.now(), List.of(orderLineItemDto))
         );
 
         List<OrderResponse> orderResponses = orderService.list();

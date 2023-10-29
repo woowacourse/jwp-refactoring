@@ -23,13 +23,13 @@ public class TableGroup {
     @Column
     private LocalDateTime createdDate;
 
-    public TableGroup() {
-        this.createdDate = LocalDateTime.now();
+    public TableGroup(Long id, LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
     }
 
-    public TableGroup(final Long id) {
-        this.id = id;
-        this.createdDate = LocalDateTime.now();
+    public TableGroup() {
+        this(null, LocalDateTime.now());
     }
 
     public void unGroup(TableValidator tableValidator, List<OrderTable> orderTables) {

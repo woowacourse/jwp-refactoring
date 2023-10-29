@@ -1,7 +1,5 @@
 package kitchenpos.order.ui;
 
-import kitchenpos.order.OrderLineItem;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,12 +8,12 @@ public class OrderRequest {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemDto> orderLineItems;
 
     public OrderRequest(Long orderTableId,
                         String orderStatus,
                         LocalDateTime orderedTime,
-                        List<OrderLineItem> orderLineItems) {
+                        List<OrderLineItemDto> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -34,7 +32,7 @@ public class OrderRequest {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemDto> getOrderLineItemDtos() {
         return orderLineItems;
     }
 }

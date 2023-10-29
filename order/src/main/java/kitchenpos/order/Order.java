@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "orders")
@@ -42,7 +43,9 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems.addAll(orderLineItems);
+        if (Objects.nonNull(orderLineItems)) {
+            this.orderLineItems.addAll(orderLineItems);
+        }
     }
 
     public Order(final Long orderTableId,
@@ -55,15 +58,18 @@ public class Order {
     public Order(final Long orderTableId,
                  final String orderStatus,
                  final LocalDateTime orderedTime) {
-        this(null, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime, List.of());
+        this(null, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime, null);
     }
 
     public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (Objects.isNull(orderLineItems)) {
+            return;
+        }
         this.orderLineItems.addAll(orderLineItems);
     }
 
     public void place(final OrderValidator orderValidator) {
-        orderValidator.validate(this);
+        orderValidator.validateOrderLineItemExist(this);
     }
 
     public void updateStatus(final Order other) {

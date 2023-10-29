@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.math.BigDecimal;
 
 @Entity
 public class OrderLineItem {
@@ -17,29 +18,23 @@ public class OrderLineItem {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-    private Long menuId;
+    private String name;
+    private BigDecimal price;
     @Column
     private long quantity;
 
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq,
-                         final Order order,
-                         final Long menuId,
+    public OrderLineItem(final Order order,
+                         final String name,
+                         final BigDecimal price,
                          final long quantity) {
-        this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
-
-    public OrderLineItem(final Order order,
-                         final Long menuId,
-                         final long quantity) {
-        this(null, order, menuId, quantity);
-    }
-
 
     public Long getSeq() {
         return seq;
@@ -53,8 +48,12 @@ public class OrderLineItem {
         return order.getId();
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public long getQuantity() {
