@@ -38,9 +38,3 @@ subprojects {
         useJUnitPlatform()
     }
 }
-
-project(':module-web') {
-    dependencies {
-        implementation project(':module-core')
-    }
-}
