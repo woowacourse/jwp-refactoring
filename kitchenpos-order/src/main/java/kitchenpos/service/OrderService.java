@@ -2,8 +2,12 @@ package kitchenpos.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
+import kitchenpos.domain.OrderMenuProduct;
 import kitchenpos.domain.type.OrderStatus;
 import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.request.ChangeOrderRequest;
@@ -13,6 +17,8 @@ import kitchenpos.exception.EmptyListException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderMenuProductRepository;
+import kitchenpos.repository.OrderMenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.validator.OrderValidator;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,21 +34,24 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
+    private final OrderMenuProductRepository orderMenuProductRepository;
+    private final OrderMenuRepository orderMenuRepository;
     private final OrderValidator orderValidator;
-    private final OrderSnapShotCreator orderSnapShotCreator;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
-            final OrderValidator orderValidator,
-            final OrderSnapShotCreator orderSnapShotCreator
+            final OrderMenuProductRepository orderMenuProductRepository,
+            final OrderMenuRepository orderMenuRepository,
+            final OrderValidator orderValidator
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
+        this.orderMenuProductRepository = orderMenuProductRepository;
+        this.orderMenuRepository = orderMenuRepository;
         this.orderValidator = orderValidator;
-        this.orderSnapShotCreator = orderSnapShotCreator;
     }
 
     public OrderResponse create(final CreateOrderRequest request) {
@@ -67,8 +76,10 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = orderLineItemDtos.stream()
                 .map(OrderLineItem::from)
                 .collect(Collectors.toList());
+
         orderLineItemRepository.saveAll(orderLineItems);
-        orderSnapShotCreator.createOrderSnapShot(orderLineItemDtos);
+
+        createOrderSnapShot(orderLineItemDtos);
 
         return OrderResponse.from(Order.of(order, orderLineItems));
     }
@@ -93,5 +104,44 @@ public class OrderService {
         savedOrder.changeOrderStatus(orderStatus);
 
         return OrderResponse.from(savedOrder);
+    }
+
+    private void createOrderSnapShot(final List<OrderLineItemsDto> orderLineItemsDtos){
+        final List<Long> menuIds = orderLineItemsDtos.stream()
+                .map(OrderLineItemsDto::getMenuId)
+                .collect(Collectors.toList());
+        final List<Menu> menus = menuRepository.findAllById(menuIds);
+        for (final OrderLineItemsDto dto : orderLineItemsDtos) {
+            final Menu menu = findMenuById(menus, dto.getMenuId());
+            final OrderMenu orderMenu = orderMenuRepository.save(
+                    new OrderMenu(
+                            menu.getName(),
+                            menu.getPrice(),
+                            menu.getMenuGroupId()
+                    )
+            );
+            orderMenuRepository.save(orderMenu);
+            saveAllProduct(menu.getMenuProducts());
+            dto.changeToOrderMenuId(orderMenu.getId());
+        }
+    }
+
+    private Menu findMenuById(final List<Menu> menus, final Long id) {
+        return menus.stream()
+                .filter(menu -> menu.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchDataException("해당하는 id의 메뉴가 없습니다."));
+    }
+
+    private void saveAllProduct(final List<MenuProduct> menuProducts) {
+        final List<OrderMenuProduct> orderMenuProducts = menuProducts.stream()
+                .map(menuProduct -> new OrderMenuProduct(
+                                menuProduct.getMenuId(),
+                                menuProduct.getProductId(),
+                                menuProduct.getQuantity()
+                        )
+                )
+                .collect(Collectors.toList());
+        orderMenuProductRepository.saveAll(orderMenuProducts);
     }
 }
