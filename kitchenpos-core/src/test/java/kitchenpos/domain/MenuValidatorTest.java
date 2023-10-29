@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +12,6 @@ import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class MenuValidatorTest extends ServiceTest {
         final var menu = new Menu("망고 치킨", value, menuGroup.getId(), menuProducts);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> menuValidator.validate(menu))
+        assertThatThrownBy(() -> menuValidator.validate(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -59,7 +60,7 @@ class MenuValidatorTest extends ServiceTest {
         final var menu = new Menu("망고 치킨", price, menuGroup.getId(), menuProducts);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> menuValidator.validate(menu))
+        assertThatThrownBy(() -> menuValidator.validate(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

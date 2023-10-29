@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -16,7 +17,6 @@ import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ class OrderValidatorTest extends ServiceTest {
         final var order = new Order(orderTable.getId(), COOKING, LocalDateTime.now(), orderLineItems);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> orderValidator.validate(order))
+        assertThatThrownBy(() -> orderValidator.validate(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -65,7 +65,7 @@ class OrderValidatorTest extends ServiceTest {
         final var order = new Order(orderTable.getId(), COOKING, LocalDateTime.now(), orderLineItems);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> orderValidator.validate(order))
+        assertThatThrownBy(() -> orderValidator.validate(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -80,7 +80,7 @@ class OrderValidatorTest extends ServiceTest {
 
         // when & then
         final var orderStatus = order.getOrderStatus();
-        Assertions.assertThatThrownBy(() -> orderValidator.validateOrderStatus(orderStatus))
+        assertThatThrownBy(() -> orderValidator.validateOrderStatus(orderStatus))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -4,6 +4,7 @@ import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import kitchenpos.application.ServiceTest;
@@ -15,7 +16,6 @@ import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -77,7 +77,7 @@ class OrderServiceTest extends ServiceTest {
             final var request = OrderFixture.주문요청_생성(savedOrderTable);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> orderService.create(request))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -102,7 +102,7 @@ class OrderServiceTest extends ServiceTest {
             final var request = OrderFixture.주문요청_생성(savedOrderTable, orderLineItem);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> orderService.create(request))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -127,7 +127,7 @@ class OrderServiceTest extends ServiceTest {
             final var request = OrderFixture.주문요청_생성(invalidOrderTable, orderLineItem);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> orderService.create(request))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -153,7 +153,7 @@ class OrderServiceTest extends ServiceTest {
             final var request = OrderFixture.주문요청_생성(savedOrderTable, orderLineItem);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> orderService.create(request))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -261,7 +261,7 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             final var invalidId = 999999L;
-            Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, request))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -290,7 +290,7 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             final var id = order.getId();
-            Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(id, request))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

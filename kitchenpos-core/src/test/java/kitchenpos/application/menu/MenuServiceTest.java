@@ -1,6 +1,7 @@
 package kitchenpos.application.menu;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import kitchenpos.application.ServiceTest;
@@ -9,7 +10,6 @@ import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -69,7 +69,7 @@ class MenuServiceTest extends ServiceTest {
             final var request = MenuFixture.메뉴요청_망고치킨_N원_생성(-1, savedMenuGroup, menuProduct1, menuProduct2);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> menuService.create(request))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -88,7 +88,7 @@ class MenuServiceTest extends ServiceTest {
             final var request = MenuFixture.메뉴요청_생성(menu);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> menuService.create(request))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -104,7 +104,7 @@ class MenuServiceTest extends ServiceTest {
             final var request = MenuFixture.메뉴요청_생성(menu);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> menuService.create(request))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -123,7 +123,7 @@ class MenuServiceTest extends ServiceTest {
             final var request = MenuFixture.메뉴요청_망고치킨_N원_생성(17_000, savedMenuGroup, menuProduct1, menuProduct2);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> menuService.create(request))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -1,6 +1,7 @@
 package kitchenpos.application.tablegroup;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Collections;
@@ -9,7 +10,6 @@ import kitchenpos.application.ServiceTest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -56,7 +56,7 @@ class TableGroupServiceTest extends ServiceTest {
             final var request = TableGroupFixture.단체지정요청_생성(Collections.singletonList(savedOrderTable));
 
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -70,7 +70,7 @@ class TableGroupServiceTest extends ServiceTest {
             final var request = TableGroupFixture.단체지정요청_생성(List.of(savedOrderTable, orderTable2));
 
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -84,7 +84,7 @@ class TableGroupServiceTest extends ServiceTest {
             final var request = TableGroupFixture.단체지정요청_생성(savedOrderTables);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

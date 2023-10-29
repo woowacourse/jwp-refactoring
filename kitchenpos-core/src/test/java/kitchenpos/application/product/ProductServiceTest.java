@@ -1,12 +1,12 @@
 package kitchenpos.application.product;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.application.ServiceTest;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.ProductFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +45,7 @@ class ProductServiceTest extends ServiceTest {
             final var request = ProductFixture.상품요청_생성("INVALID", -1);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> productService.create(request))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

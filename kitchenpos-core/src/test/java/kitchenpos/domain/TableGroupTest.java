@@ -1,10 +1,11 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.util.Collections;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ class TableGroupTest {
         final var orderTables = Collections.<OrderTable>emptyList();
 
         // when & then
-        Assertions.assertThatThrownBy(() -> new TableGroup(orderTables))
+        assertThatThrownBy(() -> new TableGroup(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -29,7 +30,7 @@ class TableGroupTest {
         final var orderTables = Collections.singletonList(OrderTableFixture.빈테이블_1명());
 
         // when & then
-        Assertions.assertThatThrownBy(() -> new TableGroup(orderTables))
+        assertThatThrownBy(() -> new TableGroup(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -39,7 +40,7 @@ class TableGroupTest {
         final var orderTables = Collections.singletonList(OrderTableFixture.주문테이블_N명(1));
 
         // when & then
-        Assertions.assertThatThrownBy(() -> new TableGroup(orderTables))
+        assertThatThrownBy(() -> new TableGroup(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -49,7 +50,7 @@ class TableGroupTest {
         final var orderTables = Collections.singletonList(OrderTableFixture.빈테이블_1명_단체지정());
 
         // when & then
-        Assertions.assertThatThrownBy(() -> new TableGroup(orderTables))
+        assertThatThrownBy(() -> new TableGroup(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

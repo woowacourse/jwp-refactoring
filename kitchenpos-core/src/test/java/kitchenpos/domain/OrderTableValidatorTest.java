@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.domain.order.OrderStatus.MEAL;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.application.ServiceTest;
 import kitchenpos.domain.table.OrderTableValidator;
@@ -11,7 +12,6 @@ import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class OrderTableValidatorTest extends ServiceTest {
         orderTable1.changeEmpty(true);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> orderTableValidator.validateChangeEmpty(orderTable1))
+        assertThatThrownBy(() -> orderTableValidator.validateChangeEmpty(orderTable1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -68,7 +68,7 @@ class OrderTableValidatorTest extends ServiceTest {
         order.changeOrderStatus(MEAL);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> orderTableValidator.validateChangeEmpty(orderTable1))
+        assertThatThrownBy(() -> orderTableValidator.validateChangeEmpty(orderTable1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -79,7 +79,7 @@ class OrderTableValidatorTest extends ServiceTest {
         orderTable.changeNumberOfGuests(10);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> orderTableValidator.validateChangeNumberOfGuests(orderTable))
+        assertThatThrownBy(() -> orderTableValidator.validateChangeNumberOfGuests(orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -90,7 +90,7 @@ class OrderTableValidatorTest extends ServiceTest {
         orderTable.changeNumberOfGuests(-1);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> orderTableValidator.validateChangeNumberOfGuests(orderTable))
+        assertThatThrownBy(() -> orderTableValidator.validateChangeNumberOfGuests(orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

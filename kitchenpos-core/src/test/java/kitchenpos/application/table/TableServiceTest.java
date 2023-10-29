@@ -2,6 +2,7 @@ package kitchenpos.application.table;
 
 import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import kitchenpos.application.ServiceTest;
@@ -12,7 +13,6 @@ import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -91,7 +91,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             final var id = orderTable.getId();
-            Assertions.assertThatThrownBy(() -> tableService.changeEmpty(id, request))
+            assertThatThrownBy(() -> tableService.changeEmpty(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -121,7 +121,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             final var id = orderTable.getId();
-            Assertions.assertThatThrownBy(() -> tableService.changeEmpty(id, request))
+            assertThatThrownBy(() -> tableService.changeEmpty(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -156,7 +156,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             final var id = orderTable.getId();
-            Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, request))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -171,7 +171,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             final var id = savedOrderTable.getId();
-            Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, request))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
