@@ -9,7 +9,7 @@ import kitchenpos.menu.domain.Price;
 @Embeddable
 public class OrderMenu {
 
-    @Column(nullable = false)
+    @Column(name = "menu_id", nullable = false)
     private Long menuId;
 
     private String menuName;

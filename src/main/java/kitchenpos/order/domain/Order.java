@@ -2,18 +2,15 @@ package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
 
 @Table(name = "orders")
 @Entity
@@ -23,9 +20,8 @@ public class Order {
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id", nullable = false)
+    private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.COOKING;
@@ -38,16 +34,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final LocalDateTime orderedTime) {
-        validateOrderTable(orderTable);
-        this.orderTable = orderTable;
+    public Order(final Long orderTableId, final LocalDateTime orderedTime) {
+        this.orderTableId = orderTableId;
         this.orderedTime = orderedTime;
-    }
-
-    private void validateOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블에는 주문을 넣을 수 없습니다.");
-        }
     }
 
     public Long getId() {
@@ -73,8 +62,8 @@ public class Order {
         return OrderStatus.COMPLETION.equals(orderStatus);
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public LocalDateTime getOrderedTime() {
