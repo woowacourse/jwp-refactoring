@@ -23,7 +23,6 @@ public class TableGroupManager {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public void group(final TableGroup tableGroup, final List<Long> orderTableIds) {
         final List<OrderTable> orderTables = convertToOrderTables(orderTableIds);
         validateTableGroupAvailability(orderTables);
@@ -59,7 +58,6 @@ public class TableGroupManager {
         }
     }
 
-    @Transactional
     public void ungroup(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
         final List<Long> orderTableIds = convertToOrderTableIds(orderTables);
