@@ -59,15 +59,10 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final TableGroup tableGroup = findTableGroupById(tableGroupId);
+        final TableGroup tableGroup = tableGroupRepository.getByIdOrThrow(tableGroupId);
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         applicationEventPublisher.publishEvent(new TableGroupUnGroupEvent(orderTables));
         orderTables.forEach(OrderTable::unGroup);
         tableGroupRepository.save(tableGroup);
-    }
-
-    private TableGroup findTableGroupById(final Long tableGroupId) {
-        return tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 단체 지정 번호입니다."));
     }
 }

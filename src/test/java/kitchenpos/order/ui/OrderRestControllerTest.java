@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.order.application.dto.request.OrderCreateRequest;
 import kitchenpos.order.application.dto.request.OrderStatusChangeRequest;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.order.application.dto.response.OrderResponse;
 import kitchenpos.order.domain.OrderStatus;
@@ -95,7 +96,7 @@ class OrderRestControllerTest {
         //when
         //then
         assertThatThrownBy(() -> orderRestController.changeOrderStatus(1L, request))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(OrderRepository.NoEntityException.class)
                 .hasMessage("존재하지 않는 주문입니다.");
     }
 

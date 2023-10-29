@@ -38,20 +38,15 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         applicationEventPublisher.publishEvent(new OrderTableChangeEmptyEvent(orderTableId));
-        final OrderTable orderTable = findOrderTableById(orderTableId);
+        final OrderTable orderTable = orderTableRepository.getByIdOrThrow(orderTableId);
         orderTable.updateEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
-    }
-
-    private OrderTable findOrderTableById(final Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableChangeNumberOfGuestsRequest request) {
-        final OrderTable orderTable = findOrderTableById(orderTableId);
+        final OrderTable orderTable = orderTableRepository.getByIdOrThrow(orderTableId);
         orderTable.updateNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
