@@ -4,9 +4,5 @@ jar { enabled = true }
 dependencies {
     implementation project(':core')
     implementation project(':domain-menu')
-    implementation project(':domain-menugroup')
-    implementation project(':domain-order')
     implementation project(':domain-ordertable')
-    implementation project(':domain-product')
-    implementation project(':domain-tablegroup')
 }

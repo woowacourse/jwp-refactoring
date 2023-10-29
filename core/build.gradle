@@ -1,11 +1,2 @@
 bootJar { enabled = false }
 jar { enabled = true }
-
-dependencies {
-    testImplementation project(':domain-menu')
-    testImplementation project(':domain-menugroup')
-    testImplementation project(':domain-order')
-    testImplementation project(':domain-ordertable')
-    testImplementation project(':domain-product')
-    testImplementation project(':domain-tablegroup')
-}

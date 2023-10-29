@@ -1,4 +1,4 @@
-package tablegroup.application;
+package kitchenpos.tablegroup;
 
 import kitchenpos.config.ServiceTestConfig;
 import kitchenpos.exception.InvalidOrderTableToTableGroup;
