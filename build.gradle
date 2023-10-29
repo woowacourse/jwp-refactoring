@@ -4,6 +4,12 @@ plugins {
     id 'java'
 }
 
+bootJar.enabled = false
+
+repositories {
+    mavenCentral()
+}
+
 subprojects {
     group = 'camp.nextstep.edu'
     version = '0.0.1-SNAPSHOT'
@@ -35,4 +41,9 @@ project(':module-api') {
     dependencies {
         implementation project(':module-core')
     }
+}
+
+project(':module-core') {
+    bootJar { enabled = false }
+    jar { enabled = true }
 }
