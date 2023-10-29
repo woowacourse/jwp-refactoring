@@ -162,7 +162,7 @@ class OrderServiceTest {
 
         // when
         OrderResponse changedOrder = orderService.changeOrderStatus(savedOrder.getId(),
-                new Order(orderTable, OrderStatus.MEAL));
+                Order.of(orderTable, OrderStatus.MEAL));
 
         // then
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
@@ -187,11 +187,11 @@ class OrderServiceTest {
 
         OrderResponse orderResponse = orderService.create(orderCreateRequest);
 
-        orderService.changeOrderStatus(orderResponse.getId(), new Order(null, null, OrderStatus.COMPLETION, null, null));
+        orderService.changeOrderStatus(orderResponse.getId(), Order.of(orderTable, OrderStatus.COMPLETION));
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(),
-                new Order(null, null, OrderStatus.MEAL, null, null)))
+                Order.of(orderTable, OrderStatus.MEAL)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

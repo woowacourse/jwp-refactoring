@@ -14,8 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,13 +77,14 @@ class TableServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"MEAL", "COOKING"})
     void 주문_테이블의_주문_상태가_MEAL_이나_COOKING이면_empty_상태_변경_요청시_예외_발생(OrderStatus status) {
         // given
-        OrderTableResponse orderTableResponse = tableService.create(new TableCreateRequest(3, true));
+        OrderTableResponse orderTableResponse = tableService.create(new TableCreateRequest(3, false));
         OrderTable orderTable = new OrderTable(orderTableResponse.getId(), orderTableResponse.getTableGroupId(), orderTableResponse.getNumberOfGuests(), orderTableResponse.isEmpty());
+        ;
 
-        orderRepository.save(new Order(null, orderTable, status, LocalDateTime.now(), Collections.emptyList()));
+        orderRepository.save(Order.of(orderTable, status));
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new TableEmptyUpdateRequest(false)))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new TableEmptyUpdateRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

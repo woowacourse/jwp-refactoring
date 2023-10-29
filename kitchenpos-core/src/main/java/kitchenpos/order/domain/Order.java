@@ -41,7 +41,7 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -49,20 +49,16 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long id, OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this.id = id;
-        this.orderTable = orderTable;
-        this.orderLineItems = orderLineItems;
-    }
-
-    public Order(OrderTable orderTable, OrderStatus orderStatus) {
-        this.id = null;
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-    }
-
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderLineItems);
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    public static Order of(OrderTable orderTable, OrderStatus orderStatus) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        return new Order(null, orderTable, orderStatus, LocalDateTime.now(), new ArrayList<>());
     }
 
 

@@ -7,6 +7,7 @@ import kitchenpos.order.application.request.OrderLineItemCreateRequest;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderedMenu;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
@@ -14,7 +15,6 @@ import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +43,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order order = new Order(orderTable, new ArrayList<>());
+        Order order = Order.of(orderTable, OrderStatus.COOKING);
 
         for (final OrderLineItemCreateRequest orderLineItem : orderLineItemCreateRequests) {
             Menu menu = menuRepository.findById(orderLineItem.getMenuId())
@@ -59,13 +59,8 @@ public class OrderService {
     }
 
     private OrderTable getOrderTable(OrderCreateRequest orderCreateRequest) {
-        OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+        return orderTableRepository.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        return orderTable;
     }
 
     @Transactional(readOnly = true)

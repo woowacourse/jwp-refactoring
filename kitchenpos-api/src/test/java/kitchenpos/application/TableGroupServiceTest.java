@@ -125,7 +125,7 @@ class TableGroupServiceTest {
 
         TableGroupResponse tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
-        Order save = orderRepository.save(new Order(orderTable1, status));
+        Order save = orderRepository.save(Order.of(orderTable1, status));
         System.out.println(save);
 
 
