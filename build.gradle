@@ -41,6 +41,19 @@ test {
     useJUnitPlatform()
 }
 
+project(':app') {
+    dependencies {
+        implementation project(':product')
+        implementation project(':menugroup')
+        implementation project(':order')
+        implementation project(':menu')
+        implementation project(':table')
+        implementation project(':tablegroup')
+    }
+
+    bootJar { enabled = true }
+}
+
 project(':menu') {
     dependencies {
         implementation project(':common')
@@ -49,7 +62,7 @@ project(':menu') {
     }
 }
 
-project(':menugroup'){
+project(':menugroup') {
     dependencies {
         implementation project(':common')
     }
