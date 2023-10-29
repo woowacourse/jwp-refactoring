@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 
 public class ProductResponse {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
 
     private ProductResponse(Long id, String name, BigDecimal price) {
         this.id = id;

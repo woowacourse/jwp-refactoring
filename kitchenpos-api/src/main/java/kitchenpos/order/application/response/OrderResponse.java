@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 public class OrderResponse {
 
-    private Long id;
-    private OrderTable orderTable;
-    private OrderStatus orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItemResponse> orderLineItems;
+    private final Long id;
+    private final OrderTable orderTable;
+    private final OrderStatus orderStatus;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItemResponse> orderLineItems;
 
     private OrderResponse(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
@@ -53,10 +53,10 @@ public class OrderResponse {
     }
 
     public static class OrderLineItemResponse {
-        private Long seq;
-        private Long orderId;
-        private OrderedMenuResponse orderedMenuResponse;
-        private long quantity;
+        private final Long seq;
+        private final Long orderId;
+        private final OrderedMenuResponse orderedMenuResponse;
+        private final long quantity;
 
         private OrderLineItemResponse(Long seq, Long orderId, OrderedMenuResponse orderedMenuResponse, long quantity) {
             this.seq = seq;
@@ -87,9 +87,9 @@ public class OrderResponse {
         }
 
         public static class OrderedMenuResponse {
-            private Long menuId;
-            private String menuName;
-            private BigDecimal menuPrice;
+            private final Long menuId;
+            private final String menuName;
+            private final BigDecimal menuPrice;
 
             private OrderedMenuResponse(Long menuId, String menuName, BigDecimal menuPrice) {
                 this.menuId = menuId;

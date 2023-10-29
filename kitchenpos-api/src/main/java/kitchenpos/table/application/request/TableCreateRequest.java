@@ -2,8 +2,8 @@ package kitchenpos.table.application.request;
 
 public class TableCreateRequest {
 
-    private Integer numberOfGuests;
-    private Boolean empty;
+    private final Integer numberOfGuests;
+    private final Boolean empty;
 
     public TableCreateRequest(Integer numberOfGuests, Boolean empty) {
         this.numberOfGuests = numberOfGuests;

@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 
 public class MenuResponse {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private MenuGroup menuGroup;
-    private List<MenuProductResponse> menuProducts;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final MenuGroup menuGroup;
+    private final List<MenuProductResponse> menuProducts;
 
     private MenuResponse(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProductResponse> menuProducts) {
         this.id = id;
@@ -50,10 +50,10 @@ public class MenuResponse {
     }
 
     public static class MenuProductResponse {
-        private Long seq;
-        private Long menuId;
-        private Long productId;
-        private long quantity;
+        private final Long seq;
+        private final Long menuId;
+        private final Long productId;
+        private final long quantity;
 
         private MenuProductResponse(Long seq, Long menuId, Long productId, long quantity) {
             this.seq = seq;
