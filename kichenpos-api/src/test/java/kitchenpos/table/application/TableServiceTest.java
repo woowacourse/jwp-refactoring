@@ -9,6 +9,9 @@ import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.table.domain.NumberOfGuests;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.ChangeNumberOfGuestsDto;
+import kitchenpos.table.dto.ChangeOrderTableEmptyDto;
+import kitchenpos.table.dto.CreateOrderTableDto;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
@@ -16,9 +19,6 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.table.dto.ChangeNumberOfGuestsRequest;
-import kitchenpos.table.dto.ChangeOrderTableEmptyRequest;
-import kitchenpos.table.dto.CreateOrderTableRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,7 +71,7 @@ class TableServiceTest {
     @DisplayName("테이블을 등록한다")
     void create() {
         // given
-        final CreateOrderTableRequest request = new CreateOrderTableRequest(2, true);
+        final CreateOrderTableDto request = new CreateOrderTableDto(2, true);
 
         // when
         final OrderTable actual = tableService.create(request);
@@ -114,7 +114,7 @@ class TableServiceTest {
         em.clear();
 
         final Long tableId = 두명_테이블.getId();
-        final ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
+        final ChangeOrderTableEmptyDto request = new ChangeOrderTableEmptyDto(false);
 
         // when
         final OrderTable actual = tableService.changeEmpty(tableId, request);
@@ -129,7 +129,7 @@ class TableServiceTest {
         // given
         final Long invalidOrderTableId = -999L;
 
-        final ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
+        final ChangeOrderTableEmptyDto request = new ChangeOrderTableEmptyDto(false);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, request))
@@ -151,7 +151,7 @@ class TableServiceTest {
         em.clear();
 
         final Long groupedTableId = 세명_테이블.getId();
-        final ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
+        final ChangeOrderTableEmptyDto request = new ChangeOrderTableEmptyDto(false);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(groupedTableId, request))
@@ -177,7 +177,7 @@ class TableServiceTest {
         em.clear();
 
         final Long notCompleteTableId = 두명_테이블.getId();
-        final ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
+        final ChangeOrderTableEmptyDto request = new ChangeOrderTableEmptyDto(false);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(notCompleteTableId, request))
@@ -196,7 +196,7 @@ class TableServiceTest {
 
         final Long tableId = 두명_테이블.getId();
         int newNumberOfGuests = 10;
-        final ChangeNumberOfGuestsRequest request = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
+        final ChangeNumberOfGuestsDto request = new ChangeNumberOfGuestsDto(newNumberOfGuests);
 
         // when
         final OrderTable actual = tableService.changeNumberOfGuests(tableId, request);
@@ -216,7 +216,7 @@ class TableServiceTest {
 
         final Long tableId = 두명_테이블.getId();
         final int invalidNumberOfGuests = -1;
-        final ChangeNumberOfGuestsRequest invalidRequest = new ChangeNumberOfGuestsRequest(invalidNumberOfGuests);
+        final ChangeNumberOfGuestsDto invalidRequest = new ChangeNumberOfGuestsDto(invalidNumberOfGuests);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, invalidRequest))
@@ -231,7 +231,7 @@ class TableServiceTest {
         final Long invalidOrderTableId = -999L;
 
         int newNumberOfGuests = 10;
-        final ChangeNumberOfGuestsRequest request = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
+        final ChangeNumberOfGuestsDto request = new ChangeNumberOfGuestsDto(newNumberOfGuests);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, request))
@@ -249,7 +249,7 @@ class TableServiceTest {
         em.clear();
 
         int newNumberOfGuests = 10;
-        final ChangeNumberOfGuestsRequest request = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
+        final ChangeNumberOfGuestsDto request = new ChangeNumberOfGuestsDto(newNumberOfGuests);
         final Long emptyTableId = 두명_테이블.getId();
 
         // when & then

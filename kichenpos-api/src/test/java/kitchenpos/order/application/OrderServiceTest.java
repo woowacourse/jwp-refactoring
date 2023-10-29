@@ -7,6 +7,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.ChangeOrderStatusDto;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
@@ -14,9 +15,8 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.order.dto.ChangeOrderStatusRequest;
-import kitchenpos.order.dto.CreateOrderLineItemRequest;
-import kitchenpos.order.dto.CreateOrderRequest;
+import kitchenpos.order.dto.CreateOrderLineItemDto;
+import kitchenpos.order.dto.CreateOrderDto;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -84,8 +84,8 @@ class OrderServiceTest {
         em.flush();
         em.clear();
 
-        final CreateOrderLineItemRequest 주문항목 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1L);
-        final CreateOrderRequest request = new CreateOrderRequest(주문_테이블.getId(), List.of(주문항목));
+        final CreateOrderLineItemDto 주문항목 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 1L);
+        final CreateOrderDto request = new CreateOrderDto(주문_테이블.getId(), List.of(주문항목));
 
         // when
         final Order actual = orderService.create(request);
@@ -106,8 +106,8 @@ class OrderServiceTest {
         em.flush();
         em.clear();
 
-        final List<CreateOrderLineItemRequest> 빈_주문_항목 = Collections.emptyList();
-        final CreateOrderRequest invalidRequest = new CreateOrderRequest(주문_테이블.getId(), 빈_주문_항목);
+        final List<CreateOrderLineItemDto> 빈_주문_항목 = Collections.emptyList();
+        final CreateOrderDto invalidRequest = new CreateOrderDto(주문_테이블.getId(), 빈_주문_항목);
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidRequest))
@@ -124,9 +124,9 @@ class OrderServiceTest {
         em.flush();
         em.clear();
 
-        final CreateOrderLineItemRequest 후라이드_2개_메뉴_1개 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1L);
-        final CreateOrderLineItemRequest 후라이드_2개_메뉴_2개 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 2L);
-        final CreateOrderRequest invalidRequest = new CreateOrderRequest(주문_테이블.getId(), List.of(후라이드_2개_메뉴_1개, 후라이드_2개_메뉴_2개));
+        final CreateOrderLineItemDto 후라이드_2개_메뉴_1개 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 1L);
+        final CreateOrderLineItemDto 후라이드_2개_메뉴_2개 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 2L);
+        final CreateOrderDto invalidRequest = new CreateOrderDto(주문_테이블.getId(), List.of(후라이드_2개_메뉴_1개, 후라이드_2개_메뉴_2개));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidRequest))
@@ -139,8 +139,8 @@ class OrderServiceTest {
     void create_invalidOrderTable() {
         // given
         final long invalidOrderTableId = -999L;
-        final CreateOrderLineItemRequest 주문항목 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1L);
-        final CreateOrderRequest invalidRequest = new CreateOrderRequest(invalidOrderTableId, List.of(주문항목));
+        final CreateOrderLineItemDto 주문항목 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 1L);
+        final CreateOrderDto invalidRequest = new CreateOrderDto(invalidOrderTableId, List.of(주문항목));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidRequest))
@@ -157,8 +157,8 @@ class OrderServiceTest {
         em.flush();
         em.clear();
 
-        final CreateOrderLineItemRequest 주문항목 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1L);
-        final CreateOrderRequest invalidRequest = new CreateOrderRequest(비어있는_테이블.getId(), List.of(주문항목));
+        final CreateOrderLineItemDto 주문항목 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 1L);
+        final CreateOrderDto invalidRequest = new CreateOrderDto(비어있는_테이블.getId(), List.of(주문항목));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidRequest))
@@ -204,7 +204,7 @@ class OrderServiceTest {
         em.clear();
 
         final OrderStatus expect = OrderStatus.MEAL;
-        final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(expect.name());
+        final ChangeOrderStatusDto request = new ChangeOrderStatusDto(expect);
 
         // when
         final Order actual = orderService.changeOrderStatus(주문.getId(), request);
@@ -226,7 +226,7 @@ class OrderServiceTest {
 
         final Long completeOrderId = 완료된_주문.getId();
         final OrderStatus newOrderStatus = OrderStatus.MEAL;
-        final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(newOrderStatus.name());
+        final ChangeOrderStatusDto request = new ChangeOrderStatusDto(newOrderStatus);
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(completeOrderId, request))

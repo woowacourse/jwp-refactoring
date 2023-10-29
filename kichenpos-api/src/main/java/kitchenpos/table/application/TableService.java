@@ -3,9 +3,9 @@ package kitchenpos.table.application;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table.dto.ChangeNumberOfGuestsRequest;
-import kitchenpos.table.dto.ChangeOrderTableEmptyRequest;
-import kitchenpos.table.dto.CreateOrderTableRequest;
+import kitchenpos.table.dto.ChangeNumberOfGuestsDto;
+import kitchenpos.table.dto.ChangeOrderTableEmptyDto;
+import kitchenpos.table.dto.CreateOrderTableDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +23,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final CreateOrderTableRequest request) {
-        final OrderTable orderTable = request.toOrderTable();
+    public OrderTable create(final CreateOrderTableDto request) {
+        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
 
         return orderTableRepository.save(orderTable);
     }
@@ -34,7 +34,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest request) {
+    public OrderTable changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyDto request) {
         final OrderTable savedOrderTable =
                 orderTableRepository.findById(orderTableId)
                                     .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
@@ -45,7 +45,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsDto request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                                    .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
         

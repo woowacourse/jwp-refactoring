@@ -2,7 +2,7 @@ package kitchenpos.menu.application;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuValidator;
-import kitchenpos.menu.dto.CreateMenuRequest;
+import kitchenpos.menu.dto.CreateMenuDto;
 import kitchenpos.menu.domain.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +21,12 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final CreateMenuRequest request) {
+    public Menu create(final CreateMenuDto dto) {
         final Menu menu = Menu.createNewMenu(
-                request.getName(),
-                request.getPrice(),
-                request.getMenuGroupId(),
-                request.toMenuProducts(),
+                dto.getName(),
+                dto.getPrice(),
+                dto.getMenuGroupId(),
+                dto.toMenuProducts(),
                 menuValidator
         );
 

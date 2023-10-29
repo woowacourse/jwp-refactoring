@@ -1,11 +1,10 @@
 package kitchenpos.order.application;
 
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.dto.ChangeOrderStatusRequest;
-import kitchenpos.order.dto.CreateOrderRequest;
+import kitchenpos.order.dto.ChangeOrderStatusDto;
+import kitchenpos.order.dto.CreateOrderDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final CreateOrderRequest request) {
+    public Order create(final CreateOrderDto request) {
         final Order order = Order.createNewOrder(request.getOrderTableId(), request.toOrderLineItems(), orderValidator);
 
         return orderRepository.save(order);
@@ -37,12 +36,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
+    public Order changeOrderStatus(final Long orderId, final ChangeOrderStatusDto request) {
         final Order savedOrder = orderRepository.findById(orderId)
                                                 .orElseThrow(IllegalArgumentException::new);
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus);
+        savedOrder.changeOrderStatus(request.getOrderStatus());
 
         return savedOrder;
     }

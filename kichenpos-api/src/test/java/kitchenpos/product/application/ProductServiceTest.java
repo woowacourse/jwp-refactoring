@@ -1,7 +1,7 @@
 package kitchenpos.product.application;
 
 import kitchenpos.common.Price;
-import kitchenpos.product.dto.CreateProductRequest;
+import kitchenpos.product.dto.CreateProductDto;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
@@ -35,7 +35,7 @@ class ProductServiceTest {
     @DisplayName("상품을 등록한다")
     void create() {
         // given
-        final CreateProductRequest request = new CreateProductRequest("강정치킨", BigDecimal.valueOf(17000));
+        final CreateProductDto request = new CreateProductDto("강정치킨", BigDecimal.valueOf(17000));
 
         // when
         final Product actual = productService.create(request);
@@ -53,7 +53,7 @@ class ProductServiceTest {
     void create_invalidPrice() {
         // given
         final BigDecimal invalidPrice = BigDecimal.valueOf(-1);
-        final CreateProductRequest invalidRequest = new CreateProductRequest("-1원 상품", invalidPrice);
+        final CreateProductDto invalidRequest = new CreateProductDto("-1원 상품", invalidPrice);
 
         // when & then
         assertThatThrownBy(() -> productService.create(invalidRequest))

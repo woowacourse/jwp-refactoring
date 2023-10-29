@@ -1,14 +1,14 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.dto.CreateMenuDto;
+import kitchenpos.menu.dto.CreateMenuProductDto;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.menu.dto.CreateMenuProductRequest;
-import kitchenpos.menu.dto.CreateMenuRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,8 +56,8 @@ class MenuServiceTest {
         em.flush();
         em.clear();
 
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest request = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개));
+        final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
+        final CreateMenuDto request = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개));
 
         // when
         final Menu actual = menuService.create(request);
@@ -76,8 +76,8 @@ class MenuServiceTest {
         em.flush();
         em.clear();
 
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", null, 두마리메뉴.getId(), List.of(후라이드_2개));
+        final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
+        final CreateMenuDto invalidRequest = new CreateMenuDto("후라이드+후라이드", null, 두마리메뉴.getId(), List.of(후라이드_2개));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidRequest))
@@ -96,8 +96,8 @@ class MenuServiceTest {
         em.clear();
 
         final BigDecimal invalidPrice = BigDecimal.valueOf(-1);
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
+        final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
+        final CreateMenuDto invalidRequest = new CreateMenuDto("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidRequest))
@@ -115,8 +115,8 @@ class MenuServiceTest {
         em.clear();
 
         final Long invalidMenuGroupId = -999L;
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(후라이드_2개));
+        final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
+        final CreateMenuDto invalidRequest = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(후라이드_2개));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidRequest))
@@ -134,8 +134,8 @@ class MenuServiceTest {
         em.clear();
 
         final Long invalidProductId = -999L;
-        final CreateMenuProductRequest invalidMenuProductRequest = new CreateMenuProductRequest(invalidProductId, 2L);
-        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(invalidMenuProductRequest));
+        final CreateMenuProductDto invalidMenuProductRequest = new CreateMenuProductDto(invalidProductId, 2L);
+        final CreateMenuDto invalidRequest = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(invalidMenuProductRequest));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidRequest))
@@ -154,8 +154,8 @@ class MenuServiceTest {
         em.clear();
 
         final BigDecimal invalidPrice = BigDecimal.valueOf(50000);
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
+        final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
+        final CreateMenuDto invalidRequest = new CreateMenuDto("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidRequest))

@@ -1,7 +1,7 @@
 package kitchenpos.tablegroup.application;
 
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.dto.CreateTableGroupRequest;
+import kitchenpos.tablegroup.dto.CreateTableGroupDto;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final CreateTableGroupRequest request) {
+    public TableGroup create(final CreateTableGroupDto request) {
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
 
         savedTableGroup.group(request.getOrderTableIds());

@@ -1,6 +1,6 @@
 package kitchenpos.menugroup.application;
 
-import kitchenpos.menugroup.dto.CreateMenuGroupRequest;
+import kitchenpos.menugroup.dto.CreateMenuGroupDto;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import org.assertj.core.api.SoftAssertions;
@@ -33,7 +33,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록한다")
     void create() {
         // given
-        final CreateMenuGroupRequest request = new CreateMenuGroupRequest("추천메뉴");
+        final CreateMenuGroupDto request = new CreateMenuGroupDto("추천메뉴");
 
         // when
         final MenuGroup actual = menuGroupService.create(request);
