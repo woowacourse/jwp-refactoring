@@ -1,5 +1,6 @@
 package kitchenpos.domain.common;
 
+import common.domain.Money;
 import kitchenpos.domain.DomainTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

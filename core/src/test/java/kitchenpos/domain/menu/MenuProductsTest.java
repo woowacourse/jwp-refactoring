@@ -1,9 +1,10 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.domain.DomainTest;
-import kitchenpos.domain.product.Product;
+import menu.domain.MenuProducts;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import product.domain.Product;
 
 import java.util.List;
 

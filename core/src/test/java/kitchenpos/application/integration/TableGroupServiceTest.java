@@ -1,19 +1,17 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.application.tablegroup.TableGroupService;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.tablegroup.TableGroup;
-import kitchenpos.dto.order.ChangeOrderStatusRequest;
-import kitchenpos.dto.table.OrderTableRequest;
-import kitchenpos.dto.table.OrderTableResponse;
-import kitchenpos.dto.tablegroup.CreateTableGroupRequest;
-import kitchenpos.dto.tablegroup.TableGroupResponse;
-import kitchenpos.dto.tablegroup.UnGroupRequest;
-import kitchenpos.exception.order.OrderTableNotFoundException;
+import order.domain.OrderStatus;
+import order.dto.ChangeOrderStatusRequest;
+import order.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import table.dto.OrderTableRequest;
+import table.dto.OrderTableResponse;
+import tablegroups.domain.TableGroup;
+import tablegroups.dto.CreateTableGroupRequest;
+import tablegroups.dto.TableGroupResponse;
+import tablegroups.dto.UnGroupRequest;
 
 import java.util.List;
 
@@ -21,9 +19,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @SpringBootTest
 public class TableGroupServiceTest extends ApplicationIntegrationTest {
-
-    @Autowired
-    private TableGroupService tableGroupService;
 
     @Test
     void create_table_group() {

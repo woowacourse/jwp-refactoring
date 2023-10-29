@@ -1,12 +1,12 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.domain.common.Money;
-import kitchenpos.domain.common.Name;
-import kitchenpos.dto.product.CreateProductRequest;
-import kitchenpos.dto.product.ListProductResponse;
-import kitchenpos.dto.product.ProductResponse;
+import common.domain.Money;
+import common.domain.Name;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import product.dto.CreateProductRequest;
+import product.dto.ListProductResponse;
+import product.dto.ProductResponse;
 
 import java.math.BigDecimal;
 

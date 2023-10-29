@@ -1,19 +1,19 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.dto.order.ChangeOrderStatusRequest;
-import kitchenpos.dto.order.OrderResponse;
-import kitchenpos.dto.table.ChangeNumberOfGuestsRequest;
-import kitchenpos.dto.table.ChangeOrderTableOrderableRequest;
-import kitchenpos.dto.table.CreateOrderTableRequest;
-import kitchenpos.dto.table.OrderTableRequest;
-import kitchenpos.dto.table.OrderTableResponse;
-import kitchenpos.dto.tablegroup.CreateTableGroupRequest;
-import kitchenpos.exception.table.OrderIsNotCompletedBadRequestException;
-import kitchenpos.exception.table.OrderTableIsInOtherTableGroupBadRequest;
+import order.domain.OrderStatus;
+import order.dto.ChangeOrderStatusRequest;
+import order.dto.OrderResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import table.domain.OrderTable;
+import table.dto.ChangeNumberOfGuestsRequest;
+import table.dto.ChangeOrderTableOrderableRequest;
+import table.dto.CreateOrderTableRequest;
+import table.dto.OrderTableRequest;
+import table.dto.OrderTableResponse;
+import table.exception.OrderIsNotCompletedBadRequestException;
+import table.exception.OrderTableIsInOtherTableGroupBadRequest;
+import tablegroups.dto.CreateTableGroupRequest;
 
 import java.util.List;
 

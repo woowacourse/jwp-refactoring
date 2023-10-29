@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.15'
-    id 'io.spring.dependency-management' version '1.1.3'
+    id 'org.springframework.boot' version '2.7.15' apply false
+    id 'io.spring.dependency-management' version '1.1.3' apply false
     id 'java'
 }
 
@@ -13,6 +13,10 @@ allprojects {
     version = '0.0.1-SNAPSHOT'
     sourceCompatibility = '11'
 
+    repositories {
+        mavenCentral()
+    }
+
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -23,62 +27,15 @@ allprojects {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
     }
 
-    repositories {
-        mavenCentral()
+    tasks.named('bootJar') {
+        enabled = false
+    }
+
+    tasks.named('jar') {
+        enabled = true
     }
 
     test {
         useJUnitPlatform()
-    }
-
-    bootJar {
-        enabled(false)
-    }
-    jar {
-        enabled(true)
-    }
-}
-
-project(':menu-groups') {
-    dependencies {
-        implementation project(':common')
-    }
-}
-
-project(':product') {
-    dependencies {
-        implementation project(':common')
-    }
-}
-
-project(':menu') {
-    dependencies {
-        implementation project(':common')
-        implementation project(':menu-groups')
-        implementation project(':product')
-        testImplementation project(':common')
-    }
-}
-
-project(':order') {
-    dependencies {
-        implementation project(':common')
-        implementation project(':menu')
-        testImplementation project(':common')
-    }
-}
-
-project(':table') {
-    dependencies {
-        implementation project(':common')
-        implementation project(':order')
-    }
-}
-
-project(':table-groups') {
-    dependencies {
-        implementation project(':common')
-        implementation project(':table')
-        implementation project(':order')
     }
 }

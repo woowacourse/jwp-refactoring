@@ -1,10 +1,11 @@
 package kitchenpos.domain.menu;
 
+import common.domain.Quantity;
 import kitchenpos.domain.DomainTest;
-import kitchenpos.domain.common.Quantity;
-import kitchenpos.domain.product.Product;
+import menu.domain.MenuProduct;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import product.domain.Product;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

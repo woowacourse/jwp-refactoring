@@ -1,9 +1,10 @@
 rootProject.name = 'kitchenpos'
-include 'menu-groups'
 include 'common'
 include 'product'
+include 'menu-groups'
 include 'menu'
 include 'order'
 include 'table'
 include 'table-groups'
+include 'core'
 

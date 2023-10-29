@@ -1,8 +1,8 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.DomainTest;
-import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Test;
+import table.domain.OrderTable;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
