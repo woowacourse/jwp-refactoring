@@ -18,7 +18,7 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn()
+    @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
     @Column(nullable = false)

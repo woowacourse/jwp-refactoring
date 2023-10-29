@@ -3,6 +3,7 @@ package kitchenpos.table.domain;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,6 +22,10 @@ public class OrderTables {
     }
 
     public void joinGroup(final TableGroup tableGroup) {
+        if (Objects.isNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+
         validate(orderTables);
         for (final OrderTable orderTable : orderTables) {
             orderTable.changeEmpty(false);
