@@ -1,17 +1,17 @@
 package kitchenpos.application.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.CreateOrderRequest;
-import kitchenpos.dto.request.OrderLineItemDto;
-import kitchenpos.dto.request.PutOrderStatusRequest;
-import kitchenpos.infrastructure.persistence.JpaMenuGroupRepository;
-import kitchenpos.infrastructure.persistence.JpaMenuRepository;
-import kitchenpos.infrastructure.persistence.JpaOrderRepository;
-import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.common.dto.request.CreateOrderRequest;
+import kitchenpos.common.dto.request.OrderLineItemDto;
+import kitchenpos.common.dto.request.PutOrderStatusRequest;
+import kitchenpos.menugroup.persistence.JpaMenuGroupRepository;
+import kitchenpos.menu.persistence.JpaMenuRepository;
+import kitchenpos.order.persistence.JpaOrderRepository;
+import kitchenpos.ordertable.persistence.JpaOrderTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

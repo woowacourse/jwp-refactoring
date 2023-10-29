@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.application.fixture.MenuServiceFixture;
-import kitchenpos.domain.Menu;
-import org.assertj.core.api.Assertions;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.application.MenuService;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.fixture.TableServiceFixture;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.CreateOrderTableRequest;
-import org.assertj.core.api.Assertions;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.common.dto.request.CreateOrderTableRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

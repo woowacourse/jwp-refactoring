@@ -1,8 +1,8 @@
 package kitchenpos.application.fixture;
 
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.infrastructure.persistence.JpaMenuGroupRepository;
-import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.persistence.JpaMenuGroupRepository;
+import kitchenpos.common.dto.request.CreateMenuGroupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

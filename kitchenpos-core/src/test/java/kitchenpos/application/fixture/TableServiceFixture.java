@@ -1,14 +1,14 @@
 package kitchenpos.application.fixture;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.PutOrderTableEmptyRequest;
-import kitchenpos.dto.request.PutOrderTableGuestsNumberRequest;
-import kitchenpos.infrastructure.persistence.JpaOrderRepository;
-import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
-import kitchenpos.infrastructure.persistence.JpaTableGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.common.dto.request.PutOrderTableEmptyRequest;
+import kitchenpos.common.dto.request.PutOrderTableGuestsNumberRequest;
+import kitchenpos.order.persistence.JpaOrderRepository;
+import kitchenpos.ordertable.persistence.JpaOrderTableRepository;
+import kitchenpos.tablegroup.persistence.JpaTableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;

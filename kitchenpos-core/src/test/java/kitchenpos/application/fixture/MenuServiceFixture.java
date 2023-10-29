@@ -1,16 +1,16 @@
 package kitchenpos.application.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.vo.Price;
-import kitchenpos.infrastructure.persistence.JpaMenuGroupRepository;
-import kitchenpos.infrastructure.persistence.JpaMenuProductRepository;
-import kitchenpos.infrastructure.persistence.JpaMenuRepository;
-import kitchenpos.infrastructure.persistence.JpaProductRepository;
-import kitchenpos.dto.request.CreateMenuRequest;
-import kitchenpos.dto.request.MenuProductDto;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
+import kitchenpos.common.vo.Price;
+import kitchenpos.menugroup.persistence.JpaMenuGroupRepository;
+import kitchenpos.menu.persistence.JpaMenuProductRepository;
+import kitchenpos.menu.persistence.JpaMenuRepository;
+import kitchenpos.product.persistence.JpaProductRepository;
+import kitchenpos.common.dto.request.CreateMenuRequest;
+import kitchenpos.common.dto.request.MenuProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;

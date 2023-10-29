@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.application.event.AddGroupTableEvent;
-import kitchenpos.application.event.UngroupTableEvent;
+import kitchenpos.tablegroup.application.event.AddGroupTableEvent;
+import kitchenpos.tablegroup.application.event.UngroupTableEvent;
 import kitchenpos.application.fixture.TableGroupServiceFixture;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.application.TableGroupService;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
