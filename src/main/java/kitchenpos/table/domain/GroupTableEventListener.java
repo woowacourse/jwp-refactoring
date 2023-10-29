@@ -1,6 +1,5 @@
 package kitchenpos.table.domain;
 
-import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.GroupTableEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

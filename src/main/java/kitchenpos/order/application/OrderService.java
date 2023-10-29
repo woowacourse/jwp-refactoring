@@ -3,7 +3,7 @@ package kitchenpos.order.application;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.dto.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.CreateOrderRequest;
 import org.springframework.stereotype.Service;

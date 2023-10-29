@@ -2,7 +2,7 @@ package kitchenpos.menugroup.application;
 
 import kitchenpos.menugroup.dto.CreateMenuGroupRequest;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

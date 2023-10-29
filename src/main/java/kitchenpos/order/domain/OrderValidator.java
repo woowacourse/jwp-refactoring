@@ -2,8 +2,8 @@ package kitchenpos.order.domain;
 
 import kitchenpos.configuration.Validator;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.table.domain.OrderTableRepository;
 
 @Validator
 public class OrderValidator {

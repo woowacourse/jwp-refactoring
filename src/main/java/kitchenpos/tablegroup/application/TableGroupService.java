@@ -2,7 +2,7 @@ package kitchenpos.tablegroup.application;
 
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.CreateTableGroupRequest;
-import kitchenpos.tablegroup.repository.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

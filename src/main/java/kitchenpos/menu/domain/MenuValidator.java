@@ -3,8 +3,8 @@ package kitchenpos.menu.domain;
 import kitchenpos.common.Price;
 import kitchenpos.configuration.Validator;
 import kitchenpos.product.domain.Product;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
-import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.product.domain.ProductRepository;
 
 @Validator
 public class MenuValidator {

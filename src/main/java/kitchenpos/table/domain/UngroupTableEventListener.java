@@ -1,8 +1,7 @@
 package kitchenpos.table.domain;
 
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.tablegroup.domain.UngroupTableEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

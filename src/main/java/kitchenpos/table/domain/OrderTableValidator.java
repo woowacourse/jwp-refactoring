@@ -2,7 +2,7 @@ package kitchenpos.table.domain;
 
 import kitchenpos.configuration.Validator;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.domain.OrderRepository;
 
 import java.util.List;
 
