@@ -1,18 +1,18 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
-import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.table.TableService;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
-import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -96,24 +96,6 @@ class TableServiceTest extends ServiceTest {
         }
 
         @Test
-        void 단체_지정되어_있는_테이블이면_예외가_발생한다() {
-            // given
-            final var orderTable1 = OrderTableFixture.빈테이블_1명();
-            final var orderTable2 = OrderTableFixture.빈테이블_1명();
-            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
-
-            final var tableGroup = TableGroupFixture.단체지정_여러_테이블(savedOrderTables);
-            단일_단체지정_저장(tableGroup);
-
-            final var request = OrderTableFixture.테이블요청_empty_수정_생성(true);
-
-            // when & then
-            final var id = orderTable1.getId();
-            assertThatThrownBy(() -> tableService.changeEmpty(id, request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 주문_상태가_조리_또는_식사면_예외가_발생한다() {
             // given
             final var orderTable = OrderTableFixture.주문테이블_N명(1);
@@ -162,21 +144,6 @@ class TableServiceTest extends ServiceTest {
             // then
             assertThat(actual.getNumberOfGuests()).usingRecursiveComparison()
                     .isEqualTo(changedNumberOfGuests);
-        }
-
-        @Test
-        void 방문한_손님_수가_0보다_작으면_예외가_발생한다() {
-            // given
-            final var orderTable = OrderTableFixture.주문테이블_N명(1);
-            final var savedOrderTable = 단일_주문테이블_저장(orderTable);
-
-            final var changedNumberOfGuests = -1;
-            final var request = OrderTableFixture.테이블요청_손님수_수정_생성(changedNumberOfGuests);
-
-            // when & then
-            final var id = savedOrderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, request))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test

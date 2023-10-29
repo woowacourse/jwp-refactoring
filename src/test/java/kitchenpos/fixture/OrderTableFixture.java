@@ -1,10 +1,10 @@
 package kitchenpos.fixture;
 
 import java.util.List;
-import kitchenpos.application.dto.request.TableCreateRequest;
-import kitchenpos.application.dto.request.TableUpdateEmptyRequest;
-import kitchenpos.application.dto.request.TableUpdateNumberOfGuestsRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.dto.request.TableCreateRequest;
+import kitchenpos.dto.request.TableUpdateEmptyRequest;
+import kitchenpos.dto.request.TableUpdateNumberOfGuestsRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {
@@ -18,7 +18,7 @@ public class OrderTableFixture {
     }
 
     public static OrderTable 빈테이블_1명_단체지정() {
-        return new OrderTable(TableGroupFixture.단체지정_여러_테이블(List.of(빈테이블_1명(), 빈테이블_1명())), 1, true);
+        return new OrderTable(TableGroupFixture.단체지정_여러_테이블(List.of(빈테이블_1명(), 빈테이블_1명())).getId(), 1, true);
     }
 
     public static OrderTable 주문테이블_INVALID() {

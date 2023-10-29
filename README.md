@@ -79,3 +79,88 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+---
+
+## 의존성 리팩터링
+
+- [X] Menu -> MenuGroup
+  - AS-IS : 단방향 직접 참조
+  ```mermaid
+  graph LR
+    Menu --> MenuGroup
+  ```
+  - TO-BE : 단방향 간접 참조
+  ```mermaid
+  graph LR
+    Menu -.-> MenuGroup
+  ```
+- [X] Menu <-> MenuProduct
+  - AS-IS : 양방향 직접 참조
+  ```mermaid
+  graph LR
+    Menu --> MenuProduct
+    MenuProduct --> Menu
+  ```
+  - TO-BE : 단방향 직접 참조
+  ```mermaid
+  graph LR
+    Menu --> MenuProduct
+  ```
+- [X] MenuProduct -> Product
+  - AS-IS : 단방향 직접 참조
+  ```mermaid
+  graph LR
+    MenuProduct --> Product
+  ```
+  - TO-BE : 단방향 간접 참조
+  ```mermaid
+  graph LR
+    MenuProduct -.-> Product
+  ```
+- [X] OrderLineItem -> Menu
+  - AS-IS : 단방향 직접 참조
+  ```mermaid
+  graph LR
+    OrderLineItem --> Menu
+  ```
+  - TO-BE : 단방향 간접 참조
+  ```mermaid
+  graph LR
+    OrderLineItem -.-> Menu
+  ```
+- [X] Order <-> OrderLineItem
+  - AS-IS : 양방향 직접 참조
+  ```mermaid
+  graph LR
+    Order --> OrderLineItem
+    OrderLineItem --> Order
+  ```
+  - TO-BE : 단방향 직접 참조
+  ```mermaid
+  graph LR
+    Order --> OrderLineItem
+  ```
+- [X] Order -> OrderTable
+  - AS-IS : 단방향 직접 참조
+  ```mermaid
+  graph LR
+    Order --> OrderTable
+  ```
+  - TO-BE : 단방향 간접 참조
+  ```mermaid
+  graph LR
+    Order -.-> OrderTable
+  ```
+- [X] OrderTable <-> TableGroup
+  - AS-IS : 양방향 직접 참조
+  ```mermaid
+  graph LR
+    OrderTable --> TableGroup
+    TableGroup --> OrderTable
+  ```
+  - TO-BE : 단방향 간접 참조
+  ```mermaid
+  graph LR
+    OrderTable -.-> TableGroup
+  ```
