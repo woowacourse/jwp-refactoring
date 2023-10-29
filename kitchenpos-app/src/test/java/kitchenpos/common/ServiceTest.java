@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@TestExecutionListeners(value = {kitchenpos.common.ServiceTestExecutionListener.class,}, mergeMode = MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(value = {
+        kitchenpos.common.ServiceTestExecutionListener.class,}, mergeMode = MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class ServiceTest {
 }

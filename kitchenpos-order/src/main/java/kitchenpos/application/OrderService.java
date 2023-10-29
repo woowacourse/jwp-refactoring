@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.event.ValidateExistMenuEvent;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -11,6 +10,7 @@ import kitchenpos.dto.OrderChangeStatusRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemInOrderDto;
 import kitchenpos.dto.OrderResponse;
+import kitchenpos.event.ValidateExistMenuEvent;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.context.ApplicationEventPublisher;

@@ -2,13 +2,13 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableInTableGroupDto;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.event.TableGroupCreateEvent;
 import kitchenpos.event.TableGroupDeleteEvent;
 import kitchenpos.event.ValidateSameSizeOrderTableEvent;
-import kitchenpos.dto.OrderTableInTableGroupDto;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateRequest;
-import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
