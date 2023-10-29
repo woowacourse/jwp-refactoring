@@ -35,10 +35,14 @@ allprojects {
     }
 }
 
-project(':order') {
+repositories {
+    mavenCentral()
+}
+
+project(':app') {
     dependencies {
+        implementation project(':order')
         implementation project(':table')
         implementation project(':menu')
     }
 }
-
