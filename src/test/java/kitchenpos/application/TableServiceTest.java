@@ -104,7 +104,7 @@ class TableServiceTest {
 
         @Test
         void 테이블이_완료_상태일때_테이블_상태를_변경한다() {
-            orderRepository.save(new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now()));
+            orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
 
             final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
             final OrderTableResponse response = tableService.changeEmpty(orderTable.getId(), request);
@@ -115,7 +115,7 @@ class TableServiceTest {
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 테이블이_조리_혹은_식사_주문_상태일때_예외가_발생한다(String status) {
-            orderRepository.save(new Order(orderTable, OrderStatus.valueOf(status), LocalDateTime.now()));
+            orderRepository.save(new Order(orderTable.getId(), OrderStatus.valueOf(status), LocalDateTime.now()));
             final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))

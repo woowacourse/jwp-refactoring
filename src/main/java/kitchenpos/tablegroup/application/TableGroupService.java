@@ -52,7 +52,10 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = findTableGroupById(tableGroupId);
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
-        validateOrderStatus(orderTables);
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        validateOrderStatus(orderTableIds);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.updateTableGroup(null);
@@ -74,9 +77,9 @@ public class TableGroupService {
         }
     }
 
-    private void validateOrderStatus(final List<OrderTable> orderTables) {
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+    private void validateOrderStatus(final List<Long> orderTableIds) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }

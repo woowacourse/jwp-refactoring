@@ -25,7 +25,7 @@ class OrderTest {
             final OrderStatus orderStatus = OrderStatus.valueOf(status);
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             final OrderTable orderTable = new OrderTable(tableGroup.getId(), new OrderTableNumberOfGuests(5), true);
-            final Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
+            final Order order = new Order(orderTable.getId(), OrderStatus.MEAL, LocalDateTime.now());
 
             order.changeOrderStatus(orderStatus);
 
@@ -38,7 +38,7 @@ class OrderTest {
             final OrderStatus orderStatus = OrderStatus.valueOf(status);
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             final OrderTable orderTable = new OrderTable(tableGroup.getId(), new OrderTableNumberOfGuests(5), true);
-            final Order order = new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now());
+            final Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now());
 
             assertThatThrownBy(() -> order.changeOrderStatus(orderStatus))
                     .isInstanceOf(IllegalArgumentException.class);

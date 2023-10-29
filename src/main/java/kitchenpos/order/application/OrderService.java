@@ -8,15 +8,15 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemQuantity;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderLineItemRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.dto.request.OrderChangeStatusRequest;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.response.OrderLineItemResponse;
 import kitchenpos.order.dto.response.OrderResponse;
-import kitchenpos.order.domain.repository.OrderLineItemRepository;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -55,7 +55,7 @@ public class OrderService {
         final OrderTable orderTable = findOrderTableById(request.getOrderTableId());
         orderTable.validateIsEmpty();
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
         final Order savedOrder = orderRepository.save(order);
         saveOrderLineItems(orderLineItemRequest, savedOrder);
         return convertToResponse(savedOrder);
@@ -124,7 +124,7 @@ public class OrderService {
     private OrderResponse convertToResponse(final Order order) {
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTable().getId(),
+                order.getOrderTableId(),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
                 orderLineItemRepository.findAllByOrderId(order.getId()).stream()

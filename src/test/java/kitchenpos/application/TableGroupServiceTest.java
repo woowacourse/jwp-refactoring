@@ -110,7 +110,7 @@ class TableGroupServiceTest {
             final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
                 final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, new OrderTableNumberOfGuests(0), true));
-                orderRepository.save(new Order(savedOrderTable, OrderStatus.valueOf(status), LocalDateTime.now()));
+                orderRepository.save(new Order(savedOrderTable.getId(), OrderStatus.valueOf(status), LocalDateTime.now()));
                 orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
 
