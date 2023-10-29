@@ -47,7 +47,8 @@ class TableGroupServiceTest {
     @BeforeEach
     void setUp() {
         dummyTables = new ArrayList<>();
-        dummyTables.addAll(List.of(orderTableRepository.save(new OrderTable()), orderTableRepository.save(new OrderTable())));
+        dummyTables.addAll(
+                List.of(orderTableRepository.save(new OrderTable()), orderTableRepository.save(new OrderTable())));
         dummyTableRequests = dummyTables.stream()
                 .map(dummyTable -> new TableRequest(dummyTable.getId()))
                 .collect(Collectors.toList());
@@ -179,7 +180,8 @@ class TableGroupServiceTest {
             // given
             final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, true));
             final TableGroup tableGroup = tableGroupService.create(
-                    new TableGroupRequest(List.of(new TableRequest(invalidTable.getId()), new TableRequest(dummyTables.get(0).getId()))));
+                    new TableGroupRequest(List.of(new TableRequest(invalidTable.getId()),
+                            new TableRequest(dummyTables.get(0).getId()))));
             orderRepository.save(new Order(invalidTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1))));
 
@@ -193,7 +195,8 @@ class TableGroupServiceTest {
             // given
             final OrderTable invalidTable = orderTableRepository.save(new OrderTable(null, 0, true));
             final TableGroup tableGroup = tableGroupService.create(
-                    new TableGroupRequest(List.of(new TableRequest(invalidTable.getId()), new TableRequest(dummyTables.get(0).getId()))));
+                    new TableGroupRequest(List.of(new TableRequest(invalidTable.getId()),
+                            new TableRequest(dummyTables.get(0).getId()))));
             orderRepository.save(new Order(invalidTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1))));
 

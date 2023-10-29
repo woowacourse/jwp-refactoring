@@ -1,4 +1,5 @@
-SET referential_integrity FALSE;
+SET
+referential_integrity FALSE;
 TRUNCATE TABLE menu RESTART IDENTITY;
 TRUNCATE TABLE menu_group RESTART IDENTITY;
 TRUNCATE TABLE menu_product RESTART IDENTITY;
@@ -7,4 +8,5 @@ TRUNCATE TABLE order_line_item RESTART IDENTITY;
 TRUNCATE TABLE order_table RESTART IDENTITY;
 TRUNCATE TABLE product RESTART IDENTITY;
 TRUNCATE TABLE table_group RESTART IDENTITY;
-SET referential_integrity TRUE;
+SET
+referential_integrity TRUE;

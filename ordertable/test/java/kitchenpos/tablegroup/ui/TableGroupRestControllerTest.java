@@ -40,7 +40,8 @@ class TableGroupRestControllerTest {
         // given
         final OrderTable orderTable1 = new OrderTable(1L, null, 5, true);
         final OrderTable orderTable2 = new OrderTable(2L, null, 10, true);
-        final TableGroupRequest request = new TableGroupRequest(List.of(new TableRequest(orderTable1.getId()), new TableRequest(orderTable2.getId())));
+        final TableGroupRequest request = new TableGroupRequest(
+                List.of(new TableRequest(orderTable1.getId()), new TableRequest(orderTable2.getId())));
         final TableGroup responseTableGroup = new TableGroup(1L, null, List.of(orderTable1, orderTable2));
         given(tableGroupService.create(any())).willReturn(responseTableGroup);
 
