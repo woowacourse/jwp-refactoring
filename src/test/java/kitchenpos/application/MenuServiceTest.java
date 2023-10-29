@@ -7,7 +7,6 @@ import kitchenpos.domain.menu.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.dto.CreateMenuProductRequest;
 import kitchenpos.dto.CreateMenuRequest;
 import org.assertj.core.api.SoftAssertions;
@@ -22,6 +21,7 @@ import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.domain.menu.MenuFixture.menu;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -172,15 +172,12 @@ class MenuServiceTest {
         final Product 양념치킨 = productRepository.save(new Product("양념치킨", BigDecimal.valueOf(20000)));
 
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-        final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2L);
-        final MenuProduct 후라이드_1개 = new MenuProduct(후라이드, 1L);
-        final MenuProduct 양념치킨_1개 = new MenuProduct(양념치킨, 1L);
+        final MenuProduct 후라이드_2개 = new MenuProduct(후라이드.getId(), 2L);
+        final MenuProduct 후라이드_1개 = new MenuProduct(후라이드.getId(), 1L);
+        final MenuProduct 양념치킨_1개 = new MenuProduct(양념치킨.getId(), 1L);
 
-        final MenuProducts 후라이드_후라이드_메뉴_상품_목록 = new MenuProducts(List.of(후라이드_2개));
-        final MenuProducts 후라이드_양념치킨_메뉴_상품_목록 = new MenuProducts(List.of(후라이드_1개, 양념치킨_1개));
-
-        final Menu 후라이드_후라이드 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), 후라이드_후라이드_메뉴_상품_목록));
-        final Menu 후라이드_양념치킨 = menuRepository.save(new Menu("후라이드+양념치킨", BigDecimal.valueOf(33000), 두마리메뉴.getId(), 후라이드_양념치킨_메뉴_상품_목록));
+        final Menu 후라이드_후라이드 = menuRepository.save(menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개)));
+        final Menu 후라이드_양념치킨 = menuRepository.save(menu("후라이드+양념치킨", BigDecimal.valueOf(33000), 두마리메뉴.getId(), List.of(후라이드_1개, 양념치킨_1개)));
 
         em.flush();
         em.clear();

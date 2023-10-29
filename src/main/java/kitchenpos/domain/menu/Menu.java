@@ -1,13 +1,17 @@
 package kitchenpos.domain.menu;
 
 import javax.persistence.AttributeOverride;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,30 +29,41 @@ public class Menu {
 
     private Long menuGroupId;
 
-    @Embedded
-    private MenuProducts menuProducts;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "menu_id", nullable = false)
+    private List<MenuProduct> menuProducts;
 
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId, final MenuProducts menuProducts) {
+    Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-
-        validatePrice();
     }
 
-    private void validatePrice() {
-        final Price menuProductsTotalPrice = menuProducts.calculateTotalPrice();
-        if (price == null || price.biggerThan(menuProductsTotalPrice)) {
-            throw new IllegalArgumentException("메뉴 가격은 메뉴를 구성하는 상품의 가격 합보다 작아야 합니다.");
-        }
+    public static Menu createNewMenu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts, final MenuValidator menuValidator) {
+        final Menu menu = new Menu(name, price, menuGroupId, menuProducts);
+        menuValidator.validate(menu);
+
+        return menu;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 
     @Override
