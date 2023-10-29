@@ -30,6 +30,7 @@ allprojects {
         useJUnitPlatform()
     }
 }
+
 project(':kitchen-api') {
     dependencies {
         implementation project(':kitchen-core')
