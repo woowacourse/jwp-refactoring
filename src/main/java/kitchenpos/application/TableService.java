@@ -4,9 +4,9 @@ import java.util.List;
 import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.dto.request.OrderTableCreateRequest;
-import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
-import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.presentation.dto.request.OrderTableCreateRequest;
+import kitchenpos.presentation.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.presentation.dto.request.OrderTableUpdateNumberOfGuestsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

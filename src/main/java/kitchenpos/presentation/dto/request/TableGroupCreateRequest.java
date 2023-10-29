@@ -1,4 +1,4 @@
-package kitchenpos.dto.request;
+package kitchenpos.presentation.dto.request;
 
 import java.util.List;
 import java.util.stream.Collectors;

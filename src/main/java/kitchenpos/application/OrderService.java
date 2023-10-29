@@ -12,8 +12,8 @@ import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.vo.OrderStatus;
-import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.presentation.dto.request.OrderCreateRequest;
+import kitchenpos.presentation.dto.request.OrderLineItemCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -7,13 +7,13 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
-import kitchenpos.dto.request.IdForRequest;
-import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.request.MenuProductCreateRequest;
-import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.presentation.dto.request.IdForRequest;
+import kitchenpos.presentation.dto.request.MenuCreateRequest;
+import kitchenpos.presentation.dto.request.MenuProductCreateRequest;
+import kitchenpos.presentation.dto.request.OrderCreateRequest;
+import kitchenpos.presentation.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.presentation.dto.request.ProductCreateRequest;
+import kitchenpos.presentation.dto.request.TableGroupCreateRequest;
 
 public class RequestParser {
 
