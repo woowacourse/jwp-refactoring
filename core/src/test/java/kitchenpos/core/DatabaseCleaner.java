@@ -1,4 +1,4 @@
-package kitchenpos;
+package kitchenpos.core;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

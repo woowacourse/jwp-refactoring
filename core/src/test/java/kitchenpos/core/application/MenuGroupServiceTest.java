@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static kitchenpos.TestFixtureFactory.새로운_메뉴_그룹;
+import static kitchenpos.core.TestFixtureFactory.새로운_메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 

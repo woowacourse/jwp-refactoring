@@ -20,7 +20,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.TestFixtureFactory.*;
+import static kitchenpos.core.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

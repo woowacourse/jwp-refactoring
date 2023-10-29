@@ -2,12 +2,14 @@ package kitchenpos.core.table.domain;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @EntityListeners(AuditingEntityListener.class)
+@EnableJpaAuditing
 @Entity
 public class TableGroup {
 
@@ -20,6 +22,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     public TableGroup() {
+        this.createdDate = LocalDateTime.now();
     }
 
     public TableGroup(final Long id) {

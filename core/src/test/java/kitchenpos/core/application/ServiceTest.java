@@ -1,6 +1,6 @@
 package kitchenpos.core.application;
 
-import kitchenpos.DatabaseCleaner;
+import kitchenpos.core.DatabaseCleaner;
 import kitchenpos.core.Product.application.ProductService;
 import kitchenpos.core.menu.application.MenuService;
 import kitchenpos.core.menugroup.application.MenuGroupService;

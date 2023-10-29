@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static kitchenpos.TestFixtureFactory.새로운_주문_테이블;
+import static kitchenpos.core.TestFixtureFactory.새로운_주문_테이블;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 

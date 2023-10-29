@@ -3,6 +3,7 @@ package kitchenpos.core.order.domain;
 import kitchenpos.core.table.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import static kitchenpos.core.order.domain.OrderStatus.COOKING;
 
 @EntityListeners(AuditingEntityListener.class)
+@EnableJpaAuditing
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -35,6 +37,7 @@ public class Order {
     }
 
     public Order(final OrderTable orderTable) {
+        this.orderedTime = LocalDateTime.now();
         this.orderTable = orderTable;
         this.orderStatus = COOKING;
     }
