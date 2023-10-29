@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.fixture.ProductServiceFixture;
-import kitchenpos.product.domain.Product;
 import kitchenpos.common.dto.request.CreateProductRequest;
-import kitchenpos.product.application.ProductService;
+import kitchenpos.menu.application.ProductService;
+import kitchenpos.menu.domain.Product;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class ProductServiceTest extends ProductServiceFixture {
             final CreateProductRequest 가격이_입력되지_않은_상품 = new CreateProductRequest("가격이 입력되지 않은 상품", null);
 
             assertThatThrownBy(() -> productService.create(가격이_입력되지_않은_상품))
-                      .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -50,7 +50,7 @@ class ProductServiceTest extends ProductServiceFixture {
             final CreateProductRequest 가격이_0보다_작은_상품 = new CreateProductRequest("가격이 0보다 작은 상품", BigDecimal.valueOf(-1));
 
             assertThatThrownBy(() -> productService.create(가격이_0보다_작은_상품))
-                      .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

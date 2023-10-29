@@ -1,16 +1,16 @@
 package kitchenpos.menu.application;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.Products;
-import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.domain.repository.MenuProductRepository;
-import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.common.dto.request.CreateMenuRequest;
 import kitchenpos.common.dto.request.MenuProductDto;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.domain.Products;
+import kitchenpos.menu.domain.repository.MenuProductRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.domain.repository.ProductRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +19,7 @@ import java.util.List;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
@@ -49,16 +50,6 @@ public class MenuService {
         return savedMenu;
     }
 
-    private void createMenuProducts(final CreateMenuRequest menuRequest, final Menu savedMenu, final Products products) {
-        final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
-            final Product product = products.findProductById(menuProductDto.getProductId());
-            final MenuProduct menuProduct = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
-            menuProducts.add(menuProduct);
-        }
-        menuProductRepository.saveAll(menuProducts);
-    }
-
     private Products findProducts(final CreateMenuRequest menuRequest) {
         final List<Product> products = new ArrayList<>();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
@@ -67,6 +58,16 @@ public class MenuService {
             products.add(product);
         }
         return new Products(products);
+    }
+
+    private void createMenuProducts(final CreateMenuRequest menuRequest, final Menu savedMenu, final Products products) {
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
+            final Product product = products.findProductById(menuProductDto.getProductId());
+            final MenuProduct menuProduct = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
+            menuProducts.add(menuProduct);
+        }
+        menuProductRepository.saveAll(menuProducts);
     }
 
     @Transactional(readOnly = true)
