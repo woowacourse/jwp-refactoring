@@ -8,19 +8,40 @@ group = 'camp.nextstep.edu'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-repositories {
-    mavenCentral()
+allprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
 }
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.flywaydb:flyway-core'
-    runtimeOnly 'com.h2database:h2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+subprojects {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    bootJar { enabled = false }
+    jar { enabled = true }
 }
 
-test {
-    useJUnitPlatform()
+project(':kitchenpos-web') {
+    dependencies {
+        implementation project(':kitchenpos-core')
+    }
+}
+
+project(':kitchenpos-core') {
+    dependencies {
+        implementation project(':kitchenpos-db')
+    }
 }
