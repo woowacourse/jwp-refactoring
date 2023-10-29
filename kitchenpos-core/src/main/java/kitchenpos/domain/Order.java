@@ -1,15 +1,13 @@
 package kitchenpos.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -24,9 +22,8 @@ public class Order {
     @Column(name = "order_table_id", nullable = false)
     private long orderTableId;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "order_id", nullable = false)
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -50,10 +47,7 @@ public class Order {
                                       .orElseThrow(() -> new IllegalArgumentException("잘못된 상태입니다."));
     }
 
-    public void addOrderItems(final List<OrderLineItem> savedOrderLineItems) {
-        if (savedOrderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+    public void addOrderItems(final OrderLineItems savedOrderLineItems) {
         this.orderLineItems = savedOrderLineItems;
     }
 
@@ -66,7 +60,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
     public String getOrderStatus() {

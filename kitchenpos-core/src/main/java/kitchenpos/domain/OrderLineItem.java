@@ -36,6 +36,15 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public static OrderLineItem of(final Menu menu, final int quantity) {
+        return new OrderLineItem(
+                menu.getId(),
+                menu.getName(),
+                new Price(menu.getPrice()),
+                quantity
+        );
+    }
+
     public Long getSeq() {
         return seq;
     }

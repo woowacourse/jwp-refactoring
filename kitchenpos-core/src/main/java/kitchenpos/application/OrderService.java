@@ -3,12 +3,12 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.vo.Price;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.request.OrderLineItemDto;
 import kitchenpos.dto.request.PutOrderStatusRequest;
@@ -42,7 +42,7 @@ public class OrderService {
         validateEmptyTable(orderTable);
         final Order order = new Order(orderTable.getId(), OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
-        final List<OrderLineItem> orderLineItems = createOrderLineItems(orderRequest);
+        final OrderLineItems orderLineItems = createOrderLineItems(orderRequest);
         savedOrder.addOrderItems(orderLineItems);
         return savedOrder;
     }
@@ -53,32 +53,17 @@ public class OrderService {
         }
     }
 
-    private List<OrderLineItem> createOrderLineItems(final CreateOrderRequest orderRequest) {
+    private OrderLineItems createOrderLineItems(final CreateOrderRequest orderRequest) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
-        final List<Menu> menus = new ArrayList<>();
+        final List<Long> menuIds = new ArrayList<>();
         for (final OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
             final Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                                             .orElseThrow(() -> new IllegalArgumentException("잘못된 메뉴입니다."));
-            final OrderLineItem orderLineItem = new OrderLineItem(
-                    menu.getId(),
-                    menu.getName(),
-                    new Price(menu.getPrice()),
-                    orderLineItemDto.getQuantity()
-            );
+            final OrderLineItem orderLineItem = OrderLineItem.of(menu, orderLineItemDto.getQuantity());
             orderLineItems.add(orderLineItem);
-            menus.add(menu);
+            menuIds.add(menu.getId());
         }
-        validateMenuIds(orderLineItems.size(), menus);
-        return orderLineItems;
-    }
-
-    private void validateMenuIds(final int orderLineItemSize, final List<Menu> menus) {
-        final List<Long> menuIds = menus.stream()
-                                        .map(Menu::getId)
-                                        .toList();
-        if (orderLineItemSize != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        return OrderLineItems.of(orderLineItems, (int) menuRepository.countByIdIn(menuIds));
     }
 
     @Transactional(readOnly = true)
