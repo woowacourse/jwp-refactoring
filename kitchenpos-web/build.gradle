@@ -1,14 +1,3 @@
-plugins {
-    id 'java'
-}
-
-group = 'kitchenpos'
-version = '0.0.1-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation project(':kitchenpos-core')
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -16,8 +5,4 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.rest-assured:rest-assured:4.5.1'
-}
-
-test {
-    useJUnitPlatform()
 }
