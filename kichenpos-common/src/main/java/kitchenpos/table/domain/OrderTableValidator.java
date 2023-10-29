@@ -1,10 +1,8 @@
 package kitchenpos.table.domain;
 
 import kitchenpos.configuration.Validator;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
-
-import java.util.List;
+import kitchenpos.order.domain.OrderStatus;
 
 @Validator
 public class OrderTableValidator {
@@ -26,9 +24,6 @@ public class OrderTableValidator {
     }
 
     private boolean containsNotCompleteOrder(final Long orderTableId) {
-        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
-
-        return orders.stream()
-                     .anyMatch(Order::isNotComplete);
+        return orderRepository.existsByOrderTableIdAndOrderStatusIsNot(orderTableId, OrderStatus.COMPLETION);
     }
 }

@@ -1,7 +1,7 @@
 package kitchenpos.table.domain;
 
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.tablegroup.domain.UngroupTableEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -45,10 +45,8 @@ public class UngroupTableEventListener {
         final List<Long> orderTableIds = orderTables.stream()
                                                     .map(OrderTable::getId)
                                                     .collect(Collectors.toList());
-        final List<Order> findOrders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
 
-        return findOrders.stream()
-                         .anyMatch(Order::isNotComplete);
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIsNot(orderTableIds, OrderStatus.COMPLETION);
     }
 
     private void ungroupOrderTables(final List<OrderTable> orderTables) {
