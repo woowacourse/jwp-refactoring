@@ -17,12 +17,10 @@ import java.util.List;
 public class TableService {
     private final OrderTableRepository orderTableRepository;
 
-    private final TableGroupRepository tableGroupRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository, ApplicationEventPublisher applicationEventPublisher) {
+    public TableService(OrderTableRepository orderTableRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupRepository = tableGroupRepository;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
