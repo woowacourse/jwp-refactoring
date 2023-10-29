@@ -2,11 +2,11 @@ package kitchenpos.menu.application;
 
 import static kitchenpos.support.TestFixtureFactory.새로운_메뉴_그룹;
 
-import application.MenuGroupService;
-import domain.MenuGroup;
-import domain.MenuGroupRepository;
-import dto.request.MenuGroupCreateRequest;
-import dto.response.MenuGroupResponse;
+import kitchenpos.application.MenuGroupService;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import java.util.List;
 import kitchenpos.support.ServiceTest;
 import org.assertj.core.api.Assertions;

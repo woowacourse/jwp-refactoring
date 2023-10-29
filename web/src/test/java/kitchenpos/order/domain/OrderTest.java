@@ -2,10 +2,10 @@ package kitchenpos.order.domain;
 
 import static kitchenpos.support.TestFixtureFactory.새로운_주문_테이블;
 
-import domain.Order;
-import domain.OrderStatus;
-import domain.OrderTable;
-import exception.OrderException;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.OrderException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

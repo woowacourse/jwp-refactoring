@@ -2,8 +2,8 @@ package kitchenpos.common.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import domain.Price;
-import exception.PriceException;
+import kitchenpos.domain.Price;
+import kitchenpos.exception.PriceException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

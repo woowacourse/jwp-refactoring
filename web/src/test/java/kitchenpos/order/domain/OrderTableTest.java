@@ -3,8 +3,8 @@ package kitchenpos.order.domain;
 import static kitchenpos.support.TestFixtureFactory.새로운_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import domain.OrderTable;
-import exception.OrderTableException;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.OrderTableException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;

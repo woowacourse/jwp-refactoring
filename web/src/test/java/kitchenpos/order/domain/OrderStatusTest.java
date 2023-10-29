@@ -2,8 +2,8 @@ package kitchenpos.order.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import domain.OrderStatus;
-import exception.OrderStatusException;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.exception.OrderStatusException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -3,8 +3,8 @@ package kitchenpos.product.domain;
 import static kitchenpos.support.TestFixtureFactory.새로운_상품;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import exception.PriceException;
-import exception.ProductException;
+import kitchenpos.exception.PriceException;
+import kitchenpos.exception.ProductException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

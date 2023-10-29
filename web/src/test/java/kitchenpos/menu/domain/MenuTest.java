@@ -3,7 +3,7 @@ package kitchenpos.menu.domain;
 import static kitchenpos.support.TestFixtureFactory.새로운_메뉴;
 import static kitchenpos.support.TestFixtureFactory.새로운_메뉴_그룹;
 
-import exception.MenuException;
+import kitchenpos.exception.MenuException;
 import java.math.BigDecimal;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;

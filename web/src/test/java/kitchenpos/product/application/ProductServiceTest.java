@@ -2,13 +2,13 @@ package kitchenpos.product.application;
 
 import static kitchenpos.support.TestFixtureFactory.새로운_상품;
 
-import application.ProductService;
-import domain.Product;
-import domain.ProductRepository;
-import dto.request.ProductCreateRequest;
-import dto.response.ProductResponse;
-import exception.PriceException;
-import exception.ProductException;
+import kitchenpos.application.ProductService;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.exception.PriceException;
+import kitchenpos.exception.ProductException;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.support.ServiceTest;
