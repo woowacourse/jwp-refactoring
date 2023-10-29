@@ -1,4 +1,4 @@
-package kitchenpos.service;
+package kitchenpos.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,10 +20,10 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
-import kitchenpos.supports.ServiceTestContext;
+import kitchenpos.supports.IntegrationTestContext;
 
 @SuppressWarnings("NonAsciiCharacters")
-class MenuServiceTest extends ServiceTestContext {
+class MenuIntegrationTest extends IntegrationTestContext {
 
     @Test
     void 메뉴_가격이_0보다_작으면_예외를_던진다() {

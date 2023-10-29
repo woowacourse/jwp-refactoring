@@ -1,4 +1,4 @@
-package kitchenpos.service;
+package kitchenpos.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,13 +25,13 @@ import kitchenpos.exception.OrderIsCompletedException;
 import kitchenpos.exception.OrderLineEmptyException;
 import kitchenpos.exception.OrderNotFoundException;
 import kitchenpos.exception.OrderTableNotFoundException;
-import kitchenpos.supports.ServiceTestContext;
+import kitchenpos.supports.IntegrationTestContext;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
-class OrderServiceTest extends ServiceTestContext {
+class OrderIntegrationTest extends IntegrationTestContext {
 
     @Test
     void 주문_항목이_없다면_예외를_던진다() {

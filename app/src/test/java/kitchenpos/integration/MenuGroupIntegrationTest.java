@@ -1,4 +1,4 @@
-package kitchenpos.service;
+package kitchenpos.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,10 +6,10 @@ import java.util.List;
 import kitchenpos.dto.request.CreateMenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
-import kitchenpos.supports.ServiceTestContext;
+import kitchenpos.supports.IntegrationTestContext;
 
 @SuppressWarnings("NonAsciiCharacters")
-class MenuGroupServiceTest extends ServiceTestContext {
+class MenuGroupIntegrationTest extends IntegrationTestContext {
 
     @Test
     void 메뉴_그룹을_생성할_수_있다() {

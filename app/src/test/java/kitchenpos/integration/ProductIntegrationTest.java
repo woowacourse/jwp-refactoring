@@ -1,10 +1,10 @@
-package kitchenpos.service;
+package kitchenpos.integration;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.request.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.supports.ServiceTestContext;
+import kitchenpos.supports.IntegrationTestContext;
 import kitchenpos.vo.PriceIsNegativeException;
 import kitchenpos.vo.PriceIsNotProvidedException;
 import org.assertj.core.api.Assertions;
@@ -12,7 +12,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
-class ProductServiceTest extends ServiceTestContext {
+class ProductIntegrationTest extends IntegrationTestContext {
 
     @Test
     void 상품_생성_시_가격이_0보다_작으면_예외를_던진다() {

@@ -30,7 +30,7 @@ import org.springframework.test.context.event.RecordApplicationEvents;
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
 )
 @RecordApplicationEvents
-public abstract class ServiceTestContext {
+public abstract class IntegrationTestContext {
 
     @Autowired
     protected MenuService menuService;

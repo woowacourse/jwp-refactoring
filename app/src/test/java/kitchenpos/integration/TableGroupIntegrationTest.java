@@ -1,4 +1,4 @@
-package kitchenpos.service;
+package kitchenpos.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,10 +26,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.ValueSource;
-import kitchenpos.supports.ServiceTestContext;
+import kitchenpos.supports.IntegrationTestContext;
 
 @SuppressWarnings("NonAsciiCharacters")
-class TableGroupServiceTest extends ServiceTestContext {
+class TableGroupIntegrationTest extends IntegrationTestContext {
 
     @ParameterizedTest
     @ValueSource(ints = {-1, 0, 1})
