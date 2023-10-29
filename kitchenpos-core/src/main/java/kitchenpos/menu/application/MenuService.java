@@ -2,14 +2,14 @@ package kitchenpos.menu.application;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menugroup.exception.NotExistMenuGroupException;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.product.exception.NotExistProductException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

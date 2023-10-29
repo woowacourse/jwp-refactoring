@@ -1,6 +1,6 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.OrderCompletionValidator;
 import kitchenpos.tablegroup.exception.InvalidTableGroupUngroupException;

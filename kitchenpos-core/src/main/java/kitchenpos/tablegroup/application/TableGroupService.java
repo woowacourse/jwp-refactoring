@@ -6,8 +6,8 @@ import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.exception.NotExistOrderTable;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.exception.NotExistTableGroupException;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

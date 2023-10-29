@@ -6,7 +6,7 @@ import kitchenpos.ordertable.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.dto.OrderTableChangeNumberOfGuests;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.exception.NotExistOrderTable;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

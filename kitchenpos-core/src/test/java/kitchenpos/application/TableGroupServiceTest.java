@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.exception.NotExistOrderTable;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;
