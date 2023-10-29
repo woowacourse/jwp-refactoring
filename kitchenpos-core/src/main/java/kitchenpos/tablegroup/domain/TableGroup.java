@@ -29,7 +29,7 @@ public class TableGroup {
     @OneToMany
     private List<OrderTable> orderTables;
     
-    public TableGroup() {
+    protected TableGroup() {
     }
     
     public TableGroup(final List<OrderTable> orderTables) {

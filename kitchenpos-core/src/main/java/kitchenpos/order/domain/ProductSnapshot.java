@@ -13,7 +13,7 @@ public class ProductSnapshot {
     
     private BigDecimal price;
     
-    public ProductSnapshot() {
+    protected ProductSnapshot() {
     }
     
     public static ProductSnapshot from(final Product product) {

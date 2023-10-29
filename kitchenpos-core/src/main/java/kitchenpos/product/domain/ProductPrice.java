@@ -11,7 +11,7 @@ public class ProductPrice {
     
     private BigDecimal price;
     
-    public ProductPrice() {
+    protected ProductPrice() {
     }
     
     public ProductPrice(final BigDecimal price) {

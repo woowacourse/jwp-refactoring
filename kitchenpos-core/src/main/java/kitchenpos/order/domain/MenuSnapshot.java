@@ -23,7 +23,7 @@ public class MenuSnapshot {
     )
     private List<MenuProductSnapshot> menuProductSnapshots = new ArrayList<>();
     
-    public MenuSnapshot() {
+    protected MenuSnapshot() {
     }
     
     public static MenuSnapshot from(final Menu menu) {

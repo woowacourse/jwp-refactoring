@@ -15,6 +15,9 @@ public class Product {
     @Embedded
     private ProductPrice productPrice;
     
+    protected Product() {
+    }
+    
     public Product(final String name, final ProductPrice productPrice) {
         this(null, name, productPrice);
     }

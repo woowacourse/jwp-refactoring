@@ -18,6 +18,8 @@ public class OrderLineItem {
     
     private long quantity;
     
+    protected OrderLineItem() {
+    }
     
     public OrderLineItem(final Order order,
                          final MenuSnapshot menuSnapshot,

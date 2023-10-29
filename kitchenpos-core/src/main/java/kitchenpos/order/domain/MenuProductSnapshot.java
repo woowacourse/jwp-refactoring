@@ -14,7 +14,7 @@ public class MenuProductSnapshot {
     
     private long quantity;
     
-    public MenuProductSnapshot() {
+    protected MenuProductSnapshot() {
     }
     
     public MenuProductSnapshot(final ProductSnapshot productSnapshot,
