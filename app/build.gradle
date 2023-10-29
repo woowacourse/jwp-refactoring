@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation(project(':menu'))
+    implementation(project(':menugroup'))
+    implementation(project(':order'))
+    implementation(project(':product'))
+    implementation(project(':table'))
+    implementation(project(':tablegroup'))
+}
+
+bootJar { enabled = true }

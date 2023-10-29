@@ -4,24 +4,87 @@ plugins {
     id 'java'
 }
 
-group = 'camp.nextstep.edu'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.flywaydb:flyway-core'
-    runtimeOnly 'com.h2database:h2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+subprojects {
+    group = 'camp.nextstep.edu'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '11'
+
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.flywaydb:flyway-core'
+        runtimeOnly 'com.h2database:h2'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+    }
+
+    bootJar { enabled = false }
+    jar { enabled = true }
+
+
+    test {
+        useJUnitPlatform()
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
 }
 
-test {
-    useJUnitPlatform()
+project(':menu') {
+    dependencies {
+        testImplementation project(':app')
+
+        implementation project(':menugroup')
+        implementation project(':product')
+    }
+}
+
+project(':menugroup') {
+    dependencies {
+        testImplementation project(':app')
+    }
+}
+
+project(':order') {
+    dependencies {
+        testImplementation project(':app')
+
+        implementation project(':table')
+        implementation project(':menu')
+    }
+}
+
+project(':product') {
+    dependencies {
+        testImplementation project(':app')
+    }
+}
+
+project(':table') {
+    dependencies {
+        testImplementation project(':app')
+    }
+}
+
+project(':tablegroup') {
+    dependencies {
+        testImplementation project(':app')
+
+        implementation project(':table')
+        implementation project(':order')
+    }
 }
