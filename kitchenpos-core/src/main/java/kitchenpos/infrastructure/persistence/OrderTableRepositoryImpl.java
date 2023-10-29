@@ -40,4 +40,9 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
         return jpaOrderTableRepository.findAllByTableGroupId(tableGroupId);
     }
+
+    @Override
+    public List<OrderTable> saveAll(final List<OrderTable> orderTables) {
+        return jpaOrderTableRepository.saveAll(orderTables);
+    }
 }

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.event.AddGroupTableEvent;
+import kitchenpos.application.event.UngroupTableEvent;
 import kitchenpos.application.fixture.TableGroupServiceFixture;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.api.SoftAssertions;
@@ -89,6 +90,15 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
                 softAssertions.assertThat(삭제할_주문테이블에_포함된_주문_테이블_리스트.get(1).getTableGroup()).isNull();
                 softAssertions.assertThat(삭제할_주문테이블에_포함된_주문_테이블_리스트.get(1).isEmpty()).isFalse();
             });
+        }
+
+        @Test
+        void 단체_테이블을_삭제하는_경우_이벤트를_호출한다() {
+            단체_테이블을_삭제하는_경우_이벤트를_호출한다_픽스처_생성();
+            tableGroupService.ungroup(삭제할_테이블_그룹.getId());
+            final long actual = events.stream(UngroupTableEvent.class).count();
+
+            assertThat(actual).isEqualTo(1);
         }
 
         @Test

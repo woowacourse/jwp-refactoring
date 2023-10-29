@@ -96,6 +96,20 @@ public class TableGroupServiceFixture {
         tableGroupRepository.save(삭제할_테이블_그룹);
     }
 
+    protected void 단체_테이블을_삭제하는_경우_이벤트를_호출한다_픽스처_생성() {
+        final OrderTable 삭제할_주문_테이블_1 = new OrderTable(1, false);
+        final OrderTable 삭제할_주문_테이블_2 = new OrderTable(2, false);
+        삭제할_주문테이블에_포함된_주문_테이블_리스트 = List.of(삭제할_주문_테이블_1, 삭제할_주문_테이블_2);
+        orderTableRepository.saveAll(삭제할_주문테이블에_포함된_주문_테이블_리스트);
+
+        final Order 주문_1 = new Order(삭제할_주문_테이블_1.getId(), OrderStatus.COOKING);
+        final Order 주문_2 = new Order(삭제할_주문_테이블_2.getId(), OrderStatus.COOKING);
+        orderRepository.saveAll(List.of(주문_1, 주문_2));
+
+        삭제할_테이블_그룹 = new TableGroup(LocalDateTime.now());
+        tableGroupRepository.save(삭제할_테이블_그룹);
+    }
+
     protected void 단체_테이블에_포함된_주문_테이블_중_주문_상태가_조리_또는_식사인_경우_예외가_발생한다_픽스처_생성() {
         final OrderTable 주문_테이블1 = new OrderTable(1, false);
         final OrderTable 주문_테이블2 = new OrderTable(2, false);

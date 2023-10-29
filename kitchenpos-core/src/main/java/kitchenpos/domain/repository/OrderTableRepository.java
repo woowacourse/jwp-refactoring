@@ -16,4 +16,6 @@ public interface OrderTableRepository {
     List<OrderTable> findAllByIdsIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    List<OrderTable> saveAll(List<OrderTable> orderTables);
 }
