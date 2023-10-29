@@ -1,6 +1,4 @@
 dependencies {
     implementation project(':menu')
     implementation project(':ordertable')
-
-    testImplementation(project(':table'))
 }
