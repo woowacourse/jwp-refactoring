@@ -1,8 +1,8 @@
-package kitchenpos.application.table;
+package table.application;
 
-import kitchenpos.application.order.OrderedTableService;
-import kitchenpos.domain.table.OrderTableRepository;
+import order.application.OrderedTableService;
 import org.springframework.stereotype.Component;
+import table.domain.OrderTableRepository;
 
 @Component
 public class OrderedTableServiceImpl implements OrderedTableService {

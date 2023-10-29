@@ -1,6 +1,6 @@
-package kitchenpos.exception.table;
+package table.exception;
 
-import kitchenpos.exception.common.BadRequestException;
+import common.exception.BadRequestException;
 
 public class OrderTableIsInOtherTableGroupBadRequest extends BadRequestException {
     private static final String resourceName = "주문 테이블";

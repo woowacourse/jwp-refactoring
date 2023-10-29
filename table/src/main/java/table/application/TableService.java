@@ -1,20 +1,20 @@
-package kitchenpos.application.table;
+package table.application;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.dto.table.ChangeNumberOfGuestsRequest;
-import kitchenpos.dto.table.ChangeOrderTableOrderableRequest;
-import kitchenpos.dto.table.CreateOrderTableRequest;
-import kitchenpos.dto.table.ListOrderTableResponse;
-import kitchenpos.dto.table.OrderTableResponse;
-import kitchenpos.exception.order.OrderNotFoundException;
-import kitchenpos.exception.order.OrderTableNotFoundException;
-import kitchenpos.exception.table.OrderIsNotCompletedBadRequestException;
-import kitchenpos.exception.table.OrderTableIsInOtherTableGroupBadRequest;
+import order.domain.Order;
+import order.domain.OrderRepository;
+import order.exception.OrderNotFoundException;
+import order.exception.OrderTableNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import table.domain.OrderTable;
+import table.domain.OrderTableRepository;
+import table.dto.ChangeNumberOfGuestsRequest;
+import table.dto.ChangeOrderTableOrderableRequest;
+import table.dto.CreateOrderTableRequest;
+import table.dto.ListOrderTableResponse;
+import table.dto.OrderTableResponse;
+import table.exception.OrderIsNotCompletedBadRequestException;
+import table.exception.OrderTableIsInOtherTableGroupBadRequest;
 
 @Service
 public class TableService {
