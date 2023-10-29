@@ -17,8 +17,6 @@ import java.util.Objects;
 @Entity(name = "orders")
 public class Order {
 
-    private static final int MINIMUM_ORDER_LINE_ITEM_SIZE = 1;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -53,7 +51,7 @@ public class Order {
     }
 
     public void addOrderItems(final List<OrderLineItem> savedOrderLineItems) {
-        if (savedOrderLineItems.size() < MINIMUM_ORDER_LINE_ITEM_SIZE) {
+        if (savedOrderLineItems.isEmpty()) {
             throw new IllegalArgumentException();
         }
         this.orderLineItems = savedOrderLineItems;
