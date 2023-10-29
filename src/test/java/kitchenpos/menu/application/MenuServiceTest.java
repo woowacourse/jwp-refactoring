@@ -57,10 +57,10 @@ class MenuServiceTest {
         em.clear();
 
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest menu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개));
+        final CreateMenuRequest request = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개));
 
         // when
-        final Menu actual = menuService.create(menu);
+        final Menu actual = menuService.create(request);
 
         // then
         assertThat(actual.getId()).isPositive();
@@ -76,12 +76,11 @@ class MenuServiceTest {
         em.flush();
         em.clear();
 
-        final BigDecimal invalidPrice = null;
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
+        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", null, 두마리메뉴.getId(), List.of(후라이드_2개));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(invalidMenu))
+        assertThatThrownBy(() -> menuService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격은 0원 이상이어야 합니다.");
     }
@@ -98,10 +97,10 @@ class MenuServiceTest {
 
         final BigDecimal invalidPrice = BigDecimal.valueOf(-1);
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
+        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(invalidMenu))
+        assertThatThrownBy(() -> menuService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격은 0원 이상이어야 합니다.");
     }
@@ -117,10 +116,10 @@ class MenuServiceTest {
 
         final Long invalidMenuGroupId = -999L;
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(후라이드_2개));
+        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(후라이드_2개));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(invalidMenu))
+        assertThatThrownBy(() -> menuService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 그룹이 존재하지 않습니다.");
     }
@@ -136,10 +135,10 @@ class MenuServiceTest {
 
         final Long invalidProductId = -999L;
         final CreateMenuProductRequest invalidMenuProductRequest = new CreateMenuProductRequest(invalidProductId, 2L);
-        final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(invalidMenuProductRequest));
+        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(invalidMenuProductRequest));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(invalidMenu))
+        assertThatThrownBy(() -> menuService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 상품입니다.");
     }
@@ -156,10 +155,10 @@ class MenuServiceTest {
 
         final BigDecimal invalidPrice = BigDecimal.valueOf(50000);
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
-        final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
+        final CreateMenuRequest invalidRequest = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(invalidMenu))
+        assertThatThrownBy(() -> menuService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 가격은 메뉴를 구성하는 상품의 가격 합보다 작아야 합니다.");
     }

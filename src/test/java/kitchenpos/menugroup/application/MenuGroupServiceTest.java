@@ -33,10 +33,10 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록한다")
     void create() {
         // given
-        final CreateMenuGroupRequest menuGroup = new CreateMenuGroupRequest("추천메뉴");
+        final CreateMenuGroupRequest request = new CreateMenuGroupRequest("추천메뉴");
 
         // when
-        final MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroup actual = menuGroupService.create(request);
 
         // then
         assertThat(actual.getId()).isPositive();

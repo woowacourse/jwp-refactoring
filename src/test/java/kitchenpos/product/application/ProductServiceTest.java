@@ -53,10 +53,10 @@ class ProductServiceTest {
     void create_invalidPrice() {
         // given
         final BigDecimal invalidPrice = BigDecimal.valueOf(-1);
-        final CreateProductRequest invalidProduct = new CreateProductRequest("-1원 상품", invalidPrice);
+        final CreateProductRequest invalidRequest = new CreateProductRequest("-1원 상품", invalidPrice);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(invalidProduct))
+        assertThatThrownBy(() -> productService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격은 0원 이상이어야 합니다.");
     }

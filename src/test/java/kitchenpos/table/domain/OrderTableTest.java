@@ -27,9 +27,10 @@ class OrderTableTest {
         // given
         final TableGroup tableGroup = new TableGroup();
         final OrderTable orderTable = new OrderTable(5, true);
+        final Long tableGroupId = tableGroup.getId();
 
         // when
-        orderTable.groupBy(tableGroup.getId());
+        orderTable.groupBy(tableGroupId);
 
         // then
         assertThat(orderTable.isEmpty()).isFalse();
@@ -41,9 +42,10 @@ class OrderTableTest {
         // given
         final TableGroup tableGroup = new TableGroup();
         final OrderTable orderTable = new OrderTable(5, false);
+        final Long tableGroupId = tableGroup.getId();
 
         // when & then
-        assertThatThrownBy(() -> orderTable.groupBy(tableGroup.getId()))
+        assertThatThrownBy(() -> orderTable.groupBy(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블을 그룹화하려면 테이블이 비어있고 그룹화되어있지 않아야 합니다.");
     }

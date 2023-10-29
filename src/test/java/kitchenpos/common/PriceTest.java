@@ -13,11 +13,8 @@ class PriceTest {
     @Test
     @DisplayName("가격이 null이면 예외가 발생한다")
     void price_nullPrice() {
-        // given
-        final BigDecimal invalidPriceValue = null;
-
         // when & then
-        assertThatThrownBy(() -> new Price(invalidPriceValue))
+        assertThatThrownBy(() -> new Price(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격은 0원 이상이어야 합니다.");
     }

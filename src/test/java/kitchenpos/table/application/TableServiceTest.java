@@ -71,10 +71,10 @@ class TableServiceTest {
     @DisplayName("테이블을 등록한다")
     void create() {
         // given
-        final CreateOrderTableRequest orderTable = new CreateOrderTableRequest(2, true);
+        final CreateOrderTableRequest request = new CreateOrderTableRequest(2, true);
 
         // when
-        final OrderTable actual = tableService.create(orderTable);
+        final OrderTable actual = tableService.create(request);
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -113,10 +113,11 @@ class TableServiceTest {
         em.flush();
         em.clear();
 
-        final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
+        final Long tableId = 두명_테이블.getId();
+        final ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
         // when
-        final OrderTable actual = tableService.changeEmpty(두명_테이블.getId(), orderTable);
+        final OrderTable actual = tableService.changeEmpty(tableId, request);
 
         // then
         assertThat(actual.isEmpty()).isFalse();
@@ -128,10 +129,10 @@ class TableServiceTest {
         // given
         final Long invalidOrderTableId = -999L;
 
-        final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
+        final ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
@@ -149,10 +150,11 @@ class TableServiceTest {
         em.flush();
         em.clear();
 
-        final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
+        final Long groupedTableId = 세명_테이블.getId();
+        final ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(세명_테이블.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(groupedTableId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("그룹화된 테이블의 상태를 변경할 수 없습니다.");
     }
@@ -174,10 +176,11 @@ class TableServiceTest {
         em.flush();
         em.clear();
 
-        final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
+        final Long notCompleteTableId = 두명_테이블.getId();
+        final ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(두명_테이블.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(notCompleteTableId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상태가 조리중이거나 식사중인 주문이 남아있다면 테이블 상태를 변경할 수 없습니다.");
     }
@@ -191,11 +194,12 @@ class TableServiceTest {
         em.flush();
         em.clear();
 
+        final Long tableId = 두명_테이블.getId();
         int newNumberOfGuests = 10;
-        final ChangeNumberOfGuestsRequest orderTable = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
+        final ChangeNumberOfGuestsRequest request = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
 
         // when
-        final OrderTable actual = tableService.changeNumberOfGuests(두명_테이블.getId(), orderTable);
+        final OrderTable actual = tableService.changeNumberOfGuests(tableId, request);
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(new NumberOfGuests(newNumberOfGuests));
@@ -210,11 +214,12 @@ class TableServiceTest {
         em.flush();
         em.clear();
 
+        final Long tableId = 두명_테이블.getId();
         final int invalidNumberOfGuests = -1;
-        final ChangeNumberOfGuestsRequest invalidOrderTable = new ChangeNumberOfGuestsRequest(invalidNumberOfGuests);
+        final ChangeNumberOfGuestsRequest invalidRequest = new ChangeNumberOfGuestsRequest(invalidNumberOfGuests);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(두명_테이블.getId(), invalidOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("손님 수는 음수일 수 없습니다.");
     }
@@ -226,10 +231,10 @@ class TableServiceTest {
         final Long invalidOrderTableId = -999L;
 
         int newNumberOfGuests = 10;
-        final ChangeNumberOfGuestsRequest orderTable = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
+        final ChangeNumberOfGuestsRequest request = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
@@ -244,10 +249,11 @@ class TableServiceTest {
         em.clear();
 
         int newNumberOfGuests = 10;
-        final ChangeNumberOfGuestsRequest orderTable = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
+        final ChangeNumberOfGuestsRequest request = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
+        final Long emptyTableId = 두명_테이블.getId();
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(두명_테이블.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTableId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블이 비어있으면 손님 수를 변경할 수 없습니다.");
     }

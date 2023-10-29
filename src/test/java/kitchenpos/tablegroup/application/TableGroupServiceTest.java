@@ -79,10 +79,10 @@ class TableGroupServiceTest {
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
-        final CreateTableGroupRequest tableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 네명_테이블_아이디));
+        final CreateTableGroupRequest request = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 네명_테이블_아이디));
 
         // when
-        final TableGroup actual = tableGroupService.create(tableGroup);
+        final TableGroup actual = tableGroupService.create(request);
 
         // then
         assertThat(actual.getId()).isPositive();
@@ -92,10 +92,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 등록할 때 테이블 목록이 비어있으면 예외가 발생한다")
     void create_emptyOrderTables() {
         // given
-        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(Collections.emptyList());
+        final CreateTableGroupRequest invalidRequest = new CreateTableGroupRequest(Collections.emptyList());
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("그룹화하려는 테이블은 2개 이상이어야 합니다.");
     }
@@ -110,10 +110,10 @@ class TableGroupServiceTest {
         em.clear();
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
-        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디));
+        final CreateTableGroupRequest invalidRequest = new CreateTableGroupRequest(List.of(두명_테이블_아이디));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("그룹화하려는 테이블은 2개 이상이어야 합니다.");
     }
@@ -129,10 +129,10 @@ class TableGroupServiceTest {
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 존재하지_않는_테이블_아이디 = new CreateTableGroupOrderTableRequest(10L);
-        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 존재하지_않는_테이블_아이디));
+        final CreateTableGroupRequest invalidRequest = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 존재하지_않는_테이블_아이디));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(invalidRequest))
                 .hasCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("그룹화를 요청한 테이블 중에 존재하지 않는 테이블이 포함되어 있습니다.");
     }
@@ -149,10 +149,10 @@ class TableGroupServiceTest {
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 사용중인_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블_사용중.getId());
-        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 사용중인_네명_테이블_아이디));
+        final CreateTableGroupRequest invalidRequest = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 사용중인_네명_테이블_아이디));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(invalidRequest))
                 .hasCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블을 그룹화하려면 테이블이 비어있고 그룹화되어있지 않아야 합니다.");
     }
@@ -173,10 +173,10 @@ class TableGroupServiceTest {
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 그룹화된_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
-        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 그룹화된_네명_테이블_아이디));
+        final CreateTableGroupRequest invalidRequest = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 그룹화된_네명_테이블_아이디));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(invalidRequest))
                 .hasCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블을 그룹화하려면 테이블이 비어있고 그룹화되어있지 않아야 합니다.");
     }

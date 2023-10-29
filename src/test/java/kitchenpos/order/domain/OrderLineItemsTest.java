@@ -32,9 +32,10 @@ class OrderLineItemsTest {
         final OrderLineItem 후라이드_후라이드_1개 = new OrderLineItem(후라이드_후라이드_메뉴_아이디, 1);
         final OrderLineItem 후라이드_후라이드_2개 = new OrderLineItem(후라이드_후라이드_메뉴_아이디, 2);
         final OrderLineItem 후라이드_양념치킨_1개 = new OrderLineItem(후라이드_양념치킨_메뉴_아이디, 1);
+        final List<OrderLineItem> orderLineItems = List.of(후라이드_후라이드_1개, 후라이드_후라이드_2개, 후라이드_양념치킨_1개);
 
         // when
-        assertThatThrownBy(() -> new OrderLineItems(List.of(후라이드_후라이드_1개, 후라이드_후라이드_2개, 후라이드_양념치킨_1개)))
+        assertThatThrownBy(() -> new OrderLineItems(orderLineItems))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 항목의 메뉴는 중복될 수 없습니다.");
     }
