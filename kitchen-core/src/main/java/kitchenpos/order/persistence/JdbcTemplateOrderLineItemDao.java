@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -50,20 +51,20 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
 
     @Override
     public List<OrderLineItemEntity> findAll() {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
+        final String sql = "SELECT seq, order_id, menu_id, name, price, quantity FROM order_line_item";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
     public List<OrderLineItemEntity> findAllByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final String sql = "SELECT seq, order_id, menu_id, name, price, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", orderId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private OrderLineItemEntity select(final Long id) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
+        final String sql = "SELECT seq, order_id, menu_id, name, price, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters,
@@ -74,8 +75,10 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         final Long seq = resultSet.getLong(KEY_COLUMN_NAME);
         final Long orderId = resultSet.getLong("order_id");
         final Long menuId = resultSet.getLong("menu_id");
+        final String name = resultSet.getString("name");
+        final BigDecimal price = resultSet.getBigDecimal("price");
         final long quantity = resultSet.getLong("quantity");
 
-        return new OrderLineItemEntity(seq, orderId, menuId, quantity);
+        return new OrderLineItemEntity(seq, orderId, menuId, name, price, quantity);
     }
 }

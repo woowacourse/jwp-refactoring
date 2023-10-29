@@ -1,5 +1,7 @@
 package kitchenpos.order.persistence;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.persistence.MenuDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
@@ -19,10 +21,12 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
+    private final MenuDao menuDao;
 
-    public OrderRepositoryImpl(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao) {
+    public OrderRepositoryImpl(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao, final MenuDao menuDao) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
+        this.menuDao = menuDao;
     }
 
     @Override
@@ -36,9 +40,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     private OrderLineItems saveOrderLineItems(final Order entity, final OrderEntity savedOrder) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : entity.getOrderLineItems().getOrderLineItems()) {
+            final Menu menu = menuDao.findById(orderLineItem.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new)
+                    .toMenu();
             savedOrderLineItems.add(
-                    orderLineItemDao.save(OrderLineItemEntity.of(savedOrder.getId(), new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(),
-                            orderLineItem.getQuantity()))
+                    orderLineItemDao.save(OrderLineItemEntity.of(savedOrder.getId(),
+                            new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(), menu.getName(),
+                                    menu.getPrice(), orderLineItem.getQuantity()))
                     ).toOrderLineItem());
         }
         return new OrderLineItems(savedOrderLineItems);
