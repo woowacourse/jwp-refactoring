@@ -1,9 +1,9 @@
 package kitchenpos.domain.ordertable;
 
 import kitchenpos.DomainTest;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableNumberOfGuests;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -25,9 +25,9 @@ class OrderTableTest {
     void 테이블의_그룹을_변경한다() {
         final OrderTable orderTable = new OrderTable(null, new OrderTableNumberOfGuests(5), true);
         final TableGroup newTableGroup = new TableGroup(LocalDateTime.now());
-        orderTable.updateTableGroup(newTableGroup);
+        orderTable.updateTableGroup(newTableGroup.getId());
 
-        assertThat(orderTable.getTableGroup()).isEqualTo(newTableGroup);
+        assertThat(orderTable.getTableGroupId()).isEqualTo(newTableGroup.getId());
     }
 
     @Test
@@ -47,21 +47,21 @@ class OrderTableTest {
 
     @Test
     void 테이블_그룹이_비어있지_않으면_테이블_그룹을_생성할_수_없다() {
-        final OrderTable orderTable = new OrderTable(new TableGroup(LocalDateTime.now()), new OrderTableNumberOfGuests(5), true);
+        final OrderTable orderTable = new OrderTable(1L, new OrderTableNumberOfGuests(5), true);
         assertThatThrownBy(() -> orderTable.validateCreateTableGroup())
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블_그룹이_비어있지_않으면_테이블_상태를_바꿀_수_없다() {
-        final OrderTable orderTable = new OrderTable(new TableGroup(LocalDateTime.now()), new OrderTableNumberOfGuests(5), true);
+        final OrderTable orderTable = new OrderTable(1L, new OrderTableNumberOfGuests(5), true);
         assertThatThrownBy(() -> orderTable.validateChangeEmpty())
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블이_빈_테이블이면_예외를_발생시킨다() {
-        final OrderTable orderTable = new OrderTable(new TableGroup(LocalDateTime.now()), new OrderTableNumberOfGuests(5), true);
+        final OrderTable orderTable = new OrderTable(null, new OrderTableNumberOfGuests(5), true);
         assertThatThrownBy(() -> orderTable.validateIsEmpty())
                 .isInstanceOf(IllegalArgumentException.class);
     }

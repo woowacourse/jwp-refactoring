@@ -1,18 +1,18 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.tablegroup.application.TableGroupService;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.table.dto.request.OrderTableIdRequest;
-import kitchenpos.tablegroup.dto.request.TableGroupCreateRequest;
-import kitchenpos.tablegroup.dto.response.TableGroupResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableNumberOfGuests;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.dto.request.OrderTableIdRequest;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.dto.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -99,7 +99,7 @@ class TableGroupServiceTest {
             final TableGroup tableGroup = tableGroupRepository.findById(tableGroupResponse.getId())
                     .orElseThrow(IllegalArgumentException::new);
 
-            final List<OrderTable> changedOrderTableIds = orderTableRepository.findAllByTableGroup(tableGroup);
+            final List<OrderTable> changedOrderTableIds = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
             assertThat(changedOrderTableIds).isEmpty();
         }

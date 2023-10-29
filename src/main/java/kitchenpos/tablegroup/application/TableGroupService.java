@@ -1,15 +1,15 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.table.dto.request.OrderTableIdRequest;
-import kitchenpos.tablegroup.dto.request.TableGroupCreateRequest;
-import kitchenpos.table.dto.response.OrderTableResponse;
-import kitchenpos.tablegroup.dto.response.TableGroupResponse;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.dto.request.OrderTableIdRequest;
+import kitchenpos.table.dto.response.OrderTableResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.dto.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -42,7 +42,7 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroup(savedTableGroup);
+            orderTable.updateTableGroup(savedTableGroup.getId());
             orderTable.updateEmpty(false);
         }
         return convertToResponse(savedTableGroup);
@@ -51,7 +51,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = findTableGroupById(tableGroupId);
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
         validateOrderStatus(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
@@ -90,7 +90,7 @@ public class TableGroupService {
         return new TableGroupResponse(
                 tableGroup.getId(),
                 tableGroup.getCreatedDate(),
-                orderTableRepository.findAllByTableGroup(tableGroup).stream()
+                orderTableRepository.findAllByTableGroupId(tableGroup.getId()).stream()
                         .map(this::convertToResponse)
                         .collect(Collectors.toList())
         );
@@ -99,7 +99,7 @@ public class TableGroupService {
     private OrderTableResponse convertToResponse(final OrderTable orderTable) {
         return new OrderTableResponse(
                 orderTable.getId(),
-                orderTable.getTableGroup().getId(),
+                orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty());
     }

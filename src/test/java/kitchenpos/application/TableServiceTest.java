@@ -1,19 +1,19 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableNumberOfGuests;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.table.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
-import kitchenpos.table.application.TableService;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableNumberOfGuests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -94,7 +94,7 @@ class TableServiceTest {
             final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
             final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
             for (final OrderTable orderTable : orderTables) {
-                orderTable.updateTableGroup(savedTableGroup);
+                orderTable.updateTableGroup(savedTableGroup.getId());
             }
 
             final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);

@@ -1,14 +1,10 @@
 package kitchenpos.table.domain;
 
-import kitchenpos.tablegroup.domain.TableGroup;
-
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
@@ -17,9 +13,7 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     @NotNull
     @Embedded
     private OrderTableNumberOfGuests numberOfGuests;
@@ -29,8 +23,8 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final TableGroup tableGroup, final OrderTableNumberOfGuests numberOfGuests, final boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(final Long tableGroupId, final OrderTableNumberOfGuests numberOfGuests, final boolean empty) {
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -39,8 +33,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void updateTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void updateTableGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void updateNumberOfGuests(final OrderTableNumberOfGuests orderTableNumberOfGuests) {
@@ -48,13 +42,13 @@ public class OrderTable {
     }
 
     public void validateCreateTableGroup() {
-        if (!this.empty || Objects.nonNull(tableGroup)) {
+        if (!this.empty || Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }
 
     public void validateChangeEmpty() {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }
@@ -69,15 +63,11 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
     public Long getTableGroupId() {
-        if (Objects.isNull(tableGroup)) {
+        if (Objects.isNull(tableGroupId)) {
             return null;
         }
-        return tableGroup.getId();
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
