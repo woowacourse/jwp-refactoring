@@ -2,7 +2,7 @@ package kitchenpos.domain.order;
 
 import kitchenpos.domain.DomainTest;
 import org.junit.jupiter.api.Test;
-import table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

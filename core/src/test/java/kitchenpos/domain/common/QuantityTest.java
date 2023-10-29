@@ -1,6 +1,6 @@
 package kitchenpos.domain.common;
 
-import common.domain.Quantity;
+import kitchenpos.common.domain.Quantity;
 import kitchenpos.domain.DomainTest;
 import org.junit.jupiter.api.Test;
 

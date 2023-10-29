@@ -1,22 +1,22 @@
 package kitchenpos.application.integration;
 
-import common.domain.Money;
-import common.domain.Quantity;
-import order.domain.Order;
-import order.domain.OrderLineItems;
-import order.domain.OrderStatus;
-import order.dto.ChangeOrderStatusRequest;
-import order.dto.CreateOrderRequest;
-import order.dto.ListOrderResponse;
-import order.dto.OrderLineItemRequest;
-import order.dto.OrderResponse;
-import order.exception.OrderTableNotFoundException;
+import kitchenpos.common.domain.Money;
+import kitchenpos.common.domain.Quantity;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItems;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.ChangeOrderStatusRequest;
+import kitchenpos.order.dto.CreateOrderRequest;
+import kitchenpos.order.dto.ListOrderResponse;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import table.dto.CreateOrderTableRequest;
-import table.dto.OrderTableResponse;
+import kitchenpos.table.dto.CreateOrderTableRequest;
+import kitchenpos.table.dto.OrderTableResponse;
 
 import javax.persistence.EntityManager;
 import java.util.List;

@@ -1,18 +1,18 @@
 package kitchenpos.application.integration;
 
 
-import menu.domain.Menu;
-import menu.dto.CreateMenuRequest;
-import menu.dto.MenuProductRequest;
-import menu.dto.MenuResponse;
-import menugroups.dto.CreateMenuGroupRequest;
-import menugroups.dto.MenuGroupResponse;
-import menugroups.exception.MenuGroupNotFoundException;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.dto.CreateMenuRequest;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.menugroups.dto.CreateMenuGroupRequest;
+import kitchenpos.menugroups.dto.MenuGroupResponse;
+import kitchenpos.menugroups.exception.MenuGroupNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import product.dto.CreateProductRequest;
-import product.dto.ProductResponse;
+import kitchenpos.product.dto.CreateProductRequest;
+import kitchenpos.product.dto.ProductResponse;
 
 import java.math.BigDecimal;
 import java.util.List;

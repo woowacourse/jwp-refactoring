@@ -1,17 +1,17 @@
 package kitchenpos.application.integration;
 
-import order.domain.OrderStatus;
-import order.dto.ChangeOrderStatusRequest;
-import order.exception.OrderTableNotFoundException;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.ChangeOrderStatusRequest;
+import kitchenpos.order.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import table.dto.OrderTableRequest;
-import table.dto.OrderTableResponse;
-import tablegroups.domain.TableGroup;
-import tablegroups.dto.CreateTableGroupRequest;
-import tablegroups.dto.TableGroupResponse;
-import tablegroups.dto.UnGroupRequest;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.table.dto.OrderTableResponse;
+import kitchenpos.tablegroups.domain.TableGroup;
+import kitchenpos.tablegroups.dto.CreateTableGroupRequest;
+import kitchenpos.tablegroups.dto.TableGroupResponse;
+import kitchenpos.tablegroups.dto.UnGroupRequest;
 
 import java.util.List;
 

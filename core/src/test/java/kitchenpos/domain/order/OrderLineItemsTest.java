@@ -1,7 +1,7 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.DomainTest;
-import order.domain.OrderLineItems;
+import kitchenpos.order.domain.OrderLineItems;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
