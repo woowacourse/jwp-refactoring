@@ -1,6 +1,7 @@
 package kitchenpos.product.application;
 
 import kitchenpos.common.Price;
+import kitchenpos.configuration.ServiceTest;
 import kitchenpos.product.dto.CreateProductDto;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
@@ -8,22 +9,14 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ServiceTest
 class ProductServiceTest {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private ProductService productService;
@@ -67,9 +60,6 @@ class ProductServiceTest {
         // given
         final Product expect1 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(17000)));
         final Product expect2 = productRepository.save(new Product("양념치킨", BigDecimal.valueOf(20000)));
-
-        em.flush();
-        em.clear();
 
         // when
         final List<Product> actual = productService.list();

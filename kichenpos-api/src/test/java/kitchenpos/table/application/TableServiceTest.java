@@ -1,5 +1,6 @@
 package kitchenpos.table.application;
 
+import kitchenpos.configuration.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
@@ -25,11 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -38,13 +35,9 @@ import static kitchenpos.order.domain.OrderFixture.order;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ServiceTest
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private ProductRepository productRepository;
@@ -90,9 +83,6 @@ class TableServiceTest {
         final OrderTable expect1 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable expect2 = orderTableRepository.save(new OrderTable(4, true));
 
-        em.flush();
-        em.clear();
-
         // when
         final List<OrderTable> actual = tableService.list();
 
@@ -109,9 +99,6 @@ class TableServiceTest {
     void changeEmpty() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
-
-        em.flush();
-        em.clear();
 
         final Long tableId = 두명_테이블.getId();
         final ChangeOrderTableEmptyDto request = new ChangeOrderTableEmptyDto(false);
@@ -146,9 +133,8 @@ class TableServiceTest {
         final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
         세명_테이블.groupBy(세명_네명_테이블_그룹.getId());
         네명_테이블.groupBy(세명_네명_테이블_그룹.getId());
-
-        em.flush();
-        em.clear();
+        orderTableRepository.save(세명_테이블);
+        orderTableRepository.save(네명_테이블);
 
         final Long groupedTableId = 세명_테이블.getId();
         final ChangeOrderTableEmptyDto request = new ChangeOrderTableEmptyDto(false);
@@ -173,9 +159,6 @@ class TableServiceTest {
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
         orderRepository.save(order(두명_테이블.getId(), orderStatus, new OrderLineItems(List.of(주문_항목))));
 
-        em.flush();
-        em.clear();
-
         final Long notCompleteTableId = 두명_테이블.getId();
         final ChangeOrderTableEmptyDto request = new ChangeOrderTableEmptyDto(false);
 
@@ -190,9 +173,6 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
-
-        em.flush();
-        em.clear();
 
         final Long tableId = 두명_테이블.getId();
         int newNumberOfGuests = 10;
@@ -210,9 +190,6 @@ class TableServiceTest {
     void changeNumberOfGuests_invalidNumberOfGuests() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
-
-        em.flush();
-        em.clear();
 
         final Long tableId = 두명_테이블.getId();
         final int invalidNumberOfGuests = -1;
@@ -244,9 +221,6 @@ class TableServiceTest {
     void changeNumberOfGuests_emptyTable() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
-
-        em.flush();
-        em.clear();
 
         int newNumberOfGuests = 10;
         final ChangeNumberOfGuestsDto request = new ChangeNumberOfGuestsDto(newNumberOfGuests);

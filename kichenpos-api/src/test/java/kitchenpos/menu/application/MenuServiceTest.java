@@ -1,5 +1,6 @@
 package kitchenpos.menu.application;
 
+import kitchenpos.configuration.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.dto.CreateMenuDto;
 import kitchenpos.menu.dto.CreateMenuProductDto;
@@ -13,11 +14,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -25,13 +22,9 @@ import static kitchenpos.menu.domain.MenuFixture.menu;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ServiceTest
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private MenuService menuService;
@@ -53,9 +46,6 @@ class MenuServiceTest {
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
 
-        em.flush();
-        em.clear();
-
         final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
         final CreateMenuDto request = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개));
 
@@ -73,9 +63,6 @@ class MenuServiceTest {
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
 
-        em.flush();
-        em.clear();
-
         final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
         final CreateMenuDto invalidRequest = new CreateMenuDto("후라이드+후라이드", null, 두마리메뉴.getId(), List.of(후라이드_2개));
 
@@ -91,9 +78,6 @@ class MenuServiceTest {
         // given
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-
-        em.flush();
-        em.clear();
 
         final BigDecimal invalidPrice = BigDecimal.valueOf(-1);
         final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
@@ -111,9 +95,6 @@ class MenuServiceTest {
         // given
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
 
-        em.flush();
-        em.clear();
-
         final Long invalidMenuGroupId = -999L;
         final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
         final CreateMenuDto invalidRequest = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(후라이드_2개));
@@ -129,9 +110,6 @@ class MenuServiceTest {
     void create_invalidProduct() {
         // given
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-
-        em.flush();
-        em.clear();
 
         final Long invalidProductId = -999L;
         final CreateMenuProductDto invalidMenuProductRequest = new CreateMenuProductDto(invalidProductId, 2L);
@@ -149,9 +127,6 @@ class MenuServiceTest {
         // given
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-
-        em.flush();
-        em.clear();
 
         final BigDecimal invalidPrice = BigDecimal.valueOf(50000);
         final CreateMenuProductDto 후라이드_2개 = new CreateMenuProductDto(후라이드.getId(), 2L);
@@ -177,9 +152,6 @@ class MenuServiceTest {
 
         final Menu 후라이드_후라이드 = menuRepository.save(menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개)));
         final Menu 후라이드_양념치킨 = menuRepository.save(menu("후라이드+양념치킨", BigDecimal.valueOf(33000), 두마리메뉴.getId(), List.of(후라이드_1개, 양념치킨_1개)));
-
-        em.flush();
-        em.clear();
 
         // when
         final List<Menu> actual = menuService.list();

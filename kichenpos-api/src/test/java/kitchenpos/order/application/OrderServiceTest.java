@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import kitchenpos.configuration.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
@@ -22,11 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -36,13 +33,9 @@ import static kitchenpos.order.domain.OrderFixture.order;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ServiceTest
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private OrderService orderService;
@@ -70,9 +63,6 @@ class OrderServiceTest {
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final MenuProduct 후라이드_2개 = new MenuProduct(후라이드.getId(), 2L);
         후라이드_2개_메뉴 = menuRepository.save(menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개)));
-
-        em.flush();
-        em.clear();
     }
 
     @Test
@@ -80,9 +70,6 @@ class OrderServiceTest {
     void create() {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
-
-        em.flush();
-        em.clear();
 
         final CreateOrderLineItemDto 주문항목 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 1L);
         final CreateOrderDto request = new CreateOrderDto(주문_테이블.getId(), List.of(주문항목));
@@ -103,9 +90,6 @@ class OrderServiceTest {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
 
-        em.flush();
-        em.clear();
-
         final List<CreateOrderLineItemDto> 빈_주문_항목 = Collections.emptyList();
         final CreateOrderDto invalidRequest = new CreateOrderDto(주문_테이블.getId(), 빈_주문_항목);
 
@@ -120,9 +104,6 @@ class OrderServiceTest {
     void create_invalidNumberOfOrderLineItems() {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
-
-        em.flush();
-        em.clear();
 
         final CreateOrderLineItemDto 후라이드_2개_메뉴_1개 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 1L);
         final CreateOrderLineItemDto 후라이드_2개_메뉴_2개 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 2L);
@@ -153,10 +134,6 @@ class OrderServiceTest {
     void create_emptyTable() {
         // given
         final OrderTable 비어있는_테이블 = orderTableRepository.save(new OrderTable(3, true));
-
-        em.flush();
-        em.clear();
-
         final CreateOrderLineItemDto 주문항목 = new CreateOrderLineItemDto(후라이드_2개_메뉴.getId(), 1L);
         final CreateOrderDto invalidRequest = new CreateOrderDto(비어있는_테이블.getId(), List.of(주문항목));
 
@@ -173,13 +150,11 @@ class OrderServiceTest {
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, false));
 
-        final OrderLineItem 후라이드_2개_메뉴_1개_주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
+        final OrderLineItem 후라이드_2개_메뉴_1개_주문항목1 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
+        final OrderLineItem 후라이드_2개_메뉴_1개_주문항목2 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
 
-        final Order 세명_테이블_주문 = orderRepository.save(order(세명_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목))));
-        final Order 네명_테이블_주문 = orderRepository.save(order(네명_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목))));
-
-        em.flush();
-        em.clear();
+        final Order 세명_테이블_주문 = orderRepository.save(order(세명_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목1))));
+        final Order 네명_테이블_주문 = orderRepository.save(order(네명_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목2))));
 
         // when
         final List<Order> actual = orderService.list();
@@ -200,9 +175,6 @@ class OrderServiceTest {
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
         final Order 주문 = orderRepository.save(order(주문_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(주문항목))));
 
-        em.flush();
-        em.clear();
-
         final OrderStatus expect = OrderStatus.MEAL;
         final ChangeOrderStatusDto request = new ChangeOrderStatusDto(expect);
 
@@ -220,9 +192,6 @@ class OrderServiceTest {
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 1L);
         final Order 완료된_주문 = orderRepository.save(order(주문_테이블.getId(), OrderStatus.COMPLETION, new OrderLineItems(List.of(주문항목))));
-
-        em.flush();
-        em.clear();
 
         final Long completeOrderId = 완료된_주문.getId();
         final OrderStatus newOrderStatus = OrderStatus.MEAL;

@@ -1,27 +1,20 @@
 package kitchenpos.menugroup.application;
 
-import kitchenpos.menugroup.dto.CreateMenuGroupDto;
+import kitchenpos.configuration.ServiceTest;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.dto.CreateMenuGroupDto;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ServiceTest
 class MenuGroupServiceTest {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -48,9 +41,6 @@ class MenuGroupServiceTest {
         // given
         final MenuGroup expect1 = menuGroupRepository.save(new MenuGroup("추천메뉴"));
         final MenuGroup expect2 = menuGroupRepository.save(new MenuGroup("신메뉴"));
-
-        em.flush();
-        em.clear();
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();

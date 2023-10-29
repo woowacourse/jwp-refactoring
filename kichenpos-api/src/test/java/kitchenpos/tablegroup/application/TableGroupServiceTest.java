@@ -1,5 +1,6 @@
 package kitchenpos.tablegroup.application;
 
+import kitchenpos.configuration.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
@@ -23,11 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -38,13 +35,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ServiceTest
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -73,9 +66,6 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-
-        em.flush();
-        em.clear();
 
         final CreateTableGroupOrderTableDto 두명_테이블_아이디 = new CreateTableGroupOrderTableDto(두명_테이블.getId());
         final CreateTableGroupOrderTableDto 네명_테이블_아이디 = new CreateTableGroupOrderTableDto(네명_테이블.getId());
@@ -106,9 +96,6 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
 
-        em.flush();
-        em.clear();
-
         final CreateTableGroupOrderTableDto 두명_테이블_아이디 = new CreateTableGroupOrderTableDto(두명_테이블.getId());
         final CreateTableGroupDto invalidRequest = new CreateTableGroupDto(List.of(두명_테이블_아이디));
 
@@ -123,9 +110,6 @@ class TableGroupServiceTest {
     void create_invalidNumberOfTable() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
-
-        em.flush();
-        em.clear();
 
         final CreateTableGroupOrderTableDto 두명_테이블_아이디 = new CreateTableGroupOrderTableDto(두명_테이블.getId());
         final CreateTableGroupOrderTableDto 존재하지_않는_테이블_아이디 = new CreateTableGroupOrderTableDto(10L);
@@ -143,9 +127,6 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 네명_테이블_사용중 = orderTableRepository.save(new OrderTable(4, false));
-
-        em.flush();
-        em.clear();
 
         final CreateTableGroupOrderTableDto 두명_테이블_아이디 = new CreateTableGroupOrderTableDto(두명_테이블.getId());
         final CreateTableGroupOrderTableDto 사용중인_네명_테이블_아이디 = new CreateTableGroupOrderTableDto(네명_테이블_사용중.getId());
@@ -167,9 +148,8 @@ class TableGroupServiceTest {
         final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
         세명_테이블.groupBy(세명_네명_테이블_그룹.getId());
         네명_테이블.groupBy(세명_네명_테이블_그룹.getId());
-
-        em.flush();
-        em.clear();
+        orderTableRepository.save(세명_테이블);
+        orderTableRepository.save(네명_테이블);
 
         final CreateTableGroupOrderTableDto 두명_테이블_아이디 = new CreateTableGroupOrderTableDto(두명_테이블.getId());
         final CreateTableGroupOrderTableDto 그룹화된_네명_테이블_아이디 = new CreateTableGroupOrderTableDto(네명_테이블.getId());
@@ -190,9 +170,8 @@ class TableGroupServiceTest {
         final TableGroup 세명_네명_테이블_그룹 = tableGroupRepository.save(new TableGroup());
         세명_테이블.groupBy(세명_네명_테이블_그룹.getId());
         네명_테이블.groupBy(세명_네명_테이블_그룹.getId());
-
-        em.flush();
-        em.clear();
+        orderTableRepository.save(세명_테이블);
+        orderTableRepository.save(네명_테이블);
 
         // when
         tableGroupService.ungroup(세명_네명_테이블_그룹.getId());
@@ -217,7 +196,8 @@ class TableGroupServiceTest {
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final MenuProduct 후라이드_2개 = new MenuProduct(후라이드.getId(), 2L);
         final Menu 후라이드_2개_메뉴 = menuRepository.save(menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개)));
-        final OrderLineItem 주문_항목 = new OrderLineItem(후라이드_2개_메뉴.getId(), 2);
+        final OrderLineItem 주문_항목1 = new OrderLineItem(후라이드_2개_메뉴.getId(), 2);
+        final OrderLineItem 주문_항목2 = new OrderLineItem(후라이드_2개_메뉴.getId(), 2);
 
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
@@ -225,12 +205,11 @@ class TableGroupServiceTest {
         final Long 세명_네명_테이블_그룹_아이디 = 세명_네명_테이블_그룹.getId();
         세명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
         네명_테이블.groupBy(세명_네명_테이블_그룹_아이디);
+        orderTableRepository.save(세명_테이블);
+        orderTableRepository.save(네명_테이블);
 
-        orderRepository.save(order(세명_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(주문_항목))));
-        orderRepository.save(order(네명_테이블.getId(), orderStatus, new OrderLineItems(List.of(주문_항목))));
-
-        em.flush();
-        em.clear();
+        orderRepository.save(order(세명_테이블.getId(), OrderStatus.COOKING, new OrderLineItems(List.of(주문_항목1))));
+        orderRepository.save(order(네명_테이블.getId(), orderStatus, new OrderLineItems(List.of(주문_항목2))));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(세명_네명_테이블_그룹_아이디))
