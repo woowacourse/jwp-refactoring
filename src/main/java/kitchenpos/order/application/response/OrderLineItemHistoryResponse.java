@@ -1,7 +1,6 @@
 package kitchenpos.order.application.response;
 
-import kitchenpos.menu.application.response.MenuHistoryResponse;
-import kitchenpos.menu.domain.MenuHistory;
+import kitchenpos.order.domain.MenuHistory;
 import kitchenpos.order.domain.OrderLineItem;
 
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ public class OrderLineItemHistoryResponse {
     public long getSeq() {
         return seq;
     }
+
 
     public MenuHistoryResponse getMenu() {
         return menu;

@@ -70,7 +70,7 @@ class MenuTest {
 
             softly.assertThat(actualMenuProduct)
                     .usingRecursiveComparison()
-                    .isEqualTo(new MenuProduct(product, new Quantity(10)));
+                    .isEqualTo(MenuProduct.withoutMenu(product, new Quantity(10)));
         });
     }
 }

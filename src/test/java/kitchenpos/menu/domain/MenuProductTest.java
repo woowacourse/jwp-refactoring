@@ -20,7 +20,7 @@ class MenuProductTest {
         final Product product = new Product(new Name("테스트용 상품명"), Price.from("10000"));
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴그룹명"));
 
-        assertThatCode(() -> new MenuProduct(product, new Quantity(10)))
+        assertThatCode(() -> MenuProduct.withoutMenu(product, new Quantity(10)))
                 .doesNotThrowAnyException();
     }
 

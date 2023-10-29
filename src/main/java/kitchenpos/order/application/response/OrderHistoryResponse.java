@@ -1,7 +1,7 @@
 package kitchenpos.order.application.response;
 
 import kitchenpos.table.application.response.OrderTableResponse;
-import kitchenpos.menu.domain.MenuHistory;
+import kitchenpos.order.domain.MenuHistory;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;

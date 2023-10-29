@@ -1,8 +1,8 @@
 package kitchenpos.order.application;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuHistory;
-import kitchenpos.menu.domain.MenuHistoryRepository;
+import kitchenpos.order.domain.MenuHistory;
+import kitchenpos.order.domain.MenuHistoryRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.event.OrderPreparedEvent;
 import kitchenpos.order.application.request.OrderStatusUpdateRequest;

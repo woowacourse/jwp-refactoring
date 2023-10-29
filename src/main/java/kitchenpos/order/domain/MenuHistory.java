@@ -1,4 +1,4 @@
-package kitchenpos.menu.domain;
+package kitchenpos.order.domain;
 
 import kitchenpos.common.vo.Name;
 import kitchenpos.common.vo.Price;
@@ -27,39 +27,32 @@ public class MenuHistory {
     @Embedded
     private Price price;
 
-    @Embedded
-    private MenuProductHistories menuProductHistories;
-
     protected MenuHistory() {
     }
 
     public MenuHistory(final Long orderId,
                        final Name name,
-                       final Price price,
-                       final MenuProductHistories menuProductHistories
+                       final Price price
     ) {
-        this(null, orderId, name, price, menuProductHistories);
+        this(null, orderId, name, price);
     }
 
     protected MenuHistory(final Long id,
                           final Long orderId,
                           final Name name,
-                          final Price price,
-                          final MenuProductHistories menuProductHistories
+                          final Price price
     ) {
         this.id = id;
         this.orderId = orderId;
         this.name = name;
         this.price = price;
-        this.menuProductHistories = menuProductHistories;
     }
 
-    public static MenuHistory of(final Long orderId, final Menu menu) {
+    public static MenuHistory of(final Long orderId, final Name name, final Price price) {
         return new MenuHistory(
                 orderId,
-                menu.getName(),
-                menu.getPrice(),
-                MenuProductHistories.from(menu.getMenuProducts())
+                name,
+                price
         );
     }
 
@@ -77,9 +70,5 @@ public class MenuHistory {
 
     public Price getPrice() {
         return price;
-    }
-
-    public MenuProductHistories getMenuProductHistories() {
-        return menuProductHistories;
     }
 }

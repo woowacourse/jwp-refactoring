@@ -1,16 +1,16 @@
 package kitchenpos.menu.event;
 
-import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuHistory;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductHistories;
-import kitchenpos.menu.domain.Product;
 import kitchenpos.common.vo.Name;
 import kitchenpos.common.vo.Price;
 import kitchenpos.common.vo.Quantity;
+import kitchenpos.config.ApplicationTestConfig;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.order.application.event.OrderHistoryEventListener;
 import kitchenpos.order.application.event.OrderPreparedEvent;
+import kitchenpos.order.domain.MenuHistory;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
@@ -23,16 +23,16 @@ import java.util.List;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-class MenuHistoryEventListenerTest extends ApplicationTestConfig {
+class OrderHistoryEventListenerTest extends ApplicationTestConfig {
 
-    private MenuHistoryEventListener menuHistoryEventListener;
+    private OrderHistoryEventListener orderHistoryEventListener;
 
     @BeforeEach
     void setUp() {
-        menuHistoryEventListener = new MenuHistoryEventListener(
+        orderHistoryEventListener = new OrderHistoryEventListener(
                 orderRepository,
-                menuRepository,
-                menuHistoryRepository
+                menuHistoryRepository,
+                menuRepository
         );
     }
 
@@ -71,11 +71,9 @@ class MenuHistoryEventListenerTest extends ApplicationTestConfig {
         );
 
         // when
-        menuHistoryEventListener.menuHistoryEvent(new OrderPreparedEvent(savedOrder.getId()));
+        orderHistoryEventListener.menuHistoryEvent(new OrderPreparedEvent(savedOrder.getId()));
 
         // then
-        final MenuProductHistories expectedMenuProductHistories = MenuProductHistories.from(menu.getMenuProducts());
-
         final List<MenuHistory> actual = menuHistoryRepository.findAll();
         assertSoftly(softly -> {
             softly.assertThat(actual).hasSize(1);
@@ -84,10 +82,6 @@ class MenuHistoryEventListenerTest extends ApplicationTestConfig {
             softly.assertThat(actualMenuHistory.getId()).isPositive();
             softly.assertThat(actualMenuHistory.getName()).isEqualTo(savedMenu.getName());
             softly.assertThat(actualMenuHistory.getPrice()).isEqualTo(savedMenu.getPrice());
-            softly.assertThat(actualMenuHistory.getMenuProductHistories())
-                    .usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
-                    .isEqualTo(expectedMenuProductHistories);
         });
     }
 }

@@ -1,7 +1,7 @@
 package kitchenpos.config;
 
 import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuHistoryRepository;
+import kitchenpos.order.domain.MenuHistoryRepository;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.ProductRepository;
