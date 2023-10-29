@@ -1,0 +1,12 @@
+tasks.named('bootJar') {
+    enabled = true
+}
+
+dependencies {
+    implementation project(':menugroup')
+    implementation project(':menu')
+    implementation project(':product')
+    implementation project(':table')
+    implementation project(':tablegroup')
+    implementation project(':order')
+}
