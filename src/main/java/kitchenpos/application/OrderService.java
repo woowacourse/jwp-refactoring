@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuPrice;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.orderlineitem.OrderLineItem;
@@ -88,9 +90,11 @@ public class OrderService {
 
     private void saveOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItemRequest, final Order order) {
         for (final OrderLineItemCreateRequest orderLineItem : orderLineItemRequest) {
+            final Menu menu = findMenuById(orderLineItem.getMenuId());
             orderLineItemRepository.save(new OrderLineItem(
                     order,
-                    findMenuById(orderLineItem.getMenuId()),
+                    new MenuName(menu.getName()),
+                    new MenuPrice(menu.getPrice()),
                     new OrderLineItemQuantity(orderLineItem.getQuantity())
             ));
         }
@@ -133,7 +137,8 @@ public class OrderService {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
                 orderLineItem.getOrder().getId(),
-                orderLineItem.getMenu().getId(),
+                orderLineItem.getMenuName().getName(),
+                orderLineItem.getMenuPrice().getPrice(),
                 orderLineItem.getQuantity()
         );
     }
