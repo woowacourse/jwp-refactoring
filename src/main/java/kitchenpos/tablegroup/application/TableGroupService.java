@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.common.event.TableGroupCreateEvent;
 import kitchenpos.common.event.TableGroupDeleteEvent;
 import kitchenpos.common.event.ValidateSameSizeOrderTableEvent;
-import kitchenpos.order.dto.OrderTableInTableGroupDto;
+import kitchenpos.tablegroup.dto.OrderTableInTableGroupDto;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.dto.TableGroupResponse;
