@@ -74,7 +74,7 @@ public class Order {
     }
 
     public void prepare(final OrderValidator orderValidator) {
-        orderValidator.validatePrepare(this);
+        orderValidator.validatePrepare(orderTableId, orderLineItems);
         this.orderStatus = OrderStatus.COOKING;
     }
 

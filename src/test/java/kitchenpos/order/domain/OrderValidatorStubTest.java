@@ -17,13 +17,13 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class OrderValidatorTest extends ApplicationTestConfig {
+class OrderValidatorStubTest extends ApplicationTestConfig {
 
-    private OrderValidator orderValidator;
+    private OrderValidatorImpl orderValidatorImpl;
 
     @BeforeEach
     void setUp() {
-        orderValidator = new OrderValidator(menuRepository, orderTableRepository);
+        orderValidatorImpl = new OrderValidatorImpl(menuRepository, orderTableRepository);
     }
 
 
@@ -41,14 +41,12 @@ class OrderValidatorTest extends ApplicationTestConfig {
         );
 
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
-        final Order newOrder = new Order(
-                savedOrderTable.getId(),
-                new OrderLineItems(List.of(
-                        new OrderLineItem(savedMenu.getId(), new Quantity(10))
-                )));
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(
+                new OrderLineItem(savedMenu.getId(), new Quantity(10))
+        ));
 
         // expect
-        assertThatCode(() -> orderValidator.validatePrepare(newOrder))
+        assertThatCode(() -> orderValidatorImpl.validatePrepare(savedOrderTable.getId(), orderLineItems))
                 .doesNotThrowAnyException();
     }
 
@@ -65,14 +63,14 @@ class OrderValidatorTest extends ApplicationTestConfig {
                 )
         );
 
-        final Order newOrder = new Order(
-                -1L,
-                new OrderLineItems(List.of(
-                        new OrderLineItem(savedMenu.getId(), new Quantity(10))
-                )));
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(
+                new OrderLineItem(savedMenu.getId(), new Quantity(10))
+        ));
 
         // expect
-        assertThatThrownBy(() -> orderValidator.validatePrepare(newOrder))
+        final Long wrongOrderTableId = -1L;
+
+        assertThatThrownBy(() -> orderValidatorImpl.validatePrepare(wrongOrderTableId, orderLineItems))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -81,14 +79,13 @@ class OrderValidatorTest extends ApplicationTestConfig {
     void throwException_validateMenuSize() {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
-        final Order newOrder = new Order(
-                savedOrderTable.getId(),
-                new OrderLineItems(List.of(
-                        new OrderLineItem(-1L, new Quantity(10))
-                )));
 
         // expect
-        assertThatThrownBy(() -> orderValidator.validatePrepare(newOrder))
+        final OrderLineItems wrongOrderLineItems = new OrderLineItems(List.of(
+                new OrderLineItem(-1L, new Quantity(10))
+        ));
+
+        assertThatThrownBy(() -> orderValidatorImpl.validatePrepare(savedOrderTable.getId(), wrongOrderLineItems))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -96,23 +93,12 @@ class OrderValidatorTest extends ApplicationTestConfig {
     @Test
     void throwException_validateOrderLineItemsEmpty() {
         // given
-        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-        final Menu savedMenu = menuRepository.save(
-                Menu.withEmptyMenuProducts(
-                        new Name("테스트용 메뉴명"),
-                        Price.ZERO,
-                        savedMenuGroup
-                )
-        );
-
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
-        final Order newOrder = new Order(
-                savedOrderTable.getId(),
-                new OrderLineItems(Collections.emptyList())
-        );
 
         // expect
-        assertThatThrownBy(() -> orderValidator.validatePrepare(newOrder))
+        final OrderLineItems emptyOrderLineItems = new OrderLineItems(Collections.emptyList());
+
+        assertThatThrownBy(() -> orderValidatorImpl.validatePrepare(savedOrderTable.getId(), emptyOrderLineItems))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

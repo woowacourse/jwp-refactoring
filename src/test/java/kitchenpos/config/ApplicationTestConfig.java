@@ -9,6 +9,7 @@ import kitchenpos.order.application.OrderMapper;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.order.domain.OrderValidatorImpl;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.table.domain.TableGroupRepository;
@@ -20,7 +21,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/truncate.sql")
-@Import({JpaAuditingConfig.class, OrderValidator.class, OrderMapper.class, OrderTableValidator.class, TableGroupValidator.class})
+@Import({JpaAuditingConfig.class, OrderValidatorImpl.class, OrderMapper.class, OrderTableValidator.class, TableGroupValidator.class})
 @DataJpaTest
 public abstract class ApplicationTestConfig {
 

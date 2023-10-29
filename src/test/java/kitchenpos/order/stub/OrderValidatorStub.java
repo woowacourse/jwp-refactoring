@@ -1,17 +1,12 @@
 package kitchenpos.order.stub;
 
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderValidator;
 
-public class OrderValidatorStub extends OrderValidator {
-
-    public OrderValidatorStub() {
-        super(null, null);
-    }
+public class OrderValidatorStub implements OrderValidator {
 
     @Override
-    public void validatePrepare(final Order order) {
-        order.changeOrderStatus(OrderStatus.COOKING);
+    public void validatePrepare(final Long orderTableId, final OrderLineItems orderLineItems) {
+        /** NOT IMPLEMENTED **/
     }
 }
