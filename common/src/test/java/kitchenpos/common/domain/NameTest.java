@@ -1,12 +1,13 @@
-package kitchenpos.domain.common;
+package kitchenpos.common.domain;
 
-import kitchenpos.common.domain.Name;
-import kitchenpos.domain.DomainTest;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class NameTest extends DomainTest {
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+class NameTest {
     @Test
     void throw_when_name_is_empty() {
         // given
