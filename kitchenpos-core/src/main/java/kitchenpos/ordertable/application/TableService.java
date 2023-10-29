@@ -1,26 +1,24 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import kitchenpos.common.dto.request.CreateOrderTableRequest;
 import kitchenpos.common.dto.request.PutOrderTableEmptyRequest;
 import kitchenpos.common.dto.request.PutOrderTableGuestsNumberRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableValidator;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final OrderTableValidator orderTableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableValidator orderTableValidator, final OrderTableRepository orderTableRepository) {
+        this.orderTableValidator = orderTableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -39,25 +37,9 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final PutOrderTableEmptyRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                                                                .orElseThrow(IllegalArgumentException::new);
-        validateCompletion(orderTableId);
-        validateTableGroupInvolve(savedOrderTable);
+        orderTableValidator.validateOrderCompletion(orderTableId);
         savedOrderTable.changeEmptyStatus(orderTableRequest.getEmpty());
         return orderTableRepository.save(savedOrderTable);
-    }
-
-    private void validateCompletion(final Long orderTableId) {
-        final boolean isNotComplete = orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, OrderStatus.notCompleteStatuses()
-        );
-        if (isNotComplete) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateTableGroupInvolve(final OrderTable orderTable) {
-        if (Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     @Transactional

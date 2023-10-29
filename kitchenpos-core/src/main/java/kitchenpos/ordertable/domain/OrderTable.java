@@ -1,7 +1,7 @@
 package kitchenpos.ordertable.domain;
 
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.ordertable.domain.vo.GuestsNumber;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -65,10 +65,14 @@ public class OrderTable {
     }
 
     public void changeEmptyStatus(final boolean empty) {
+        validateTableGroupInvolve();
+        this.empty = empty;
+    }
+
+    private void validateTableGroupInvolve() {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
         }
-        this.empty = empty;
     }
 
     public void addToTableGroup(final TableGroup tableGroup) {
