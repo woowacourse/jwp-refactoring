@@ -1,11 +1,8 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import kitchenpos.fixtures.Fixtures;
 import java.util.List;
 import javax.persistence.EntityManager;
+import kitchenpos.fixtures.Fixtures;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.ordertable.JpaOrderTableRepository;
 import kitchenpos.ordertable.OrderTable;

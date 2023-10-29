@@ -1,10 +1,8 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.ordertable.OrderTable;
-import kitchenpos.tablegroup.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

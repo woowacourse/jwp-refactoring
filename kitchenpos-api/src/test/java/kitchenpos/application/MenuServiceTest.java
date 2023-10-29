@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.fixtures.Fixtures;
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.fixtures.Fixtures;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuService;

@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.fixtures.Fixtures;
 import java.util.List;
+import kitchenpos.fixtures.Fixtures;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuGroupService;
 import kitchenpos.menu.dto.MenuGroupRequest;

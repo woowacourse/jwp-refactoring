@@ -1,11 +1,7 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.util.List;
 import kitchenpos.fixtures.Fixtures;
-
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.TableService;
 import kitchenpos.ordertable.dto.OrderTableRequest;
@@ -117,7 +113,7 @@ class TableServiceTest extends ServiceTest {
 
             // when, then
             Assertions.assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(-1L, request))
+                            () -> tableService.changeNumberOfGuests(-1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

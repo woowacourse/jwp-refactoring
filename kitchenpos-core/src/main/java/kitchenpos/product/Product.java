@@ -25,7 +25,7 @@ public class Product {
         this.price = price;
     }
 
-    protected Product(){
+    protected Product() {
 
     }
 
