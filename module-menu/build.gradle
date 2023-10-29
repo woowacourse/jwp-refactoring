@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(':module-common')
+    testFixturesImplementation project(':module-common')
+}

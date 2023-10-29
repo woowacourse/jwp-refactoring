@@ -1,0 +1,7 @@
+dependencies {
+    implementation (
+            project(':module-common'),
+            project(':module-menu')
+    )
+    testImplementation testFixtures(project(':module-menu'))
+}
