@@ -1,14 +1,22 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.ui.dto.request.*;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.ui.dto.MenuProductRequest;
+import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.ui.dto.MenuGroupRequest;
+import kitchenpos.order.ui.dto.OrderLineItemRequest;
+import kitchenpos.order.ui.dto.OrderRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.ui.dto.ProductRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.ui.dto.CreateOrderTableRequest;
+import kitchenpos.tablegroup.ui.dto.CreateTableGroupRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TestFixture {
@@ -44,6 +52,7 @@ public class TestFixture {
     }
 
     public static CreateTableGroupRequest 그룹화_테이블(List<OrderTable> 그룹화_할_테이블들) {
-        return new CreateTableGroupRequest(그룹화_할_테이블들);
+        final List<Long> 그룹화할_테이블_아이디 = 그룹화_할_테이블들.stream().map(table -> table.getId()).collect(Collectors.toList());
+        return new CreateTableGroupRequest(그룹화할_테이블_아이디);
     }
 }

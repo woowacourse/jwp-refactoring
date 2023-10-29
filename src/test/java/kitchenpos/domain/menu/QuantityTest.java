@@ -1,12 +1,13 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.exception.KitchenposException;
+import kitchenpos.global.exception.KitchenposException;
+import kitchenpos.menu.domain.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import static kitchenpos.exception.ExceptionInformation.MENU_QUANTITY_OUT_OF_BOUNCE;
+import static kitchenpos.global.exception.ExceptionInformation.MENU_QUANTITY_OUT_OF_BOUNCE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("NonAsciiCharacters")
