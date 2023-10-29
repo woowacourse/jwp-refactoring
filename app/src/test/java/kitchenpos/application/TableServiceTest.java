@@ -13,13 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.common.event.OrderCheckEvent;
-import kitchenpos.table.application.TableService;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.dto.request.TableCreateRequest;
-import kitchenpos.table.dto.request.TableUpdateEmptyRequest;
-import kitchenpos.table.dto.request.TableUpdateGuestRequest;
-import kitchenpos.table.dto.response.TableResponse;
-import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +21,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.TableCreateRequest;
+import kitchenpos.table.dto.request.TableUpdateEmptyRequest;
+import kitchenpos.table.dto.request.TableUpdateGuestRequest;
+import kitchenpos.table.dto.response.TableResponse;
+import kitchenpos.table.repository.OrderTableRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {

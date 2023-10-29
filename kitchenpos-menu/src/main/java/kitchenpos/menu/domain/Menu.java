@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import kitchenpos.common.Price;
 
+
 @Entity
 public class Menu {
 

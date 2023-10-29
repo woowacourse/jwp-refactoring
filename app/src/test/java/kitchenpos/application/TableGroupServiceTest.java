@@ -11,10 +11,8 @@ import static org.mockito.Mockito.times;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
 import kitchenpos.common.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.TableGroupService;
@@ -24,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.OrderTableRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {

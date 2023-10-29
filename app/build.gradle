@@ -1,6 +1,11 @@
 dependencies {
     implementation project(path: ':kitchenpos-common')
     implementation project(path: ':kitchenpos-product')
+    implementation project(path: ':kitchenpos-menu')
+    implementation project(path: ':kitchenpos-menugroup')
+    implementation project(path: ':kitchenpos-tablegroup')
+    implementation project(path: ':kitchenpos-table')
+    implementation project(path: ':kitchenpos-order')
 }
 
 tasks.named('bootJar') {

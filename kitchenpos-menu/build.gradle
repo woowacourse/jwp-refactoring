@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(path: ':kitchenpos-common')
+    implementation project(path: ':kitchenpos-menugroup')
+    implementation project(path: ':kitchenpos-product')
+}
