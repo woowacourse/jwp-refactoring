@@ -1,9 +1,9 @@
 package kitchenpos.ordertable.service;
 
 import kitchenpos.ordertable.domain.OrderTable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class OrderTableMapper {
 
     public OrderTable toEntity(OrderTableDto orderTableDto) {

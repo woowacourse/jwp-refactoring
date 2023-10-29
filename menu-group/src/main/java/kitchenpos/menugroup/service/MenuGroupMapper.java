@@ -1,9 +1,11 @@
 package kitchenpos.menugroup.service;
 
 import kitchenpos.menugroup.domain.MenuGroup;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Transactional
+@Service
 public class MenuGroupMapper {
 
     public MenuGroup toEntity(MenuGroupDto menuGroupDto) {

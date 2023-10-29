@@ -11,9 +11,11 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.service.OrderLineItemDto;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Transactional
+@Service
 public class OrderMapper {
 
     private final MenuService menuService;
@@ -22,6 +24,7 @@ public class OrderMapper {
         this.menuService = menuService;
     }
 
+    @Transactional(readOnly = true)
     public Order toEntity(OrderDto orderDto) {
         List<OrderLineItem> orderLineItems = orderDto.getOrderLineItemDtos()
                                                      .stream()

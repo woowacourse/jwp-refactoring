@@ -6,9 +6,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Transactional
+@Service
 public class TableGroupMapper {
 
     private final OrderTableService orderTableService;
@@ -17,6 +19,7 @@ public class TableGroupMapper {
         this.orderTableService = orderTableService;
     }
 
+    @Transactional(readOnly = true)
     public TableGroup toEntity(TableGroupDto tableGroupDto) {
         List<OrderTable> orderTables = tableGroupDto.getOrderTables()
                                                     .stream()

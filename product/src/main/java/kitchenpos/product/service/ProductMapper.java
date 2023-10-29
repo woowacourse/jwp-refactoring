@@ -1,9 +1,9 @@
 package kitchenpos.product.service;
 
 import kitchenpos.product.domain.Product;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class ProductMapper {
 
     public Product toEntity(ProductDto productDto) {
