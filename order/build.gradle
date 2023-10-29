@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':menu')
+    implementation project(':table')
+    implementation project(':common')
+}
