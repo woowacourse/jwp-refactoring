@@ -22,10 +22,6 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public TableGroup(final Long id, final LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
@@ -33,6 +29,10 @@ public class TableGroup {
 
     public TableGroup(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public LocalDateTime getCreatedDate() {

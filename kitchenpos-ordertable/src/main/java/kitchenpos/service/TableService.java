@@ -3,6 +3,7 @@ package kitchenpos.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.ChangeEmptyRequest;
 import kitchenpos.dto.request.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
@@ -10,9 +11,8 @@ import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.EmptyListException;
 import kitchenpos.exception.GroupTableException;
 import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.validator.OrderStatusValidator;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.validator.OrderStatusValidator;
 import kitchenpos.value.NumberOfGuests;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
@@ -56,7 +56,6 @@ public class TableService {
             throw new GroupTableException("그룹이 설정된 테이블의 상태는 변경 할 수 없습니다.");
         }
 
-        // todo : 이벤트 처리 해결
         orderStatusValidator.validateById(orderTableId);
 
         savedOrderTable.changeEmpty(request.getEmpty());

@@ -5,13 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
-import kitchenpos.exception.EmptyListException;
-import kitchenpos.exception.InvalidNumberException;
-import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.dto.request.ChangeEmptyRequest;
 import kitchenpos.dto.request.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exception.EmptyListException;
+import kitchenpos.exception.InvalidNumberException;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.util.ObjectCreator;
 import kitchenpos.util.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +28,20 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    private static Stream<Arguments> tableProvider() {
+        return Stream.of(
+                Arguments.of("빈", true),
+                Arguments.of("체운", false)
+        );
+    }
+
+    private static Stream<Arguments> idAndEmptyAndGuestsProvider() {
+        return Stream.of(
+                Arguments.of("0이하로", 1L, -1, InvalidNumberException.class, "손님 수는 음수가 될 수 없습니다."),
+                Arguments.of("없는 테이블에서", -1L, 4, NoSuchDataException.class, "해당하는 id의 테이블이 존재하지 않습니다.")
+        );
+    }
 
     @DisplayName("테이블을 생성한다")
     @Test
@@ -63,13 +77,6 @@ class TableServiceTest extends ServiceTest {
 
         // then
         assertThat(actual.getEmpty()).isEqualTo(empty);
-    }
-
-    private static Stream<Arguments> tableProvider() {
-        return Stream.of(
-                Arguments.of("빈", true),
-                Arguments.of("체운", false)
-        );
     }
 
     @DisplayName("없는 테이블 상태 변경시 실패한다")
@@ -133,13 +140,6 @@ class TableServiceTest extends ServiceTest {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
                 .isInstanceOf(exception)
                 .hasMessage(errorMessage);
-    }
-
-    private static Stream<Arguments> idAndEmptyAndGuestsProvider() {
-        return Stream.of(
-                Arguments.of("0이하로", 1L, -1, InvalidNumberException.class, "손님 수는 음수가 될 수 없습니다."),
-                Arguments.of("없는 테이블에서", -1L, 4, NoSuchDataException.class, "해당하는 id의 테이블이 존재하지 않습니다.")
-        );
     }
 
     @DisplayName("빈 상태의 테이블의 손님 변경은 실패한다")

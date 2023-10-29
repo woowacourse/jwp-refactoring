@@ -2,13 +2,13 @@ package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import kitchenpos.exception.EmptyTableException;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import kitchenpos.exception.EmptyTableException;
 import kitchenpos.value.NumberOfGuests;
 
 @Entity

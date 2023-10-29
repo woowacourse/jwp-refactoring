@@ -41,18 +41,6 @@ public class Order {
     protected Order() {
     }
 
-    public void validateIsNotComplete() {
-        if (!orderStatus.equals(OrderStatus.COMPLETION)) {
-            throw new InvalidOrderStateException("조리 중이거나 식사 중인 테이블의 상태는 변경 할 수 없습니다.");
-        }
-    }
-
-    public void validateIsComplete() {
-        if (orderStatus.equals(OrderStatus.COMPLETION)) {
-            throw new InvalidOrderStateException("계산이 완료된 주문의 상태를 변경할 수 없습니다.");
-        }
-    }
-
     private Order(
             final Long orderTableId,
             final OrderStatus orderStatus,
@@ -81,6 +69,18 @@ public class Order {
 
     public static Order of(final Order order, final List<OrderLineItem> orderLineItems) {
         return new Order(order.id, order.orderTableId, order.orderStatus, order.getOrderedTime(), orderLineItems);
+    }
+
+    public void validateIsNotComplete() {
+        if (!orderStatus.equals(OrderStatus.COMPLETION)) {
+            throw new InvalidOrderStateException("조리 중이거나 식사 중인 테이블의 상태는 변경 할 수 없습니다.");
+        }
+    }
+
+    public void validateIsComplete() {
+        if (orderStatus.equals(OrderStatus.COMPLETION)) {
+            throw new InvalidOrderStateException("계산이 완료된 주문의 상태를 변경할 수 없습니다.");
+        }
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

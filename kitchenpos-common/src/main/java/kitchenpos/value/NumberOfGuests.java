@@ -1,8 +1,8 @@
 package kitchenpos.value;
 
-import kitchenpos.exception.InvalidNumberException;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import kitchenpos.exception.InvalidNumberException;
 
 @Embeddable
 public class NumberOfGuests {

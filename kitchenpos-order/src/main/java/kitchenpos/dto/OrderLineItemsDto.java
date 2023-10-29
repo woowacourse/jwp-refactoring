@@ -6,8 +6,8 @@ public class OrderLineItemsDto {
 
     private final Long seq;
     private final Long orderId;
-    private Long menuId;
     private final Long quantity;
+    private Long menuId;
 
     private OrderLineItemsDto(Long seq, Long orderId, Long menuId, Long quantity) {
         this.seq = seq;

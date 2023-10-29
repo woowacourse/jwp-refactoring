@@ -2,9 +2,9 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.service.MenuGroupService;
 import kitchenpos.dto.request.CreateMenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.service.MenuGroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

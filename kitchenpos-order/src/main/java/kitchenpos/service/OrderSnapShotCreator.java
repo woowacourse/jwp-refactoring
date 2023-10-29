@@ -34,7 +34,7 @@ public class OrderSnapShotCreator {
 
     public void createOrderSnapShot(final List<OrderLineItemsDto> orderLineItemsDtos) {
         final List<Long> menuIds = orderLineItemsDtos.stream()
-                .map(dto -> dto.getMenuId())
+                .map(OrderLineItemsDto::getMenuId)
                 .collect(Collectors.toList());
         final List<Menu> menus = menuRepository.findAllById(menuIds);
         for (final OrderLineItemsDto dto : orderLineItemsDtos) {
@@ -62,9 +62,9 @@ public class OrderSnapShotCreator {
     private void saveAllProduct(final List<MenuProduct> menuProducts) {
         final List<OrderMenuProduct> orderMenuProducts = menuProducts.stream()
                 .map(menuProduct -> new OrderMenuProduct(
-                        menuProduct.getMenuId(),
-                        menuProduct.getProductId(),
-                        menuProduct.getQuantity()
+                                menuProduct.getMenuId(),
+                                menuProduct.getProductId(),
+                                menuProduct.getQuantity()
                         )
                 )
                 .collect(Collectors.toList());

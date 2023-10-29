@@ -7,14 +7,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.request.ChangeOrderRequest;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.EmptyListException;
 import kitchenpos.exception.EmptyTableException;
 import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.util.ObjectCreator;
 import kitchenpos.util.ServiceTest;
 import kitchenpos.value.Quantity;
@@ -32,6 +32,15 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    private static Stream<Arguments> orderTableProvider() {
+        return Stream.of(
+                Arguments.of("상품이 없는", 5L, List.of(), EmptyListException.class, "아이템이 비어있습니다."),
+                Arguments.of("메뉴에 없는 상품", 5L, List.of(-1L), NoSuchDataException.class, "입력한 메뉴들이 일치하지 않습니다."),
+                Arguments.of("빈 테이블", 1L, List.of(1L, 2L), EmptyTableException.class, "비어있는 테이블의 주문은 생성할 수 없습니다."),
+                Arguments.of("존재하지 않는", -1L, List.of(1L, 2L), NoSuchDataException.class, "입력한 id의 테이블이 존재하지 않습니다.")
+        );
+    }
 
     @DisplayName("주문을 생성한다")
     @Test
@@ -83,15 +92,6 @@ class OrderServiceTest extends ServiceTest {
             );
         }
         return ObjectCreator.getObject(CreateOrderRequest.class, id, dto);
-    }
-
-    private static Stream<Arguments> orderTableProvider() {
-        return Stream.of(
-                Arguments.of("상품이 없는", 5L, List.of(), EmptyListException.class, "아이템이 비어있습니다."),
-                Arguments.of("메뉴에 없는 상품", 5L, List.of(-1L), NoSuchDataException.class, "입력한 메뉴들이 일치하지 않습니다."),
-                Arguments.of("빈 테이블", 1L, List.of(1L, 2L), EmptyTableException.class, "비어있는 테이블의 주문은 생성할 수 없습니다."),
-                Arguments.of("존재하지 않는", -1L, List.of(1L, 2L), NoSuchDataException.class, "입력한 id의 테이블이 존재하지 않습니다.")
-        );
     }
 
     @DisplayName("주문 목록을 조회한다")

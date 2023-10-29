@@ -5,12 +5,12 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import kitchenpos.exception.EmptyTableException;
-import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exception.EmptyTableException;
+import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.util.ObjectCreator;
 import kitchenpos.util.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
