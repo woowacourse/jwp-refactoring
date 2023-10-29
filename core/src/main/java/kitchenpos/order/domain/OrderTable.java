@@ -2,6 +2,7 @@ package kitchenpos.order.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 public class OrderTable {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
