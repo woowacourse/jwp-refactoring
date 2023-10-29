@@ -1,0 +1,15 @@
+plugins {
+    id 'java-test-fixtures'
+}
+
+dependencies {
+    implementation project(':table')
+    implementation project(':menu')
+    implementation project(':common')
+
+    testImplementation testFixtures(project(':common'))
+
+    testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testFixturesImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    testFixturesImplementation testFixtures(project(':common'))
+}
