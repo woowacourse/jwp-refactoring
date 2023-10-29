@@ -1,4 +1,4 @@
-package kitchenpos.menu.ui;
+package kitchenpos.menu;
 
 import java.net.URI;
 import java.util.List;
