@@ -8,14 +8,17 @@ group = 'camp.nextstep.edu'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-subprojects {
+allprojects {
     apply plugin: 'java'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
 
     repositories {
         mavenCentral()
     }
+}
+
+subprojects {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
 
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -25,4 +28,7 @@ subprojects {
     test {
         useJUnitPlatform()
     }
+
+    bootJar { enabled = false }
+    jar { enabled = true }
 }
