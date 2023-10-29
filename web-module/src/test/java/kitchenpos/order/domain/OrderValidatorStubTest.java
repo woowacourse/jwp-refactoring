@@ -46,7 +46,7 @@ class OrderValidatorStubTest extends ApplicationTestConfig {
         ));
 
         // expect
-        assertThatCode(() -> orderValidatorImpl.validatePrepare(savedOrderTable.getId(), orderLineItems))
+        assertThatCode(() -> orderValidatorImpl.validatePrepare(orderLineItems))
                 .doesNotThrowAnyException();
     }
 
@@ -61,7 +61,7 @@ class OrderValidatorStubTest extends ApplicationTestConfig {
                 new OrderLineItem(-1L, new Quantity(10))
         ));
 
-        assertThatThrownBy(() -> orderValidatorImpl.validatePrepare(savedOrderTable.getId(), wrongOrderLineItems))
+        assertThatThrownBy(() -> orderValidatorImpl.validatePrepare(wrongOrderLineItems))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -74,7 +74,7 @@ class OrderValidatorStubTest extends ApplicationTestConfig {
         // expect
         final OrderLineItems emptyOrderLineItems = new OrderLineItems(Collections.emptyList());
 
-        assertThatThrownBy(() -> orderValidatorImpl.validatePrepare(savedOrderTable.getId(), emptyOrderLineItems))
+        assertThatThrownBy(() -> orderValidatorImpl.validatePrepare(emptyOrderLineItems))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -8,6 +8,7 @@ import kitchenpos.order.domain.MenuHistoryRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTableEmptyValidator;
 import kitchenpos.order.domain.OrderValidator;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -23,18 +24,21 @@ public class OrderService {
     private final MenuHistoryRepository menuHistoryRepository;
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
+    private final OrderTableEmptyValidator orderTableEmptyValidator;
     private final OrderMapper orderMapper;
     private final ApplicationEventPublisher publisher;
 
     public OrderService(final MenuHistoryRepository menuHistoryRepository,
                         final OrderRepository orderRepository,
                         final OrderValidator orderValidator,
+                        final OrderTableEmptyValidator orderTableEmptyValidator,
                         final OrderMapper orderMapper,
                         final ApplicationEventPublisher publisher
     ) {
         this.menuHistoryRepository = menuHistoryRepository;
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
+        this.orderTableEmptyValidator = orderTableEmptyValidator;
         this.orderMapper = orderMapper;
         this.publisher = publisher;
     }
@@ -42,7 +46,7 @@ public class OrderService {
     @Transactional
     public OrderHistoryResponse create(final OrderSheet requestOrderSheet) {
         final Order newOrder = orderMapper.map(requestOrderSheet);
-        newOrder.prepare(orderValidator);
+        newOrder.prepare(orderValidator, orderTableEmptyValidator);
         final Order savedOrder = orderRepository.save(newOrder);
 
         publisher.publishEvent(new OrderPreparedEvent(savedOrder.getId()));

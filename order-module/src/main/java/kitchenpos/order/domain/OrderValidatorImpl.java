@@ -16,7 +16,7 @@ public class OrderValidatorImpl implements OrderValidator {
     }
 
     @Override
-    public void validatePrepare(final Long orderTableId, final OrderLineItems orderLineItems) {
+    public void validatePrepare(final OrderLineItems orderLineItems) {
         validateMenuSize(getMenuIds(orderLineItems));
         validateOrderLineItemsEmpty(orderLineItems);
     }

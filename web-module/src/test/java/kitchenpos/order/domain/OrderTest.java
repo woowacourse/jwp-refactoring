@@ -5,6 +5,7 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.common.vo.Name;
 import kitchenpos.common.vo.Price;
 import kitchenpos.common.vo.Quantity;
+import kitchenpos.order.stub.OrderTableEmptyValidatorStub;
 import kitchenpos.order.stub.OrderValidatorStub;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
@@ -89,7 +90,7 @@ class OrderTest {
         final Order order = Order.ofEmptyOrderLineItems(orderTable.getId());
 
         // when
-        order.prepare(new OrderValidatorStub());
+        order.prepare(new OrderValidatorStub(), new OrderTableEmptyValidatorStub());
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);

@@ -73,8 +73,9 @@ public class Order {
         );
     }
 
-    public void prepare(final OrderValidator orderValidator) {
-        orderValidator.validatePrepare(orderTableId, orderLineItems);
+    public void prepare(final OrderValidator orderValidator, final OrderTableEmptyValidator orderTableEmptyValidator) {
+        orderValidator.validatePrepare(orderLineItems);
+        orderTableEmptyValidator.validateEmpty(orderTableId);
         this.orderStatus = OrderStatus.COOKING;
     }
 

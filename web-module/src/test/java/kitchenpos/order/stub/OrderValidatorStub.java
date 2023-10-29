@@ -6,7 +6,7 @@ import kitchenpos.order.domain.OrderValidator;
 public class OrderValidatorStub implements OrderValidator {
 
     @Override
-    public void validatePrepare(final Long orderTableId, final OrderLineItems orderLineItems) {
+    public void validatePrepare(final OrderLineItems orderLineItems) {
         /** NOT IMPLEMENTED **/
     }
 }
