@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    implementation project(path: ':common')
+    implementation project(path: ':product')
+    implementation project(path: ':menu')
+    implementation project(path: ':menu-group')
+    implementation project(path: ':order')
+    implementation project(path: ':order-table')
+    implementation project(path: ':order-crud')
+}
+
+test {
+    useJUnitPlatform()
+}
