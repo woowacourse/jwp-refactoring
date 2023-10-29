@@ -1,15 +1,14 @@
 package kitchenpos.application.menu;
 
-import com.sun.tools.javac.util.List;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menuGroup.domain.MenuGroup;
-import kitchenpos.product.domain.Product;
+import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.application.dto.MenuProductRequest;
 import kitchenpos.menu.application.dto.MenuRequest;
-import kitchenpos.menu.application.MenuService;
-import kitchenpos.menuGroup.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menuGroup.domain.MenuGroup;
+import kitchenpos.menuGroup.domain.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
