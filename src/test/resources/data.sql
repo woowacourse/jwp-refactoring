@@ -99,3 +99,8 @@ alter table order_table
     add constraint fk_order_table_to_table_group
         foreign key (table_group_id)
             references table_group (id);
+
+alter table order_line_item
+    add column menu_name varchar(255) not null;
+alter table order_line_item
+    add column menu_price decimal(19, 2) not null;

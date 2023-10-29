@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.event.ValidateExistMenuEvent;
@@ -52,7 +53,7 @@ public class OrderService {
     private OrderLineItem convertOrderLineItem(final OrderLineItemInOrderDto request) {
         final Long menuId = request.getMenuId();
         publisher.publishEvent(new ValidateExistMenuEvent(menuId));
-        return new OrderLineItem(menuId, request.getQuantity());
+        return new OrderLineItem(menuId, request.getMenuName(), request.getMenuPrice(), request.getQuantity());
     }
 
     private OrderTable findOrderTable(final Long orderTableId) {
