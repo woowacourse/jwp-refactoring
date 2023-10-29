@@ -25,7 +25,6 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.flywaydb:flyway-core'
         runtimeOnly 'com.h2database:h2'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
     }
@@ -52,6 +51,7 @@ project(':menu') {
     dependencies {
         implementation project(':core')
         implementation project(':common')
+        implementation project(':product')
     }
 }
 
@@ -60,13 +60,6 @@ project(':order') {
         implementation project(':core')
         implementation project(':common')
         implementation project(':menu')
-        implementation project(':ordertable')
-    }
-}
-
-project(':ordertable') {
-    dependencies {
-        implementation project(':core')
-        implementation project(':common')
+        implementation project(':product')
     }
 }
