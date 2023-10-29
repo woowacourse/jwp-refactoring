@@ -35,13 +35,9 @@ public class MenuValidator {
 
     private void validateInvalidProduct(final Menu menu) {
         final List<Long> requiredProductIds = extractProductIds(menu.getMenuProducts());
-        final Set<Long> savedProducts = findAllProductsByIds(requiredProductIds).stream()
-                .map(Product::getId)
-                .collect(Collectors.toSet());
-        for (Long requiredProductId : requiredProductIds) {
-            if (!savedProducts.contains(requiredProductId)) {
-                throw new IllegalArgumentException("존재하지 않는 상품이 포함되어 있습니다.");
-            }
+        final List<Product> savedProducts = findAllProductsByIds(requiredProductIds);
+        if (savedProducts.size() != requiredProductIds.size()) {
+            throw new IllegalArgumentException("존재하지 않는 상품이 포함되어 있습니다.");
         }
     }
 
