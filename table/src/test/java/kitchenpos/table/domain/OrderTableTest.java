@@ -1,12 +1,13 @@
-package kitchenpos.domain.order;
+package kitchenpos.table.domain;
 
-import kitchenpos.domain.DomainTest;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import kitchenpos.table.domain.OrderTable;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class OrderTableTest extends DomainTest {
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+class OrderTableTest {
     @Test
     void throw_when_number_of_guests_is_below_zero() {
         // when & then

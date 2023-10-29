@@ -1,19 +1,19 @@
-package kitchenpos.domain.menu;
+package kitchenpos.menu.domain;
 
-import kitchenpos.domain.DomainTest;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menugroups.domain.MenuGroup;
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Test;
 import kitchenpos.product.domain.Product;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class MenuTest extends DomainTest {
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+class MenuTest {
     @Test
     void create_menu() {
         //given

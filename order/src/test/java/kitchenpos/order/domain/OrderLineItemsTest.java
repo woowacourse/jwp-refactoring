@@ -1,14 +1,15 @@
-package kitchenpos.domain.order;
+package kitchenpos.order.domain;
 
-import kitchenpos.domain.DomainTest;
-import kitchenpos.order.domain.OrderLineItems;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class OrderLineItemsTest extends DomainTest {
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+class OrderLineItemsTest {
     @Test
     void throw_when_orderLineItems_is_emtpy() {
         // when & then

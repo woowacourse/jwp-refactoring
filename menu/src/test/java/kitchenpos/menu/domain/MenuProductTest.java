@@ -1,15 +1,16 @@
-package kitchenpos.domain.menu;
+package kitchenpos.menu.domain;
 
 import kitchenpos.common.domain.Quantity;
-import kitchenpos.domain.DomainTest;
-import kitchenpos.menu.domain.MenuProduct;
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Test;
 import kitchenpos.product.domain.Product;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class MenuProductTest extends DomainTest {
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+class MenuProductTest {
     @Test
     void throw_when_quantity_is_negative() {
         // given
