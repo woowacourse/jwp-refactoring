@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(path: ':table')
+    implementation project(path: ':order')
+}
