@@ -1,9 +1,9 @@
 package kitchenpos.fixture;
 
 import java.util.function.Consumer;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTable.Builder;
-import kitchenpos.dto.OrderTableDto;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable.Builder;
+import kitchenpos.ordertable.service.OrderTableDto;
 
 public enum OrderTableFixture {
 

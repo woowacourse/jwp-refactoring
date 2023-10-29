@@ -5,12 +5,12 @@ import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.dto.MenuDto;
-import kitchenpos.dto.MenuGroupDto;
-import kitchenpos.dto.OrderDto;
-import kitchenpos.dto.OrderTableDto;
-import kitchenpos.dto.ProductDto;
-import kitchenpos.dto.TableGroupDto;
+import kitchenpos.menu.service.MenuDto;
+import kitchenpos.menugroup.service.MenuGroupDto;
+import kitchenpos.ordercrud.service.OrderDto;
+import kitchenpos.ordertable.service.OrderTableDto;
+import kitchenpos.product.service.ProductDto;
+import kitchenpos.ordertable.service.TableGroupDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

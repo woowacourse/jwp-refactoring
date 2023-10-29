@@ -1,9 +1,8 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuProductDto;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.service.MenuProductDto;
 
 public enum MenuProductFixture {
 
@@ -31,7 +30,7 @@ public enum MenuProductFixture {
         return menuProductDto;
     }
 
-    public MenuProduct toEntity(Menu menu, Product product) {
-        return new MenuProduct(seq, menu, product, quantity);
+    public MenuProduct toEntity(Product product) {
+        return new MenuProduct(seq, product.getName(), product.getPrice(), quantity);
     }
 }

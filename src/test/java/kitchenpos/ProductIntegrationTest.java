@@ -8,7 +8,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dto.ProductDto;
+import kitchenpos.product.service.ProductDto;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

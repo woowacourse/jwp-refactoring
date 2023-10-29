@@ -3,11 +3,13 @@ package kitchenpos.fixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.OrderDto;
-import kitchenpos.dto.OrderLineItemDto;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordercrud.service.OrderDto;
+import kitchenpos.order.service.OrderLineItemDto;
 
 public enum OrderFixture {
 
@@ -57,7 +59,6 @@ public enum OrderFixture {
 
     public Order toEntity() {
         return new Order.Builder()
-            .orderTable(OrderTableFixture.OCCUPIED_TABLE.toEntity())
             .orderLineItems(List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toEntity()))
             .orderStatus(OrderStatus.COOKING)
             .orderedTime(LocalDateTime.now())
@@ -91,8 +92,9 @@ public enum OrderFixture {
         }
 
         public OrderLineItem toEntity() {
+            Menu entity = MenuFixture.LUNCH_SPECIAL.toEntity();
             return new OrderLineItem.Builder()
-                .menu(MenuFixture.LUNCH_SPECIAL.toEntity())
+                .orderMenu(new OrderMenu(entity.getId(), entity.getName(), entity.getPrice()))
                 .quantity(quantity)
                 .build();
         }

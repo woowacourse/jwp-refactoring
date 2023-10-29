@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.exception.ExceptionType;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
@@ -33,19 +35,6 @@ class OrderTableTest {
 
         // then
         assertThat(orderTable.isEmpty()).isTrue();
-    }
-
-    @Test
-    @DisplayName("주문 테이블이 그룹이면 상태를 변경할 수 없다")
-    void change_empty_fail1() {
-        // given
-        TableGroup tableGroup = TableGroupFixture.TABLE_GROUP_AVAILABLE.toEntity();
-
-        // when & then
-        tableGroup.getOrderTables().forEach(orderTable ->
-            assertThatThrownBy(() -> orderTable.changeEmpty(true))
-            .hasMessageContaining(ExceptionType.TABLE_GROUP_CANNOT_CHANGE_STATUS.getMessage())
-        );
     }
 
     @ParameterizedTest

@@ -2,8 +2,8 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import java.util.function.Consumer;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductDto;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.service.ProductDto;
 
 public enum ProductFixture {
 
