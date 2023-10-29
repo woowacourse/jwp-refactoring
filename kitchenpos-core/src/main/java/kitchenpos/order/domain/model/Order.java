@@ -36,7 +36,7 @@ public class Order {
     private OrderStatus orderStatus = OrderStatus.COOKING;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @CreatedDate

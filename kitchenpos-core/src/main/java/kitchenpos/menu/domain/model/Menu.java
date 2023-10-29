@@ -31,7 +31,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name = "menu_id", nullable = false)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
