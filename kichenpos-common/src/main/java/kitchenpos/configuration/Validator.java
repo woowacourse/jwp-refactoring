@@ -1,4 +1,4 @@
-package kitchenpos.configuration;  
+package kitchenpos.configuration;
   
 import org.springframework.stereotype.Component;  
   
