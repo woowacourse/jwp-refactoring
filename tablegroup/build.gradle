@@ -1,0 +1,9 @@
+dependencies {
+    implementation project(':table')
+    implementation project(':order')
+    implementation project(':common')
+
+    testImplementation testFixtures(project(':order'))
+    testImplementation testFixtures(project(':common'))
+}
+

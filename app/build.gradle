@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':menu')
+    implementation project(':menugroup')
+    implementation project(':order')
+    implementation project(':product')
+    implementation project(':table')
+    implementation project(':tablegroup')
+    implementation project(':common')
+    testImplementation project(':common')
+    testImplementation testFixtures(project(':common'))
+}
