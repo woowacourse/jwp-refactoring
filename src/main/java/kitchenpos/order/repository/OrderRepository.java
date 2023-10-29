@@ -11,8 +11,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<String> orderStatuses);
 
-    @Query("SELECT o "
+    @Query("SELECT DISTINCT o "
             + "FROM orders o "
-            + "JOIN OrderLineItem oli")
+            + "JOIN FETCH o.orderLineItems.value")
     List<Order> findAll();
 }
