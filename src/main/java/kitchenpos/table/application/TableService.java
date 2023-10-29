@@ -1,9 +1,8 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableNumberOfGuests;
+import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.request.OrderTableChangeNumberOfGuestsRequest;
@@ -18,11 +17,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final OrderTableValidator orderTableValidator) {
+        this.orderTableValidator = orderTableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -47,7 +46,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
         orderTable.validateChangeEmpty();
-        validateOrderStatus(orderTableId);
+        orderTableValidator.validateOrderStatus(orderTableId, Arrays.asList("COOKING", "MEAL"));
         orderTable.updateEmpty(request.getEmpty());
         return convertToResponse(orderTable);
     }
@@ -60,13 +59,6 @@ public class TableService {
         orderTable.validateIsEmpty();
         orderTable.updateNumberOfGuests(new OrderTableNumberOfGuests(request.getNumberOfGuests()));
         return convertToResponse(orderTable);
-    }
-
-    private void validateOrderStatus(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {
