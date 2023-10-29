@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.ReflectionUtils;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest {
@@ -49,8 +51,12 @@ class OrderRestControllerTest {
         );
         final OrderRequest orderRequest = new OrderRequest(1L, orderLineItemsRequests);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 4L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2L, 7L);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 4L);
+        final Field field = ReflectionUtils.findField(OrderLineItem.class, "seq");
+        ReflectionUtils.makeAccessible(field);
+        ReflectionUtils.setField(field, orderLineItem, 1L);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 7L);
+        ReflectionUtils.setField(field, orderLineItem2, 2L);
 
         when(orderService.create(1L, orderLineItemsRequests))
                 .thenReturn(

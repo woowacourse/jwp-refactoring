@@ -118,7 +118,7 @@ class OrderServiceTest {
         final Menu savedMenu2 = 저장할메뉴만들기("메뉴 2!", "9000", savedMenuGroup.getId(), menuProduct);
 
         // given : 주문 메뉴
-        final OrderLineItem orderLineItem = new OrderLineItem(null, 0L, 4); // 존재하지 않는 메뉴
+        final OrderLineItem orderLineItem = new OrderLineItem(0L, 4); // 존재하지 않는 메뉴
 
         final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2.getId(), 3);
 
