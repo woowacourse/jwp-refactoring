@@ -11,9 +11,10 @@ public class Price {
     public static final Price ZERO_PRICE = new Price(BigDecimal.ZERO);
 
     @Column(name = "price", nullable = false)
-    private BigDecimal value;
+    private final BigDecimal value;
 
     protected Price() {
+        value = null;
     }
 
     public Price(final BigDecimal price) {

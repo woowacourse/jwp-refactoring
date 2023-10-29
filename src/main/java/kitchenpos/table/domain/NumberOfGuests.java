@@ -1,5 +1,6 @@
 package kitchenpos.table.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -7,9 +8,10 @@ import javax.persistence.Embeddable;
 public class NumberOfGuests {
 
     @Column(name = "numberOfGuests", nullable = false)
-    private int value;
+    private final int value;
 
     protected NumberOfGuests() {
+        value = 0;
     }
 
     public NumberOfGuests(final int value) {
@@ -26,5 +28,22 @@ public class NumberOfGuests {
 
     public int getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        NumberOfGuests that = (NumberOfGuests) o;
+        return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }
