@@ -1,7 +1,9 @@
 package kitchenpos.domain.ordertable;
 
 import kitchenpos.DomainTest;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableNumberOfGuests;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

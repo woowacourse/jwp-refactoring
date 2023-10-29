@@ -1,9 +1,11 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.DomainTest;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.OrderTableNumberOfGuests;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableNumberOfGuests;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
