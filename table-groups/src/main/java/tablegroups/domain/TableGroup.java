@@ -1,6 +1,6 @@
-package kitchenpos.domain.tablegroup;
+package tablegroups.domain;
 
-import kitchenpos.domain.table.OrderTable;
+import table.domain.OrderTable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

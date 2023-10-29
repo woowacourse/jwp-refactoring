@@ -5,3 +5,5 @@ include 'product'
 include 'menu'
 include 'order'
 include 'table'
+include 'table-groups'
+

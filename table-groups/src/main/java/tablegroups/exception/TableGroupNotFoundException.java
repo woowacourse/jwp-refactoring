@@ -1,6 +1,6 @@
-package kitchenpos.exception.tablegroup;
+package tablegroups.exception;
 
-import kitchenpos.exception.common.NotFoundException;
+import common.exception.NotFoundException;
 
 public class TableGroupNotFoundException extends NotFoundException {
     private static final String RESOURCE = "테이블 그룹";

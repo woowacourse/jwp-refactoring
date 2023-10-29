@@ -1,15 +1,15 @@
-package kitchenpos.ui.tablegroup;
+package tablegroups.ui;
 
-import kitchenpos.application.tablegroup.TableGroupService;
-import kitchenpos.dto.tablegroup.CreateTableGroupRequest;
-import kitchenpos.dto.tablegroup.TableGroupResponse;
-import kitchenpos.dto.tablegroup.UnGroupRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import tablegroups.application.TableGroupService;
+import tablegroups.dto.CreateTableGroupRequest;
+import tablegroups.dto.TableGroupResponse;
+import tablegroups.dto.UnGroupRequest;
 
 import java.net.URI;
 

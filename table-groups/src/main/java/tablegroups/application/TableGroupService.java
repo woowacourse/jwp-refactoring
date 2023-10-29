@@ -1,21 +1,22 @@
-package kitchenpos.application.tablegroup;
+package tablegroups.application;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.domain.tablegroup.TableGroup;
-import kitchenpos.domain.tablegroup.TableGroupRepository;
-import kitchenpos.dto.table.OrderTableRequest;
-import kitchenpos.dto.tablegroup.CreateTableGroupRequest;
-import kitchenpos.dto.tablegroup.TableGroupResponse;
-import kitchenpos.dto.tablegroup.UnGroupRequest;
-import kitchenpos.exception.order.OrderNotFoundException;
-import kitchenpos.exception.order.OrderTableNotFoundException;
-import kitchenpos.exception.table.OrderIsNotCompletedBadRequestException;
-import kitchenpos.exception.tablegroup.TableGroupNotFoundException;
+
+import order.domain.Order;
+import order.domain.OrderRepository;
+import order.exception.OrderNotFoundException;
+import order.exception.OrderTableNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import table.domain.OrderTable;
+import table.domain.OrderTableRepository;
+import table.dto.OrderTableRequest;
+import table.exception.OrderIsNotCompletedBadRequestException;
+import tablegroups.domain.TableGroup;
+import tablegroups.domain.TableGroupRepository;
+import tablegroups.dto.CreateTableGroupRequest;
+import tablegroups.dto.TableGroupResponse;
+import tablegroups.dto.UnGroupRequest;
+import tablegroups.exception.TableGroupNotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;

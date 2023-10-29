@@ -56,6 +56,7 @@ project(':menu') {
         implementation project(':common')
         implementation project(':menu-groups')
         implementation project(':product')
+        testImplementation project(':common')
     }
 }
 
@@ -63,6 +64,7 @@ project(':order') {
     dependencies {
         implementation project(':common')
         implementation project(':menu')
+        testImplementation project(':common')
     }
 }
 
@@ -77,5 +79,6 @@ project(':table-groups') {
     dependencies {
         implementation project(':common')
         implementation project(':table')
+        implementation project(':order')
     }
 }
