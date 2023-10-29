@@ -34,22 +34,14 @@ subprojects {
 
 }
 
-project(':common') {
-    dependencies {
-        implementation project(':core')
-    }
-}
-
 project(':product') {
     dependencies {
-        implementation project(':core')
         implementation project(':common')
     }
 }
 
 project(':menu') {
     dependencies {
-        implementation project(':core')
         implementation project(':common')
         implementation project(':product')
     }
@@ -57,7 +49,15 @@ project(':menu') {
 
 project(':order') {
     dependencies {
-        implementation project(':core')
+        implementation project(':common')
+        implementation project(':menu')
+        implementation project(':product')
+    }
+}
+
+project(':core') {
+    dependencies {
+        implementation project(':order')
         implementation project(':common')
         implementation project(':menu')
         implementation project(':product')
