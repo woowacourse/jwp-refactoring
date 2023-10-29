@@ -4,23 +4,74 @@ plugins {
     id 'java'
 }
 
-group = 'camp.nextstep.edu'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+allprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    group = 'camp.nextstep.edu'
+
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '11'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.flywaydb:flyway-core'
+        runtimeOnly 'com.h2database:h2'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    bootJar { enabled = false }
+    jar { enabled = true }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+project(':menu') {
+    dependencies {
+        implementation project(':product')
+
+        testImplementation project(':app')
+    }
+}
+
+project(':order') {
+    dependencies {
+        implementation project(':ordertable')
+        implementation project(':menu')
+
+        testImplementation project(':app')
+    }
+}
+
+project(':tablegroup') {
+    dependencies {
+        implementation project(':ordertable')
+
+        testImplementation project(':app')
+    }
+}
+
+project(':product') {
+    dependencies {
+        testImplementation project(':app')
+    }
+}
+
+project(':ordertable') {
+    dependencies {
+        testImplementation project(':app')
+    }
+}
 
 repositories {
     mavenCentral()
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.flywaydb:flyway-core'
-    runtimeOnly 'com.h2database:h2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-test {
-    useJUnitPlatform()
 }
