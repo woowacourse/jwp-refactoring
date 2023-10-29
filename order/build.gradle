@@ -1,0 +1,11 @@
+dependencies {
+    implementation(project(':core'))
+
+    implementation(project(':ordertable'))
+    implementation(project(':menu'))
+    implementation(project(':product'))
+
+    testImplementation(testFixtures(project(':ordertable')))
+
+    testFixturesImplementation(project(':product'))
+}
