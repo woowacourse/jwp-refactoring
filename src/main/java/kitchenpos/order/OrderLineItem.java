@@ -1,8 +1,10 @@
 package kitchenpos.order;
 
+import kitchenpos.common.vo.Price;
 import kitchenpos.menu.Menu;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -27,22 +29,29 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_order"))
     private Order order;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_menu"))
-    private Menu menu;
+    @Column
+    private Long menuId;
+
+    @Column
+    private String menuName;
+
+    @Embedded
+    private Price menuPrice;
 
     protected OrderLineItem() {
     }
 
-    private OrderLineItem(final Long seq, final long quantity, final Order order, final Menu menu) {
+    private OrderLineItem(final Long seq, final long quantity, final Order order, final Long menuId, final String menuName, final Price menuPrice) {
         this.seq = seq;
         this.quantity = quantity;
         this.order = order;
-        this.menu = menu;
+        this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
     }
 
     public OrderLineItem(final long quantity, final Order order, final Menu menu) {
-        this(null, quantity, order, menu);
+        this(null, quantity, order, menu.getId(), menu.getName(), menu.getPrice());
     }
 
     public Long getSeq() {
@@ -57,7 +66,7 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 }
