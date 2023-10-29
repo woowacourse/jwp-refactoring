@@ -7,7 +7,9 @@ import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,23 +22,24 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableValidator orderTableValidator;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableValidator orderTableValidator
+            final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableValidator = orderTableValidator;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public Long order(final OrderCreateRequest request) {
         final List<Menu> menus = menuRepository.findByIdIn(request.extractMenuIds());
-        orderTableValidator.validate(request, menus);
+        validateAllMenuFound(request.extractMenuIds(), menus);
         final List<OrderLineItem> orderLineItems = createOrderLineItems(menus, request);
-        final Order order = Order.ofCooking(request.getOrderTableId(), orderLineItems);
+        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+        final Order order = Order.ofCooking(orderTable.getId(), orderLineItems);
         final Order saveOrder = orderRepository.save(order);
         return saveOrder.getId();
     }
@@ -60,5 +63,11 @@ public class OrderService {
         final Order savedOrder = orderRepository.getById(orderId);
         savedOrder.updateOrderStatus(orderStatusRequest.getOrderStatus());
         return OrderResponse.from(savedOrder);
+    }
+
+    private void validateAllMenuFound(final List<Long> menuIds, final List<Menu> menus) {
+        if (menuIds.size() != menus.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 }
