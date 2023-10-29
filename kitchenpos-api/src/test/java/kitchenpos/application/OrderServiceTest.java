@@ -62,7 +62,7 @@ class OrderServiceTest {
         OrderResponse savedOrder = orderService.create(orderCreateRequest);
 
         // then
-        assertThat(savedOrder).usingRecursiveComparison().ignoringFields("id", "orderedTime", "orderLineItems.order", "orderLineItems.seq")
+        assertThat(savedOrder).usingRecursiveComparison().ignoringFields("id", "orderedTime", "orderLineItems")
                 .isEqualTo(order);
     }
 
@@ -186,12 +186,11 @@ class OrderServiceTest {
                 List.of(orderLineItemCreateRequest));
 
         OrderResponse orderResponse = orderService.create(orderCreateRequest);
-        Order savedOrder = new Order(orderResponse.getId(), orderResponse.getOrderTable(), orderResponse.getOrderStatus(),
-                orderResponse.getOrderedTime(), orderResponse.getOrderLineItems());
-        orderService.changeOrderStatus(savedOrder.getId(), new Order(null, null, OrderStatus.COMPLETION, null, null));
+
+        orderService.changeOrderStatus(orderResponse.getId(), new Order(null, null, OrderStatus.COMPLETION, null, null));
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(),
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(),
                 new Order(null, null, OrderStatus.MEAL, null, null)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -222,9 +221,8 @@ class OrderServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(orderResponses.get(0).getOrderLineItems().get(0).getOrderedMenu().getMenuName()).isEqualTo(orderedMenu.getMenuName()),
-                () -> assertThat(orderResponses.get(0).getOrderLineItems().get(0).getOrderedMenu().getMenuPrice()).isEqualTo(orderedMenu.getMenuPrice())
+                () -> assertThat(orderResponses.get(0).getOrderLineItems().get(0).getOrderedMenuResponse().getMenuName()).isEqualTo(orderedMenu.getMenuName()),
+                () -> assertThat(orderResponses.get(0).getOrderLineItems().get(0).getOrderedMenuResponse().getMenuPrice()).isEqualTo(orderedMenu.getMenuPrice())
         );
-
     }
 }
