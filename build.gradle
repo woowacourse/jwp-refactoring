@@ -32,3 +32,15 @@ subprojects {
     bootJar { enabled = false }
     jar { enabled = true }
 }
+
+project(':kitchenpos-web') {
+    dependencies {
+        implementation project(':kitchenpos-core')
+    }
+}
+
+project(':kitchenpos-core') {
+    dependencies {
+        implementation project(':kitchenpos-db')
+    }
+}
