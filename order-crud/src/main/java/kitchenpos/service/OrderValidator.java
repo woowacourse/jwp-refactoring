@@ -26,7 +26,7 @@ public class OrderValidator {
         this.orderTableService = orderTableService;
     }
 
-    void validate(Order order) {
+    public void validate(Order order) {
         validateNotEmptyOrderTable(order.geOrderTableId());
         validateOrderLineItems(order.getOrderLineItems());
     }
