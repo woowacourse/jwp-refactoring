@@ -34,17 +34,17 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<Long> orderTableIds = request.getOrderTables().stream().map(OrderTableIdRequest::getId)
             .collect(Collectors.toList());
-        validateEmptyOrderTables(orderTableIds);
         final TableGroup tableGroup = TableGroup.forSave();
         final List<OrderTable> savedOrderTables = orderTableRepository.getAllById(orderTableIds);
+        validateEmptyOrderTables(savedOrderTables);
         final OrderTables orderTables = new OrderTables(savedOrderTables);
         orderTables.group(tableGroup.getId());
 
         return TableGroupResponse.of(tableGroup, orderTables);
     }
 
-    private void validateEmptyOrderTables(final List<Long> orderTableIds) {
-        if (orderTableIds.isEmpty()) {
+    private void validateEmptyOrderTables(final List<OrderTable> orderTables) {
+        if (orderTables.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블이 없습니다.");
         }
     }
