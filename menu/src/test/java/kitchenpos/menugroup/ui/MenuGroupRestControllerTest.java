@@ -1,4 +1,4 @@
-package menu.test.java.kitchenpos.menugroup.ui;
+package kitchenpos.menugroup.ui;
 
 import static kitchenpos.fixture.MenuGroupFixture.CHICKEN_SET;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menugroup.dto.MenuGroupRequest;
-import kitchenpos.menugroup.ui.MenuGroupRestController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
