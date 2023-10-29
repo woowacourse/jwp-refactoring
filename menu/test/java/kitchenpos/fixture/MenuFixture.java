@@ -1,0 +1,62 @@
+package menu.test.java.kitchenpos.fixture;
+
+import java.math.BigDecimal;
+import java.util.List;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+
+public class MenuFixture {
+
+    public static MenuProductRequest CHICKEN_MENU_PRODUCT_REQUEST = new MenuProductRequest(
+            1L,
+            1L
+    );
+
+    public static MenuProduct CHICKEN_MENU_PRODUCT = new MenuProduct(
+            1L,
+            1L,
+            1
+    );
+
+    public static MenuProduct COKE_MENU_PRODUCT = new MenuProduct(
+            2L,
+            2L,
+            1
+    );
+
+    public static Menu CHICKEN_SET_MENU_NON_ID = new Menu(
+            null,
+            "치킨+콜라 세트",
+            BigDecimal.valueOf(11000),
+            1L,
+            List.of(CHICKEN_MENU_PRODUCT, COKE_MENU_PRODUCT)
+    );
+
+    public static Menu CHICKEN_SET_MENU = new Menu(
+            1L,
+            "치킨+콜라 세트",
+            BigDecimal.valueOf(11000),
+            1L,
+            List.of(CHICKEN_MENU_PRODUCT, COKE_MENU_PRODUCT)
+    );
+
+    public static Menu createChickenSetMenuById(final Long id) {
+        final Menu chickenSetMenu = new Menu(
+                id,
+                "치킨 세트",
+                BigDecimal.valueOf(10000),
+                1L,
+                List.of(CHICKEN_MENU_PRODUCT)
+        );
+        return chickenSetMenu;
+    }
+
+    public static MenuRequest CHICKEN_SET_MENU_REQUEST = new MenuRequest(
+            "치킨 세트",
+            BigDecimal.valueOf(10000),
+            1L,
+            List.of(CHICKEN_MENU_PRODUCT_REQUEST)
+    );
+}
