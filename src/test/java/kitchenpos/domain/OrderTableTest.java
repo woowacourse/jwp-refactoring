@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

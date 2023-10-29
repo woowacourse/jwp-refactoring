@@ -1,15 +1,15 @@
 package kitchenpos.integration;
 
-import kitchenpos.application.dto.MenuProductDto;
-import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.request.MenuGroupCreateRequest;
-import kitchenpos.application.dto.request.ProductCreateRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.common.Price;
-import kitchenpos.domain.product.Product;
+import kitchenpos.menu.application.dto.MenuProductDto;
+import kitchenpos.menu.application.dto.request.MenuCreateRequest;
+import kitchenpos.menu.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.product.application.dto.request.ProductCreateRequest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.product.application.dto.response.ProductResponse;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.common.Price;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;

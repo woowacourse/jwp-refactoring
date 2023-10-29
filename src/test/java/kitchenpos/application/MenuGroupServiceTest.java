@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.request.MenuGroupCreateRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.persistence.MenuGroupRepository;
+import kitchenpos.menu.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.persistence.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

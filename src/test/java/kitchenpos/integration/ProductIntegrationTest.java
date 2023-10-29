@@ -1,7 +1,7 @@
 package kitchenpos.integration;
 
-import kitchenpos.application.dto.request.ProductCreateRequest;
-import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.product.application.dto.request.ProductCreateRequest;
+import kitchenpos.product.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;

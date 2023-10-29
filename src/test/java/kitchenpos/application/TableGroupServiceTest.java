@@ -1,13 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
-import kitchenpos.persistence.OrderRepository;
-import kitchenpos.persistence.OrderTableRepository;
-import kitchenpos.persistence.TableGroupRepository;
+import kitchenpos.table.application.dto.OrderTableDto;
+import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.table.application.dto.response.TableGroupResponse;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.order.persistence.OrderRepository;
+import kitchenpos.table.persistence.OrderTableRepository;
+import kitchenpos.table.persistence.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

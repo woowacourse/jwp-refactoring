@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.common.Price;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.common.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

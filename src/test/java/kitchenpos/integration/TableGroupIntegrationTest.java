@@ -1,10 +1,10 @@
 package kitchenpos.integration;
 
-import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.table.application.dto.OrderTableDto;
+import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.table.application.dto.response.OrderTableResponse;
+import kitchenpos.table.application.dto.response.TableGroupResponse;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
