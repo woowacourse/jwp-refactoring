@@ -13,7 +13,7 @@
 - [x] order line item
 
 ## RequestDTO
-- [ ] request body를 domain -> request dto 로 변경
+- [ ] request body를 kitchenpos.domain -> request dto 로 변경
 
 ## ResponseDTO
 - [ ] service -> controller 응답 시에 response dto로 응답하도록 변경 

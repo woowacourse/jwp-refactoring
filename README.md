@@ -25,11 +25,11 @@
 ### 요청, 응답 DTO 규칙
 - 요청과 응답 DTO는 ui 패키지에 위치한다.
 - 클라이언트 <-> controller 간의 요청과 응답으로 간주한다.
-- 만약 controller <-> service 간의 DTO가 필요하면 application 패키지에 DTO를 생성한다.
+- 만약 controller <-> service 간의 DTO가 필요하면 kitchenpos.application 패키지에 DTO를 생성한다.
 
 ## API 수정 사항
 _23/10/19_
-### `GET /api/menus` 
+### `GET /kitchenpos.api/menus` 
 API 응답에 menuProducts 안에 불필요한 menuId 제거
 #### 변경 전
 
@@ -38,7 +38,7 @@ API 응답에 menuProducts 안에 불필요한 menuId 제거
 
 <br>
 
-### `POST /api/table-groups` 
+### `POST /kitchenpos.api/table-groups` 
 API 요청에 id를 객체로 감싸놓은 것을 언박싱
 #### 변경 전
 ```json
@@ -62,7 +62,7 @@ API 요청에 id를 객체로 감싸놓은 것을 언박싱
 
 <br>
 
-### `GET /api/orders`
+### `GET /kitchenpos.api/orders`
 API 응답에 orderLineItems 안에 불필요한 orderId 제거
 #### 변경 전
 ```json
@@ -100,7 +100,7 @@ API 응답에 orderLineItems 안에 불필요한 orderId 제거
 ```
 <br>
 
-### `PUT /api/orders/{id}/order-status`
+### `PUT /kitchenpos.api/orders/{id}/order-status`
 API 응답에 orderLineItems 안에 불필요한 orderId 제거
 #### 변경 전
 ```json
@@ -139,7 +139,7 @@ API 응답에 orderLineItems 안에 불필요한 orderId 제거
 
 
 _23/10/25_
-### `GET /api/table-groups`
+### `GET /kitchenpos.api/table-groups`
 API 응답에 orderTable 목록이 있는데 이를 orderTableId 목록으로 변경
 #### 변경 전
 ```json
@@ -171,7 +171,7 @@ API 응답에 orderTable 목록이 있는데 이를 orderTableId 목록으로 �
 ```
 <br>
 
-### `POST /api/table-groups`
+### `POST /kitchenpos.api/table-groups`
 API 응답에 orderTable 목록이 있는데 이를 orderTableId 목록으로 변경
 #### 변경 전
 ```json
