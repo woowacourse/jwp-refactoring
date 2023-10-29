@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group 'camp.nextstep.edu'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'com.h2database:h2'
+}
+
+test {
+    useJUnitPlatform()
+}
