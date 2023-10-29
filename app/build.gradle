@@ -1,0 +1,10 @@
+dependencies {
+    implementation(project(':core'))
+    implementation(project(':product'))
+    implementation(project(':ordertable'))
+    implementation(project(':order'))
+    implementation(project(':menugroup'))
+    implementation(project(':menu'))
+    implementation(project(':tablegroup'))
+}
+

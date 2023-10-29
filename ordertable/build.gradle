@@ -1,0 +1,9 @@
+dependencies {
+    implementation(project(':core'))
+
+    testImplementation(project(':order'))
+    testImplementation(testFixtures(project(':order')))
+
+    testImplementation(project(':tablegroup'))
+    testImplementation(testFixtures(project(':tablegroup')))
+}
