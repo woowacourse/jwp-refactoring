@@ -42,6 +42,10 @@ public class MenuProduct {
         this(null, null, product, quantity);
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
     public Menu getMenu() {
         return menu;
     }

@@ -61,12 +61,13 @@ class MenuServiceTest {
                 new MenuProducts(List.of(menuProduct)));
 
         // when
+        MenuResponse expected = MenuResponse.from(menu);
         MenuResponse createdMenu = menuService.create(menuCreateRequest);
 
         // then
         assertThat(createdMenu).usingRecursiveComparison()
-                .ignoringFields("id", "menuProducts.menu", "menuProducts.seq")
-                .isEqualTo(menu);
+                .ignoringFields("id", "menuProducts.seq", "menuProducts.menuId", "menuProducts.productId")
+                .isEqualTo(expected);
     }
 
     @ParameterizedTest
@@ -103,7 +104,7 @@ class MenuServiceTest {
 
         // then
         assertThat(menus).usingRecursiveComparison()
-                .ignoringFields("id", "menuGroup.id", "menuProducts.seq", "menuProducts.menu", "menuProducts.product.id")
+                .ignoringFields("id", "menuGroup.id", "menuProducts")
                 .isEqualTo(List.of(MenuFixture.MENU_1, MenuFixture.MENU_2, MenuFixture.MENU_3, MenuFixture.MENU_4, MenuFixture.MENU_5, MenuFixture.MENU_6));
     }
 }
