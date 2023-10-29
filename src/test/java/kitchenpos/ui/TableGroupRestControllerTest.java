@@ -23,7 +23,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.service.TableGroupService;
-import kitchenpos.test.ObjectCreator;
+import kitchenpos.util.ObjectCreator;
 
 @WebMvcTest(TableGroupRestController.class)
 @MockBean(JpaMetamodelMappingContext.class)

@@ -10,7 +10,7 @@ import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.EmptyListException;
 import kitchenpos.exception.GroupTableException;
 import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.validator.OrderValidator;
+import kitchenpos.validator.OrderStatusValidator;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.value.NumberOfGuests;
@@ -24,14 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderValidator orderValidator;
+    private final OrderStatusValidator orderStatusValidator;
 
     public TableService(
             final OrderTableRepository orderTableRepository,
-            final OrderValidator orderValidator
+            final OrderStatusValidator orderStatusValidator
     ) {
         this.orderTableRepository = orderTableRepository;
-        this.orderValidator = orderValidator;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     public OrderTableResponse create(final CreateOrderTableRequest request) {
@@ -57,7 +57,7 @@ public class TableService {
         }
 
         // todo : 이벤트 처리 해결
-        orderValidator.validateById(orderTableId);
+        orderStatusValidator.validateById(orderTableId);
 
         savedOrderTable.changeEmpty(request.getEmpty());
 

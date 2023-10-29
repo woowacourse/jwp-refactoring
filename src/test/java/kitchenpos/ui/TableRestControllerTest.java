@@ -17,7 +17,7 @@ import kitchenpos.dto.request.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.service.TableService;
-import kitchenpos.test.ObjectCreator;
+import kitchenpos.util.ObjectCreator;
 import kitchenpos.value.NumberOfGuests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

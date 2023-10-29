@@ -1,4 +1,3 @@
 dependencies {
     implementation project(path: ':kitchenpos-common')
-    testImplementation project(path: ':kitchenpos-common')
 }

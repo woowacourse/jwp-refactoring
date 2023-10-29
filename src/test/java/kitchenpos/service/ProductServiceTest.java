@@ -9,7 +9,7 @@ import java.util.List;
 import kitchenpos.dto.request.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.exception.InvalidNumberException;
-import kitchenpos.test.ObjectCreator;
+import kitchenpos.util.ObjectCreator;
 import kitchenpos.util.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

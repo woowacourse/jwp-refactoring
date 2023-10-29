@@ -15,7 +15,7 @@ import kitchenpos.exception.EmptyTableException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.OrderLineItemsDto;
-import kitchenpos.test.ObjectCreator;
+import kitchenpos.util.ObjectCreator;
 import kitchenpos.util.ServiceTest;
 import kitchenpos.value.Quantity;
 import org.junit.jupiter.api.DisplayName;

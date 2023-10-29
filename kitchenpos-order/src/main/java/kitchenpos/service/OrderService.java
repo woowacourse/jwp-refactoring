@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderSnapShotCreator;
 import kitchenpos.domain.type.OrderStatus;
 import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.request.ChangeOrderRequest;
@@ -15,6 +14,7 @@ import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.validator.OrderValidator;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,17 +28,20 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
+    private final OrderValidator orderValidator;
     private final OrderSnapShotCreator orderSnapShotCreator;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
+            final OrderValidator orderValidator,
             final OrderSnapShotCreator orderSnapShotCreator
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
+        this.orderValidator = orderValidator;
         this.orderSnapShotCreator = orderSnapShotCreator;
     }
 
@@ -57,7 +60,7 @@ public class OrderService {
             throw new NoSuchDataException("입력한 메뉴들이 일치하지 않습니다.");
         }
 
-        //publisher.publishEvent(new OrderTableIdValidateEvent(request.getOrderTableId()));
+        orderValidator.validate(request.getOrderTableId());
 
         final Order order = orderRepository.save(Order.from(request.getOrderTableId()));
 

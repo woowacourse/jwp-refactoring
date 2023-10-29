@@ -1,28 +1,33 @@
-package kitchenpos.domain;
+package kitchenpos.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderMenu;
+import kitchenpos.domain.OrderMenuProduct;
 import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.exception.NoSuchDataException;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderMenuProductRepository;
 import kitchenpos.repository.OrderMenuRepository;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 @Component
-@ComponentScan(basePackages = "kitchenpos.menu")
+@ComponentScan(basePackages = "kitchenpos")
 public class OrderSnapShotCreator {
 
-    private final SnapShotCreator snapShotCreator;
+    private final MenuRepository menuRepository;
     private final OrderMenuRepository orderMenuRepository;
     private final OrderMenuProductRepository orderMenuProductRepository;
 
     public OrderSnapShotCreator(
-            final SnapShotCreator snapShotCreator,
+            final MenuRepository menuRepository,
             final OrderMenuRepository orderMenuRepository,
             final OrderMenuProductRepository orderMenuProductRepository
     ) {
-        this.snapShotCreator = snapShotCreator;
+        this.menuRepository = menuRepository;
         this.orderMenuRepository = orderMenuRepository;
         this.orderMenuProductRepository = orderMenuProductRepository;
     }
@@ -31,7 +36,7 @@ public class OrderSnapShotCreator {
         final List<Long> menuIds = orderLineItemsDtos.stream()
                 .map(dto -> dto.getMenuId())
                 .collect(Collectors.toList());
-        final List<Menu> menus = snapShotCreator.findAllByIds(menuIds);
+        final List<Menu> menus = menuRepository.findAllById(menuIds);
         for (final OrderLineItemsDto dto : orderLineItemsDtos) {
             final Menu menu = findMenuById(menus, dto.getMenuId());
             final OrderMenu orderMenu = orderMenuRepository.save(

@@ -15,7 +15,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.service.MenuService;
-import kitchenpos.test.ObjectCreator;
+import kitchenpos.util.ObjectCreator;
 import kitchenpos.value.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

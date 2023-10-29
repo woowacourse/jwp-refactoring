@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.test.ObjectCreator.getObject;
+import static kitchenpos.util.ObjectCreator.getObject;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;

@@ -14,7 +14,7 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.InvalidNumberException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.dto.request.CreateMenuRequest;
-import kitchenpos.test.ObjectCreator;
+import kitchenpos.util.ObjectCreator;
 import kitchenpos.util.ServiceTest;
 import kitchenpos.value.Quantity;
 import org.junit.jupiter.api.DisplayName;

@@ -9,7 +9,7 @@ import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.validator.OrderValidator;
+import kitchenpos.validator.OrderStatusValidator;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.TableGroupRepository;
@@ -25,16 +25,16 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final OrderValidator orderValidator;
+    private final OrderStatusValidator orderStatusValidator;
 
     public TableGroupService(
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository,
-            final OrderValidator orderValidator
+            final OrderStatusValidator orderStatusValidator
     ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.orderValidator = orderValidator;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     public TableGroupResponse create(final CreateTableGroupRequest request) {
@@ -77,7 +77,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        orderValidator.validateByIdIn(orderTableIds);
+        orderStatusValidator.validateByIdIn(orderTableIds);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.unGroup();

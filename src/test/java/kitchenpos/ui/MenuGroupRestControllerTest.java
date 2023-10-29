@@ -14,7 +14,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.CreateMenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.service.MenuGroupService;
-import kitchenpos.test.ObjectCreator;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

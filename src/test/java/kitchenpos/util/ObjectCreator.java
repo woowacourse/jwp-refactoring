@@ -1,4 +1,4 @@
-package kitchenpos.test;
+package kitchenpos.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
