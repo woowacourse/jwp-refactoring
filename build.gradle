@@ -4,6 +4,9 @@ plugins {
     id 'java'
 }
 
+bootJar { enabled = false }
+jar { enabled = true }
+
 allprojects {
     group = 'camp.nextstep.edu'
     version = '0.0.1-SNAPSHOT'
