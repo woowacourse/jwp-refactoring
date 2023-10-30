@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(path: ':kitchenpos-core')
+}
+bootJar {
+    enabled = false
+}
